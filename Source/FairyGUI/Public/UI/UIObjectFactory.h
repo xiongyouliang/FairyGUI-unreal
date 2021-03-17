@@ -18,6 +18,9 @@ public:
     static UGObject* NewObject(const TSharedPtr<FPackageItem>& PackageItem);
     static UGObject* NewObject(EObjectType Type);
 
+    static UGObject* NewObject(UObject* Outer, const TSharedPtr<FPackageItem>& PackageItem);
+    static UGObject* NewObject(UObject* Outer, EObjectType Type);
+
     static FGLoaderCreator LoaderCreator;
     static void ResolvePackageItemExtension(const TSharedPtr<FPackageItem>& PackageItem);
 

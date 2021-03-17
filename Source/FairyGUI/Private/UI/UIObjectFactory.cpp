@@ -57,6 +57,25 @@ UGObject* FUIObjectFactory::NewObject(const TSharedPtr<FPackageItem>& PackageIte
     return obj;
 }
 
+UGObject* FUIObjectFactory::NewObject(UObject* Outer, const TSharedPtr<FPackageItem>& PackageItem)
+{
+    UGObject* obj = nullptr;
+    if (PackageItem->ExtensionCreator.IsBound())
+    {
+        obj = PackageItem->ExtensionCreator.Execute();
+    }
+    else
+    {
+        obj = NewObject(Outer, PackageItem->ObjectType);
+    }
+
+    if (obj != nullptr)
+    {
+        obj->PackageItem = PackageItem;
+    }
+    return obj;
+}
+
 UGObject* FUIObjectFactory::NewObject(EObjectType Type)
 {
     switch (Type)
@@ -117,6 +136,72 @@ UGObject* FUIObjectFactory::NewObject(EObjectType Type)
 
     case EObjectType::Loader3D:
         return ::NewObject<UGLoader3D>();
+
+    default:
+        return nullptr;
+    }
+}
+
+UGObject* FUIObjectFactory::NewObject(UObject* Outer, EObjectType Type)
+{
+    switch (Type)
+    {
+    case EObjectType::Image:
+        return ::NewObject<UGImage>(Outer);
+
+    case EObjectType::MovieClip:
+        return ::NewObject<UGMovieClip>(Outer);
+
+    case EObjectType::Component:
+        return ::NewObject<UGComponent>(Outer);
+
+    case EObjectType::Text:
+        return ::NewObject<UGTextField>(Outer);
+
+    case EObjectType::RichText:
+        return ::NewObject<UGRichTextField>(Outer);
+
+    case EObjectType::InputText:
+        return ::NewObject<UGTextInput>(Outer);
+
+    case EObjectType::Group:
+        return ::NewObject<UGGroup>(Outer);
+
+    case EObjectType::List:
+        return ::NewObject<UGList>(Outer);
+
+    case EObjectType::Graph:
+        return ::NewObject<UGGraph>(Outer);
+
+    case EObjectType::Loader:
+        if (LoaderCreator.IsBound())
+            return LoaderCreator.Execute();
+        else
+            return ::NewObject<UGLoader>(Outer);
+
+    case EObjectType::Button:
+        return ::NewObject<UGButton>(Outer);
+
+    case EObjectType::Label:
+        return ::NewObject<UGLabel>(Outer);
+
+    case EObjectType::ProgressBar:
+        return ::NewObject<UGProgressBar>(Outer);
+
+    case EObjectType::Slider:
+        return ::NewObject<UGSlider>(Outer);
+
+    case EObjectType::ScrollBar:
+        return ::NewObject<UGScrollBar>(Outer);
+
+    case EObjectType::ComboBox:
+        return ::NewObject<UGComboBox>(Outer);
+
+    case EObjectType::Tree:
+        return ::NewObject<UGTree>(Outer);
+
+    case EObjectType::Loader3D:
+        return ::NewObject<UGLoader3D>(Outer);
 
     default:
         return nullptr;

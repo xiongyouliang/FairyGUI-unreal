@@ -271,6 +271,27 @@ UGObject* UUIPackage::CreateObject(const TSharedPtr<FPackageItem>& Item)
     return g;
 }
 
+UGObject* UUIPackage::CreateObject(UObject* Owner, const FString& ResourceName)
+{
+    TSharedPtr<FPackageItem> item = GetItemByName(ResourceName);
+    verifyf(item.IsValid(), TEXT("FairyGUI: resource not found - %s in  %s"), *ResourceName, *Name);
+
+    return CreateObject(Owner, item);
+}
+
+UGObject* UUIPackage::CreateObject(UObject* Owner, const TSharedPtr<FPackageItem>& Item)
+{
+    UGObject* Object = FUIObjectFactory::NewObject(Owner, Item);
+    if (Object == nullptr) {
+        return nullptr;
+    }
+
+    Constructing++;
+    Object->ConstructFromResource();
+    Constructing--;
+    return Object;
+}
+
 void UUIPackage::Load(FByteBuffer* Buffer)
 {
     if (Buffer->ReadUint() != 0x46475549)

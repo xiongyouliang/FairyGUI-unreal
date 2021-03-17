@@ -65,6 +65,9 @@ public:
     UGObject* CreateObject(const FString& ResourceName);
     UGObject* CreateObject(const TSharedPtr<FPackageItem>& Item);
 
+    UGObject* CreateObject(UObject* Owner, const FString& ResourceName);
+    UGObject* CreateObject(UObject* Owner, const TSharedPtr<FPackageItem>& Item);
+
 private:
     void Load(FByteBuffer* Buffer);
     void LoadAtlas(const TSharedPtr<FPackageItem>& Item);
@@ -94,6 +97,7 @@ private:
     static TMap<FString, FString> Vars;
     static FString Branch;
 
+    friend class UUIPackageMgr;
     friend class FPackageItem;
     friend class UFairyApplication;
 };

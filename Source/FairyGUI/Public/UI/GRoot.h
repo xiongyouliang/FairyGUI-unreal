@@ -12,9 +12,6 @@ class FAIRYGUI_API UGRoot : public UGComponent
     GENERATED_BODY()
 
 public:
-    UFUNCTION(BlueprintPure, Category = "FairyGUI", meta = (DisplayName = "Get UI Root"))
-    static UGRoot* Get();
-
     static int32 ContentScaleLevel;
 
     UGRoot();
@@ -76,7 +73,9 @@ public:
     void HideTooltips();
 
 private:
+    TWeakPtr<SWidget> FullScreenWidget;
     void AddToViewport();
+    void RemoveFromViewport();
 
     void CreateModalLayer();
     void AdjustModalLayer();
@@ -88,12 +87,16 @@ private:
 
     UPROPERTY(Transient)
     UGGraph* ModalLayer;
+
     UPROPERTY(Transient)
     UGObject* ModalWaitPane;
+
     UPROPERTY(Transient)
     UGObject* TooltipWin;
+
     UPROPERTY(Transient)
     UGObject* DefaultTooltipWin;
+
     TArray<TWeakObjectPtr<UGObject>> PopupStack;
     TArray<TWeakObjectPtr<UGObject>> JustClosedPopups;
     FTimerHandle ShowTooltipsTimerHandle;

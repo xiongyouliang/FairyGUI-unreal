@@ -109,8 +109,8 @@ void UFairyApplication::Destroy()
 {
     if (Instance != nullptr)
     {
-        Instance->RemoveFromRoot();
         Instance->OnDestroy();
+        Instance->RemoveFromRoot();
     }
     Instance = nullptr;
 }
@@ -123,15 +123,54 @@ UFairyApplication::UFairyApplication() :
     Touches.Add(LastTouch);
 }
 
+void UFairyApplication::AddUIRoot(UObject* WorldContextObject)
+{
+    UWorld* World = WorldContextObject->GetWorld();
+    if (World && World->IsGameWorld())
+    {
+        UGRoot* NewUIRoot = NewObject<UGRoot>(WorldContextObject);
+
+        UIRoots.Add(World, NewUIRoot);
+
+        UDragDropManager* NewDragDropManager = NewObject<UDragDropManager>(WorldContextObject);
+        DragDropManagers.Add(World, NewDragDropManager);
+    }
+}
+
+UGRoot* UFairyApplication::GetUIRoot(UObject* WorldContextObject)
+{
+    UWorld* World = WorldContextObject->GetWorld();
+    if (World && World->IsGameWorld())
+    {
+        return UIRoots[World];
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
+void UFairyApplication::RemoveUIRoot(UObject* WorldContextObject)
+{
+    UWorld* World = WorldContextObject->GetWorld();
+    if (World && World->IsGameWorld() && UIRoots.Num() != 0)
+    {
+        UGRoot* TargetUIRoot = UIRoots[World];
+        TargetUIRoot->RemoveFromViewport();
+
+        UIRoots.Remove(World);
+        DragDropManagers.Remove(World);
+    }
+}
+
+
 void UFairyApplication::OnCreate()
 {
     InputProcessor = MakeShareable(new FInputProcessor());
     FSlateApplication::Get().RegisterInputPreProcessor(InputProcessor);
 
-    ViewportClient = GWorld->GetGameViewport();
-    ViewportWidget = Instance->ViewportClient->GetGameViewportWidget();
-
-    DragDropManager = NewObject<UDragDropManager>();
+    //ViewportClient = GWorld->GetGameViewport();
+    //ViewportWidget = Instance->ViewportClient->GetGameViewportWidget();
 
     PostTickDelegateHandle = FSlateApplication::Get().OnPostTick().AddUObject(this, &UFairyApplication::OnSlatePostTick);
 }
@@ -173,9 +212,13 @@ void UFairyApplication::OnSlatePostTick(float DeltaTime)
     if (bNeedCheckPopups)
     {
         bNeedCheckPopups = false;
-
-        if (UIRoot != nullptr)
-            UIRoot->CheckPopups(nullptr);
+        for (auto It = UIRoots.CreateConstIterator(); It; ++It)
+        {
+            if (It.Value())
+            {
+                It.Value()->CheckPopups(nullptr);
+            }
+        }
     }
 }
 
@@ -536,8 +579,6 @@ FReply UFairyApplication::OnWidgetMouseButtonDown(const TSharedRef<SWidget>& Wid
     }
 
     bNeedCheckPopups = false;
-    if (UIRoot != nullptr)
-        UIRoot->CheckPopups(&Widget.Get());
 
     BubbleEvent(FUIEvents::TouchBegin, Widget);
 

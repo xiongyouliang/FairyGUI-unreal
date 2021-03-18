@@ -15,8 +15,10 @@ public:
     UDragDropManager();
     virtual ~UDragDropManager();
 
-    UFUNCTION(BlueprintPure, Category = "FairyGUI", meta = (DisplayName = "Get DragDropManager"))
-    static UDragDropManager* Get();
+    void Init(UObject* WorldContextObject);
+
+    //UFUNCTION(BlueprintPure, Category = "FairyGUI", meta = (DisplayName = "Get DragDropManager"))
+    //static UDragDropManager* Get();
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     UGLoader* GetAgent() const { return Agent; }

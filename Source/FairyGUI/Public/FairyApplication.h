@@ -56,6 +56,15 @@ public:
 
     UFairyApplication();
 
+    UFUNCTION(BlueprintCallable, Category = "FairyGUI | FairyApplication")
+    void AddUIRoot(UObject* WorldContextObject);
+
+    UFUNCTION(BlueprintPure, Category = "FairyGUI | FairyApplication")
+    UGRoot* GetUIRoot(UObject* WorldContextObject);
+
+    UFUNCTION(BlueprintCallable, Category = "FairyGUI | FairyApplication")
+    void RemoveUIRoot(UObject* WorldContextObject);
+
     UFUNCTION(BlueprintPure, Category = "FairyGUI")
     FVector2D GetTouchPosition(int32 InUserIndex = -1, int32 InPointerIndex = -1);
 
@@ -128,12 +137,10 @@ private:
     void OnSlatePostTick(float DeltaTime);
 
 private:
-    UPROPERTY(Transient)
-    TArray<UUIPackage*> PackageList;
-    UPROPERTY(Transient)
-    UGRoot* UIRoot;
-    UPROPERTY(Transient)
-    UDragDropManager* DragDropManager;
+    TMap<UWorld*, UGRoot*> UIRoots;
+
+    TMap<UWorld*, UDragDropManager*> DragDropManagers;
+
     UPROPERTY(Transient)
     TArray<UEventContext*> EventContextPool;
 
@@ -151,6 +158,7 @@ private:
 
     static UFairyApplication* Instance;
 
+    friend class UUIPackageMgr;
     friend class UUIPackage;
     friend class UGRoot;
     friend class FGTween;

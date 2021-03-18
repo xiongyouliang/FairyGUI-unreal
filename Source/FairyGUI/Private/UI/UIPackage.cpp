@@ -73,7 +73,6 @@ UUIPackage* UUIPackage::AddPackage(UUIPackageAsset* InAsset)
     FByteBuffer Buffer(InAsset->Data.GetData(), 0, InAsset->Data.Num(), false);
     Pkg->Load(&Buffer);
 
-    UFairyApplication::Get()->PackageList.Add(Pkg);
     PackageInstByID.Add(Pkg->ID, Pkg);
     PackageInstByID.Add(Pkg->AssetPath, Pkg);
     PackageInstByName.Add(Pkg->Name, Pkg);
@@ -88,9 +87,6 @@ void UUIPackage::RemovePackage(const FString& IDOrName)
 
     if (pkg != nullptr)
     {
-        TArray<UUIPackage*>& PackageList = UFairyApplication::Get()->PackageList;
-        PackageList.Remove(pkg);
-
         PackageInstByID.Remove(pkg->ID);
         PackageInstByID.Remove(pkg->AssetPath);
         PackageInstByName.Remove(pkg->Name);
@@ -101,9 +97,6 @@ void UUIPackage::RemovePackage(const FString& IDOrName)
 
 void UUIPackage::RemoveAllPackages()
 {
-    TArray<UUIPackage*>& PackageList = UFairyApplication::Get()->PackageList;
-    PackageList.Reset();
-
     PackageInstByID.Reset();
     PackageInstByName.Reset();
 }

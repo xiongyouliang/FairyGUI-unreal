@@ -17,18 +17,6 @@ public:
     virtual void OnArrangeChildren(const FGeometry& AllottedGeometry, FArrangedChildren& ArrangedChildren) const override;
 };
 
-UGRoot* UGRoot::Get()
-{
-    if (Instance == nullptr)
-    {
-        Instance = NewObject<UGRoot>();
-        UFairyApplication::Get()->UIRoot = Instance;
-        Instance->AddToViewport();
-    }
-
-    return Instance;
-}
-
 UGRoot::UGRoot()
 {
 }
@@ -39,13 +27,36 @@ UGRoot::~UGRoot()
 
 void UGRoot::AddToViewport()
 {
-    UGameViewportClient* ViewportClient = GWorld->GetGameViewport();
-    TSharedRef<SRootContainer> FullScreenCanvas = SNew(SRootContainer);
-    FullScreenCanvas->SetOpaque(false);
-    FullScreenCanvas->AddChild(GetDisplayObject());
-    ViewportClient->AddViewportWidgetContent(FullScreenCanvas, 100);
+    UWorld* World = GetWorld();
+    if (World && World->IsGameWorld())
+    {
+        UGameViewportClient* ViewportClient = World->GetGameViewport();
+        TSharedRef<SRootContainer> FullScreenCanvas = SNew(SRootContainer).GObject(this);
+        FullScreenCanvas->SetOpaque(false);
+        FullScreenCanvas->AddChild(GetDisplayObject());
+        ViewportClient->AddViewportWidgetContent(FullScreenCanvas, 100);
 
-    SetSize(FullScreenCanvas->GetParentWidget()->GetPaintSpaceGeometry().GetLocalSize().RoundToVector());
+        FullScreenWidget = FullScreenCanvas;
+
+        SetSize(FullScreenCanvas->GetParentWidget()->GetPaintSpaceGeometry().GetLocalSize().RoundToVector());
+    }
+}
+
+void UGRoot::RemoveFromViewport()
+{
+    TSharedPtr<SWidget> WidgetHost = FullScreenWidget.Pin();
+
+    // If this is a game world remove the widget from the current world's viewport.
+    UWorld* World = GetWorld();
+    if (World && World->IsGameWorld())
+    {
+        if (UGameViewportClient* ViewportClient = World->GetGameViewport())
+        {
+            TSharedRef<SWidget> WidgetHostRef = WidgetHost.ToSharedRef();
+
+            ViewportClient->RemoveViewportWidgetContent(WidgetHostRef);
+        }
+    }
 }
 
 void UGRoot::ShowWindow(UGWindow* Window)
@@ -439,10 +450,10 @@ void UGRoot::HideTooltips()
 void SRootContainer::OnArrangeChildren(const FGeometry& AllottedGeometry, FArrangedChildren& ArrangedChildren) const
 {
     const FVector2D& LocalSize = AllottedGeometry.GetLocalSize().RoundToVector();
-    if (LocalSize != UGRoot::Get()->GetSize())
+    if (LocalSize != GObject->GetSize())
     {
-        UGRoot::Get()->SetSize(LocalSize.RoundToVector());
-        UE_LOG(LogFairyGUI, Log, TEXT("UIRoot resize to %f,%f"), UGRoot::Get()->GetSize().X, UGRoot::Get()->GetSize().Y);
+        GObject->SetSize(LocalSize.RoundToVector());
+        UE_LOG(LogFairyGUI, Log, TEXT("UIRoot resize to %f,%f"), GObject->GetSize().X, GObject->GetSize().Y);
     }
 
     SContainer::OnArrangeChildren(AllottedGeometry, ArrangedChildren);

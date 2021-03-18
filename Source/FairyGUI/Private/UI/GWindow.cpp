@@ -2,6 +2,7 @@
 #include "UI/GGraph.h"
 #include "UI/GRoot.h"
 #include "UI/UIPackage.h"
+#include "FairyApplication.h"
 
 UGWindow::UGWindow()
 {
@@ -82,7 +83,7 @@ void UGWindow::SetDragArea(UGObject * Obj)
 
 void UGWindow::Show()
 {
-    UGRoot::Get()->ShowWindow(this);
+    UFairyApplication::Get()->GetUIRoot(this)->ShowWindow(this);
 }
 
 void UGWindow::Hide()
@@ -93,7 +94,7 @@ void UGWindow::Hide()
 
 void UGWindow::HideImmediately()
 {
-    UGRoot::Get()->HideWindowImmediately(this);
+    UFairyApplication::Get()->GetUIRoot(this)->HideWindowImmediately(this);
 }
 
 void UGWindow::ToggleStatus()
@@ -106,7 +107,7 @@ void UGWindow::ToggleStatus()
 
 void UGWindow::BringToFront()
 {
-    UGRoot::Get()->BringToFront(this);
+    UFairyApplication::Get()->GetUIRoot(this)->BringToFront(this);
 }
 
 bool UGWindow::IsTop() const

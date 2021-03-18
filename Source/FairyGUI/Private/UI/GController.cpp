@@ -2,6 +2,7 @@
 #include "UI/GComponent.h"
 #include "UI/UIPackage.h"
 #include "Utils/ByteBuffer.h"
+#include "UI/UIPackageMgr.h"
 
 UGController::UGController() :
     SelectedIndex(-1),
@@ -166,7 +167,7 @@ void UGController::Setup(FByteBuffer* Buffer)
             break;
 
         case 2:
-            HomePageIndex = PageNames.Find(UUIPackage::GetBranch());
+            HomePageIndex = PageNames.Find(UUIPackageMgr::GetBranch());
             if (HomePageIndex == INDEX_NONE)
                 HomePageIndex = 0;
             break;

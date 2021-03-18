@@ -176,7 +176,7 @@ void UGObject::Center(bool bRestraint)
     if (Parent.IsValid())
         r = Parent.Get();
     else
-        r = UGRoot::Get();
+        r = UFairyApplication::Get()->GetUIRoot(this);
 
     SetPosition(((r->Size - Size) / 2).RoundToVector());
     if (bRestraint)
@@ -188,9 +188,9 @@ void UGObject::Center(bool bRestraint)
 
 void UGObject::MakeFullScreen(bool bRestraint)
 {
-    SetSize(UGRoot::Get()->GetSize());
+    SetSize(UFairyApplication::Get()->GetUIRoot(this)->GetSize());
     if (bRestraint)
-        AddRelation(UGRoot::Get(), ERelationType::Size);
+        AddRelation(UFairyApplication::Get()->GetUIRoot(this), ERelationType::Size);
 }
 
 void UGObject::SetPivot(const FVector2D& InPivot, bool bAsAnchor)
@@ -353,12 +353,12 @@ void UGObject::SetTooltips(const FString& InTooltips)
 
 void UGObject::OnRollOverHandler(UEventContext* Context)
 {
-    UGRoot::Get()->ShowTooltips(Tooltips);
+    UFairyApplication::Get()->GetUIRoot(this)->ShowTooltips(Tooltips);
 }
 
 void UGObject::OnRollOutHandler(UEventContext* Context)
 {
-    UGRoot::Get()->HideTooltips();
+    UFairyApplication::Get()->GetUIRoot(this)->HideTooltips();
 }
 
 void UGObject::SetDraggable(bool bInDraggable)
@@ -438,12 +438,12 @@ FBox2D UGObject::LocalToGlobalRect(const FBox2D& InRect)
 
 FVector2D UGObject::LocalToRoot(const FVector2D& InPoint)
 {
-    return UGRoot::Get()->GlobalToLocal(LocalToGlobal(InPoint));
+    return UFairyApplication::Get()->GetUIRoot(this)->GlobalToLocal(LocalToGlobal(InPoint));
 }
 
 FBox2D UGObject::LocalToRootRect(const FBox2D& InRect)
 {
-    return UGRoot::Get()->GlobalToLocalRect(LocalToGlobalRect(InRect));
+    return UFairyApplication::Get()->GetUIRoot(this)->GlobalToLocalRect(LocalToGlobalRect(InRect));
 }
 
 FVector2D UGObject::GlobalToLocal(const FVector2D& InPoint)
@@ -463,12 +463,12 @@ FBox2D UGObject::GlobalToLocalRect(const FBox2D& InRect)
 
 FVector2D UGObject::RootToLocal(const FVector2D& InPoint)
 {
-    return GlobalToLocal(UGRoot::Get()->LocalToGlobal(InPoint));
+    return GlobalToLocal(UFairyApplication::Get()->GetUIRoot(this)->LocalToGlobal(InPoint));
 }
 
 FBox2D UGObject::RootToLocalRect(const FBox2D& InRect)
 {
-    return GlobalToLocalRect(UGRoot::Get()->LocalToGlobalRect(InRect));
+    return GlobalToLocalRect(UFairyApplication::Get()->GetUIRoot(this)->LocalToGlobalRect(InRect));
 }
 
 void UGObject::AddRelation(UGObject* Obj, ERelationType RelationType, bool bUsePercent)
@@ -569,7 +569,15 @@ void UGObject::SetParent(UGObject* InParent)
 
 void UGObject::SetParentToRoot()
 {
-    SetParent(UGRoot::Get());
+    if (UObject* Outer = GetOuter())
+    {
+        UGRoot* TargetUIRoot = UFairyApplication::Get()->GetUIRoot(Outer);
+        SetParent(TargetUIRoot);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("This FairyGUI Object Has NO Outer"));
+    }
 }
 
 void UGObject::RemoveFromParent()
@@ -868,7 +876,7 @@ void UGObject::OnTouchMoveHandler(UEventContext* Context)
         FVector2D Pos = Context->GetPointerPosition() - GlobalDragStart + GlobalRect.Min;
         if (DragBounds.IsSet())
         {
-            FBox2D rect = UGRoot::Get()->LocalToGlobalRect(DragBounds.GetValue());
+            FBox2D rect = UFairyApplication::Get()->GetUIRoot(this)->LocalToGlobalRect(DragBounds.GetValue());
             if (Pos.X < rect.Min.X)
                 Pos.X = rect.Min.X;
             else if (Pos.X + GlobalRect.GetSize().X > rect.Max.X)

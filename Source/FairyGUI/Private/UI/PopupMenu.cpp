@@ -2,6 +2,7 @@
 #include "UI/GRoot.h"
 #include "UI/UIPackage.h"
 #include "UI/GController.h"
+#include "FairyApplication.h"
 
 const FName UPopupMenu::ClickMenu("ClickMenu");
 
@@ -194,7 +195,7 @@ int32 UPopupMenu::GetItemCount() const
 
 void UPopupMenu::Show(UGObject * AtObject, EPopupDirection Dir)
 {
-    UGRoot::Get()->ShowPopup(ContentPane, AtObject, Dir);
+    UFairyApplication::Get()->GetUIRoot(this)->ShowPopup(ContentPane, AtObject, Dir);
 }
 
 void UPopupMenu::OnClickItem(UEventContext * Context)
@@ -218,7 +219,7 @@ void UPopupMenu::OnClickItem(UEventContext * Context)
             c->SetSelectedIndex(1);
     }
 
-    UGRoot::Get()->HidePopup(ContentPane);
+    UFairyApplication::Get()->GetUIRoot(this)->HidePopup(ContentPane);
 
     item->DispatchEvent(ClickMenu, Context->GetData());
 }

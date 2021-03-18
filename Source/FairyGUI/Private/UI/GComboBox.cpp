@@ -195,7 +195,7 @@ void UGComboBox::ShowDropdown()
     DropdownObject->SetWidth(Size.X);
     ListObject->EnsureBoundsCorrect();
 
-    UGRoot::Get()->TogglePopup(DropdownObject, this, PopupDirection);
+    UFairyApplication::Get()->GetUIRoot(this)->TogglePopup(DropdownObject, this, PopupDirection);
     if (DropdownObject->GetParent() != nullptr)
         SetState(UGButton::DOWN);
 }

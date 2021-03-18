@@ -1,14 +1,24 @@
 #include "UI/DragDropManager.h"
 #include "FairyApplication.h"
+#include "UI/GRoot.h"
 
-UDragDropManager* UDragDropManager::Get()
-{
-    return UFairyApplication::Get()->DragDropManager;
-}
+//UDragDropManager* UDragDropManager::Get()
+//{
+//    return UFairyApplication::Get()->DragDropManager;
+//}
 
 UDragDropManager::UDragDropManager()
 {
-    Agent = (UGLoader*)FUIObjectFactory::NewObject(EObjectType::Loader);
+    
+}
+
+UDragDropManager::~UDragDropManager()
+{
+}
+
+void UDragDropManager::Init(UObject* WorldContextObject)
+{
+    Agent = (UGLoader*)FUIObjectFactory::NewObject(WorldContextObject, EObjectType::Loader);
     Agent->Name = TEXT("DragDropAgent");
     Agent->SetTouchable(false);
     Agent->SetDraggable(true);
@@ -20,19 +30,16 @@ UDragDropManager::UDragDropManager()
     Agent->On(FUIEvents::DragEnd).AddUObject(this, &UDragDropManager::OnDragEnd);
 }
 
-UDragDropManager::~UDragDropManager()
-{
-}
-
 void UDragDropManager::StartDrag(const FString& InIcon, const FNVariant& InUserData, int32 InUserIndex, int32 InPointerIndex)
 {
     if (Agent->GetParent() != nullptr)
         return;
 
+    UGRoot* TargetUIRoot = UFairyApplication::Get()->GetUIRoot(this);
     UserData = InUserData;
     Agent->SetURL(InIcon);
-    UGRoot::Get()->AddChild(Agent);
-    FVector2D pt = UGRoot::Get()->GlobalToLocal(UFairyApplication::Get()->GetTouchPosition(InUserIndex, InPointerIndex));
+    TargetUIRoot->AddChild(Agent);
+    FVector2D pt = TargetUIRoot->GlobalToLocal(UFairyApplication::Get()->GetTouchPosition(InUserIndex, InPointerIndex));
     Agent->SetPosition(pt);
     UFairyApplication::Get()->CallAfterSlateTick(FSimpleDelegate::CreateUObject(this, &UDragDropManager::DelayStartDrag, InUserIndex, InPointerIndex));
 }

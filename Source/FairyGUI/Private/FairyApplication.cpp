@@ -130,7 +130,7 @@ void UFairyApplication::AddUIRoot(UObject* WorldContextObject)
     if (World && World->IsGameWorld())
     {
         UGRoot* NewUIRoot = NewObject<UGRoot>(WorldContextObject);
-
+        NewUIRoot->AddToViewport();
         UIRoots.Add(World, NewUIRoot);
 
         UDragDropManager* NewDragDropManager = NewObject<UDragDropManager>(WorldContextObject);

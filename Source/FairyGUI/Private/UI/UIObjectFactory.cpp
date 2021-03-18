@@ -19,6 +19,7 @@
 #include "UI/GScrollBar.h"
 #include "UI/GList.h"
 #include "UI/GTree.h"
+#include "UI/UIPackageMgr.h"
 
 TMap<FString, FGComponentCreator> FUIObjectFactory::PackageItemExtensions;
 FGLoaderCreator FUIObjectFactory::LoaderCreator;
@@ -30,7 +31,7 @@ void FUIObjectFactory::SetExtension(const FString& URL, FGComponentCreator Creat
         UE_LOG(LogFairyGUI, Warning, TEXT("Invaild url: %s"), *URL);
         return;
     }
-    TSharedPtr<FPackageItem> PackageItem = UUIPackage::GetItemByURL(URL);
+    TSharedPtr<FPackageItem> PackageItem = UUIPackageMgr::GetPackageItemByURL(URL);
     if (PackageItem.IsValid())
         PackageItem->ExtensionCreator = Creator;
 

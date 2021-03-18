@@ -7,6 +7,7 @@
 #include "UI/UIPackage.h"
 #include "UI/PackageItem.h"
 #include "UI/GLoader.h"
+#include "UI/UIPackageMgr.h"
 
 TSharedRef< FLoaderRun > FLoaderRun::Create(const FHTMLElement& InHTMLElement, const TSharedRef< const FString >& InText, int16 InBaseline, const FTextRange& InRange)
 {
@@ -28,7 +29,7 @@ FLoaderRun::FLoaderRun(const FHTMLElement& InHTMLElement, const TSharedRef< cons
     const FString& Src = HTMLElement.Attributes.Get("src");
     if (Src.Len() > 0)
     {
-        TSharedPtr<FPackageItem> pi = UUIPackage::GetItemByURL(Src);
+        TSharedPtr<FPackageItem> pi = UUIPackageMgr::GetPackageItemByURL(Src);
         if (pi.IsValid())
             SourceSize = pi->Size;
     }

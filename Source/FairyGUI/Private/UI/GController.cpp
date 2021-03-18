@@ -173,7 +173,7 @@ void UGController::Setup(FByteBuffer* Buffer)
             break;
 
         case 3:
-            HomePageIndex = PageNames.Find(UUIPackage::GetVar(Buffer->ReadS()));
+            HomePageIndex = PageNames.Find(UUIPackageMgr::GetVar(Buffer->ReadS()));
             if (HomePageIndex == INDEX_NONE)
                 HomePageIndex = 0;
             break;

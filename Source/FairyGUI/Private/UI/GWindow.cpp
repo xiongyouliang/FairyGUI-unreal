@@ -2,6 +2,7 @@
 #include "UI/GGraph.h"
 #include "UI/GRoot.h"
 #include "UI/UIPackage.h"
+#include "UI/UIPackageMgr.h"
 #include "FairyApplication.h"
 
 UGWindow::UGWindow()
@@ -123,7 +124,7 @@ void UGWindow::ShowModalWait(int32 InRequestingCmd)
     if (!FUIConfig::Config.WindowModalWaiting.IsEmpty())
     {
         if (ModalWaitPane == nullptr)
-            ModalWaitPane = UUIPackage::CreateObjectFromURL(FUIConfig::Config.WindowModalWaiting);
+            ModalWaitPane = UUIPackageMgr::CreateObjectFromURL(GetOuter(), FUIConfig::Config.WindowModalWaiting);
 
         LayoutModalWaitPane();
 

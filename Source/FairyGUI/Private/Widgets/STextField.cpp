@@ -2,6 +2,7 @@
 #include "Internationalization/BreakIterator.h"
 #include "Utils/HTMLParser.h"
 #include "Widgets/LoaderRun.h"
+#include "UI/UIPackageMgr.h"
 
 STextField::STextField() :
     bHTML(false),
@@ -242,7 +243,7 @@ void STextField::BuildLines()
     TSharedPtr<FBitmapFont> BitmapFont;
     if (TextFormat.Face.StartsWith("ui://"))
     {
-        TSharedPtr<FPackageItem> FontItem = UUIPackage::GetItemByURL(TextFormat.Face);
+        TSharedPtr<FPackageItem> FontItem = UUIPackageMgr::GetPackageItemByURL(TextFormat.Face);
         if (FontItem.IsValid())
         {
             FontItem->Load();

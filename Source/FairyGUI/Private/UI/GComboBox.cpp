@@ -1,5 +1,6 @@
 #include "UI/GComboBox.h"
 #include "UI/UIPackage.h"
+#include "UI/UIPackageMgr.h"
 #include "UI/GTextField.h"
 #include "UI/GTextInput.h"
 #include "UI/GLabel.h"
@@ -304,7 +305,7 @@ void UGComboBox::ConstructExtension(FByteBuffer* Buffer)
     const FString& dropdownResource = Buffer->ReadS();
     if (!dropdownResource.IsEmpty())
     {
-        DropdownObject = Cast<UGComponent>(UUIPackage::CreateObjectFromURL(dropdownResource));
+        DropdownObject = Cast<UGComponent>(UUIPackageMgr::CreateObjectFromURL(this, dropdownResource));
         verifyf(DropdownObject != nullptr, TEXT("should be a component."));
 
         ListObject = Cast<UGList>(DropdownObject->GetChild("list"));

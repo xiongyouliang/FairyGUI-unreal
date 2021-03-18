@@ -1,19 +1,20 @@
 #include "UI/GObjectPool.h"
 #include "UI/GObject.h"
 #include "UI/UIPackage.h"
+#include "UI/UIPackageMgr.h"
 
 UGObject* FGObjectPool::GetObject(const FString & URL)
 {
-    FString URL2 = UUIPackage::NormalizeURL(URL);
+    FString URL2 = UUIPackageMgr::NormalizeURL(URL);
     if (URL2.Len() == 0)
         return nullptr;
 
-    UGObject* ret;
+    UGObject* ret = nullptr;
     TArray<UGObject*>& arr = Pool.FindOrAdd(URL2);
     if (arr.Num() > 0)
         ret = arr.Pop();
-    else
-        ret = UUIPackage::CreateObjectFromURL(URL2);
+    //else
+        //ret = UUIPackageMgr::CreateObjectFromURL(GetOuter(), URL2);
     return ret;
 }
 

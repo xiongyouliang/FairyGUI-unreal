@@ -3,6 +3,7 @@
 #include "Slate/SGameLayerManager.h"
 #include "UI/GRoot.h"
 #include "UI/UIPackage.h"
+#include "UI/UIPackageMgr.h"
 #include "UI/UIObjectFactory.h"
 #include "Tween/TweenManager.h"
 #include "Widgets/NTexture.h"
@@ -177,10 +178,6 @@ void UFairyApplication::OnCreate()
 
 void UFairyApplication::OnDestroy()
 {
-    UUIPackage::RemoveAllPackages();
-    UUIPackage::Branch.Reset();
-    UUIPackage::Vars.Reset();
-
     FUIObjectFactory::PackageItemExtensions.Reset();
     FUIObjectFactory::LoaderCreator.Unbind();
 
@@ -267,7 +264,7 @@ void UFairyApplication::PlaySound(const FString& URL, float VolumnScale)
     if (!bSoundEnabled)
         return;
 
-    TSharedPtr<FPackageItem> SoundItem = UUIPackage::GetItemByURL(URL);
+    TSharedPtr<FPackageItem> SoundItem = UUIPackageMgr::GetPackageItemByURL(URL);
     if (SoundItem.IsValid())
     {
         SoundItem->Load();

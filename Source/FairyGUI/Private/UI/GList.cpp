@@ -4,6 +4,7 @@
 #include "UI/GController.h"
 #include "UI/GScrollBar.h"
 #include "UI/UIPackage.h"
+#include "UI/UIPackageMgr.h"
 #include "Utils/ByteBuffer.h"
 #include "Widgets/SContainer.h"
 
@@ -1456,7 +1457,7 @@ bool UGList::HandleScroll1(bool forceUpdate)
                 url = ItemProvider.Execute(curIndex % NumItems);
                 if (url.Len() == 0)
                     url = DefaultItem;
-                url = UUIPackage::NormalizeURL(url);
+                url = UUIPackageMgr::NormalizeURL(url);
             }
 
             if (ii.Obj != nullptr && ii.Obj->GetResourceURL().Compare(url) != 0)
@@ -1623,7 +1624,7 @@ bool UGList::HandleScroll2(bool forceUpdate)
                 url = ItemProvider.Execute(curIndex % NumItems);
                 if (url.Len() == 0)
                     url = DefaultItem;
-                url = UUIPackage::NormalizeURL(url);
+                url = UUIPackageMgr::NormalizeURL(url);
             }
 
             if (ii.Obj != nullptr && ii.Obj->GetResourceURL().Compare(url) != 0)
@@ -1838,7 +1839,7 @@ void UGList::HandleScroll3(bool forceUpdate)
                     url = ItemProvider.Execute(i % NumItems);
                     if (url.Len() == 0)
                         url = DefaultItem;
-                    url = UUIPackage::NormalizeURL(url);
+                    url = UUIPackageMgr::NormalizeURL(url);
                 }
 
                 ii.Obj = Pool->GetObject(url);

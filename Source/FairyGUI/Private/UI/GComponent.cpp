@@ -5,6 +5,7 @@
 #include "UI/TranslationHelper.h"
 #include "UI/UIObjectFactory.h"
 #include "UI/UIPackage.h"
+#include "UI/UIPackageMgr.h"
 #include "UI/GController.h"
 #include "UI/Transition.h"
 #include "UI/GRoot.h"
@@ -1001,7 +1002,7 @@ void UGComponent::ConstructFromResource(TArray<UGObject*>* ObjectPool, int32 Poo
             {
                 UUIPackage* pkg;
                 if (!pkgId.IsEmpty())
-                    pkg = UUIPackage::GetPackageByID(pkgId);
+                    pkg = UUIPackageMgr::GetPackageByID(pkgId);
                 else
                     pkg = ContentItem->Owner;
 

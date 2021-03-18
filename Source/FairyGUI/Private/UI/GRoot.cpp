@@ -6,6 +6,7 @@
 #include "UI/GWindow.h"
 #include "UI/GGraph.h"
 #include "UI/UIPackage.h"
+#include "UI/UIPackageMgr.h"
 #include "Widgets/SContainer.h"
 
 UGRoot* UGRoot::Instance = nullptr;
@@ -206,7 +207,7 @@ UGObject* UGRoot::GetModalWaitingPane()
     {
         if (ModalWaitPane == nullptr)
         {
-            ModalWaitPane = UUIPackage::CreateObjectFromURL(FUIConfig::Config.GlobalModalWaiting);
+            ModalWaitPane = UUIPackageMgr::CreateObjectFromURL(GetOuter(), FUIConfig::Config.GlobalModalWaiting);
             ModalWaitPane->SetSortingOrder(INT_MAX);
         }
 
@@ -394,7 +395,7 @@ void UGRoot::ShowTooltips(const FString& Text)
             return;
         }
 
-        DefaultTooltipWin = UUIPackage::CreateObjectFromURL(resourceURL);
+        DefaultTooltipWin = UUIPackageMgr::CreateObjectFromURL(GetOuter(), resourceURL);
         DefaultTooltipWin->SetTouchable(false);
     }
 

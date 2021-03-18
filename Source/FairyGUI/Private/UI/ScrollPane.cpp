@@ -2,7 +2,7 @@
 #include "Engine/World.h"
 #include "Engine/GameViewportClient.h"
 #include "TimerManager.h"
-#include "UI/UIPackage.h"
+#include "UI/UIPackageMgr.h"
 #include "UI/GList.h"
 #include "UI/GController.h"
 #include "UI/GScrollBar.h"
@@ -104,7 +104,7 @@ void UScrollPane::Setup(FByteBuffer* Buffer)
             const FString& res = vtScrollBarRes.Len() == 0 ? FUIConfig::Config.VerticalScrollBar : vtScrollBarRes;
             if (res.Len() > 0)
             {
-                VtScrollBar = Cast<UGScrollBar>(UUIPackage::CreateObjectFromURL(res));
+                VtScrollBar = Cast<UGScrollBar>(UUIPackageMgr::CreateObjectFromURL(GetOuter(), res));
                 if (VtScrollBar == nullptr)
                 {
                     UE_LOG(LogFairyGUI, Warning, TEXT("cannot create scrollbar from %s"), *res);
@@ -121,7 +121,7 @@ void UScrollPane::Setup(FByteBuffer* Buffer)
             const FString& res = hzScrollBarRes.Len() == 0 ? FUIConfig::Config.HorizontalScrollBar : hzScrollBarRes;
             if (res.Len() > 0)
             {
-                HzScrollBar = Cast<UGScrollBar>(UUIPackage::CreateObjectFromURL(res));
+                HzScrollBar = Cast<UGScrollBar>(UUIPackageMgr::CreateObjectFromURL(GetOuter(), res));
                 if (HzScrollBar == nullptr)
                 {
                     UE_LOG(LogFairyGUI, Warning, TEXT("cannot create scrollbar from %s"), *res);
@@ -151,7 +151,7 @@ void UScrollPane::Setup(FByteBuffer* Buffer)
 
     if (headerRes.Len() > 0)
     {
-        Header = Cast<UGComponent>(UUIPackage::CreateObjectFromURL(headerRes));
+        Header = Cast<UGComponent>(UUIPackageMgr::CreateObjectFromURL(GetOuter(), headerRes));
         if (Header == nullptr)
         {
             UE_LOG(LogFairyGUI, Warning, TEXT("cannot create UScrollPane header from %s"), *headerRes);
@@ -165,7 +165,7 @@ void UScrollPane::Setup(FByteBuffer* Buffer)
 
     if (footerRes.Len() > 0)
     {
-        Footer = Cast<UGComponent>(UUIPackage::CreateObjectFromURL(footerRes));
+        Footer = Cast<UGComponent>(UUIPackageMgr::CreateObjectFromURL(GetOuter(), footerRes));
         if (Footer == nullptr)
         {
             UE_LOG(LogFairyGUI, Warning, TEXT("cannot create UScrollPane footer from %s"), *footerRes);

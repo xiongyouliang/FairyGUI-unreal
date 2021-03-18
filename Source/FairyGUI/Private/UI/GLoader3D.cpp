@@ -1,5 +1,6 @@
 #include "UI/GLoader3D.h"
 #include "UI/UIPackage.h"
+#include "UI/UIPackageMgr.h"
 #include "UI/GComponent.h"
 #include "Widgets/NTexture.h"
 #include "Widgets/SMovieClip.h"
@@ -57,7 +58,7 @@ void UGLoader3D::ClearContent()
 
 void UGLoader3D::LoadFromPackage(const FString& ItemURL)
 {
-    ContentItem = UUIPackage::GetItemByURL(ItemURL);
+    ContentItem = UUIPackageMgr::GetPackageItemByURL(ItemURL);
 
     if (ContentItem.IsValid())
     {

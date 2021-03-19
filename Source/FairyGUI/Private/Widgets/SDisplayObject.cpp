@@ -1,6 +1,7 @@
 #include "Widgets/SDisplayObject.h"
+#include "Framework/Application/SlateApplication.h"
 #include "FairyApplication.h"
-#include "Engine/GameViewportClient.h"
+//#include "Engine/GameViewportClient.h" // Slate Widget shouldn't reference Engine module class
 
 FNoChildren SDisplayObject::NoChildrenInstance;
 FName SDisplayObject::SDisplayObjectTag("SDisplayObjectTag");
@@ -149,19 +150,20 @@ int32 SDisplayObject::OnPaint(const FPaintArgs& Args, const FGeometry& AllottedG
 
 bool SDisplayObject::OnStage() const
 {
-    if (!UFairyApplication::IsStarted())
-        return false;
-
-    TSharedPtr<SWidget> ViewportWidget = UFairyApplication::Get()->GetViewportWidget();
-    TSharedPtr<SWidget> Ptr = GetParentWidget();
-    while (Ptr.IsValid())
+    if (!IsParentValid())
     {
-        if (Ptr == ViewportWidget)
-            return true;
-
-        Ptr = Ptr->GetParentWidget();
+        return false;
     }
-    return false;
+
+    TSharedPtr<SWindow> Window = FSlateApplication::Get().FindWidgetWindow(AsShared());
+    if (Window.IsValid())
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 FReply SDisplayObject::OnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)

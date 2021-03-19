@@ -17,6 +17,9 @@ public:
     UGComponent();
     virtual ~UGComponent();
 
+    // ~ UGVisual Interface
+    virtual void ReleaseSlateResources(bool bReleaseChildren) override;
+
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     UGObject* AddChild(UGObject* Child);
 
@@ -196,8 +199,12 @@ protected:
     TArray<UTransition*> Transitions;
     UPROPERTY(Transient)
     UScrollPane* ScrollPane;
+
+    // Slate Resource
     TSharedPtr<SContainer> RootContainer;
     TSharedPtr<SContainer> Container;
+    void MakeSlateWidget();
+
     FMargin Margin;
     FVector2D AlignOffset;
     EChildrenRenderOrder ChildrenRenderOrder;

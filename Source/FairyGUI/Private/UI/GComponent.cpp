@@ -16,20 +16,33 @@
 UGComponent::UGComponent() :
     AlignOffset(ForceInit)
 {
-    DisplayObject = RootContainer = SNew(SContainer).GObject(this);
-    DisplayObject->SetOpaque(false);
+    //if (!HasAnyFlags(RF_ClassDefaultObject | RF_ArchetypeObject))
+    //{
+    //    DisplayObject = RootContainer = SNew(SContainer).GObject(this);
+    //    DisplayObject->SetOpaque(false);
 
-    Container = SNew(SContainer);
-    Container->SetOpaque(false);
-    RootContainer->AddChild(Container.ToSharedRef());
+    //    Container = SNew(SContainer);
+    //    Container->SetOpaque(false);
+    //    RootContainer->AddChild(Container.ToSharedRef());
+    //}
 }
 
 UGComponent::~UGComponent()
 {
 }
 
+void UGComponent::ReleaseSlateResources(bool bReleaseChildren)
+{
+    Super::ReleaseSlateResources(bReleaseChildren);
+    Container.Reset();
+    RootContainer.Reset();
+}
+
 UGObject* UGComponent::AddChild(UGObject* Child)
 {
+    if (UGComponent* Component = Cast<UGComponent>(Child)) {
+        Component->MakeSlateWidget();
+    }
     AddChildAt(Child, Children.Num());
     return Child;
 }
@@ -843,7 +856,7 @@ void UGComponent::SetupScroll(FByteBuffer* Buffer)
 
 void UGComponent::HandleSizeChanged()
 {
-    UGObject::HandleSizeChanged();
+    Super::HandleSizeChanged();
 
     if (ScrollPane != nullptr)
         ScrollPane->OnOwnerSizeChanged();
@@ -900,6 +913,7 @@ void UGComponent::OnRemovedFromStageHandler(UEventContext* Context)
 
 void UGComponent::ConstructFromResource()
 {
+    MakeSlateWidget();
     ConstructFromResource(nullptr, 0);
 }
 
@@ -1125,6 +1139,19 @@ void UGComponent::ConstructExtension(FByteBuffer* Buffer)
 void UGComponent::OnConstruct()
 {
     K2_OnConstruct();
+}
+
+void UGComponent::MakeSlateWidget()
+{
+    if (!DisplayObject.IsValid())
+    {
+        DisplayObject = RootContainer = SNew(SContainer).GObject(this);
+        DisplayObject->SetOpaque(false);
+
+        Container = SNew(SContainer).GObject(this);
+        Container->SetOpaque(false);
+        RootContainer->AddChild(Container.ToSharedRef());
+    }
 }
 
 void UGComponent::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)

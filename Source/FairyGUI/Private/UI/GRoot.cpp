@@ -8,8 +8,8 @@
 #include "UI/UIPackage.h"
 #include "UI/UIPackageMgr.h"
 #include "Widgets/SContainer.h"
+#include "Widgets/Layout/SConstraintCanvas.h"
 
-UGRoot* UGRoot::Instance = nullptr;
 int32 UGRoot::ContentScaleLevel = 0;
 
 class SRootContainer : public SContainer
@@ -18,12 +18,14 @@ public:
     virtual void OnArrangeChildren(const FGeometry& AllottedGeometry, FArrangedChildren& ArrangedChildren) const override;
 };
 
-UGRoot::UGRoot()
+UGRoot::UGRoot(const FObjectInitializer& Initializer)
 {
+    UE_LOG(LogTemp, Warning, TEXT("UGRoot Constructor"))
 }
 
 UGRoot::~UGRoot()
 {
+    //UE_LOG(LogTemp, Warning, TEXT("UGRoot Destructor"))
 }
 
 void UGRoot::AddToViewport()
@@ -32,12 +34,13 @@ void UGRoot::AddToViewport()
     if (World && World->IsGameWorld())
     {
         UGameViewportClient* ViewportClient = World->GetGameViewport();
+        //TSharedRef<SConstraintCanvas> FullScreenCanvas = SNew(SConstraintCanvas);
         TSharedRef<SRootContainer> FullScreenCanvas = SNew(SRootContainer).GObject(this);
-        FullScreenCanvas->SetOpaque(false);
-        FullScreenCanvas->AddChild(GetDisplayObject());
-        ViewportClient->AddViewportWidgetContent(FullScreenCanvas, 100);
-
         FullScreenWidget = FullScreenCanvas;
+
+        FullScreenCanvas->SetOpaque(false);
+        FullScreenCanvas->AddChild(RootContainer.ToSharedRef());
+        ViewportClient->AddViewportWidgetContent(FullScreenCanvas, 100);
 
         SetSize(FullScreenCanvas->GetParentWidget()->GetPaintSpaceGeometry().GetLocalSize().RoundToVector());
     }
@@ -45,17 +48,24 @@ void UGRoot::AddToViewport()
 
 void UGRoot::RemoveFromViewport()
 {
-    TSharedPtr<SWidget> WidgetHost = FullScreenWidget.Pin();
-
-    // If this is a game world remove the widget from the current world's viewport.
-    UWorld* World = GetWorld();
-    if (World && World->IsGameWorld())
+    if (!HasAnyFlags(RF_BeginDestroyed))
     {
-        if (UGameViewportClient* ViewportClient = World->GetGameViewport())
+        if (FullScreenWidget.IsValid())
         {
-            TSharedRef<SWidget> WidgetHostRef = WidgetHost.ToSharedRef();
+            FullScreenWidget->RemoveChildren();
 
-            ViewportClient->RemoveViewportWidgetContent(WidgetHostRef);
+            // If this is a game world remove the widget from the current world's viewport.
+            UWorld* World = GetWorld();
+            if (World && World->IsGameWorld())
+            {
+                if (UGameViewportClient* ViewportClient = World->GetGameViewport())
+                {
+                    TSharedRef<SWidget> WidgetHostRef = FullScreenWidget.ToSharedRef();
+
+                    ViewportClient->RemoveViewportWidgetContent(WidgetHostRef);
+                }
+            }
+            FullScreenWidget.Reset();
         }
     }
 }
@@ -408,7 +418,8 @@ void UGRoot::ShowTooltipsWin(UGObject* InTooltipWin)
     HideTooltips();
 
     TooltipWin = InTooltipWin;
-    GWorld->GetTimerManager().SetTimer(
+    UWorld* World = GetWorld();
+    World->GetTimerManager().SetTimer(
         ShowTooltipsTimerHandle,
         FTimerDelegate::CreateUObject(this, &UGRoot::DoShowTooltipsWin),
         0.1f,
@@ -451,7 +462,7 @@ void UGRoot::HideTooltips()
 void SRootContainer::OnArrangeChildren(const FGeometry& AllottedGeometry, FArrangedChildren& ArrangedChildren) const
 {
     const FVector2D& LocalSize = AllottedGeometry.GetLocalSize().RoundToVector();
-    if (LocalSize != GObject->GetSize())
+    if (GObject.IsValid() && (LocalSize != GObject->GetSize()))
     {
         GObject->SetSize(LocalSize.RoundToVector());
         UE_LOG(LogFairyGUI, Log, TEXT("UIRoot resize to %f,%f"), GObject->GetSize().X, GObject->GetSize().Y);

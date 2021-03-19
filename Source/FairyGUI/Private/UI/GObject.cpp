@@ -34,14 +34,43 @@ UGObject::UGObject() :
     static int32 _gInstanceCounter = 1;
     ID.AppendInt(_gInstanceCounter);
 
+    for (int32 i = 0; i < 10; i++)
+    {
+        Gears[i] = nullptr;
+    }
     Relations = new FRelations(this);
 }
 
 UGObject::~UGObject()
 {
     for (int32 i = 0; i < 10; i++)
-        delete Gears[i];
-    delete Relations;
+    {
+        if (Gears[i])
+        {
+            delete Gears[i];
+            Gears[i] = nullptr;
+        }
+    }
+        
+    //delete Relations;
+    if (Relations)
+    {
+        delete Relations;
+        Relations = nullptr;
+    }
+}
+
+void UGObject::ReleaseSlateResources(bool bReleaseChildren)
+{
+    Super::ReleaseSlateResources(bReleaseChildren);
+    DisplayObject.Reset();
+}
+
+void UGObject::BeginDestroy()
+{
+    Super::BeginDestroy();
+    Parent.Reset();
+    Group.Reset();
 }
 
 void UGObject::SetX(float InX)

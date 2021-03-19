@@ -14,7 +14,7 @@ class FAIRYGUI_API UGRoot : public UGComponent
 public:
     static int32 ContentScaleLevel;
 
-    UGRoot();
+    UGRoot(const FObjectInitializer& Initializer);
     virtual ~UGRoot();
 
     void ShowWindow(UGWindow* Window);
@@ -73,7 +73,7 @@ public:
     void HideTooltips();
 
 private:
-    TWeakPtr<SWidget> FullScreenWidget;
+    TSharedPtr<SContainer> FullScreenWidget;
     void AddToViewport();
     void RemoveFromViewport();
 
@@ -100,8 +100,6 @@ private:
     TArray<TWeakObjectPtr<UGObject>> PopupStack;
     TArray<TWeakObjectPtr<UGObject>> JustClosedPopups;
     FTimerHandle ShowTooltipsTimerHandle;
-
-    static UGRoot* Instance;
 
     friend class UFairyApplication;
 };

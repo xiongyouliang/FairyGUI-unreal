@@ -21,9 +21,12 @@ UGList::UGList() :
     LastSelectedIndex(-1),
     FirstIndex(-1)
 {
-    bTrackBounds = true;
-    SetOpaque(true);
-    Pool = new FGObjectPool();
+    if (!HasAnyFlags(RF_ClassDefaultObject | RF_ArchetypeObject))
+    {
+        bTrackBounds = true;
+        SetOpaque(true);
+        Pool = new FGObjectPool();
+    }
 }
 
 UGList::~UGList()

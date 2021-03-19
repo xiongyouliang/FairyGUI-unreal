@@ -14,11 +14,12 @@ public:
         _Tag(SDisplayObject::SDisplayObjectTag)
     {
     }
-    SLATE_ARGUMENT(UGObject*, GObject)
+        SLATE_ARGUMENT(UGObject*, GObject)
         SLATE_ARGUMENT(FName, Tag)
-        SLATE_END_ARGS()
+    SLATE_END_ARGS()
 
-        static FName SDisplayObjectTag;
+public:
+    static FName SDisplayObjectTag;
 
     SDisplayObject();
     void Construct(const FArguments& InArgs);

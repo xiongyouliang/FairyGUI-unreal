@@ -7,6 +7,7 @@
 #include "FairyCommons.h"
 #include "Event/EventContext.h"
 #include "Utils/NVariant.h"
+#include "UI/GVisual.h"
 #include "GObject.generated.h"
 
 class FByteBuffer;
@@ -20,13 +21,19 @@ class UGController;
 class UGRoot;
 
 UCLASS(BlueprintType)
-class FAIRYGUI_API UGObject : public UObject
+class FAIRYGUI_API UGObject : public UGVisual
 {
     GENERATED_BODY()
 
 public:
     UGObject();
     virtual ~UGObject();
+
+    // ~ UGVisual Interface
+    virtual void ReleaseSlateResources(bool bReleaseChildren) override;
+
+    // ~ UObject Interface
+    virtual void BeginDestroy() override;
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     float GetX() const { return Position.X; };
@@ -316,7 +323,9 @@ public:
 
 protected:
     TWeakObjectPtr<UGComponent> Parent;
+
     TSharedPtr<SDisplayObject> DisplayObject;
+
     TSharedPtr<FPackageItem> PackageItem;
 
     virtual void HandleSizeChanged();

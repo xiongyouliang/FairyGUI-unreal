@@ -110,8 +110,8 @@ public:
 
     UGObject* GetWidgetGObject(const TSharedPtr<SWidget>& InWidget);
 
-    UGameViewportClient* GetViewportClient() const { return ViewportClient; }
-    const TSharedPtr<SWidget>& GetViewportWidget() const { return ViewportWidget; }
+    //UGameViewportClient* GetViewportClient() const { return ViewportClient; }
+    //const TSharedPtr<SWidget>& GetViewportWidget() const { return ViewportWidget; }
 
     void CallAfterSlateTick(FSimpleDelegate Callback);
 
@@ -138,7 +138,6 @@ private:
 
 private:
     TMap<UWorld*, UGRoot*> UIRoots;
-
     TMap<UWorld*, UDragDropManager*> DragDropManagers;
 
     UPROPERTY(Transient)
@@ -146,8 +145,8 @@ private:
 
     FTweenManager TweenManager;
     TSharedPtr<IInputProcessor> InputProcessor;
-    UGameViewportClient* ViewportClient;
-    TSharedPtr<SWidget> ViewportWidget;
+    //UGameViewportClient* ViewportClient;
+    //TSharedPtr<SWidget> ViewportWidget;
     TIndirectArray<FTouchInfo> Touches;
     FTouchInfo* LastTouch;
     bool bNeedCheckPopups;

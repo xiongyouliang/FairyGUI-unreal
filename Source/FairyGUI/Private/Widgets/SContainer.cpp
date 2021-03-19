@@ -23,18 +23,20 @@ void SContainer::AddChildAt(const TSharedRef<SWidget>& SlotWidget, int32 Index)
     int32 Count = Children.Num();
     verifyf(Index >= 0 && Index <= Count, TEXT("Invalid child index"));
 
-    if (SlotWidget->GetParentWidget().Get() == this)
+    if (SlotWidget->IsParentValid() && SlotWidget->GetParentWidget().Get() == this)
+    {
         SetChildIndex(SlotWidget, Index);
+    }
     else
     {
-        verifyf(!SlotWidget->GetParentWidget().IsValid(), TEXT("Cant add a child has parent"));
+        verifyf(!SlotWidget->IsParentValid(), TEXT("Cant add a child has parent"));
 
         FSlotBase& NewSlot = *new FSlotBase();
+        NewSlot.AttachWidget(SlotWidget);
         if (Index == Count)
             Children.Add(&NewSlot);
         else
             Children.Insert(&NewSlot, Index);
-        NewSlot.AttachWidget(SlotWidget);
 
         if (OnStage())
         {

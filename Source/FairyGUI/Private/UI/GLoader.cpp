@@ -9,10 +9,12 @@
 
 UGLoader::UGLoader()
 {
-    DisplayObject = Container = SNew(SContainer).GObject(this);
-    Content = SNew(SMovieClip);
-    Content->SetInteractable(false);
-    Container->AddChild(Content.ToSharedRef());
+    if (!HasAnyFlags(RF_ClassDefaultObject | RF_ArchetypeObject)) {
+        DisplayObject = Container = SNew(SContainer).GObject(this);
+        Content = SNew(SMovieClip);
+        Content->SetInteractable(false);
+        Container->AddChild(Content.ToSharedRef());
+    }
 }
 
 UGLoader::~UGLoader()

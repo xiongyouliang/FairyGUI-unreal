@@ -45,19 +45,6 @@ void FUIObjectFactory::SetExtension(const FString& URL, TSubclassOf<UGComponent>
     }));
 }
 
-UGObject* FUIObjectFactory::NewObject(const TSharedPtr<FPackageItem>& PackageItem)
-{
-    UGObject* obj = nullptr;
-    if (PackageItem->ExtensionCreator.IsBound())
-        obj = PackageItem->ExtensionCreator.Execute();
-    else
-        obj = NewObject(PackageItem->ObjectType);
-    if (obj != nullptr)
-        obj->PackageItem = PackageItem;
-
-    return obj;
-}
-
 UGObject* FUIObjectFactory::NewObject(UObject* Outer, const TSharedPtr<FPackageItem>& PackageItem)
 {
     UGObject* obj = nullptr;
@@ -75,72 +62,6 @@ UGObject* FUIObjectFactory::NewObject(UObject* Outer, const TSharedPtr<FPackageI
         obj->PackageItem = PackageItem;
     }
     return obj;
-}
-
-UGObject* FUIObjectFactory::NewObject(EObjectType Type)
-{
-    switch (Type)
-    {
-    case EObjectType::Image:
-        return ::NewObject<UGImage>();
-
-    case EObjectType::MovieClip:
-        return ::NewObject<UGMovieClip>();
-
-    case EObjectType::Component:
-        return ::NewObject<UGComponent>();
-
-    case EObjectType::Text:
-        return ::NewObject<UGTextField>();
-
-    case EObjectType::RichText:
-        return ::NewObject<UGRichTextField>();
-
-    case EObjectType::InputText:
-        return ::NewObject<UGTextInput>();
-
-    case EObjectType::Group:
-        return ::NewObject<UGGroup>();
-
-    case EObjectType::List:
-        return ::NewObject<UGList>();
-
-    case EObjectType::Graph:
-        return ::NewObject<UGGraph>();
-
-    case EObjectType::Loader:
-        if (LoaderCreator.IsBound())
-            return LoaderCreator.Execute();
-        else
-            return ::NewObject<UGLoader>();
-
-    case EObjectType::Button:
-        return ::NewObject<UGButton>();
-
-    case EObjectType::Label:
-        return ::NewObject<UGLabel>();
-
-    case EObjectType::ProgressBar:
-        return ::NewObject<UGProgressBar>();
-
-    case EObjectType::Slider:
-        return ::NewObject<UGSlider>();
-
-    case EObjectType::ScrollBar:
-        return ::NewObject<UGScrollBar>();
-
-    case EObjectType::ComboBox:
-        return ::NewObject<UGComboBox>();
-
-    case EObjectType::Tree:
-        return ::NewObject<UGTree>();
-
-    case EObjectType::Loader3D:
-        return ::NewObject<UGLoader3D>();
-
-    default:
-        return nullptr;
-    }
 }
 
 UGObject* FUIObjectFactory::NewObject(UObject* Outer, EObjectType Type)

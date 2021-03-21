@@ -29,7 +29,8 @@ UGObject::UGObject() :
     Skew(ForceInit),
     Alpha(1.0f),
     bVisible(true),
-    bInternalVisible(true)
+    bInternalVisible(true),
+    SortingOrder(0)
 {
     static int32 _gInstanceCounter = 1;
     ID.AppendInt(_gInstanceCounter);
@@ -63,14 +64,24 @@ UGObject::~UGObject()
 void UGObject::ReleaseSlateResources(bool bReleaseChildren)
 {
     Super::ReleaseSlateResources(bReleaseChildren);
-    DisplayObject.Reset();
+    if (DisplayObject.IsValid())
+    {
+        DisplayObject.Reset();
+    }
 }
 
 void UGObject::BeginDestroy()
 {
     Super::BeginDestroy();
-    Parent.Reset();
-    Group.Reset();
+    if (Parent.IsValid())
+    {
+        Parent.Reset();
+    }
+
+    if (Group.IsValid())
+    {
+        Group.Reset();
+    }
 }
 
 void UGObject::SetX(float InX)

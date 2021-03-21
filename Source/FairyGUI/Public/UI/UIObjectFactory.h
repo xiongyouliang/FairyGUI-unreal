@@ -15,8 +15,6 @@ class FAIRYGUI_API FUIObjectFactory
 public:
     static void SetExtension(const FString& URL, FGComponentCreator Creator);
     static void SetExtension(const FString& URL, TSubclassOf<UGComponent> ClassType);
-    static UGObject* NewObject(const TSharedPtr<FPackageItem>& PackageItem);
-    static UGObject* NewObject(EObjectType Type);
 
     static UGObject* NewObject(UObject* Outer, const TSharedPtr<FPackageItem>& PackageItem);
     static UGObject* NewObject(UObject* Outer, EObjectType Type);

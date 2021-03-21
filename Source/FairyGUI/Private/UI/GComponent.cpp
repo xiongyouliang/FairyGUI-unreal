@@ -1026,11 +1026,11 @@ void UGComponent::ConstructFromResource(TArray<UGObject*>* ObjectPool, int32 Poo
 
             if (pi.IsValid())
             {
-                Child = FUIObjectFactory::NewObject(pi);
+                Child = FUIObjectFactory::NewObject(GetOuter(), pi);
                 Child->ConstructFromResource();
             }
             else
-                Child = FUIObjectFactory::NewObject(type);
+                Child = FUIObjectFactory::NewObject(GetOuter(), type);
         }
 
         Child->bUnderConstruct = true;

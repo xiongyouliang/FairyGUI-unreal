@@ -31,7 +31,8 @@ struct FAtlasSprite
     bool bRotated;
 };
 
-UUIPackage::UUIPackage()
+UUIPackage::UUIPackage() :
+    BranchIndex(0)
 {
 
 }

@@ -12,6 +12,12 @@ public:
     UGImage();
     virtual ~UGImage();
 
+    // ~ UGVisual Interface
+    virtual void ReleaseSlateResources(bool bReleaseChildren) override;
+
+    // ~ UObject Interface
+    virtual void BeginDestroy() override;
+
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     EFlipType GetFlip() const;
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")

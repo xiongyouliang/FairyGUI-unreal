@@ -17,6 +17,20 @@ UGImage::~UGImage()
 
 }
 
+void UGImage::ReleaseSlateResources(bool bReleaseChildren)
+{
+    Super::ReleaseDisplayLock(bReleaseChildren);
+    if (Content.IsValid())
+    {
+        Content.Reset();
+    }
+}
+
+void UGImage::BeginDestroy()
+{
+    Super::BeginDestroy();
+}
+
 EFlipType UGImage::GetFlip() const
 {
     return Content->Graphics.GetFlip();

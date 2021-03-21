@@ -158,9 +158,8 @@ void UFairyApplication::OnSlatePostTick(float DeltaTime)
 {
     if (PostTickMulticastDelegate.IsBound())
     {
-        FSimpleMulticastDelegate Clone = PostTickMulticastDelegate;
+        PostTickMulticastDelegate.Broadcast();
         PostTickMulticastDelegate.Clear();
-        Clone.Broadcast();
     }
 
     if (bNeedCheckPopups)

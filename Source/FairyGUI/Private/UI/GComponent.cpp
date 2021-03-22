@@ -14,7 +14,12 @@
 #include "Tween/GTween.h"
 
 UGComponent::UGComponent() :
-    AlignOffset(ForceInit)
+    AlignOffset(ForceInit),
+    bBuildingDisplayList(false),
+    ApexIndex(0),
+    bBoundsChanged(false),
+    bTrackBounds(false),
+    SortingChildCount(0)
 {
     //if (!HasAnyFlags(RF_ClassDefaultObject | RF_ArchetypeObject))
     //{

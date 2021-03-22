@@ -80,12 +80,19 @@ UFairyApplication::UFairyApplication() :
     bSoundEnabled(true),
     SoundVolumeScale(1)
 {
+    UE_LOG(LogTemp, Warning, TEXT("UIFairyApplicaiton::UFairyApplication(...)"));
     LastTouch = new FTouchInfo();
     Touches.Add(LastTouch);
 }
 
+UFairyApplication::~UFairyApplication()
+{
+    UE_LOG(LogTemp, Warning, TEXT("UIFairyApplicaiton::~UFairyApplication(...)"));
+}
+
 void UFairyApplication::AddUIRoot(UObject* WorldContextObject)
 {
+    UE_LOG(LogTemp, Warning, TEXT("UFairyApplication::AddUIRoot(...)"));
     UWorld* World = WorldContextObject->GetWorld();
     if (World && World->IsGameWorld())
     {
@@ -101,6 +108,7 @@ void UFairyApplication::AddUIRoot(UObject* WorldContextObject)
 
 UGRoot* UFairyApplication::GetUIRoot(UObject* WorldContextObject)
 {
+    UE_LOG(LogTemp, Warning, TEXT("UFairyApplication::GetUIRoot(...)"));
     UWorld* World = WorldContextObject->GetWorld();
     if (World && World->IsGameWorld())
     {
@@ -114,6 +122,7 @@ UGRoot* UFairyApplication::GetUIRoot(UObject* WorldContextObject)
 
 void UFairyApplication::RemoveUIRoot(UObject* WorldContextObject)
 {
+    UE_LOG(LogTemp, Warning, TEXT("UFairyApplication::RemoveUIRoot(...)"));
     UWorld* World = WorldContextObject->GetWorld();
     if (World && World->IsGameWorld() && UIRoots.Num() != 0)
     {
@@ -222,7 +231,7 @@ void UFairyApplication::PlaySound(const FString& URL, float VolumnScale)
     if (!bSoundEnabled)
         return;
 
-    TSharedPtr<FPackageItem> SoundItem = UUIPackageMgr::GetPackageItemByURL(URL);
+    TSharedPtr<FPackageItem> SoundItem = UUIPackageMgr::Get()->GetPackageItemByURL(URL);
     if (SoundItem.IsValid())
     {
         SoundItem->Load();

@@ -193,7 +193,7 @@ void UGLoader::ClearContent()
 
 void UGLoader::LoadFromPackage(const FString& ItemURL)
 {
-    ContentItem = UUIPackageMgr::GetPackageItemByURL(ItemURL);
+    ContentItem = UUIPackageMgr::Get()->GetPackageItemByURL(ItemURL);
 
     if (ContentItem.IsValid())
     {
@@ -219,7 +219,7 @@ void UGLoader::LoadFromPackage(const FString& ItemURL)
         }
         else if (ContentItem->Type == EPackageItemType::Component)
         {
-            UGObject* obj = UUIPackageMgr::CreateObjectFromURL(GetOuter(), ItemURL);
+            UGObject* obj = UUIPackageMgr::Get()->CreateObjectFromURL(GetOuter(), ItemURL);
             if (obj == nullptr || !obj->IsA<UGComponent>())
                 SetErrorState();
             else

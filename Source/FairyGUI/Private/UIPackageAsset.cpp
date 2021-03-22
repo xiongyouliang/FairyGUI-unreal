@@ -1,6 +1,16 @@
 #include "UIPackageAsset.h"
 #include "EditorFramework/AssetImportData.h"
 
+UUIPackageAsset::UUIPackageAsset()
+{
+    UE_LOG(LogTemp, Warning, TEXT("UUIPackageAsset construction"));
+}
+
+UUIPackageAsset::~UUIPackageAsset()
+{
+    UE_LOG(LogTemp, Warning, TEXT("UUIPackageAsset destruction"));
+}
+
 #if WITH_EDITORONLY_DATA
 void UUIPackageAsset::GetAssetRegistryTags(TArray<FAssetRegistryTag>& OutTags) const
 {

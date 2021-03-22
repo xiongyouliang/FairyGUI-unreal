@@ -243,7 +243,7 @@ void STextField::BuildLines()
     TSharedPtr<FBitmapFont> BitmapFont;
     if (TextFormat.Face.StartsWith("ui://"))
     {
-        TSharedPtr<FPackageItem> FontItem = UUIPackageMgr::GetPackageItemByURL(TextFormat.Face);
+        TSharedPtr<FPackageItem> FontItem = UUIPackageMgr::Get()->GetPackageItemByURL(TextFormat.Face);
         if (FontItem.IsValid())
         {
             FontItem->Load();

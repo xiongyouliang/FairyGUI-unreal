@@ -3,17 +3,13 @@
 #include "FairyApplication.h"
 #include "UIPackageAsset.h"
 #include "UI/PackageItem.h"
+#include "UI/UIObjectFactory.h"
 #include "UI/GObject.h"
 #include "Widgets/NTexture.h"
 #include "Widgets/SMovieClip.h"
 #include "Widgets/BitmapFont.h"
 #include "Utils/ByteBuffer.h"
-
-int32 UUIPackage::Constructing = 0;
-TMap<FString, UUIPackage*> UUIPackage::PackageInstByID;
-TMap<FString, UUIPackage*> UUIPackage::PackageInstByName;
-TMap<FString, FString> UUIPackage::Vars;
-FString UUIPackage::Branch;
+#include "UI/UIPackageMgr.h"
 
 struct FAtlasSprite
 {
@@ -31,10 +27,11 @@ struct FAtlasSprite
     bool bRotated;
 };
 
+int32 UUIPackage::Constructing = 0;
+
 UUIPackage::UUIPackage() :
     BranchIndex(0)
 {
-
 }
 
 UUIPackage::~UUIPackage()
@@ -128,8 +125,9 @@ void UUIPackage::Load(FByteBuffer* Buffer)
         if (cnt > 0)
         {
             Buffer->ReadSArray(Branches, cnt);
-            if (!Branch.IsEmpty())
-                BranchIndex = Branches.IndexOfByKey(Branch);
+            FString CurBranch = UUIPackageMgr::Get()->GetBranch();
+            if (!CurBranch.IsEmpty())
+                BranchIndex = Branches.IndexOfByKey(CurBranch);
         }
 
         branchIncluded = cnt > 0;

@@ -124,7 +124,7 @@ void UGWindow::ShowModalWait(int32 InRequestingCmd)
     if (!FUIConfig::Config.WindowModalWaiting.IsEmpty())
     {
         if (ModalWaitPane == nullptr)
-            ModalWaitPane = UUIPackageMgr::CreateObjectFromURL(GetOuter(), FUIConfig::Config.WindowModalWaiting);
+            ModalWaitPane = UUIPackageMgr::Get()->CreateObjectFromURL(GetOuter(), FUIConfig::Config.WindowModalWaiting);
 
         LayoutModalWaitPane();
 

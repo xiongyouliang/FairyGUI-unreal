@@ -1109,7 +1109,8 @@ void UGList::SetVirtualListChangedFlag(bool bLayoutChanged)
     else if (VirtualListChanged == 0)
         VirtualListChanged = 1;
 
-    DelayCall(RefreshTimerHandle, this, &UGList::DoRefreshVirtualList);
+    //DelayCall(RefreshTimerHandle, this, &UGList::DoRefreshVirtualList);
+    DoRefreshVirtualList();
 }
 
 void UGList::DoRefreshVirtualList()
@@ -1460,7 +1461,7 @@ bool UGList::HandleScroll1(bool forceUpdate)
                 url = ItemProvider.Execute(curIndex % NumItems);
                 if (url.Len() == 0)
                     url = DefaultItem;
-                url = UUIPackageMgr::NormalizeURL(url);
+                url = UUIPackageMgr::Get()->NormalizeURL(url);
             }
 
             if (ii.Obj != nullptr && ii.Obj->GetResourceURL().Compare(url) != 0)
@@ -1627,7 +1628,7 @@ bool UGList::HandleScroll2(bool forceUpdate)
                 url = ItemProvider.Execute(curIndex % NumItems);
                 if (url.Len() == 0)
                     url = DefaultItem;
-                url = UUIPackageMgr::NormalizeURL(url);
+                url = UUIPackageMgr::Get()->NormalizeURL(url);
             }
 
             if (ii.Obj != nullptr && ii.Obj->GetResourceURL().Compare(url) != 0)
@@ -1842,7 +1843,7 @@ void UGList::HandleScroll3(bool forceUpdate)
                     url = ItemProvider.Execute(i % NumItems);
                     if (url.Len() == 0)
                         url = DefaultItem;
-                    url = UUIPackageMgr::NormalizeURL(url);
+                    url = UUIPackageMgr::Get()->NormalizeURL(url);
                 }
 
                 ii.Obj = Pool->GetObject(url);

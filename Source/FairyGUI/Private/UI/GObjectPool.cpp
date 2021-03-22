@@ -5,7 +5,7 @@
 
 UGObject* FGObjectPool::GetObject(const FString & URL)
 {
-    FString URL2 = UUIPackageMgr::NormalizeURL(URL);
+    FString URL2 = UUIPackageMgr::Get()->NormalizeURL(URL);
     if (URL2.Len() == 0)
         return nullptr;
 

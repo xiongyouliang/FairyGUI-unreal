@@ -18,14 +18,38 @@ public:
     virtual void OnArrangeChildren(const FGeometry& AllottedGeometry, FArrangedChildren& ArrangedChildren) const override;
 };
 
-UGRoot::UGRoot(const FObjectInitializer& Initializer)
+void SRootContainer::OnArrangeChildren(const FGeometry& AllottedGeometry, FArrangedChildren& ArrangedChildren) const
+{
+    const FVector2D& LocalSize = AllottedGeometry.GetLocalSize().RoundToVector();
+    if (GObject.IsValid() && (LocalSize != GObject->GetSize()))
+    {
+        GObject->SetSize(LocalSize.RoundToVector());
+        UE_LOG(LogFairyGUI, Log, TEXT("UIRoot resize to %f,%f"), GObject->GetSize().X, GObject->GetSize().Y);
+    }
+
+    SContainer::OnArrangeChildren(AllottedGeometry, ArrangedChildren);
+}
+
+UGRoot::UGRoot() :
+    Super()
 {
     UE_LOG(LogTemp, Warning, TEXT("UGRoot Constructor"))
 }
 
 UGRoot::~UGRoot()
 {
-    //UE_LOG(LogTemp, Warning, TEXT("UGRoot Destructor"))
+    UE_LOG(LogTemp, Warning, TEXT("UGRoot Destructor"))
+}
+
+void UGRoot::ReleaseSlateResources(bool bReleaseChildren)
+{
+    Super::ReleaseSlateResources(bReleaseChildren);
+}
+
+void UGRoot::BeginDestroy()
+{
+    Super::BeginDestroy();
+    UE_LOG(LogTemp, Warning, TEXT("UGRoot::BeginDestroy(...)"));
 }
 
 void UGRoot::AddToViewport()
@@ -217,7 +241,7 @@ UGObject* UGRoot::GetModalWaitingPane()
     {
         if (ModalWaitPane == nullptr)
         {
-            ModalWaitPane = UUIPackageMgr::CreateObjectFromURL(GetOuter(), FUIConfig::Config.GlobalModalWaiting);
+            ModalWaitPane = UUIPackageMgr::Get()->CreateObjectFromURL(GetOuter(), FUIConfig::Config.GlobalModalWaiting);
             ModalWaitPane->SetSortingOrder(INT_MAX);
         }
 
@@ -287,7 +311,7 @@ void UGRoot::HidePopup(UGObject* Popup)
         {
             for (int32 i = PopupStack.Num() - 1; i >= k; i--)
             {
-                ClosePopup(PopupStack.Last().Get());
+                ClosePopup(PopupStack.Last());
                 PopupStack.Pop();
             }
         }
@@ -295,7 +319,7 @@ void UGRoot::HidePopup(UGObject* Popup)
     else
     {
         for (const auto& it : PopupStack)
-            ClosePopup(it.Get());
+            ClosePopup(it);
         PopupStack.Reset();
     }
 }
@@ -313,6 +337,11 @@ void UGRoot::ClosePopup(UGObject* Popup)
 
 void UGRoot::CheckPopups(SWidget* ClickTarget)
 {
+    if (IsPendingKill())
+    {
+        return;
+    }
+
     JustClosedPopups.Reset();
     if (PopupStack.Num() > 0)
     {
@@ -330,7 +359,7 @@ void UGRoot::CheckPopups(SWidget* ClickTarget)
                 {
                     for (int32 i = PopupStack.Num() - 1; i > k; i--)
                     {
-                        ClosePopup(PopupStack.Pop().Get());
+                        ClosePopup(PopupStack.Pop());
                     }
                     handled = true;
                     break;
@@ -343,7 +372,7 @@ void UGRoot::CheckPopups(SWidget* ClickTarget)
         {
             for (int32 i = PopupStack.Num() - 1; i >= 0; i--)
             {
-                UGObject* popup = PopupStack[i].Get();
+                UGObject* popup = PopupStack[i];
                 if (popup != nullptr)
                 {
                     JustClosedPopups.Add(popup);
@@ -405,7 +434,7 @@ void UGRoot::ShowTooltips(const FString& Text)
             return;
         }
 
-        DefaultTooltipWin = UUIPackageMgr::CreateObjectFromURL(GetOuter(), resourceURL);
+        DefaultTooltipWin = UUIPackageMgr::Get()->CreateObjectFromURL(GetOuter(), resourceURL);
         DefaultTooltipWin->SetTouchable(false);
     }
 
@@ -457,16 +486,4 @@ void UGRoot::HideTooltips()
             RemoveChild(TooltipWin);
         TooltipWin = nullptr;
     }
-}
-
-void SRootContainer::OnArrangeChildren(const FGeometry& AllottedGeometry, FArrangedChildren& ArrangedChildren) const
-{
-    const FVector2D& LocalSize = AllottedGeometry.GetLocalSize().RoundToVector();
-    if (GObject.IsValid() && (LocalSize != GObject->GetSize()))
-    {
-        GObject->SetSize(LocalSize.RoundToVector());
-        UE_LOG(LogFairyGUI, Log, TEXT("UIRoot resize to %f,%f"), GObject->GetSize().X, GObject->GetSize().Y);
-    }
-
-    SContainer::OnArrangeChildren(AllottedGeometry, ArrangedChildren);
 }

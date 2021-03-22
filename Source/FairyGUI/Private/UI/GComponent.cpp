@@ -14,26 +14,19 @@
 #include "Tween/GTween.h"
 
 UGComponent::UGComponent() :
-    AlignOffset(ForceInit),
     bBuildingDisplayList(false),
+    AlignOffset(ForceInit),
     ApexIndex(0),
     bBoundsChanged(false),
     bTrackBounds(false),
     SortingChildCount(0)
 {
-    //if (!HasAnyFlags(RF_ClassDefaultObject | RF_ArchetypeObject))
-    //{
-    //    DisplayObject = RootContainer = SNew(SContainer).GObject(this);
-    //    DisplayObject->SetOpaque(false);
-
-    //    Container = SNew(SContainer);
-    //    Container->SetOpaque(false);
-    //    RootContainer->AddChild(Container.ToSharedRef());
-    //}
+    UE_LOG(LogTemp, Warning, TEXT("UGComponent::UGComponent(...)"));
 }
 
 UGComponent::~UGComponent()
 {
+    UE_LOG(LogTemp, Warning, TEXT("UGComponent::~UGComponent(...)"));
 }
 
 void UGComponent::ReleaseSlateResources(bool bReleaseChildren)
@@ -565,7 +558,8 @@ void UGComponent::SetBoundsChangedFlag()
 
     bBoundsChanged = true;
 
-    DelayCall(UpdateBoundsTimerHandle, this, &UGComponent::EnsureBoundsCorrect);
+    //DelayCall(UpdateBoundsTimerHandle, this, &UGComponent::EnsureBoundsCorrect);
+    EnsureBoundsCorrect();
 }
 
 void UGComponent::EnsureBoundsCorrect()
@@ -713,11 +707,11 @@ void UGComponent::ChildSortingOrderChanged(UGObject* Child, int32 OldValue, int3
 
 void UGComponent::BuildNativeDisplayList(bool bImmediatelly)
 {
-    if (!bImmediatelly)
-    {
-        DelayCall(BuildDisplayListTimerHandle, this, &UGComponent::BuildNativeDisplayList, true);
-        return;
-    }
+    //if (!bImmediatelly)
+    //{
+    //    DelayCall(BuildDisplayListTimerHandle, this, &UGComponent::BuildNativeDisplayList, true);
+    //    return;
+    //}
 
     int32 cnt = Children.Num();
     if (cnt == 0)
@@ -1021,7 +1015,7 @@ void UGComponent::ConstructFromResource(TArray<UGObject*>* ObjectPool, int32 Poo
             {
                 UUIPackage* pkg;
                 if (!pkgId.IsEmpty())
-                    pkg = UUIPackageMgr::GetPackageByID(pkgId);
+                    pkg = UUIPackageMgr::Get()->GetPackageByID(pkgId);
                 else
                     pkg = ContentItem->Owner;
 

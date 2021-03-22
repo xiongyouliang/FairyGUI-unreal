@@ -167,13 +167,13 @@ void UGController::Setup(FByteBuffer* Buffer)
             break;
 
         case 2:
-            HomePageIndex = PageNames.Find(UUIPackageMgr::GetBranch());
+            HomePageIndex = PageNames.Find(UUIPackageMgr::Get()->GetBranch());
             if (HomePageIndex == INDEX_NONE)
                 HomePageIndex = 0;
             break;
 
         case 3:
-            HomePageIndex = PageNames.Find(UUIPackageMgr::GetVar(Buffer->ReadS()));
+            HomePageIndex = PageNames.Find(UUIPackageMgr::Get()->GetVar(Buffer->ReadS()));
             if (HomePageIndex == INDEX_NONE)
                 HomePageIndex = 0;
             break;

@@ -11,62 +11,65 @@ class UUIPackageAsset;
 
 
 UCLASS(BlueprintType)
-class FAIRYGUI_API UUIPackageMgr : public UBlueprintFunctionLibrary
+class FAIRYGUI_API UUIPackageMgr : public UObject
 {
 	GENERATED_BODY()
 public:
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	static const FString& GetBranch() { return Branch; }
+	static UUIPackageMgr* Get();
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	static void SetBranch(const FString& InBranch);
+	const FString& GetBranch() { return Branch; }
+
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+	void SetBranch(const FString& InBranch);
 
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	static FString GetVar(const FString& VarKey);
+	FString GetVar(const FString& VarKey);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	static void SetVar(const FString& VarKey, const FString& VarValue);
+	void SetVar(const FString& VarKey, const FString& VarValue);
 
 	// Package Manager Interface start
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	static UUIPackage* AddPackage(UObject* WorldContextObject, UUIPackageAsset* InAsset);
+	UUIPackage* AddPackage(UObject* WorldContextObject, UUIPackageAsset* InAsset);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	static UUIPackage* GetPackageByName(const FString& PackageName);
+	UUIPackage* GetPackageByName(const FString& PackageName);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	static UUIPackage* GetPackageByID(const FString& PackageID);
+	UUIPackage* GetPackageByID(const FString& PackageID);
 
-	static FString ConvertToItemURL(const FString& PackageName, const FString& ResourceName);
-	static FString NormalizeURL(const FString& URL);
-	static TSharedPtr<FPackageItem> GetPackageItemByURL(const FString& URL);
+	FString ConvertToItemURL(const FString& PackageName, const FString& ResourceName);
+	FString NormalizeURL(const FString& URL);
+	TSharedPtr<FPackageItem> GetPackageItemByURL(const FString& URL);
 	
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	static void RemovePackage(const FString& IDOrName);
+	void RemovePackage(const FString& IDOrName);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	static void RemoveAllPackages();
+	void RemoveAllPackages();
 	// Package Manager Interface end
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI", meta = (DisplayName = "Create UI", DeterminesOutputType = "ClassType"))
-	static UGObject* CreateObject(UObject* Outer, const FString& PackageName, const FString& ResourceName);
+	UGObject* CreateObject(UObject* Outer, const FString& PackageName, const FString& ResourceName);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI", meta = (DisplayName = "Create UI From URL", DeterminesOutputType = "ClassType"))
-	static UGObject* CreateObjectFromURL(UObject* Outer, const FString& URL);
+	UGObject* CreateObjectFromURL(UObject* Outer, const FString& URL);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	static UGWindow* CreateWindow(UObject* Outer, const FString& PackageName, const FString& ResourceName);
-
-	
+	UGWindow* CreateWindow(UObject* Outer, const FString& PackageName, const FString& ResourceName);
 
 private:
 	//UUIPackageMgr() {};
 
-	static TMap<FString, UUIPackage*> PackageInstByID;
-	static TMap<FString, UUIPackage*> PackageInstByName;
-	static TMap<FString, FString> Vars;
-	static FString Branch;
+	TMap<FString, UUIPackage*> PackageInstByID;
+	TMap<FString, UUIPackage*> PackageInstByName;
+	TMap<FString, FString> Vars;
+	FString Branch;
+
+	static UUIPackageMgr* Instance;
 };
 

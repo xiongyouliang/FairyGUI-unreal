@@ -55,6 +55,7 @@ public:
     static bool IsStarted() { return Instance != nullptr; }
 
     UFairyApplication();
+    ~UFairyApplication();
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI | FairyApplication")
     void AddUIRoot(UObject* WorldContextObject);
@@ -137,7 +138,9 @@ private:
     void OnSlatePostTick(float DeltaTime);
 
 private:
+    UPROPERTY()
     TMap<UWorld*, UGRoot*> UIRoots;
+    UPROPERTY()
     TMap<UWorld*, UDragDropManager*> DragDropManagers;
 
     UPROPERTY(Transient)
@@ -145,8 +148,6 @@ private:
 
     FTweenManager TweenManager;
     TSharedPtr<IInputProcessor> InputProcessor;
-    //UGameViewportClient* ViewportClient;
-    //TSharedPtr<SWidget> ViewportWidget;
     TIndirectArray<FTouchInfo> Touches;
     FTouchInfo* LastTouch;
     bool bNeedCheckPopups;

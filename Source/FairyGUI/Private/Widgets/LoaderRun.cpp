@@ -29,7 +29,7 @@ FLoaderRun::FLoaderRun(const FHTMLElement& InHTMLElement, const TSharedRef< cons
     const FString& Src = HTMLElement.Attributes.Get("src");
     if (Src.Len() > 0)
     {
-        TSharedPtr<FPackageItem> pi = UUIPackageMgr::GetPackageItemByURL(Src);
+        TSharedPtr<FPackageItem> pi = UUIPackageMgr::Get()->GetPackageItemByURL(Src);
         if (pi.IsValid())
             SourceSize = pi->Size;
     }

@@ -34,7 +34,7 @@ void UPopupMenu::Create(const FString& ResourceURL)
         }
     }
 
-    ContentPane = UUIPackageMgr::CreateObjectFromURL(GetOuter(), url)->As<UGComponent>();
+    ContentPane = UUIPackageMgr::Get()->CreateObjectFromURL(GetOuter(), url)->As<UGComponent>();
     ContentPane->On(FUIEvents::AddedToStage).AddUObject(this, &UPopupMenu::OnAddedToStage);
 
     List = ContentPane->GetChild("list")->As<UGList>();

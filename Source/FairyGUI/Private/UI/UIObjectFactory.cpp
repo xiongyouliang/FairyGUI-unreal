@@ -31,7 +31,7 @@ void FUIObjectFactory::SetExtension(const FString& URL, FGComponentCreator Creat
         UE_LOG(LogFairyGUI, Warning, TEXT("Invaild url: %s"), *URL);
         return;
     }
-    TSharedPtr<FPackageItem> PackageItem = UUIPackageMgr::GetPackageItemByURL(URL);
+    TSharedPtr<FPackageItem> PackageItem = UUIPackageMgr::Get()->GetPackageItemByURL(URL);
     if (PackageItem.IsValid())
         PackageItem->ExtensionCreator = Creator;
 

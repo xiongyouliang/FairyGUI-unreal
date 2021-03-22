@@ -58,7 +58,7 @@ void UGLoader3D::ClearContent()
 
 void UGLoader3D::LoadFromPackage(const FString& ItemURL)
 {
-    ContentItem = UUIPackageMgr::GetPackageItemByURL(ItemURL);
+    ContentItem = UUIPackageMgr::Get()->GetPackageItemByURL(ItemURL);
 
     if (ContentItem.IsValid())
     {

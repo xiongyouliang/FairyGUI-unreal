@@ -14,8 +14,14 @@ class FAIRYGUI_API UGRoot : public UGComponent
 public:
     static int32 ContentScaleLevel;
 
-    UGRoot(const FObjectInitializer& Initializer);
+    UGRoot();
     virtual ~UGRoot();
+
+    // ~ UGVisual Interface
+    virtual void ReleaseSlateResources(bool bReleaseChildren) override;
+
+    // ~ UObject Interface
+    virtual void BeginDestroy() override;
 
     void ShowWindow(UGWindow* Window);
     void HideWindow(UGWindow* Window);
@@ -97,8 +103,8 @@ private:
     UPROPERTY(Transient)
     UGObject* DefaultTooltipWin;
 
-    TArray<TWeakObjectPtr<UGObject>> PopupStack;
-    TArray<TWeakObjectPtr<UGObject>> JustClosedPopups;
+    TArray<UGObject*> PopupStack;
+    TArray<UGObject*> JustClosedPopups;
     FTimerHandle ShowTooltipsTimerHandle;
 
     friend class UFairyApplication;

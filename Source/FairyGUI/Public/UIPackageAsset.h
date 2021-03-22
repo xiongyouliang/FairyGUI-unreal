@@ -11,6 +11,9 @@ class FAIRYGUI_API UUIPackageAsset : public UObject
 
 public:
 
+    UUIPackageAsset();
+    ~UUIPackageAsset();
+
     UPROPERTY(EditAnywhere)
     TArray<uint8> Data;
 

@@ -1,13 +1,24 @@
 #include "UI/UIPackageMgr.h"
 
 #include "FairyApplication.h"
-#include "UI/UIPackage.h"
 #include "FairyCommons.h"
+#include "UIPackageAsset.h"
+#include "UI/UIPackage.h"
+#include "UI/UIObjectFactory.h"
+#include "UI/GWindow.h"
+#include "Utils/ByteBuffer.h"
 
-TMap<FString, UUIPackage*> UUIPackageMgr::PackageInstByID;
-TMap<FString, UUIPackage*> UUIPackageMgr::PackageInstByName;
-TMap<FString, FString> UUIPackageMgr::Vars;
-FString UUIPackageMgr::Branch;
+UUIPackageMgr* UUIPackageMgr::Instance = nullptr;
+
+UUIPackageMgr* UUIPackageMgr::Get()
+{
+	if (Instance == nullptr)
+	{
+		Instance = NewObject<UUIPackageMgr>();
+		Instance->AddToRoot();
+	}
+	return Instance;
+}
 
 void UUIPackageMgr::SetBranch(const FString& InBranch)
 {
@@ -39,7 +50,8 @@ void UUIPackageMgr::SetVar(const FString& VarKey, const FString& VarValue)
 
 UUIPackage* UUIPackageMgr::AddPackage(UObject* Outer, UUIPackageAsset* InAsset)
 {
-	UUIPackage* Pkg = PackageInstByID.FindRef(InAsset->GetPathName());
+	FString PathName = InAsset->GetPathName();
+	UUIPackage* Pkg = PackageInstByID.FindRef(PathName);
 	if (Pkg != nullptr)
 	{
 		UE_LOG(LogFairyGUI, Warning, TEXT("Package already addedd"));
@@ -47,7 +59,7 @@ UUIPackage* UUIPackageMgr::AddPackage(UObject* Outer, UUIPackageAsset* InAsset)
 	}
 	Pkg = NewObject<UUIPackage>(Outer);
 	Pkg->Asset = InAsset;
-	Pkg->AssetPath = InAsset->GetPathName();
+	Pkg->AssetPath = PathName;
 	FByteBuffer Buffer(InAsset->Data.GetData(), 0, InAsset->Data.Num(), false);
 	Pkg->Load(&Buffer);
 
@@ -60,16 +72,20 @@ UUIPackage* UUIPackageMgr::AddPackage(UObject* Outer, UUIPackageAsset* InAsset)
 
 UUIPackage* UUIPackageMgr::GetPackageByName(const FString& PackageName)
 {
-	auto it = UUIPackageMgr::PackageInstByName.Find(PackageName);
+	auto it = PackageInstByName.Find(PackageName);
 	if (it != nullptr)
+	{
 		return *it;
-	else
+	}
+	else 
+	{
 		return nullptr;
+	}
 }
 
 UUIPackage* UUIPackageMgr::GetPackageByID(const FString& PackageID)
 {
-	auto it = UUIPackageMgr::PackageInstByID.Find(PackageID);
+	auto it = PackageInstByID.Find(PackageID);
 	if (it != nullptr)
 		return *it;
 	else
@@ -78,7 +94,7 @@ UUIPackage* UUIPackageMgr::GetPackageByID(const FString& PackageID)
 
 FString UUIPackageMgr::ConvertToItemURL(const FString& PackageName, const FString& ResourceName)
 {
-	UUIPackage* pkg = UUIPackageMgr::GetPackageByName(PackageName);
+	UUIPackage* pkg = GetPackageByName(PackageName);
 	if (pkg != nullptr)
 	{
 		TSharedPtr<FPackageItem> pi = pkg->GetItemByName(ResourceName);
@@ -130,7 +146,7 @@ TSharedPtr<FPackageItem> UUIPackageMgr::GetPackageItemByURL(const FString& URL)
 		if (URL.Len() > 13)
 		{
 			FString pkgId = URL.Mid(5, 8);
-			UUIPackage* pkg = UUIPackageMgr::GetPackageByID(pkgId);
+			UUIPackage* pkg = GetPackageByID(pkgId);
 			if (pkg != nullptr)
 			{
 				FString srcId = URL.Mid(13);
@@ -141,7 +157,7 @@ TSharedPtr<FPackageItem> UUIPackageMgr::GetPackageItemByURL(const FString& URL)
 	else
 	{
 		FString pkgName = URL.Mid(pos1 + 2, pos2 - pos1 - 2);
-		UUIPackage* pkg = UUIPackageMgr::GetPackageByName(pkgName);
+		UUIPackage* pkg = GetPackageByName(pkgName);
 		if (pkg != nullptr)
 		{
 			FString srcName = URL.Mid(pos2 + 1);
@@ -157,7 +173,7 @@ void UUIPackageMgr::RemovePackage(const FString& IDOrName)
 	UUIPackage* pkg = GetPackageByName(IDOrName);
 	if (pkg == nullptr)
 	{
-		pkg = UUIPackageMgr::GetPackageByID(IDOrName);
+		pkg = GetPackageByID(IDOrName);
 	}
 
 	if (pkg != nullptr)
@@ -166,10 +182,13 @@ void UUIPackageMgr::RemovePackage(const FString& IDOrName)
 		//PackageList.Remove(pkg);
 
 		PackageInstByID.Remove(pkg->ID);
+		PackageInstByID.Remove(pkg->AssetPath);
 		PackageInstByName.Remove(pkg->Name);
 	}
-	else
+	else 
+	{
 		UE_LOG(LogFairyGUI, Error, TEXT("invalid package name or id: %s"), *IDOrName);
+	}
 }
 
 void UUIPackageMgr::RemoveAllPackages()
@@ -183,7 +202,7 @@ void UUIPackageMgr::RemoveAllPackages()
 
 UGObject* UUIPackageMgr::CreateObject(UObject* Outer, const FString& PackageName, const FString& ResourceName)
 {
-	UUIPackage* pkg = UUIPackageMgr::GetPackageByName(PackageName);
+	UUIPackage* pkg = GetPackageByName(PackageName);
 	if (pkg) {
 		return pkg->CreateObject(Outer, ResourceName);
 	}
@@ -195,7 +214,7 @@ UGObject* UUIPackageMgr::CreateObject(UObject* Outer, const FString& PackageName
 
 UGObject* UUIPackageMgr::CreateObjectFromURL(UObject* Outer, const FString& URL)
 {
-	TSharedPtr<FPackageItem> PackageItem = UUIPackageMgr::GetPackageItemByURL(URL);
+	TSharedPtr<FPackageItem> PackageItem = GetPackageItemByURL(URL);
 	if (PackageItem.IsValid()) {
 		return PackageItem->Owner->CreateObject(Outer, PackageItem);
 	}

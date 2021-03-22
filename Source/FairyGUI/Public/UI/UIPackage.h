@@ -57,11 +57,6 @@ private:
     TArray<FString> Branches;
     int32 BranchIndex;
 
-    static TMap<FString, UUIPackage*> PackageInstByID;
-    static TMap<FString, UUIPackage*> PackageInstByName;
-    static TMap<FString, FString> Vars;
-    static FString Branch;
-
     friend class UUIPackageMgr;
     friend class FPackageItem;
     friend class UFairyApplication;

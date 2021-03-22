@@ -316,8 +316,8 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
     FNVariant UserData;
 
-    bool bUnderConstruct;
-    bool bGearLocked;
+    bool bUnderConstruct = false;
+    bool bGearLocked = false;
 
     static UGObject* GetDraggingObject() { return DraggingObject.Get(); }
 
@@ -349,11 +349,11 @@ protected:
     FVector2D Pivot;
     FVector2D Scale;
     FVector2D Skew;
-    bool bPivotAsAnchor;
-    float Alpha;
-    float Rotation;
-    bool bVisible;
-    bool bGrayed;
+    bool bPivotAsAnchor = false;
+    float Alpha = 0.0f;
+    float Rotation = 0.0f;
+    bool bVisible = false;
+    bool bGrayed = false;
 
 private:
     bool InternalVisible() const;
@@ -378,18 +378,18 @@ private:
     UFUNCTION()
     void OnTouchEndHandler(UEventContext* Context);
 
-    bool bInternalVisible;
-    bool bHandlingController;
-    bool bDraggable;
-    int32 SortingOrder;
+    bool bInternalVisible = false;
+    bool bHandlingController = false;
+    bool bDraggable = false;
+    int32 SortingOrder = 0;
     FString Tooltips;
     TWeakObjectPtr<UGGroup> Group;
-    float SizePercentInGroup;
+    float SizePercentInGroup = 0.0f;
     FRelations* Relations;
     FGearBase* Gears[10];
     FVector2D DragTouchStartPos;
     TOptional<FBox2D> DragBounds;
-    bool bDragTesting;
+    bool bDragTesting = false;
     UGTreeNode* TreeNode;
 
     struct FUnifiedEventDelegate

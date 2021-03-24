@@ -32,12 +32,15 @@ int32 UUIPackage::Constructing = 0;
 UUIPackage::UUIPackage() :
     BranchIndex(0)
 {
+    UE_LOG(LogTemp, Warning, TEXT("UUIPackage::UUIPackage()"));
 }
 
 UUIPackage::~UUIPackage()
 {
-    for (auto& it : Sprites)
+    UE_LOG(LogTemp, Warning, TEXT("UUIPackage::~UUIPackage()"));
+    for (auto& it : Sprites) {
         delete it.Value;
+    }
 }
 
 TSharedPtr<FPackageItem> UUIPackage::GetItem(const FString& ItemID) const

@@ -45,6 +45,7 @@ private:
     FString ID;
     FString Name;
     FString AssetPath;
+
     UPROPERTY(Transient)
     UUIPackageAsset* Asset;
 

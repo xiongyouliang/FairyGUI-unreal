@@ -596,30 +596,6 @@ void UGObject::CheckGearDisplay()
     }
 }
 
-void UGObject::SetParent(UGObject* InParent)
-{
-    verifyf(InParent == nullptr || InParent->IsA<UGComponent>(), TEXT("Parent must be GComponent"));
-    verifyf(InParent != this, TEXT("Parent must not be self"));
-
-    if (InParent != nullptr)
-        Cast<UGComponent>(InParent)->AddChild(this);
-    else if (Parent.IsValid())
-        Parent->RemoveChild(this);
-}
-
-void UGObject::SetParentToRoot()
-{
-    if (UObject* Outer = GetOuter())
-    {
-        UGRoot* TargetUIRoot = UFairyApplication::Get()->GetUIRoot(Outer);
-        SetParent(TargetUIRoot);
-    }
-    else
-    {
-        UE_LOG(LogTemp, Error, TEXT("This FairyGUI Object Has NO Outer"));
-    }
-}
-
 void UGObject::RemoveFromParent()
 {
     if (Parent.IsValid())

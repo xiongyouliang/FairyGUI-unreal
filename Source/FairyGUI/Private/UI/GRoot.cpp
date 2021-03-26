@@ -33,12 +33,12 @@ void SRootContainer::OnArrangeChildren(const FGeometry& AllottedGeometry, FArran
 UGRoot::UGRoot() :
     Super()
 {
-    UE_LOG(LogTemp, Warning, TEXT("UGRoot Constructor"))
+    UE_LOG(LogTemp, Warning, TEXT("UGRoot::UGRoot()"))
 }
 
 UGRoot::~UGRoot()
 {
-    UE_LOG(LogTemp, Warning, TEXT("UGRoot Destructor"))
+    UE_LOG(LogTemp, Warning, TEXT("UGRoot::~UGRoot()"))
 }
 
 void UGRoot::ReleaseSlateResources(bool bReleaseChildren)
@@ -59,14 +59,17 @@ void UGRoot::AddToViewport()
     {
         UGameViewportClient* ViewportClient = World->GetGameViewport();
         //TSharedRef<SConstraintCanvas> FullScreenCanvas = SNew(SConstraintCanvas);
-        TSharedRef<SRootContainer> FullScreenCanvas = SNew(SRootContainer).GObject(this);
-        FullScreenWidget = FullScreenCanvas;
+        
+        TSharedRef<SRootContainer> NewRootContainer = SNew(SRootContainer).GObject(this);
+        FullScreenWidget = NewRootContainer;
 
-        FullScreenCanvas->SetOpaque(false);
-        FullScreenCanvas->AddChild(RootContainer.ToSharedRef());
-        ViewportClient->AddViewportWidgetContent(FullScreenCanvas, 100);
 
-        SetSize(FullScreenCanvas->GetParentWidget()->GetPaintSpaceGeometry().GetLocalSize().RoundToVector());
+        NewRootContainer->SetOpaque(false);
+        NewRootContainer->AddChild(RootContainer.ToSharedRef());
+        ViewportClient->AddViewportWidgetContent(NewRootContainer, 100);
+        FVector2D size = NewRootContainer->GetParentWidget()->GetPaintSpaceGeometry().GetLocalSize().RoundToVector();
+        UE_LOG(LogTemp, Warning, TEXT("-----------------> size:(%f, %f)"), size.X, size.Y);
+        SetSize(size);
     }
 }
 
@@ -76,7 +79,7 @@ void UGRoot::RemoveFromViewport()
     {
         if (FullScreenWidget.IsValid())
         {
-            FullScreenWidget->RemoveChildren();
+            TSharedPtr<SWidget> WidgetHost = FullScreenWidget.Pin();
 
             // If this is a game world remove the widget from the current world's viewport.
             UWorld* World = GetWorld();
@@ -84,7 +87,7 @@ void UGRoot::RemoveFromViewport()
             {
                 if (UGameViewportClient* ViewportClient = World->GetGameViewport())
                 {
-                    TSharedRef<SWidget> WidgetHostRef = FullScreenWidget.ToSharedRef();
+                    TSharedRef<SWidget> WidgetHostRef = WidgetHost.ToSharedRef();
 
                     ViewportClient->RemoveViewportWidgetContent(WidgetHostRef);
                 }

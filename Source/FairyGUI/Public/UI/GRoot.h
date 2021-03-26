@@ -79,7 +79,7 @@ public:
     void HideTooltips();
 
 private:
-    TSharedPtr<SContainer> FullScreenWidget;
+    TWeakPtr<SWidget> FullScreenWidget;
     void AddToViewport();
     void RemoveFromViewport();
 

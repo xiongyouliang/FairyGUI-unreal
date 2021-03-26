@@ -206,8 +206,10 @@ public:
     FBox2D LocalToRootRect(const FBox2D& InRect);
 
     FRelations* GetRelations() { return Relations; }
+
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     void AddRelation(UGObject* Obj, ERelationType RelationType, bool bUsePercent = false);
+
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     void RemoveRelation(UGObject* Obj, ERelationType RelationType);
 
@@ -220,16 +222,10 @@ public:
     UGComponent* GetParent() const { return Parent.Get(); }
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    void SetParent(UGObject* InParent);
-
-    UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    void SetParentToRoot();
+    void RemoveFromParent();
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     bool OnStage() const { return DisplayObject->OnStage(); }
-
-    UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    void RemoveFromParent();
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI", meta = (DeterminesOutputType = "ClassType"))
     UGObject* CastTo(TSubclassOf<UGObject> ClassType) const;

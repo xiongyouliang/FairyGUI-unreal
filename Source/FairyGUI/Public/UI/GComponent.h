@@ -20,6 +20,7 @@ public:
     // ~ UGVisual Interface
     virtual void ReleaseSlateResources(bool bReleaseChildren) override;
 
+    // ~ child operation start
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     UGObject* AddChild(UGObject* Child);
 
@@ -34,6 +35,7 @@ public:
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     void RemoveChildren(int32 BeginIndex = 0, int32 EndIndex = -1);
+    // ~ child operation end
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI", meta = (DeterminesOutputType = "ClassType"))
     UGObject* GetChildAt(int32 Index, TSubclassOf<UGObject> ClassType = nullptr) const;

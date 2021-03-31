@@ -1,6 +1,5 @@
 #include "UI/UIPackage.h"
 #include "Sound/SoundBase.h"
-#include "FairyApplication.h"
 #include "UIPackageAsset.h"
 #include "UI/PackageItem.h"
 #include "UI/GObject.h"
@@ -8,12 +7,9 @@
 #include "Widgets/SMovieClip.h"
 #include "Widgets/BitmapFont.h"
 #include "Utils/ByteBuffer.h"
+#include "UI/UIObjectFactory.h"
 
 int32 UUIPackage::Constructing = 0;
-TMap<FString, UUIPackage*> UUIPackage::PackageInstByID;
-TMap<FString, UUIPackage*> UUIPackage::PackageInstByName;
-TMap<FString, FString> UUIPackage::Vars;
-FString UUIPackage::Branch;
 
 struct FAtlasSprite
 {
@@ -31,23 +27,28 @@ struct FAtlasSprite
     bool bRotated;
 };
 
+const FString& UUIPackage::GetBranch()
+{
+    return UUIPackageStatic::Get().Branch;
+}
+
 void UUIPackage::SetBranch(const FString& InBranch)
 {
-    Branch = InBranch;
-    bool empty = Branch.IsEmpty();
-    for (auto& it : PackageInstByID)
+    UUIPackageStatic::Get().Branch = InBranch;
+    bool empty = InBranch.IsEmpty();
+    for (auto& it : UUIPackageStatic::Get().PackageInstByID)
     {
         UUIPackage*& Pkg = it.Value;
         if (empty)
             Pkg->BranchIndex = -1;
         else if (Pkg->Branches.Num() > 0)
-            Pkg->BranchIndex = Pkg->Branches.IndexOfByKey(Branch);
+            Pkg->BranchIndex = Pkg->Branches.Find(InBranch);
     }
 }
 
 FString UUIPackage::GetVar(const FString& VarKey)
 {
-    FString* Value = Vars.Find(VarKey);
+    FString* Value = UUIPackageStatic::Get().Vars.Find(VarKey);
     if (Value != nullptr)
         return *Value;
     else
@@ -56,44 +57,75 @@ FString UUIPackage::GetVar(const FString& VarKey)
 
 void UUIPackage::SetVar(const FString& VarKey, const FString& VarValue)
 {
-    Vars.Add(VarKey, VarValue);
+    UUIPackageStatic::Get().Vars.Add(VarKey, VarValue);
 }
 
-UUIPackage* UUIPackage::AddPackage(UUIPackageAsset* InAsset)
+UUIPackage* UUIPackage::AddPackage(const TCHAR* InAssetPath, UObject* WorldContextObject)
 {
-    UUIPackage* Pkg = PackageInstByID.FindRef(InAsset->GetPathName());
+    UUIPackageAsset* PackageAsset = Cast<UUIPackageAsset>(StaticLoadObject(UUIPackageAsset::StaticClass(), nullptr, InAssetPath));
+    verifyf(PackageAsset != nullptr, TEXT("Asset not found %s"), InAssetPath);
+
+    return AddPackage(PackageAsset, WorldContextObject);
+}
+
+UUIPackage* UUIPackage::AddPackage(UUIPackageAsset* InAsset, UObject* WorldContextObject)
+{
+    verifyf(WorldContextObject != nullptr, TEXT("Null WorldContextObject?"));
+
+    UWorld* World = WorldContextObject->GetWorld();
+    verifyf(World != nullptr, TEXT("Null World?"));
+    verifyf(World->IsGameWorld(), TEXT("Not a Game World?"));
+
+    UUIPackage* Pkg = UUIPackageStatic::Get().PackageInstByID.FindRef(InAsset->GetPathName());
     if (Pkg != nullptr)
     {
-        UE_LOG(LogFairyGUI, Warning, TEXT("Package already addedd"));
+        if (Pkg->RefWorlds.Contains(World->GetUniqueID()))
+        {
+            UE_LOG(LogFairyGUI, Warning, TEXT("Package already addedd"));
+        }
+        else
+            Pkg->RefWorlds.Add(World->GetUniqueID());
         return Pkg;
     }
+
+    FByteBuffer Buffer(InAsset->Data.GetData(), 0, InAsset->Data.Num(), false);
+
     Pkg = NewObject<UUIPackage>();
+    Pkg->RefWorlds.Add(World->GetUniqueID());
     Pkg->Asset = InAsset;
     Pkg->AssetPath = InAsset->GetPathName();
-    FByteBuffer Buffer(InAsset->Data.GetData(), 0, InAsset->Data.Num(), false);
     Pkg->Load(&Buffer);
 
-    UFairyApplication::Get()->PackageList.Add(Pkg);
-    PackageInstByID.Add(Pkg->ID, Pkg);
-    PackageInstByID.Add(Pkg->AssetPath, Pkg);
-    PackageInstByName.Add(Pkg->Name, Pkg);
+    UUIPackageStatic::Get().PackageList.Add(Pkg);
+    UUIPackageStatic::Get().PackageInstByID.Add(Pkg->ID, Pkg);
+    UUIPackageStatic::Get().PackageInstByID.Add(Pkg->AssetPath, Pkg);
+    UUIPackageStatic::Get().PackageInstByName.Add(Pkg->Name, Pkg);
+
     return Pkg;
 }
 
-void UUIPackage::RemovePackage(const FString& IDOrName)
+void UUIPackage::RemovePackage(const FString& IDOrName, UObject* WorldContextObject)
 {
-    UUIPackage* pkg = GetPackageByName(IDOrName);
-    if (pkg == nullptr)
-        pkg = GetPackageByID(IDOrName);
+    verifyf(WorldContextObject != nullptr, TEXT("Null WorldContextObject?"));
 
-    if (pkg != nullptr)
+    UUIPackage* Pkg = GetPackageByName(IDOrName);
+    if (Pkg == nullptr)
+        Pkg = GetPackageByID(IDOrName);
+
+    if (Pkg != nullptr)
     {
-        TArray<UUIPackage*>& PackageList = UFairyApplication::Get()->PackageList;
-        PackageList.Remove(pkg);
+        UWorld* World = WorldContextObject->GetWorld();
+        verifyf(World != nullptr, TEXT("Null World?"));
+        verifyf(World->IsGameWorld(), TEXT("Not a Game World?"));
+        Pkg->RefWorlds.Remove(World->GetUniqueID());
 
-        PackageInstByID.Remove(pkg->ID);
-        PackageInstByID.Remove(pkg->AssetPath);
-        PackageInstByName.Remove(pkg->Name);
+        if (Pkg->RefWorlds.Num() > 0)
+            return;
+
+        UUIPackageStatic::Get().PackageList.Remove(Pkg);
+        UUIPackageStatic::Get().PackageInstByID.Remove(Pkg->ID);
+        UUIPackageStatic::Get().PackageInstByID.Remove(Pkg->AssetPath);
+        UUIPackageStatic::Get().PackageInstByName.Remove(Pkg->Name);
     }
     else
         UE_LOG(LogFairyGUI, Error, TEXT("invalid package name or id: %s"), *IDOrName);
@@ -101,16 +133,14 @@ void UUIPackage::RemovePackage(const FString& IDOrName)
 
 void UUIPackage::RemoveAllPackages()
 {
-    TArray<UUIPackage*>& PackageList = UFairyApplication::Get()->PackageList;
-    PackageList.Reset();
-
-    PackageInstByID.Reset();
-    PackageInstByName.Reset();
+    UUIPackageStatic::Get().PackageList.Reset();
+    UUIPackageStatic::Get().PackageInstByID.Reset();
+    UUIPackageStatic::Get().PackageInstByName.Reset();
 }
 
 UUIPackage* UUIPackage::GetPackageByID(const FString& PackageID)
 {
-    auto it = PackageInstByID.Find(PackageID);
+    auto it = UUIPackageStatic::Get().PackageInstByID.Find(PackageID);
     if (it != nullptr)
         return *it;
     else
@@ -119,39 +149,29 @@ UUIPackage* UUIPackage::GetPackageByID(const FString& PackageID)
 
 UUIPackage* UUIPackage::GetPackageByName(const FString& PackageName)
 {
-    auto it = PackageInstByName.Find(PackageName);
+    auto it = UUIPackageStatic::Get().PackageInstByName.Find(PackageName);
     if (it != nullptr)
         return *it;
     else
         return nullptr;
 }
 
-UGObject* UUIPackage::CreateObject(const FString& PackageName, const FString& ResourceName, TSubclassOf<UGObject> ClassType)
+UGObject* UUIPackage::CreateObject(const FString& PackageName, const FString& ResourceName, UObject* WorldContextObject, TSubclassOf<UGObject> ClassType)
 {
     UUIPackage* pkg = UUIPackage::GetPackageByName(PackageName);
     if (pkg)
-        return pkg->CreateObject(ResourceName);
+        return pkg->CreateObject(ResourceName, WorldContextObject);
     else
         return nullptr;
 }
 
-UGObject* UUIPackage::CreateObjectFromURL(const FString& URL, TSubclassOf<UGObject> ClassType)
+UGObject* UUIPackage::CreateObjectFromURL(const FString& URL, UObject* WorldContextObject, TSubclassOf<UGObject> ClassType)
 {
-    TSharedPtr<FPackageItem> pi = UUIPackage::GetItemByURL(URL);
-    if (pi.IsValid())
-        return pi->Owner->CreateObject(pi);
+    TSharedPtr<FPackageItem> pii = UUIPackage::GetItemByURL(URL);
+    if (pii.IsValid())
+        return pii->Owner->CreateObject(pii, WorldContextObject);
     else
         return nullptr;
-}
-
-UGWindow* UUIPackage::CreateWindow(const FString& PackageName, const FString& ResourceName)
-{
-    UGObject* ContentPane = CreateObject(PackageName, ResourceName);
-    verifyf(ContentPane->IsA<UGComponent>(), TEXT("Window content should be a component"));
-    UGWindow* Window = NewObject<UGWindow>();
-    Window->SetContentPane(Cast<UGComponent>(ContentPane));
-
-    return Window;
 }
 
 FString UUIPackage::GetItemURL(const FString& PackageName, const FString& ResourceName)
@@ -159,9 +179,9 @@ FString UUIPackage::GetItemURL(const FString& PackageName, const FString& Resour
     UUIPackage* pkg = GetPackageByName(PackageName);
     if (pkg != nullptr)
     {
-        TSharedPtr<FPackageItem> pi = pkg->GetItemByName(ResourceName);
-        if (pi.IsValid())
-            return "ui://" + pkg->GetID() + pi->ID;
+        TSharedPtr<FPackageItem> pii = pkg->GetItemByName(ResourceName);
+        if (pii.IsValid())
+            return "ui://" + pkg->GetID() + pii->ID;
     }
     return "";
 }
@@ -251,17 +271,17 @@ TSharedPtr<FPackageItem> UUIPackage::GetItemByName(const FString& ResourceName)
         return nullptr;
 }
 
-UGObject* UUIPackage::CreateObject(const FString& ResourceName)
+UGObject* UUIPackage::CreateObject(const FString& ResourceName, UObject* WorldContextObject)
 {
     TSharedPtr<FPackageItem> item = GetItemByName(ResourceName);
     verifyf(item.IsValid(), TEXT("FairyGUI: resource not found - %s in  %s"), *ResourceName, *Name);
 
-    return CreateObject(item);
+    return CreateObject(item, WorldContextObject);
 }
 
-UGObject* UUIPackage::CreateObject(const TSharedPtr<FPackageItem>& Item)
+UGObject* UUIPackage::CreateObject(const TSharedPtr<FPackageItem>& Item, UObject* WorldContextObject)
 {
-    UGObject* g = FUIObjectFactory::NewObject(Item);
+    UGObject* g = FUIObjectFactory::NewObject(Item, WorldContextObject);
     if (g == nullptr)
         return nullptr;
 
@@ -304,8 +324,8 @@ void UUIPackage::Load(FByteBuffer* Buffer)
     for (int32 i = 0; i < cnt; i++)
     {
         TMap<FString, FString> info;
-        info["id"] = Buffer->ReadS();
-        info["name"] = Buffer->ReadS();
+        info.Add("id", Buffer->ReadS());
+        info.Add("name", Buffer->ReadS());
 
         Dependencies.Push(info);
     }
@@ -317,8 +337,8 @@ void UUIPackage::Load(FByteBuffer* Buffer)
         if (cnt > 0)
         {
             Buffer->ReadSArray(Branches, cnt);
-            if (!Branch.IsEmpty())
-                BranchIndex = Branches.IndexOfByKey(Branch);
+            if (!UUIPackageStatic::Get().Branch.IsEmpty())
+                BranchIndex = Branches.Find(UUIPackageStatic::Get().Branch);
         }
 
         branchIncluded = cnt > 0;
@@ -335,22 +355,22 @@ void UUIPackage::Load(FByteBuffer* Buffer)
         int32 nextPos = Buffer->ReadInt();
         nextPos += Buffer->GetPos();
 
-        TSharedPtr<FPackageItem> pi = MakeShared<FPackageItem>();
-        pi->Owner = this;
-        pi->Type = (EPackageItemType)Buffer->ReadByte();
-        pi->ID = Buffer->ReadS();
-        pi->Name = Buffer->ReadS();
+        TSharedPtr<FPackageItem> pii = MakeShared<FPackageItem>();
+        pii->Owner = this;
+        pii->Type = (EPackageItemType)Buffer->ReadByte();
+        pii->ID = Buffer->ReadS();
+        pii->Name = Buffer->ReadS();
         Buffer->Skip(2); //path
-        pi->File = Buffer->ReadS();
+        pii->File = Buffer->ReadS();
         Buffer->ReadBool(); //exported
-        pi->Size.X = Buffer->ReadInt();
-        pi->Size.Y = Buffer->ReadInt();
+        pii->Size.X = Buffer->ReadInt();
+        pii->Size.Y = Buffer->ReadInt();
 
-        switch (pi->Type)
+        switch (pii->Type)
         {
         case EPackageItemType::Image:
         {
-            pi->ObjectType = EObjectType::Image;
+            pii->ObjectType = EObjectType::Image;
             int32 scaleOption = Buffer->ReadByte();
             if (scaleOption == 1)
             {
@@ -359,11 +379,11 @@ void UUIPackage::Load(FByteBuffer* Buffer)
                 scale9Grid.Min.Y = Buffer->ReadInt();
                 scale9Grid.Max.X = scale9Grid.Min.X + Buffer->ReadInt();
                 scale9Grid.Max.Y = scale9Grid.Min.Y + Buffer->ReadInt();
-                pi->Scale9Grid = scale9Grid;
-                pi->TileGridIndice = Buffer->ReadInt();
+                pii->Scale9Grid = scale9Grid;
+                pii->TileGridIndice = Buffer->ReadInt();
             }
             else if (scaleOption == 2)
-                pi->bScaleByTile = true;
+                pii->bScaleByTile = true;
 
             Buffer->ReadBool(); //smoothing
             break;
@@ -372,14 +392,14 @@ void UUIPackage::Load(FByteBuffer* Buffer)
         case EPackageItemType::MovieClip:
         {
             Buffer->ReadBool(); //smoothing
-            pi->ObjectType = EObjectType::MovieClip;
-            pi->RawData = Buffer->ReadBuffer(false);
+            pii->ObjectType = EObjectType::MovieClip;
+            pii->RawData = Buffer->ReadBuffer(false);
             break;
         }
 
         case EPackageItemType::Font:
         {
-            pi->RawData = Buffer->ReadBuffer(false);
+            pii->RawData = Buffer->ReadBuffer(false);
             break;
         }
 
@@ -387,12 +407,12 @@ void UUIPackage::Load(FByteBuffer* Buffer)
         {
             int32 extension = Buffer->ReadByte();
             if (extension > 0)
-                pi->ObjectType = (EObjectType)extension;
+                pii->ObjectType = (EObjectType)extension;
             else
-                pi->ObjectType = EObjectType::Component;
-            pi->RawData = Buffer->ReadBuffer(false);
+                pii->ObjectType = EObjectType::Component;
+            pii->RawData = Buffer->ReadBuffer(false);
 
-            FUIObjectFactory::ResolvePackageItemExtension(pi);
+            FUIObjectFactory::ResolvePackageItemExtension(pii);
             break;
         }
 
@@ -400,15 +420,15 @@ void UUIPackage::Load(FByteBuffer* Buffer)
         case EPackageItemType::Sound:
         case EPackageItemType::Misc:
         {
-            FString file = fileName + "_" + FPaths::GetBaseFilename(pi->File);
-            pi->File = path + "/" + file + "." + file;
+            FString file = fileName + "_" + FPaths::GetBaseFilename(pii->File);
+            pii->File = path + "/" + file + "." + file;
             break;
         }
 
         case EPackageItemType::Spine:
         case EPackageItemType::DragonBones:
         {
-            pi->File = path + pi->File;
+            pii->File = path + pii->File;
             break;
         }
 
@@ -420,32 +440,32 @@ void UUIPackage::Load(FByteBuffer* Buffer)
         {
             FString str = Buffer->ReadS(); //branch
             if (!str.IsEmpty())
-                pi->Name = str + "/" + pi->Name;
+                pii->Name = str + "/" + pii->Name;
 
             int32 branchCnt = Buffer->ReadUbyte();
             if (branchCnt > 0)
             {
                 if (branchIncluded)
                 {
-                    pi->Branches.Emplace();
-                    Buffer->ReadSArray(pi->Branches.GetValue(), branchCnt);
+                    pii->Branches.Emplace();
+                    Buffer->ReadSArray(pii->Branches.GetValue(), branchCnt);
                 }
                 else
-                    ItemsByID.Add(Buffer->ReadS(), pi);
+                    ItemsByID.Add(Buffer->ReadS(), pii);
             }
 
             int32 highResCnt = Buffer->ReadUbyte();
             if (highResCnt > 0)
             {
-                pi->HighResolution.Emplace();
-                Buffer->ReadSArray(pi->HighResolution.GetValue(), highResCnt);
+                pii->HighResolution.Emplace();
+                Buffer->ReadSArray(pii->HighResolution.GetValue(), highResCnt);
             }
         }
 
-        Items.Push(pi);
-        ItemsByID.Add(pi->ID, pi);
-        if (!pi->Name.IsEmpty())
-            ItemsByName.Add(pi->Name, pi);
+        Items.Push(pii);
+        ItemsByID.Add(pii->ID, pii);
+        if (!pii->Name.IsEmpty())
+            ItemsByName.Add(pii->Name, pii);
 
         Buffer->SetPos(nextPos);
     }
@@ -459,10 +479,10 @@ void UUIPackage::Load(FByteBuffer* Buffer)
         nextPos += Buffer->GetPos();
 
         const FString& itemId = Buffer->ReadS();
-        const TSharedPtr<FPackageItem>& pi = ItemsByID[Buffer->ReadS()];
+        const TSharedPtr<FPackageItem>& pii = ItemsByID[Buffer->ReadS()];
 
         FAtlasSprite* sprite = new FAtlasSprite();
-        sprite->Atlas = pi;
+        sprite->Atlas = pii;
         sprite->Rect.Min.X = Buffer->ReadInt();
         sprite->Rect.Min.Y = Buffer->ReadInt();
         sprite->Rect.Max.X = sprite->Rect.Min.X + Buffer->ReadInt();
@@ -491,28 +511,24 @@ void UUIPackage::Load(FByteBuffer* Buffer)
         Buffer->SetPos(nextPos);
     }
 
-    //if (Buffer->seek(indexTablePos, 3))
-    //{
-    //    cnt = buffer->readShort();
-    //    for (int32 i = 0; i < cnt; i++)
-    //    {
-    //        int32 nextPos = buffer->readInt();
-    //        nextPos += buffer->getPos();
+    if (Buffer->Seek(indexTablePos, 3))
+    {
+        cnt = Buffer->ReadShort();
+        for (int32 i = 0; i < cnt; i++)
+        {
+            int32 nextPos = Buffer->ReadInt();
+            nextPos += Buffer->GetPos();
 
-    //        auto it = ItemsByID.find(buffer->readS());
-    //        if (it != ItemsByID.end())
-    //        {
-    //            pi = it->second;
-    //            if (pi->type == PackageItemType::IMAGE)
-    //            {
-    //                pi->pixelHitTestData = new PixelHitTestData();
-    //                pi->pixelHitTestData->load(buffer);
-    //            }
-    //        }
+            TSharedPtr<FPackageItem> pii = ItemsByID.FindRef(Buffer->ReadS());
+            if (pii.IsValid() && pii->Type == EPackageItemType::Image)
+            {
+                pii->PixelHitTestData = MakeShareable(new FPixelHitTestData());
+                pii->PixelHitTestData->Load(Buffer);
+            }
 
-    //        buffer->setPos(nextPos);
-    //    }
-    //}
+            Buffer->SetPos(nextPos);
+        }
+    }
 }
 
 void* UUIPackage::GetItemAsset(const TSharedPtr<FPackageItem>& Item)
@@ -723,4 +739,25 @@ void UUIPackage::LoadSound(const TSharedPtr<FPackageItem>& Item)
 
     UObject* SoundObject = StaticLoadObject(USoundBase::StaticClass(), this, *Item->File);
     Sound->SetResourceObject(SoundObject);
+}
+
+UUIPackageStatic* UUIPackageStatic::Singleton = nullptr;
+
+UUIPackageStatic& UUIPackageStatic::Get()
+{
+    if (Singleton == nullptr)
+    {
+        Singleton = NewObject<UUIPackageStatic>();
+        Singleton->AddToRoot();
+    }
+    return *Singleton;
+}
+
+void UUIPackageStatic::Destroy()
+{
+    if (Singleton != nullptr)
+    {
+        Singleton->RemoveFromRoot();
+        Singleton = nullptr;
+    }
 }

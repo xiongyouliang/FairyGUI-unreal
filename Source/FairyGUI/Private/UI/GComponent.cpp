@@ -10,7 +10,10 @@
 #include "UI/GRoot.h"
 #include "Utils/ByteBuffer.h"
 #include "Widgets/SContainer.h"
+#include "Widgets/HitTest.h"
 #include "Tween/GTween.h"
+#include "FairyApplication.h"
+
 
 UGComponent::UGComponent() :
     AlignOffset(ForceInit)
@@ -213,7 +216,7 @@ void UGComponent::SetChildIndex(UGObject* Child, int32 Index)
 {
     verifyf(Child != nullptr, TEXT("Argument must be non-nil"));
 
-    int32 OldIndex = Children.IndexOfByKey(Child);
+    int32 OldIndex = Children.Find(Child);
     verifyf(OldIndex != -1, TEXT("Not a child of this container"));
 
     if (Child->SortingOrder != 0) //no effect
@@ -233,7 +236,7 @@ int UGComponent::SetChildIndexBefore(UGObject* Child, int32 Index)
 {
     verifyf(Child != nullptr, TEXT("Argument must be non-nil"));
 
-    int32 OldIndex = Children.IndexOfByKey(Child);
+    int32 OldIndex = Children.Find(Child);
     verifyf(OldIndex != -1, TEXT("Not a child of this container"));
 
     if (Child->SortingOrder != 0) //no effect
@@ -304,8 +307,8 @@ void UGComponent::SwapChildren(UGObject* Child1, UGObject* Child2)
     verifyf(Child1 != nullptr, TEXT("Argument1 must be non-nil"));
     verifyf(Child2 != nullptr, TEXT("Argument2 must be non-nil"));
 
-    int32 Index1 = Children.IndexOfByKey(Child1);
-    int32 Index2 = Children.IndexOfByKey(Child2);
+    int32 Index1 = Children.Find(Child1);
+    int32 Index2 = Children.Find(Child2);
 
     verifyf(Index1 != -1, TEXT("Not a child of this container"));
     verifyf(Index2 != -1, TEXT("Not a child of this container"));
@@ -399,7 +402,7 @@ void UGComponent::RemoveController(UGController* Controller)
 {
     verifyf(Controller != nullptr, TEXT("Argument must be non-nil"));
 
-    int32 Index = Controllers.IndexOfByKey(Controller);
+    int32 Index = Controllers.Find(Controller);
     verifyf(Index != -1, TEXT("controller not exists"));
 
     ApplyController(Controller);
@@ -536,6 +539,12 @@ void UGComponent::SetViewHeight(float InViewHeight)
         SetHeight(InViewHeight + Margin.Top + Margin.Bottom);
 }
 
+void UGComponent::SetHitArea(const TSharedPtr<IHitTest>& InHitArea)
+{
+    HitArea = InHitArea;
+    DisplayObject->UpdateVisibilityFlags();
+}
+
 void UGComponent::SetBoundsChangedFlag()
 {
     if (bBoundsChanged)
@@ -546,7 +555,7 @@ void UGComponent::SetBoundsChangedFlag()
 
     bBoundsChanged = true;
 
-    DelayCall(UpdateBoundsTimerHandle, this, &UGComponent::EnsureBoundsCorrect);
+    GetApp()->DelayCall(UpdateBoundsTimerHandle, this, &UGComponent::EnsureBoundsCorrect);
 }
 
 void UGComponent::EnsureBoundsCorrect()
@@ -683,7 +692,7 @@ void UGComponent::ChildSortingOrderChanged(UGObject* Child, int32 OldValue, int3
         if (OldValue == 0)
             SortingChildCount++;
 
-        int32 OldIndex = Children.IndexOfByKey(Child);
+        int32 OldIndex = Children.Find(Child);
         int32 Index = GetInsertPosForSortingChild(Child);
         if (OldIndex < Index)
             MoveChild(Child, OldIndex, Index - 1);
@@ -696,7 +705,7 @@ void UGComponent::BuildNativeDisplayList(bool bImmediatelly)
 {
     if (!bImmediatelly)
     {
-        DelayCall(BuildDisplayListTimerHandle, this, &UGComponent::BuildNativeDisplayList, true);
+        GetApp()->DelayCall(BuildDisplayListTimerHandle, this, &UGComponent::BuildNativeDisplayList, true);
         return;
     }
 
@@ -851,16 +860,6 @@ void UGComponent::HandleSizeChanged()
 
     if (DisplayObject->GetClipping() != EWidgetClipping::Inherit)
         DisplayObject->SetCullingBoundsExtension(Margin);
-
-    /*
-    if (_hitArea)
-    {
-        PixelHitTest* test = dynamic_cast<PixelHitTest*>(_hitArea);
-        if (sourceSize.width != 0)
-            test->scaleX = _size.width / sourceSize.width;
-        if (sourceSize.height != 0)
-            test->scaleY = _size.height / sourceSize.height;
-    }*/
 }
 
 void UGComponent::HandleGrayedChanged()
@@ -957,7 +956,7 @@ void UGComponent::ConstructFromResource(TArray<UGObject*>* ObjectPool, int32 Poo
     else
         SetupOverflow(overflow);
 
-    if (Buffer->ReadBool()) //clipsoft
+    if (Buffer->ReadBool()) //clip soft
         Buffer->Skip(8);
 
     bBuildingDisplayList = true;
@@ -996,7 +995,7 @@ void UGComponent::ConstructFromResource(TArray<UGObject*>* ObjectPool, int32 Poo
             const FString& src = Buffer->ReadS();
             const FString& pkgId = Buffer->ReadS();
 
-            TSharedPtr<FPackageItem> pi;
+            TSharedPtr<FPackageItem> pii;
             if (!src.IsEmpty())
             {
                 UUIPackage* pkg;
@@ -1006,16 +1005,16 @@ void UGComponent::ConstructFromResource(TArray<UGObject*>* ObjectPool, int32 Poo
                     pkg = ContentItem->Owner;
 
                 if (pkg != nullptr)
-                    pi = pkg->GetItem(src);
+                    pii = pkg->GetItem(src);
             }
 
-            if (pi.IsValid())
+            if (pii.IsValid())
             {
-                Child = FUIObjectFactory::NewObject(pi);
+                Child = FUIObjectFactory::NewObject(pii, this);
                 Child->ConstructFromResource();
             }
             else
-                Child = FUIObjectFactory::NewObject(type);
+                Child = FUIObjectFactory::NewObject(type, this);
         }
 
         Child->bUnderConstruct = true;
@@ -1074,13 +1073,13 @@ void UGComponent::ConstructFromResource(TArray<UGObject*>* ObjectPool, int32 Poo
     int32 i2 = Buffer->ReadInt();
     if (!hitTestId.IsEmpty())
     {
-        TSharedPtr<FPackageItem> pi = ContentItem->Owner->GetItem(hitTestId);
-        /*if (pi != nullptr && pi->pixelHitTestData != nullptr)
-            setHitArea(new PixelHitTest(pi->pixelHitTestData, i1, i2));*/
+        TSharedPtr<FPackageItem> pii = ContentItem->Owner->GetItem(hitTestId);
+        if (pii.IsValid() && pii->PixelHitTestData.IsValid())
+            SetHitArea(MakeShareable(new FPixelHitTest(pii->PixelHitTestData, i1, i2)));
     }
     else if (i1 != 0 && i2 != -1)
     {
-        //setHitArea(new ChildHitArea(getChildAt(i2)));
+        SetHitArea(MakeShareable(new FChildHitTest(GetChildAt(i2))));
     }
 
     Buffer->Seek(0, 5);

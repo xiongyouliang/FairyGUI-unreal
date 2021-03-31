@@ -1,19 +1,20 @@
 #include "FairyApplication.h"
 #include "Framework/Application/SlateApplication.h"
 #include "Slate/SGameLayerManager.h"
+#include "UIPackageAsset.h"
 #include "UI/GRoot.h"
 #include "UI/UIPackage.h"
 #include "UI/UIObjectFactory.h"
+#include "UI/PackageItem.h"
+#include "UI/GWindow.h"
+#include "UI/PopupMenu.h"
+#include "UI/DragDropManager.h"
 #include "Tween/TweenManager.h"
 #include "Widgets/NTexture.h"
-#if WITH_EDITOR
-#include "Editor.h"
-#endif
+#include "Utils/ByteBuffer.h"
 
-UFairyApplication* UFairyApplication::Instance = nullptr;
+TMap<uint32, UFairyApplication*> UFairyApplication::Instances;
 
-#if WITH_EDITOR
-//don t know why FScopedSwitchWorldHack not work!
 struct FMyScopedSwitchWorldHack
 {
     FMyScopedSwitchWorldHack(const TSharedPtr<SWindow>& InWindow)
@@ -45,12 +46,6 @@ struct FMyScopedSwitchWorldHack
     }
     UWorld* PrevWorld;
 };
-#else
-struct FMyScopedSwitchWorldHack
-{
-    FMyScopedSwitchWorldHack(const TSharedPtr<SWindow>& InWindow) {}
-};
-#endif
 
 UFairyApplication::FTouchInfo::FTouchInfo() :
     UserIndex(0),
@@ -62,57 +57,67 @@ UFairyApplication::FTouchInfo::FTouchInfo() :
 {
 }
 
+UFairyApplication::FInputProcessor::FInputProcessor(UFairyApplication* InApplication)
+{
+    Application = InApplication;
+}
+
 void UFairyApplication::FInputProcessor::Tick(const float DeltaTime, FSlateApplication& SlateApp, TSharedRef<ICursor> Cursor)
 {
 }
 
 bool UFairyApplication::FInputProcessor::HandleMouseButtonDownEvent(FSlateApplication& SlateApp, const FPointerEvent& MouseEvent)
 {
-    if (!UFairyApplication::IsStarted())
-        return false;
-
-    UFairyApplication::Get()->PreviewDownEvent(MouseEvent);
+    Application->PreviewDownEvent(MouseEvent);
 
     return false;
 }
 
 bool UFairyApplication::FInputProcessor::HandleMouseButtonUpEvent(FSlateApplication& SlateApp, const FPointerEvent& MouseEvent)
 {
-    if (!UFairyApplication::IsStarted())
-        return false;
-
-    UFairyApplication::Get()->PreviewUpEvent(MouseEvent);
+    Application->PreviewUpEvent(MouseEvent);
     return false;
 }
 
 bool UFairyApplication::FInputProcessor::HandleMouseMoveEvent(FSlateApplication& SlateApp, const FPointerEvent& MouseEvent)
 {
-    if (!UFairyApplication::IsStarted())
-        return false;
-
-    UFairyApplication::Get()->PreviewMoveEvent(MouseEvent);
+    Application->PreviewMoveEvent(MouseEvent);
     return false;
 }
 
-UFairyApplication* UFairyApplication::Get()
+UFairyApplication* UFairyApplication::Get(UObject* WorldContextObject)
 {
-    if (Instance != nullptr)
-        return Instance;
+    UWorld* World = WorldContextObject->GetWorld();
+    verifyf(World != nullptr, TEXT("Null World?"));
+    verifyf(World->IsGameWorld(), TEXT("Not a Game World?"));
 
-    Instance = NewObject<UFairyApplication>();
-    Instance->AddToRoot();
-    Instance->OnCreate();
+    UFairyApplication* Instance = Instances.FindRef(World->GetUniqueID());
+    if (Instance == nullptr)
+    {
+        Instance = NewObject<UFairyApplication>();
+        Instances.Add(World->GetUniqueID(), Instance);
+        Instance->World = World;
+        Instance->AddToRoot();
+        Instance->OnCreate();
+    }
     return Instance;
 }
 
 void UFairyApplication::Destroy()
 {
-    if (Instance != nullptr)
+    FUIObjectFactory::PackageItemExtensions.Reset();
+    FUIObjectFactory::LoaderExtension = nullptr;
+
+    UNTexture::DestroyWhiteTexture();
+    UUIPackageStatic::Destroy();
+    FUIConfig::Config = FUIConfig(); //Reset Configuration to default values
+
+    for (auto& it : Instances)
     {
-        Instance->RemoveFromRoot();
-        Instance->OnDestroy();
+        it.Value->RemoveFromRoot();
+        it.Value->OnDestroy();
     }
-    Instance = nullptr;
+    Instances.Reset();
 }
 
 UFairyApplication::UFairyApplication() :
@@ -125,35 +130,43 @@ UFairyApplication::UFairyApplication() :
 
 void UFairyApplication::OnCreate()
 {
-    InputProcessor = MakeShareable(new FInputProcessor());
-    FSlateApplication::Get().RegisterInputPreProcessor(InputProcessor);
+    ViewportClient = World->GetGameViewport();
+    if (ViewportClient == nullptr)
+        return;
 
-    ViewportClient = GWorld->GetGameViewport();
-    ViewportWidget = Instance->ViewportClient->GetGameViewportWidget();
+    ViewportWidget = ViewportClient->GetGameViewportWidget();
 
-    DragDropManager = NewObject<UDragDropManager>();
+    DragDropManager = NewObject<UDragDropManager>(this);
+    DragDropManager->CreateAgent();
 
     PostTickDelegateHandle = FSlateApplication::Get().OnPostTick().AddUObject(this, &UFairyApplication::OnSlatePostTick);
+
+    InputProcessor = MakeShareable(new FInputProcessor(this));
+    FSlateApplication::Get().RegisterInputPreProcessor(InputProcessor);
+
 }
 
 void UFairyApplication::OnDestroy()
 {
-    UUIPackage::RemoveAllPackages();
-    UUIPackage::Branch.Reset();
-    UUIPackage::Vars.Reset();
-
-    FUIObjectFactory::PackageItemExtensions.Reset();
-    FUIObjectFactory::LoaderCreator.Unbind();
-
-    UGRoot::Instance = nullptr;
-    UNTexture::DestroyWhiteTexture();
-    FUIConfig::Config = FUIConfig(); //Reset Configuration to default values
+    FTweenManager::Singleton.Reset();
 
     if (InputProcessor.IsValid())
         FSlateApplication::Get().UnregisterInputPreProcessor(InputProcessor);
 
-    if(PostTickDelegateHandle.IsValid())
+    if (PostTickDelegateHandle.IsValid())
         FSlateApplication::Get().OnPostTick().Remove(PostTickDelegateHandle);
+}
+
+UGRoot* UFairyApplication::GetUIRoot() const
+{
+    if (UIRoot == nullptr)
+    {
+        UFairyApplication* This = const_cast<UFairyApplication*>(this);
+        This->UIRoot = NewObject<UGRoot>(This);
+        This->UIRoot->AddToViewport();
+    }
+
+    return UIRoot;
 }
 
 void UFairyApplication::CallAfterSlateTick(FSimpleDelegate Callback)
@@ -191,7 +204,7 @@ FVector2D UFairyApplication::GetTouchPosition(int32 InUserIndex, int32 InPointer
 int32 UFairyApplication::GetTouchCount() const
 {
     int32 Count = 0;
-    for (auto &it : Touches)
+    for (auto& it : Touches)
     {
         if (it.bDown)
             Count++;
@@ -207,7 +220,7 @@ UGObject* UFairyApplication::GetObjectUnderPoint(const FVector2D& ScreenspacePos
     FWidgetPath WidgetPath = FSlateApplication::Get().LocateWindowUnderMouse(ScreenspacePosition, Windows, false);
 
     if (WidgetPath.IsValid())
-        return GetWidgetGObject(WidgetPath.GetLastWidget());
+        return SDisplayObject::GetWidgetGObject(WidgetPath.GetLastWidget());
     else
         return nullptr;
 }
@@ -244,7 +257,7 @@ void UFairyApplication::SetSoundVolumeScale(float VolumnScale)
 
 bool UFairyApplication::DispatchEvent(const FName& EventType, const TSharedRef<SWidget>& Initiator, const FNVariant& Data)
 {
-    UGObject* Obj = GetWidgetGObject(Initiator);
+    UGObject* Obj = SDisplayObject::GetWidgetGObject(Initiator);
     if (Obj == nullptr)
         return false;
 
@@ -264,7 +277,7 @@ bool UFairyApplication::DispatchEvent(const FName& EventType, const TSharedRef<S
 void UFairyApplication::BubbleEvent(const FName& EventType, const TSharedRef<SWidget>& Initiator, const FNVariant& Data)
 {
     TArray<UGObject*> CallChain;
-    GetPathToRoot(Initiator, CallChain);
+    SDisplayObject::GetWidgetPathToRoot(Initiator, CallChain);
     if (CallChain.Num() == 0)
         return;
 
@@ -299,7 +312,7 @@ void UFairyApplication::InternalBubbleEvent(const FName& EventType, const TArray
 void UFairyApplication::BroadcastEvent(const FName& EventType, const TSharedRef<SWidget>& Initiator, const FNVariant& Data)
 {
     TArray<UGObject*> CallChain;
-    GetDescendants(Initiator, CallChain);
+    SDisplayObject::GetWidgetDescendants(Initiator, CallChain);
     if (CallChain.Num() == 0)
         return;
 
@@ -317,59 +330,6 @@ void UFairyApplication::BroadcastEvent(const FName& EventType, const TSharedRef<
     ReturnEventContext(Context);
 }
 
-UGObject* UFairyApplication::GetWidgetGObject(const TSharedPtr<SWidget>& InWidget)
-{
-    if (!InWidget.IsValid())
-        return nullptr;
-
-    TSharedPtr<SWidget> Ptr = InWidget;
-    while (Ptr.IsValid() && Ptr != ViewportWidget)
-    {
-        if (Ptr->GetTag() == SDisplayObject::SDisplayObjectTag)
-        {
-            const TWeakObjectPtr<UGObject>& ObjPtr = StaticCastSharedPtr<SDisplayObject>(Ptr)->GObject;
-            if (ObjPtr.IsValid())
-                return ObjPtr.Get();
-        }
-
-        Ptr = Ptr->GetParentWidget();
-    }
-
-    return nullptr;
-}
-
-void UFairyApplication::GetPathToRoot(const TSharedRef<SWidget>& InWidget, TArray<UGObject*>& OutArray)
-{
-    TSharedPtr<SWidget> Ptr = InWidget;
-    while (Ptr.IsValid() && Ptr != ViewportWidget)
-    {
-        if (Ptr->GetTag() == SDisplayObject::SDisplayObjectTag)
-        {
-            const TWeakObjectPtr<UGObject>& ObjPtr = StaticCastSharedPtr<SDisplayObject>(Ptr)->GObject;
-            if (ObjPtr.IsValid())
-                OutArray.Add(ObjPtr.Get());
-        }
-
-        Ptr = Ptr->GetParentWidget();
-    }
-}
-
-void UFairyApplication::GetDescendants(const TSharedRef<SWidget>& InWidget, TArray<UGObject*>& OutArray)
-{
-    if (InWidget->GetTag() == SDisplayObject::SDisplayObjectTag)
-    {
-        const TSharedRef<SDisplayObject>& DisplayObject = StaticCastSharedRef<SDisplayObject>(InWidget);
-        if (DisplayObject->GObject.IsValid())
-            OutArray.Add(DisplayObject->GObject.Get());
-    }
-
-    FChildren* Children = InWidget->GetChildren();
-    for (int32 SlotIdx = 0; SlotIdx < Children->Num(); ++SlotIdx)
-    {
-        GetDescendants(Children->GetChildAt(SlotIdx), OutArray);
-    }
-}
-
 UEventContext* UFairyApplication::BorrowEventContext()
 {
     UEventContext* Context;
@@ -383,6 +343,7 @@ UEventContext* UFairyApplication::BorrowEventContext()
     else
         Context = NewObject<UEventContext>(this);
     Context->PointerEvent = &LastTouch->Event;
+    Context->ClickCount = LastTouch->ClickCount;
     //Context->KeyEvent = &LastKeyEvent;
 
     return Context;
@@ -417,7 +378,7 @@ bool UFairyApplication::HasMouseCaptor(int32 InUserIndex, int32 InPointerIndex)
 UFairyApplication::FTouchInfo* UFairyApplication::GetTouchInfo(const FPointerEvent& MouseEvent)
 {
     FTouchInfo* TouchInfo = nullptr;
-    for (auto &it : Touches)
+    for (auto& it : Touches)
     {
         if (it.UserIndex == MouseEvent.GetUserIndex() && it.PointerIndex == (int32)MouseEvent.GetPointerIndex())
         {
@@ -443,7 +404,7 @@ UFairyApplication::FTouchInfo* UFairyApplication::GetTouchInfo(int32 InUserIndex
     if (InUserIndex == -1 && InPointerIndex == -1)
         return LastTouch;
 
-    for (auto &it : Touches)
+    for (auto& it : Touches)
     {
         if (it.UserIndex == InUserIndex && it.PointerIndex == InPointerIndex)
         {
@@ -477,7 +438,7 @@ void UFairyApplication::PreviewUpEvent(const FPointerEvent& MouseEvent)
 
     if (TouchInfo->MouseCaptors.Num() > 0)
     {
-        FMyScopedSwitchWorldHack SwitchWorld(ViewportClient->GetWindow());
+        FMyScopedSwitchWorldHack SwitchWorld(World);
 
         int32 cnt = TouchInfo->MouseCaptors.Num();
         for (int32 i = 0; i < cnt; i++)
@@ -501,7 +462,7 @@ void UFairyApplication::PreviewMoveEvent(const FPointerEvent& MouseEvent)
 
     if (!TouchInfo->bToClearCaptors && TouchInfo->MouseCaptors.Num() > 0)
     {
-        FMyScopedSwitchWorldHack SwitchWorld(ViewportClient->GetWindow());
+        FMyScopedSwitchWorldHack SwitchWorld(World);
 
         int32 cnt = TouchInfo->MouseCaptors.Num();
         for (int32 i = 0; i < cnt; i++)
@@ -517,7 +478,7 @@ void UFairyApplication::PreviewMoveEvent(const FPointerEvent& MouseEvent)
 
 FReply UFairyApplication::OnWidgetMouseButtonDown(const TSharedRef<SWidget>& Widget, const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
-    FMyScopedSwitchWorldHack SwitchWorld(ViewportClient->GetWindow());
+    FMyScopedSwitchWorldHack SwitchWorld(World);
 
     FTouchInfo* TouchInfo = GetTouchInfo(MouseEvent);
 
@@ -546,14 +507,14 @@ FReply UFairyApplication::OnWidgetMouseButtonDown(const TSharedRef<SWidget>& Wid
 
 FReply UFairyApplication::OnWidgetMouseButtonUp(const TSharedRef<SWidget>& Widget, const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
-    FMyScopedSwitchWorldHack SwitchWorld(ViewportClient->GetWindow());
+    FMyScopedSwitchWorldHack SwitchWorld(World);
 
     FTouchInfo* TouchInfo = GetTouchInfo(MouseEvent);
     if (TouchInfo == nullptr)
         return FReply::Handled().ReleaseMouseCapture();
 
     TArray<UGObject*> CallChain;
-    GetPathToRoot(Widget, CallChain);
+    SDisplayObject::GetWidgetPathToRoot(Widget, CallChain);
     if (CallChain.Num() > 0)
     {
         for (auto& it : TouchInfo->MouseCaptors)
@@ -594,12 +555,15 @@ FReply UFairyApplication::OnWidgetMouseMove(const TSharedRef<SWidget>& Widget, c
 
 FReply UFairyApplication::OnWidgetMouseButtonDoubleClick(const TSharedRef<SWidget>& Widget, const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
+    FTouchInfo* TouchInfo = GetTouchInfo(MouseEvent);
+    TouchInfo->ClickCount = 2;
+
     return OnWidgetMouseButtonDown(Widget, MyGeometry, MouseEvent);
 }
 
 void UFairyApplication::OnWidgetMouseEnter(const TSharedRef<SWidget>& Widget, const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
-    FMyScopedSwitchWorldHack SwitchWorld(ViewportClient->GetWindow());
+    FMyScopedSwitchWorldHack SwitchWorld(World);
 
     FTouchInfo* TouchInfo = GetTouchInfo(MouseEvent);
     DispatchEvent(FUIEvents::RollOver, Widget);
@@ -607,7 +571,7 @@ void UFairyApplication::OnWidgetMouseEnter(const TSharedRef<SWidget>& Widget, co
 
 void UFairyApplication::OnWidgetMouseLeave(const TSharedRef<SWidget>& Widget, const FPointerEvent& MouseEvent)
 {
-    FMyScopedSwitchWorldHack SwitchWorld(ViewportClient->GetWindow());
+    FMyScopedSwitchWorldHack SwitchWorld(World);
 
     FTouchInfo* TouchInfo = GetTouchInfo(MouseEvent);
     DispatchEvent(FUIEvents::RollOut, Widget);
@@ -615,7 +579,7 @@ void UFairyApplication::OnWidgetMouseLeave(const TSharedRef<SWidget>& Widget, co
 
 FReply UFairyApplication::OnWidgetMouseWheel(const TSharedRef<SWidget>& Widget, const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
-    FMyScopedSwitchWorldHack SwitchWorld(ViewportClient->GetWindow());
+    FMyScopedSwitchWorldHack SwitchWorld(World);
 
     FTouchInfo* TouchInfo = GetTouchInfo(MouseEvent);
     TouchInfo->Event = MouseEvent;

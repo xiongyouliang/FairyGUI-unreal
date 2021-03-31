@@ -15,7 +15,7 @@ public:
     SLATE_ARGUMENT(UGObject*, GObject)
     SLATE_END_ARGS()
 
-    MESHFACTORY_TYPE(SFImage)
+    MESHFACTORY_TYPE(SFImage, nullptr)
 
     SFImage();
 
@@ -23,6 +23,7 @@ public:
 
     void SetTexture(UNTexture* InTexture);
     UNTexture* GetTexture() const { return Graphics.GetTexture();  }
+    void SetNativeSize();
     void SetScale9Grid(const TOptional<FBox2D>& GridRect);
     void SetScaleByTile(bool bInScaleByTile);
     void SetTileGridIndice(int32 InTileGridIndex);

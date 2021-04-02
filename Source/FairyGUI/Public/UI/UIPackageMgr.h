@@ -33,7 +33,7 @@ public:
 
 	// Package Manager Interface start
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	UUIPackage* AddPackage(UObject* WorldContextObject, UUIPackageAsset* InAsset);
+	UUIPackage* AddPackage(UUIPackageAsset* InAsset);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	UUIPackage* GetPackageByName(const FString& PackageName);

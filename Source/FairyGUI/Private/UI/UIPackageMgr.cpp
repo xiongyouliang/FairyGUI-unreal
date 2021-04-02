@@ -48,7 +48,7 @@ void UUIPackageMgr::SetVar(const FString& VarKey, const FString& VarValue)
 	Vars.Add(VarKey, VarValue);
 }
 
-UUIPackage* UUIPackageMgr::AddPackage(UObject* Outer, UUIPackageAsset* InAsset)
+UUIPackage* UUIPackageMgr::AddPackage(UUIPackageAsset* InAsset)
 {
 	FString PathName = InAsset->GetPathName();
 	UUIPackage* Pkg = PackageInstByID.FindRef(PathName);
@@ -57,7 +57,7 @@ UUIPackage* UUIPackageMgr::AddPackage(UObject* Outer, UUIPackageAsset* InAsset)
 		UE_LOG(LogFairyGUI, Warning, TEXT("Package already addedd"));
 		return Pkg;
 	}
-	Pkg = NewObject<UUIPackage>(Outer);
+	Pkg = NewObject<UUIPackage>(this); // UUIPackage outer is UUIPackageMgr Singleton
 	Pkg->Asset = InAsset;
 	Pkg->AssetPath = PathName;
 	FByteBuffer Buffer(InAsset->Data.GetData(), 0, InAsset->Data.Num(), false);

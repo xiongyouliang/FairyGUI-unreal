@@ -10,6 +10,16 @@
 
 UUIPackageMgr* UUIPackageMgr::Instance = nullptr;
 
+UUIPackageMgr::UUIPackageMgr()
+{
+	UE_LOG(LogTemp, Warning, TEXT("UUIPackageMgr::UUIPackageMgr()"));
+}
+
+UUIPackageMgr::~UUIPackageMgr()
+{
+	UE_LOG(LogTemp, Warning, TEXT("UUIPackageMgr::~UUIPackageMgr()"));
+}
+
 UUIPackageMgr* UUIPackageMgr::Get()
 {
 	if (Instance == nullptr)
@@ -50,6 +60,7 @@ void UUIPackageMgr::SetVar(const FString& VarKey, const FString& VarValue)
 
 UUIPackage* UUIPackageMgr::AddPackage(UUIPackageAsset* InAsset)
 {
+	UE_LOG(LogFairyGUI, Log, TEXT("UUIPackageMgr::AddPackage(...)"));
 	FString PathName = InAsset->GetPathName();
 	UUIPackage* Pkg = PackageInstByID.FindRef(PathName);
 	if (Pkg != nullptr)

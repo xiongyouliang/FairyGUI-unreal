@@ -63,7 +63,8 @@ public:
 	UGWindow* CreateWindow(UObject* Outer, const FString& PackageName, const FString& ResourceName);
 
 private:
-	//UUIPackageMgr() {};
+	UUIPackageMgr();
+	~UUIPackageMgr();
 
 	UPROPERTY()
 	TMap<FString, UUIPackage*> PackageInstByID;

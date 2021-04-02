@@ -259,6 +259,15 @@ public:
         return OnSizeChangedEvent;
     }
 
+    //UPROPERTY(BlueprintAssignable, Category = "FairyGUI|LifyCycle")
+    //FSimpleDynDelegate OnConstructed;
+
+    UPROPERTY(BlueprintAssignable, Category = "FairyGUI|LifyCycle")
+    FGUISimpleDynMDelegate OnEnter;
+
+    UPROPERTY(BlueprintAssignable, Category = "FairyGUI|LifyCycle")
+    FGUISimpleDynMDelegate OnExit;
+
     UPROPERTY(BlueprintAssignable, Category = "FairyGUI|Event")
     FGUIEventDynMDelegate OnClick;
 

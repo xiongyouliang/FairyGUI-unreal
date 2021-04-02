@@ -135,4 +135,5 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FGUIEventMDelegate, UEventContext*);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FGUIEventDynDelegate, UEventContext*, EventContext);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGUIEventDynMDelegate, UEventContext*, EventContext);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FGUISimpleDynMDelegate);
 DECLARE_DYNAMIC_DELEGATE(FSimpleDynDelegate);

@@ -64,8 +64,16 @@ TSharedPtr<FPackageItem> UUIPackage::GetItemByName(const FString& ResourceName)
 UGObject* UUIPackage::CreateObject(UObject* Owner, const FString& ResourceName)
 {
     TSharedPtr<FPackageItem> item = GetItemByName(ResourceName);
+    //verifyf will break app, use a error log replace it in Dev/Test/Debug Build, include Editor;
+#if UE_BUILD_SHIPPING
     verifyf(item.IsValid(), TEXT("FairyGUI: resource not found - %s in  %s"), *ResourceName, *Name);
-
+#else
+    if (!item.IsValid())
+    {
+        UE_LOG(LogTemp, Error, TEXT("FairyGUI: resource not found - %s in  %s"), *ResourceName, *Name);
+        return nullptr;
+    }
+#endif // UE_BUILD_SHIPPING
     return CreateObject(Owner, item);
 }
 

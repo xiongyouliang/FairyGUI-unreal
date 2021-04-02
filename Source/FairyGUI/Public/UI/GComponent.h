@@ -35,7 +35,6 @@ public:
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     void RemoveChildren(int32 BeginIndex = 0, int32 EndIndex = -1);
-    // ~ child operation end
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI", meta = (DeterminesOutputType = "ClassType"))
     UGObject* GetChildAt(int32 Index, TSubclassOf<UGObject> ClassType = nullptr) const;
@@ -75,6 +74,7 @@ public:
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     virtual bool IsChildInView(UGObject* Child) const;
+    // ~ child operation end
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     virtual int32 GetFirstChildInView() const;

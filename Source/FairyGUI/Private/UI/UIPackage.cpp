@@ -32,14 +32,20 @@ int32 UUIPackage::Constructing = 0;
 UUIPackage::UUIPackage() :
     BranchIndex(0)
 {
-    UE_LOG(LogTemp, Warning, TEXT("UUIPackage::UUIPackage()"));
+    if (HasAnyFlags(RF_ClassDefaultObject) == false)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("UUIPackage::UUIPackage()"));
+    }
 }
 
 UUIPackage::~UUIPackage()
 {
-    UE_LOG(LogTemp, Warning, TEXT("UUIPackage::~UUIPackage()"));
-    for (auto& it : Sprites) {
-        delete it.Value;
+    if (HasAnyFlags(RF_ClassDefaultObject) == false)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("UUIPackage::~UUIPackage()"));
+        for (auto& it : Sprites) {
+            delete it.Value;
+        }
     }
 }
 

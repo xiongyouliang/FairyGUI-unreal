@@ -65,7 +65,9 @@ public:
 private:
 	//UUIPackageMgr() {};
 
+	UPROPERTY()
 	TMap<FString, UUIPackage*> PackageInstByID;
+	UPROPERTY()
 	TMap<FString, UUIPackage*> PackageInstByName;
 	TMap<FString, FString> Vars;
 	FString Branch;

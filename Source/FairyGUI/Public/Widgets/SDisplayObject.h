@@ -66,10 +66,10 @@ protected:
     void UpdateVisibilityFlags();
 
 protected:
-    uint8 bVisible : 1;
-    uint8 bInteractable : 1;
-    uint8 bTouchable : 1;
-    uint8 bOpaque : 1;
+    bool bVisible : 1;
+    bool bInteractable : 1;
+    bool bTouchable : 1;
+    bool bOpaque : 1;
     FVector2D Size;
 
 private:

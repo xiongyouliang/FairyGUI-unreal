@@ -14,6 +14,7 @@
 #include "Tween/GTween.h"
 
 static FThreadSafeCounter FairyComponentCount;
+
 UGComponent::UGComponent() :
 	bBuildingDisplayList(false),
 	AlignOffset(ForceInit),
@@ -24,7 +25,7 @@ UGComponent::UGComponent() :
 {
 	if (HasAnyFlags(RF_ClassDefaultObject) == false)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UGComponent::UGComponent(...), Count:%d"), FairyComponentCount.GetValue());
+		UE_LOG(LogFairyGUI, Warning, TEXT("UGComponent::UGComponent(...), Count:%d"), FairyComponentCount.GetValue());
 		FairyComponentCount.Increment();
 	}
 }
@@ -34,21 +35,22 @@ UGComponent::~UGComponent()
 	if (HasAnyFlags(RF_ClassDefaultObject) == false)
 	{
 		FairyComponentCount.Decrement();
-		UE_LOG(LogTemp, Warning, TEXT("UGComponent::~UGComponent(...), Count:%d"), FairyComponentCount.GetValue());
-		
+		UE_LOG(LogFairyGUI, Warning, TEXT("UGComponent::~UGComponent(...), Count:%d"), FairyComponentCount.GetValue());
 	}
 }
 
 void UGComponent::ReleaseSlateResources(bool bReleaseChildren)
 {
-	Super::ReleaseSlateResources(bReleaseChildren);
 	Container.Reset();
 	RootContainer.Reset();
+
+	Super::ReleaseSlateResources(bReleaseChildren);
 }
 
 UGObject* UGComponent::AddChild(UGObject* Child)
 {
-	if (UGComponent* Component = Cast<UGComponent>(Child)) {
+	if ( UGComponent* Component = Cast<UGComponent>(Child) ) 
+	{
 		Component->MakeSlateWidget();
 	}
 	AddChildAt(Child, Children.Num());
@@ -70,21 +72,27 @@ UGObject* UGComponent::AddChildAt(UGObject* Child, int32 Index)
 		Child->Parent = this;
 
 		int32 cnt = Children.Num();
-		if (Child->SortingOrder != 0)
+		if ( Child->SortingOrder != 0 )
 		{
 			SortingChildCount++;
 			Index = GetInsertPosForSortingChild(Child);
 		}
 		else if (SortingChildCount > 0)
 		{
-			if (Index > (cnt - SortingChildCount))
+			if ( Index > (cnt - SortingChildCount) )
+			{
 				Index = cnt - SortingChildCount;
+			}
 		}
 
 		if (Index == cnt)
+		{
 			Children.Add(Child);
-		else
+		}
+		else 
+		{
 			Children.Insert(Child, Index);
+		}
 
 		ChildStateChanged(Child);
 		SetBoundsChangedFlag();
@@ -1010,8 +1018,10 @@ void UGComponent::ConstructFromResource(TArray<UGObject*>* ObjectPool, int32 Poo
 		int32 dataLen = Buffer->ReadShort();
 		int32 curPos = Buffer->GetPos();
 
-		if (ObjectPool != nullptr)
+		if (ObjectPool != nullptr) 
+		{
 			Child = (*ObjectPool)[PoolIndex + i];
+		}
 		else
 		{
 			Buffer->Seek(curPos, 0);
@@ -1024,13 +1034,19 @@ void UGComponent::ConstructFromResource(TArray<UGObject*>* ObjectPool, int32 Poo
 			if (!src.IsEmpty())
 			{
 				UUIPackage* pkg;
-				if (!pkgId.IsEmpty())
+				if (!pkgId.IsEmpty()) 
+				{
 					pkg = UUIPackageMgr::Get()->GetPackageByID(pkgId);
-				else
+				}
+				else 
+				{
 					pkg = ContentItem->Owner;
+				}
 
 				if (pkg != nullptr)
+				{
 					pi = pkg->GetItem(src);
+				}
 			}
 
 			if (pi.IsValid())
@@ -1039,7 +1055,9 @@ void UGComponent::ConstructFromResource(TArray<UGObject*>* ObjectPool, int32 Poo
 				Child->ConstructFromResource();
 			}
 			else
+			{
 				Child = FUIObjectFactory::NewObject(GetOuter(), type);
+			}
 		}
 
 		Child->bUnderConstruct = true;

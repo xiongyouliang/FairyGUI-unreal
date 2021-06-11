@@ -8,8 +8,11 @@ UGGroup::UGGroup() :
     MainGridMinSize(10),
     MainChildIndex(-1)
 {
-    DisplayObject = SNew(SDisplayObject).GObject(this);;
-    DisplayObject->SetInteractable(false);
+    if (HasAnyFlags(RF_ClassDefaultObject) == false) 
+    {
+        DisplayObject = SNew(SDisplayObject).GObject(this);;
+        DisplayObject->SetInteractable(false);
+    }
 }
 
 UGGroup::~UGGroup()

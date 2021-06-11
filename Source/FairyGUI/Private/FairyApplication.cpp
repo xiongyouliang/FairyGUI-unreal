@@ -33,7 +33,6 @@ bool UFairyApplication::FInputProcessor::HandleMouseButtonDownEvent(FSlateApplic
 		return false;
 
 	UFairyApplication::Get()->PreviewDownEvent(MouseEvent);
-
 	return false;
 }
 
@@ -436,9 +435,10 @@ UFairyApplication::FTouchInfo* UFairyApplication::GetTouchInfo(const FPointerEve
 	if (TouchInfo == nullptr)
 	{
 		TouchInfo = new FTouchInfo();
-		Touches.Add(TouchInfo);
 		TouchInfo->UserIndex = MouseEvent.GetUserIndex();
 		TouchInfo->PointerIndex = (int32)MouseEvent.GetPointerIndex();
+
+		Touches.Add(TouchInfo);
 	}
 
 	LastTouch = TouchInfo;
@@ -471,6 +471,11 @@ void UFairyApplication::PreviewDownEvent(const FPointerEvent& MouseEvent)
 	TouchInfo->MouseCaptors.Reset();
 	TouchInfo->bToClearCaptors = false;
 	TouchInfo->DownPath.Reset();
+
+#if WITH_EDITOR
+	const FVector2D ScreenSpacePos = MouseEvent.GetScreenSpacePosition();
+	UE_LOG(LogFairyGUI, Log, TEXT("---> UFairyApplication::PreviewDownEvent(...), ScreenSpace, X=%f, Y=%f"), ScreenSpacePos.X, ScreenSpacePos.Y);
+#endif
 
 	bNeedCheckPopups = true;
 }
@@ -540,6 +545,9 @@ FReply UFairyApplication::OnWidgetMouseButtonDown(const TSharedRef<SWidget>& Wid
 
 	BubbleEvent(FUIEvents::TouchBegin, Widget);
 
+#if WITH_EDITOR
+	UE_LOG(LogFairyGUI, Log, TEXT("---> UFairyApplication::OnWidgetMouseButtonDown(...)"));
+#endif
 	return FReply::Handled();
 }
 
@@ -580,6 +588,10 @@ FReply UFairyApplication::OnWidgetMouseButtonUp(const TSharedRef<SWidget>& Widge
 	}
 
 	TouchInfo->DownPath.Reset();
+
+#if WITH_EDITOR
+	UE_LOG(LogFairyGUI, Log, TEXT("---> UFairyApplication::OnWidgetMouseButtonUp(...)"));
+#endif
 
 	return FReply::Handled().ReleaseMouseCapture();
 }

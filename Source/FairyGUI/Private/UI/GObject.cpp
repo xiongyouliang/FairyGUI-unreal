@@ -131,9 +131,13 @@ float UGObject::GetXMin() const
 void UGObject::SetXMin(float InXMin)
 {
 	if (bPivotAsAnchor)
+	{
 		SetPosition(FVector2D(InXMin + Size.X * Pivot.X, Position.Y));
+	}
 	else
+	{
 		SetPosition(FVector2D(InXMin, Position.Y));
+	}
 }
 
 float UGObject::GetYMin() const
@@ -144,9 +148,13 @@ float UGObject::GetYMin() const
 void UGObject::SetYMin(float InYMin)
 {
 	if (bPivotAsAnchor)
+	{
 		SetPosition(FVector2D(Position.X, InYMin + Size.Y * Pivot.Y));
+	}
 	else
+	{
 		SetPosition(FVector2D(Position.X, InYMin));
+	}
 }
 
 void UGObject::SetSize(const FVector2D& InSize, bool bIgnorePivot)
@@ -156,13 +164,22 @@ void UGObject::SetSize(const FVector2D& InSize, bool bIgnorePivot)
 		RawSize = InSize;
 		FVector2D ClampSize = InSize;
 		if (ClampSize.X < MinSize.X)
+		{
 			ClampSize.X = MinSize.X;
+		}
 		else if (MaxSize.X > 0 && ClampSize.X > MaxSize.X)
+		{
 			ClampSize.X = MaxSize.X;
+		}
+			
 		if (ClampSize.Y < MinSize.Y)
+		{
 			ClampSize.Y = MinSize.Y;
+		}
 		else if (MaxSize.Y > 0 && ClampSize.Y > MaxSize.Y)
+		{
 			ClampSize.Y = MaxSize.Y;
+		}
 		FVector2D Delta = ClampSize - Size;
 		Size = ClampSize;
 
@@ -173,19 +190,29 @@ void UGObject::SetSize(const FVector2D& InSize, bool bIgnorePivot)
 			if (!bPivotAsAnchor)
 			{
 				if (!bIgnorePivot)
+				{
 					SetPosition(Position - Pivot * Delta);
+				}
 				else
+				{
 					HandlePositionChanged();
+				}
 			}
 			else
+			{
 				HandlePositionChanged();
+			}
 		}
 		else
+		{
 			HandlePositionChanged();
+		}
 
 		UGGroup* g = Cast<UGGroup>(this);
 		if (g != nullptr)
+		{
 			g->ResizeChildren(Delta);
+		}
 
 		UpdateGear(2);
 
@@ -194,7 +221,9 @@ void UGObject::SetSize(const FVector2D& InSize, bool bIgnorePivot)
 			Relations->OnOwnerSizeChanged(Delta, bPivotAsAnchor || !bIgnorePivot);
 			Parent->SetBoundsChangedFlag();
 			if (Group.IsValid())
+			{
 				Group->SetBoundsChangedFlag();
+			}
 		}
 		OnSizeChangedEvent.Broadcast();
 	}
@@ -205,24 +234,32 @@ void UGObject::SetSizeDirectly(const FVector2D& InSize)
 	RawSize = InSize;
 	Size = InSize;
 	if (Size.X < 0)
+	{
 		Size.X = 0;
+	}
 	if (Size.Y < 0)
+	{
 		Size.Y = 0;
+	}
 }
 
 void UGObject::Center(bool bRestraint)
 {
-	UGComponent* r = nullptr;
+	UGComponent* Root = nullptr;
 	if (Parent.IsValid())
-		r = Parent.Get();
+	{
+		Root = Parent.Get();
+	}
 	else
-		r = UFairyApplication::Get()->GetUIRoot(this);
+	{
+		Root = UFairyApplication::Get()->GetUIRoot(this);
+	}
 
-	SetPosition(((r->Size - Size) / 2).RoundToVector());
+	SetPosition(((Root->Size - Size) / 2).RoundToVector());
 	if (bRestraint)
 	{
-		AddRelation(r, ERelationType::Center_Center);
-		AddRelation(r, ERelationType::Middle_Middle);
+		AddRelation(Root, ERelationType::Center_Center);
+		AddRelation(Root, ERelationType::Middle_Middle);
 	}
 }
 
@@ -230,7 +267,9 @@ void UGObject::MakeFullScreen(bool bRestraint)
 {
 	SetSize(UFairyApplication::Get()->GetUIRoot(this)->GetSize());
 	if (bRestraint)
+	{
 		AddRelation(UFairyApplication::Get()->GetUIRoot(this), ERelationType::Size);
+	}
 }
 
 void UGObject::SetPivot(const FVector2D& InPivot, bool bAsAnchor)
@@ -304,9 +343,13 @@ void UGObject::SetVisible(bool bInVisible)
 		bVisible = bInVisible;
 		HandleVisibleChanged();
 		if (Parent.IsValid())
+		{
 			Parent->SetBoundsChangedFlag();
+		}
 		if (Group.IsValid() && Group->IsExcludeInvisibles())
+		{
 			Group->SetBoundsChangedFlag();
+		}
 	}
 }
 

@@ -20,11 +20,11 @@ public:
 
 void SRootContainer::OnArrangeChildren(const FGeometry& AllottedGeometry, FArrangedChildren& ArrangedChildren) const
 {
-    const FVector2D& LocalSize = AllottedGeometry.GetLocalSize().RoundToVector();
-    if (GObject.IsValid() && (LocalSize != GObject->GetSize()))
+    const FVector2D& LocalSize = AllottedGeometry.GetLocalSize();
+    const FVector2D& AbsoluteSize = AllottedGeometry.GetAbsoluteSize();
+    if (GObject.IsValid() && (AbsoluteSize != GObject->GetSize()))
     {
-        GObject->SetSize(LocalSize.RoundToVector());
-        UE_LOG(LogFairyGUI, Log, TEXT("UIRoot resize to %f,%f"), GObject->GetSize().X, GObject->GetSize().Y);
+        GObject->SetSize(LocalSize);
     }
 
     SContainer::OnArrangeChildren(AllottedGeometry, ArrangedChildren);
@@ -66,10 +66,8 @@ void UGRoot::AddToViewport()
 
         NewRootContainer->SetOpaque(false);
         NewRootContainer->AddChild(RootContainer.ToSharedRef());
+
         ViewportClient->AddViewportWidgetContent(NewRootContainer, 100);
-        FVector2D size = NewRootContainer->GetParentWidget()->GetPaintSpaceGeometry().GetLocalSize().RoundToVector();
-        UE_LOG(LogTemp, Warning, TEXT("-----------------> size:(%f, %f)"), size.X, size.Y);
-        SetSize(size);
     }
 }
 
@@ -121,21 +119,32 @@ void UGRoot::BringToFront(UGWindow* Window)
     int32 cnt = NumChildren();
     int32 i;
     if (ModalLayer->GetParent() != nullptr && !Window->IsModal())
+    {
         i = GetChildIndex(ModalLayer) - 1;
+    }
     else
+    {
         i = cnt - 1;
+    }
 
     for (; i >= 0; i--)
     {
         UGObject* g = GetChildAt(i);
         if (g == Window)
+        {
             return;
+        }
+
         if (g->IsA<UGWindow>())
+        {
             break;
+        }
     }
 
     if (i >= 0)
+    {
         SetChildIndex(Window, i);
+    }
 }
 
 void UGRoot::CloseAllExceptModals()
@@ -146,7 +155,9 @@ void UGRoot::CloseAllExceptModals()
     for (const auto& child : map)
     {
         if (child->IsA<UGWindow>() && !((UGWindow*)child)->IsModal())
+        {
             HideWindowImmediately((UGWindow*)child);
+        }
     }
 }
 
@@ -158,7 +169,9 @@ void UGRoot::CloseAllWindows()
     for (const auto& child : map)
     {
         if (child->IsA<UGWindow>())
+        {
             HideWindowImmediately((UGWindow*)child);
+        }
     }
 }
 

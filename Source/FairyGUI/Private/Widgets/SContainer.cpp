@@ -124,9 +124,11 @@ void SContainer::OnArrangeChildren(const FGeometry& AllottedGeometry, FArrangedC
             const FSlotBase& CurChild = Children[ChildIndex];
             const TSharedRef<SWidget>& CurWidget = CurChild.GetWidget();
             if (ArrangedChildren.Accepts(CurWidget->GetVisibility()))
-                ArrangedChildren.AddWidget(AllottedGeometry.MakeChild(
-                    CurWidget, FVector2D::ZeroVector, CurWidget.Get().GetDesiredSize()
-                ));
+            {
+                ArrangedChildren.AddWidget(
+                    AllottedGeometry.MakeChild( CurWidget, FVector2D::ZeroVector, CurWidget.Get().GetDesiredSize() )
+                );
+            }   
         }
     }
 }

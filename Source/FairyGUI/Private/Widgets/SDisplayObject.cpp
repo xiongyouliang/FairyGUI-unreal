@@ -26,38 +26,54 @@ void SDisplayObject::Construct(const SDisplayObject::FArguments& InArgs)
 const FVector2D& SDisplayObject::GetPosition() const
 {
     if (!GetRenderTransform().IsSet())
+    {
         return FVector2D::ZeroVector;
+    }
     else
+    {
         return GetRenderTransform()->GetTranslation();
+    }
 }
 
 void SDisplayObject::SetPosition(const FVector2D& InPosition)
 {
-    if (!GetRenderTransform().IsSet())
-        SetRenderTransform(FSlateRenderTransform(InPosition));
-    else
-        SetRenderTransform(
-            FSlateRenderTransform(GetRenderTransform()->GetMatrix(), InPosition));
+    LocalPosition = InPosition;
+    UpdateRenderTransform();
 }
 
 void SDisplayObject::SetX(float InX)
 {
-    if (!GetRenderTransform().IsSet())
-        SetRenderTransform(FSlateRenderTransform(FVector2D(InX, 0)));
-    else
-        SetRenderTransform(
-            FSlateRenderTransform(GetRenderTransform()->GetMatrix(),
-                FVector2D(InX, GetRenderTransform()->GetTranslation().Y)));
+    LocalPosition.X = InX;
+    UpdateRenderTransform();
 }
 
 void SDisplayObject::SetY(float InY)
 {
+    //if (!GetRenderTransform().IsSet())
+    //{
+    //    SetRenderTransform( FSlateRenderTransform(FVector2D(0, InY)) );
+    //}
+    //else
+    //{
+    //    SetRenderTransform(FSlateRenderTransform(GetRenderTransform()->GetMatrix(),
+    //        FVector2D(GetRenderTransform()->GetTranslation().X, InY)) );
+    //}
+    LocalPosition.Y = InY;
+    UpdateRenderTransform();
+}
+
+void SDisplayObject::UpdateRenderTransform()
+{
+    float DPIScale = 0.6666;
+    FVector2D FinalPosition = LocalPosition / DPIScale;
     if (!GetRenderTransform().IsSet())
-        SetRenderTransform(FSlateRenderTransform(FVector2D(0, InY)));
+    {
+        SetRenderTransform(FSlateRenderTransform(FinalPosition));
+    }
     else
-        SetRenderTransform(
-            FSlateRenderTransform(GetRenderTransform()->GetMatrix(),
-                FVector2D(GetRenderTransform()->GetTranslation().X, InY)));
+    {
+        SetRenderTransform(FSlateRenderTransform(GetRenderTransform()->GetMatrix(), FinalPosition));
+    }
 }
 
 void SDisplayObject::SetSize(const FVector2D& InSize)

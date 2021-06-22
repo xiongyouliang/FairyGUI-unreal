@@ -59,22 +59,22 @@ void UGMovieClip::Advance(float Time)
 
 EFlipType UGMovieClip::GetFlip() const
 {
-    return Content->Graphics.GetFlip();
+    return Content->Graphics->GetFlip();
 }
 
 void UGMovieClip::SetFlip(EFlipType InFlip)
 {
-    Content->Graphics.SetFlip(InFlip);
+    Content->Graphics->SetFlip(InFlip);
 }
 
 FColor UGMovieClip::GetColor() const
 {
-    return Content->Graphics.GetColor();
+    return Content->Graphics->GetColor();
 }
 
 void UGMovieClip::SetColor(const FColor& InColor)
 {
-    Content->Graphics.SetColor(InColor);
+    Content->Graphics->SetColor(InColor);
 }
 
 FNVariant UGMovieClip::GetProp(EObjectPropID PropID) const

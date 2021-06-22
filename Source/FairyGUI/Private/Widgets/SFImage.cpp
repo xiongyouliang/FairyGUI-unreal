@@ -4,11 +4,23 @@
 #include "UI/FieldTypes.h"
 
 SFImage::SFImage() :
+    Graphics(nullptr),
     bScaleByTile(false),
     TextureScale(1, 1),
     TileGridIndice(0)
+    
 {
-    Graphics.SetMeshFactory(MakeShared<FMeshFactory>(this));
+    Graphics = new FNGraphics;
+    Graphics->SetMeshFactory(MakeShared<FMeshFactory>(this));
+}
+
+SFImage::~SFImage()
+{
+    if (Graphics)
+    {
+        delete Graphics;
+        Graphics = nullptr;
+    }
 }
 
 void SFImage::Construct(const FArguments& InArgs)
@@ -18,7 +30,7 @@ void SFImage::Construct(const FArguments& InArgs)
 
 void SFImage::SetTexture(UNTexture* InTexture)
 {
-    Graphics.SetTexture(InTexture);
+    Graphics->SetTexture(InTexture);
 
     if (InTexture != nullptr && Size.IsZero())
     {
@@ -37,7 +49,7 @@ void SFImage::SetScaleByTile(bool bInScaleByTile)
     if (bScaleByTile != bInScaleByTile)
     {
         bScaleByTile = bInScaleByTile;
-        Graphics.SetMeshDirty();
+        Graphics->SetMeshDirty();
     }
 }
 
@@ -46,7 +58,7 @@ void SFImage::SetTileGridIndice(int32 InTileGridIndex)
     if (TileGridIndice != InTileGridIndex)
     {
         TileGridIndice = InTileGridIndex;
-        Graphics.SetMeshDirty();
+        Graphics->SetMeshDirty();
     }
 }
 
@@ -68,7 +80,7 @@ void SFImage::SetFillMethod(EFillMethod InMethod)
     if (FillMesh->Method != InMethod)
     {
         FillMesh->Method = InMethod;
-        Graphics.SetMeshDirty();
+        Graphics->SetMeshDirty();
     }
 }
 
@@ -85,7 +97,7 @@ void SFImage::SetFillOrigin(int32 InOrigin)
     if (FillMesh->Origin != InOrigin)
     {
         FillMesh->Origin = InOrigin;
-        Graphics.SetMeshDirty();
+        Graphics->SetMeshDirty();
     }
 }
 
@@ -102,7 +114,7 @@ void SFImage::SetFillClockwise(bool bInClockwise)
     if (FillMesh->bClockwise != bInClockwise)
     {
         FillMesh->bClockwise = bInClockwise;
-        Graphics.SetMeshDirty();
+        Graphics->SetMeshDirty();
     }
 }
 
@@ -119,15 +131,14 @@ void SFImage::SetFillAmount(float InAmount)
     if (FillMesh->Amount != InAmount)
     {
         FillMesh->Amount = InAmount;
-        Graphics.SetMeshDirty();
+        Graphics->SetMeshDirty();
     }
 }
 
 int32 SFImage::OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const
 {
     const bool bIsEnabled = ShouldBeEnabled(bParentEnabled);
-    const_cast<SFImage*>(this)->Graphics.Paint(AllottedGeometry, OutDrawElements, LayerId,
-        InWidgetStyle.GetColorAndOpacityTint().A, bIsEnabled);
+    Graphics->Paint(AllottedGeometry, OutDrawElements, LayerId, InWidgetStyle.GetColorAndOpacityTint().A, bIsEnabled);
     return LayerId;
 }
 
@@ -139,7 +150,7 @@ void SFImage::OnPopulateMesh(FVertexHelper& Helper)
     }
     else if (bScaleByTile)
     {
-        UNTexture* Texture = Graphics.GetTexture();
+        UNTexture* Texture = Graphics->GetTexture();
         if (Texture->Root == Texture
             && Texture->NativeTexture != nullptr
             && Texture->NativeTexture->AddressX == TextureAddress::TA_Mirror
@@ -156,7 +167,7 @@ void SFImage::OnPopulateMesh(FVertexHelper& Helper)
             FBox2D ContentRect = Helper.ContentRect;
             ContentRect.Max = ContentRect.Min + ContentRect.GetSize() * TextureScale;
 
-            TileFill(Helper, ContentRect, Helper.UVRect, Graphics.GetTexture()->GetSize());
+            TileFill(Helper, ContentRect, Helper.UVRect, Graphics->GetTexture()->GetSize());
             Helper.AddTriangles();
         }
     }
@@ -165,7 +176,9 @@ void SFImage::OnPopulateMesh(FVertexHelper& Helper)
         SliceFill(Helper);
     }
     else
-        Graphics.PopulateDefaultMesh(Helper);
+    {
+        Graphics->PopulateDefaultMesh(Helper);
+    }
 }
 
 void SFImage::SliceFill(FVertexHelper& Helper)
@@ -190,13 +203,13 @@ void SFImage::SliceFill(FVertexHelper& Helper)
     static float gridTexX[4];
     static float gridTexY[4];
 
-    UNTexture* Texture = Graphics.GetTexture();
+    UNTexture* Texture = Graphics->GetTexture();
     FBox2D GridRect = Scale9Grid.GetValue();
     FBox2D ContentRect = Helper.ContentRect;
     ContentRect.Max = ContentRect.Min + ContentRect.GetSize() * TextureScale;
     FBox2D UVRect = Helper.UVRect;
     FVector2D TextureSize = Texture->GetSize();
-    EFlipType FlipType = Graphics.GetFlip();
+    EFlipType FlipType = Graphics->GetFlip();
 
     if (FlipType != EFlipType::None)
     {
@@ -308,9 +321,14 @@ void SFImage::TileFill(FVertexHelper& Helper, const FBox2D& ContentRect, const F
         {
             FBox2D UVTmp = UVRect;
             if (i == cnt.X - 1)
+            {
                 UVTmp.Max.X = FMath::Lerp(UVRect.Min.X, UVRect.Max.X, tailSize.X / TextureSize.X);
+            }
+
             if (j == cnt.Y - 1)
+            {
                 UVTmp.Max.Y = FMath::Lerp(UVRect.Min.Y, UVRect.Max.Y, tailSize.Y / TextureSize.Y);
+            }
 
             FVector2D Min = ContentRect.Min + FVector2D(i, j) * TextureSize;
             FBox2D drawRect = FBox2D(Min,

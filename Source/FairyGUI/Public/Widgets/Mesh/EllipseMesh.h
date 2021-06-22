@@ -5,7 +5,7 @@
 class FAIRYGUI_API FEllipseMesh : public IMeshFactory
 {
 public:
-    MESHFACTORY_TYPE(FEllipseMesh)
+    MESH_FACTORY_TYPE(FEllipseMesh)
 
     FEllipseMesh();
     virtual ~FEllipseMesh() {}

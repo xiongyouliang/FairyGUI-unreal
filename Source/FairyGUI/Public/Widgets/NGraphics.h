@@ -25,11 +25,7 @@ public:
 
     void SetMeshDirty() { bMeshDirty = true; }
 
-    void Paint(const FGeometry& AllottedGeometry,
-        FSlateWindowElementList& OutDrawElements,
-        int32 LayerId,
-        float Alpha,
-        bool bEnabled);
+    void Paint(const FGeometry& AllottedGeometry, FSlateWindowElementList& OutDrawElements, int32 LayerId, float Alpha, bool bEnabled);
 
     void PopulateDefaultMesh(FVertexHelper& Helper);
 

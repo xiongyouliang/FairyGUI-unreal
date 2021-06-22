@@ -15,14 +15,15 @@ public:
         SLATE_ARGUMENT(UGObject*, GObject)
     SLATE_END_ARGS()
 
-    MESHFACTORY_TYPE(SFImage)
+    
 
     SFImage();
+    ~SFImage();
 
 	void Construct(const FArguments& InArgs);
 
     void SetTexture(UNTexture* InTexture);
-    UNTexture* GetTexture() const { return Graphics.GetTexture();  }
+    UNTexture* GetTexture() const { return Graphics->GetTexture();  }
     void SetScale9Grid(const TOptional<FBox2D>& GridRect);
     void SetScaleByTile(bool bInScaleByTile);
     void SetTileGridIndice(int32 InTileGridIndex);
@@ -36,11 +37,14 @@ public:
     float GetFillAmount() const;
     void SetFillAmount(float Amount);
 
-    FNGraphics Graphics;
+    FNGraphics *Graphics;
 public:
 
 	// SWidget overrides
 	virtual int32 OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const override;
+
+    // IMeshFactory overrides
+    MESH_FACTORY_TYPE(SFImage)
     virtual void OnPopulateMesh(FVertexHelper& Helper) override;
 
 protected:

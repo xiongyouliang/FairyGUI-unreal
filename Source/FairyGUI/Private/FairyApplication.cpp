@@ -472,10 +472,10 @@ void UFairyApplication::PreviewDownEvent(const FPointerEvent& MouseEvent)
 	TouchInfo->bToClearCaptors = false;
 	TouchInfo->DownPath.Reset();
 
-#if WITH_EDITOR
-	const FVector2D ScreenSpacePos = MouseEvent.GetScreenSpacePosition();
-	UE_LOG(LogFairyGUI, Log, TEXT("---> UFairyApplication::PreviewDownEvent(...), ScreenSpace, X=%f, Y=%f"), ScreenSpacePos.X, ScreenSpacePos.Y);
-#endif
+//#if WITH_EDITOR
+//	const FVector2D ScreenSpacePos = MouseEvent.GetScreenSpacePosition();
+//	UE_LOG(LogFairyGUI, Log, TEXT("---> UFairyApplication::PreviewDownEvent(...), ScreenSpace, X=%f, Y=%f"), ScreenSpacePos.X, ScreenSpacePos.Y);
+//#endif
 
 	bNeedCheckPopups = true;
 }

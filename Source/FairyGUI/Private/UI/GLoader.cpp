@@ -80,22 +80,22 @@ void UGLoader::SetShrinkOnly(bool bInShrinkOnly)
 
 EFlipType UGLoader::GetFlip() const
 {
-    return Content->Graphics.GetFlip();
+    return Content->Graphics->GetFlip();
 }
 
 void UGLoader::SetFlip(EFlipType InFlip)
 {
-    Content->Graphics.SetFlip(InFlip);
+    Content->Graphics->SetFlip(InFlip);
 }
 
 FColor UGLoader::GetColor() const
 {
-    return Content->Graphics.GetColor();
+    return Content->Graphics->GetColor();
 }
 
 void UGLoader::SetColor(const FColor& InColor)
 {
-    Content->Graphics.SetColor(InColor);
+    Content->Graphics->SetColor(InColor);
 }
 
 EFillMethod UGLoader::GetFillMethod() const

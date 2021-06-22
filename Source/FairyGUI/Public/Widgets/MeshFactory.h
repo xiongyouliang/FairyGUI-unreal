@@ -2,7 +2,7 @@
 
 #include "VertexHelper.h"
 
-#define MESHFACTORY_TYPE(TYPE) \
+#define MESH_FACTORY_TYPE(TYPE) \
 	static const FName& GetMeshFactoryTypeId() { static FName Type(TEXT(#TYPE)); return Type; } \
 	virtual bool IsMeshFactoryOfType(const FName& Type) const override { return GetMeshFactoryTypeId() == Type; }
 

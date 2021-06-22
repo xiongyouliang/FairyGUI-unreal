@@ -65,12 +65,15 @@ protected:
 
     void UpdateVisibilityFlags();
 
+    void UpdateRenderTransform();
+
 protected:
     bool bVisible : 1;
     bool bInteractable : 1;
     bool bTouchable : 1;
     bool bOpaque : 1;
     FVector2D Size;
+    FVector2D LocalPosition;
 
 private:
     static FNoChildren NoChildrenInstance;

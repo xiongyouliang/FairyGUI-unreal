@@ -33,22 +33,22 @@ void UGImage::BeginDestroy()
 
 EFlipType UGImage::GetFlip() const
 {
-	return Content->Graphics.GetFlip();
+	return Content->Graphics->GetFlip();
 }
 
 void UGImage::SetFlip(EFlipType InFlip)
 {
-	Content->Graphics.SetFlip(InFlip);
+	Content->Graphics->SetFlip(InFlip);
 }
 
 FColor UGImage::GetColor() const
 {
-	return Content->Graphics.GetColor();
+	return Content->Graphics->GetColor();
 }
 
 void UGImage::SetColor(const FColor& InColor)
 {
-	Content->Graphics.SetColor(InColor);
+	Content->Graphics->SetColor(InColor);
 }
 
 EFillMethod UGImage::GetFillMethod() const
@@ -124,10 +124,15 @@ void UGImage::ConstructFromResource()
 	ContentItem->Load();
 
 	Content->SetTexture(ContentItem->Texture);
+
 	if (ContentItem->Scale9Grid.IsSet())
+	{
 		Content->SetScale9Grid(ContentItem->Scale9Grid);
-	else if (ContentItem->bScaleByTile)
+	}	
+	else if (ContentItem->bScaleByTile) 
+	{
 		Content->SetScaleByTile(true);
+	}
 
 	SetSize(SourceSize);
 }
@@ -139,7 +144,10 @@ void UGImage::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 	Buffer->Seek(BeginPos, 5);
 
 	if (Buffer->ReadBool())
+	{
 		SetColor(Buffer->ReadColor());
+	}
+
 	SetFlip((EFlipType)Buffer->ReadByte());
 	int32 method = Buffer->ReadByte();
 	if (method != 0)

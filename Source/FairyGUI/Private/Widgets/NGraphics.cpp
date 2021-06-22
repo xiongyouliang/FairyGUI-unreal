@@ -91,7 +91,7 @@ void FNGraphics::Paint(const FGeometry& AllottedGeometry,
     int32 VerticeLength = Vertices.Num();
     for (int32 i = 0; i < VerticeLength; i++)
     {
-        Vertices[i].Position = AllottedGeometry.LocalToAbsolute(PositionsBackup[i]);
+        Vertices[i].Position = AllottedGeometry.LocalToAbsolute(PositionsBackup[i]/AllottedGeometry.Scale);
     }
 
     FSlateDrawElement::MakeCustomVerts(OutDrawElements, LayerId, ResourceHandle, Vertices, Triangles, nullptr, 0, 0, DrawEffects);
@@ -104,7 +104,9 @@ void FNGraphics::UpdateMeshNow()
     Triangles.Reset();
 
     if (Texture == nullptr || !MeshFactory.IsValid())
+    {
         return;
+    }
 
     FVertexHelper Helper;
     Helper.ContentRect = FBox2D(FVector2D::ZeroVector, Size);
@@ -118,6 +120,7 @@ void FNGraphics::UpdateMeshNow()
             Helper.UVRect.Min.X = Helper.UVRect.Max.X;
             Helper.UVRect.Max.X = tmp;
         }
+
         if (Flip == EFlipType::Vertical || Flip == EFlipType::Both)
         {
             float tmp = Helper.UVRect.Min.Y;
@@ -130,7 +133,9 @@ void FNGraphics::UpdateMeshNow()
 
     int32 vertCount = Helper.GetVertexCount();
     if (vertCount == 0)
+    {
         return;
+    }
 
     if (Texture->bRotated)
     {
@@ -175,5 +180,7 @@ void FNGraphics::PopulateDefaultMesh(FVertexHelper& Helper)
 void FNGraphics::AddReferencedObjects(FReferenceCollector& Collector)
 {
     if (Texture != nullptr)
+    {
         Collector.AddReferencedObject(Texture);
+    }
 }

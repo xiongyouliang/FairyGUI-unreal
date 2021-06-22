@@ -1172,12 +1172,12 @@ void UGComponent::MakeSlateWidget()
 {
 	if (!DisplayObject.IsValid())
 	{
-		DisplayObject = RootContainer = SNew(SContainer).GObject(this);
+		DisplayObject = RootContainer = Container = SNew(SContainer).GObject(this);
 		DisplayObject->SetOpaque(false);
 
-		Container = SNew(SContainer).GObject(this);
-		Container->SetOpaque(false);
-		RootContainer->AddChild(Container.ToSharedRef());
+		//Container = SNew(SContainer).GObject(this);
+		//Container->SetOpaque(false);
+		//RootContainer->AddChild(Container.ToSharedRef());
 	}
 }
 

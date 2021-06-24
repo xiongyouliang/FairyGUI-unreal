@@ -810,24 +810,40 @@ void UFairyObject::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 
 	f1 = Buffer->ReadFloat();
 	if (f1 != 1)
+	{
 		SetAlpha(f1);
+	}
+		
 
 	f1 = Buffer->ReadFloat();
 	if (f1 != 0)
+	{
 		SetRotation(f1);
+	}
 
 	if (!Buffer->ReadBool())
+	{
 		SetVisible(false);
+	}
+
 	if (!Buffer->ReadBool())
+	{
 		SetTouchable(false);
+	}
+		
 	if (Buffer->ReadBool())
+	{
 		SetGrayed(true);
+	}
+		
 	Buffer->ReadByte(); //blendMode
 	Buffer->ReadByte(); //filter
 
 	const FString& str = Buffer->ReadS();
 	if (!str.IsEmpty())
+	{
 		UserData = str;
+	}
 }
 
 void UFairyObject::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
@@ -836,11 +852,16 @@ void UFairyObject::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 
 	const FString& str = Buffer->ReadS();
 	if (!str.IsEmpty())
+	{
 		SetTooltips(str);
+	}
 
 	int16 groupId = Buffer->ReadShort();
 	if (groupId >= 0)
+	{
 		Group = Cast<UGGroup>(Parent->GetChildAt(groupId));
+	}
+		
 
 	Buffer->Seek(BeginPos, 2);
 

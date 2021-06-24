@@ -769,7 +769,10 @@ void UFairyComponent::BuildNativeDisplayList(bool bImmediatelly)
 				UFairyObject* Child = Children[i];
 				if (Child->InternalVisible())
 				{
-					Container->AddChild(Child->DisplayObject.ToSharedRef());
+					SContainer::FSlot& Slot = Container->AddChild(Child->DisplayObject.ToSharedRef());
+					Slot.Position(Child->GetPosition());
+					Slot.Size(Child->GetSize());
+					Slot.Scale(Child->GetScale());
 				}
 			}
 		}
@@ -781,7 +784,10 @@ void UFairyComponent::BuildNativeDisplayList(bool bImmediatelly)
 				UFairyObject* Child = Children[i];
 				if (Child->InternalVisible())
 				{
-					Container->AddChild(Child->DisplayObject.ToSharedRef());
+					SContainer::FSlot& Slot = Container->AddChild(Child->DisplayObject.ToSharedRef());
+					Slot.Position(Child->GetPosition());
+					Slot.Size(Child->GetSize());
+					Slot.Scale(Child->GetScale());
 				}
 			}
 		}
@@ -794,7 +800,10 @@ void UFairyComponent::BuildNativeDisplayList(bool bImmediatelly)
 				UFairyObject* Child = Children[i];
 				if (Child->InternalVisible())
 				{
-					Container->AddChild(Child->DisplayObject.ToSharedRef());
+					SContainer::FSlot& Slot =  Container->AddChild(Child->DisplayObject.ToSharedRef());
+					Slot.Position(Child->GetPosition());
+					Slot.Size(Child->GetSize());
+					Slot.Scale(Child->GetScale());
 				}
 			}
 			for (int32 i = cnt - 1; i >= ai; i--)
@@ -802,7 +811,10 @@ void UFairyComponent::BuildNativeDisplayList(bool bImmediatelly)
 				UFairyObject* Child = Children[i];
 				if (Child->InternalVisible())
 				{
-					Container->AddChild(Child->DisplayObject.ToSharedRef());
+					SContainer::FSlot& Slot = Container->AddChild(Child->DisplayObject.ToSharedRef());
+					Slot.Position(Child->GetPosition());
+					Slot.Size(Child->GetSize());
+					Slot.Scale(Child->GetScale());
 				}
 			}
 		}
@@ -931,11 +943,15 @@ void UFairyComponent::HandleGrayedChanged()
 
 	UGController* Controller = GetController("grayed");
 	if (Controller != nullptr)
+	{
 		Controller->SetSelectedIndex(IsGrayed() ? 1 : 0);
+	}
 	else
 	{
 		for (auto& Child : Children)
+		{
 			Child->HandleGrayedChanged();
+		}
 	}
 }
 
@@ -944,19 +960,25 @@ void UFairyComponent::HandleControllerChanged(UGController* Controller)
 	UFairyObject::HandleControllerChanged(Controller);
 
 	if (ScrollPane != nullptr)
+	{
 		ScrollPane->HandleControllerChanged(Controller);
+	}
 }
 
 void UFairyComponent::OnAddedToStageHandler(UEventContext* Context)
 {
 	for (auto& Transition : Transitions)
+	{
 		Transition->OnOwnerAddedToStage();
+	}
 }
 
 void UFairyComponent::OnRemovedFromStageHandler(UEventContext* Context)
 {
 	for (auto& Transition : Transitions)
+	{
 		Transition->OnOwnerRemovedFromStage();
+	}
 }
 
 void UFairyComponent::ConstructFromResource()
@@ -980,20 +1002,20 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 
 	bUnderConstruct = true;
 
-	SourceSize.X = Buffer->ReadInt();
-	SourceSize.Y = Buffer->ReadInt();
-	InitSize = SourceSize;
-
-	SetSize(SourceSize);
-
+	// Set this Fairy Object Size attribute
+	this->SourceSize.X = Buffer->ReadInt();
+	this->SourceSize.Y = Buffer->ReadInt();
+	this->InitSize = this->SourceSize;
+	this->SetSize(SourceSize);
 	if (Buffer->ReadBool())
 	{
-		MinSize.X = Buffer->ReadInt();
-		MaxSize.X = Buffer->ReadInt();
-		MinSize.Y = Buffer->ReadInt();
-		MaxSize.Y = Buffer->ReadInt();
+		this->MinSize.X = Buffer->ReadInt();
+		this->MaxSize.X = Buffer->ReadInt();
+		this->MinSize.Y = Buffer->ReadInt();
+		this->MaxSize.Y = Buffer->ReadInt();
 	}
 
+	// Set this Object Pivot attribute
 	if (Buffer->ReadBool())
 	{
 		float f1 = Buffer->ReadFloat();
@@ -1001,6 +1023,7 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 		SetPivot(FVector2D(f1, f2), Buffer->ReadBool());
 	}
 
+	// Set this Component Margin attribute
 	if (Buffer->ReadBool())
 	{
 		Margin.Top = Buffer->ReadInt();
@@ -1018,13 +1041,16 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 		Buffer->SetPos(savedPos);
 	}
 	else
+	{
 		SetupOverflow(overflow);
+	}
 
 	if (Buffer->ReadBool()) //clipsoft
+	{
 		Buffer->Skip(8);
+	}
 
 	bBuildingDisplayList = true;
-
 	Buffer->Seek(0, 1);
 
 	int32 controllerCount = Buffer->ReadShort();
@@ -1042,6 +1068,7 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 
 	Buffer->Seek(0, 2);
 
+	// Parse Children
 	UFairyObject* Child;
 	int32 childCount = Buffer->ReadShort();
 	for (int32 i = 0; i < childCount; i++)
@@ -1171,7 +1198,8 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 		Buffer->SetPos(nextPos);
 	}
 
-	if (Transitions.Num() > 0) {
+	if (Transitions.Num() > 0) 
+	{
 		On(FUIEvents::AddedToStage).AddUObject(this, &UFairyComponent::OnAddedToStageHandler);
 		On(FUIEvents::RemovedFromStage).AddUObject(this, &UFairyComponent::OnRemovedFromStageHandler);
 	}
@@ -1185,7 +1213,9 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 	SetBoundsChangedFlag();
 
 	if (ContentItem->ObjectType != EObjectType::Component)
+	{
 		ConstructExtension(Buffer);
+	}
 
 	OnConstruct();
 }

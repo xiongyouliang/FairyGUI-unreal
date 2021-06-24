@@ -355,6 +355,7 @@ protected:
 	FVector2D Pivot;
 	FVector2D Scale;
 	FVector2D Skew;
+
 	bool bPivotAsAnchor = false;
 	float Alpha = 0.0f;
 	float Rotation = 0.0f;

@@ -13,42 +13,42 @@ void SContainer::Construct(const SContainer::FArguments& InArgs)
     SDisplayObject::Construct(SDisplayObject::FArguments().GObject(InArgs._GObject));
 }
 
-void SContainer::AddChild(const TSharedRef<SWidget>& SlotWidget)
+SContainer::FSlot& SContainer::AddChild(const TSharedRef<SDisplayObject>& SlotWidget)
 {
-    AddChildAt(SlotWidget, Children.Num());
+    return AddChildAt(SlotWidget, Children.Num());
 }
 
-void SContainer::AddChildAt(const TSharedRef<SWidget>& SlotWidget, int32 Index)
+SContainer::FSlot& SContainer::AddChildAt(const TSharedRef<SDisplayObject>& SlotWidget, int32 Index)
 {
     int32 Count = Children.Num();
     verifyf(Index >= 0 && Index <= Count, TEXT("Invalid child index"));
+    verifyf(!SlotWidget->IsParentValid(), TEXT("Cant add a child has parent"));
 
-    if (SlotWidget->IsParentValid() && SlotWidget->GetParentWidget().Get() == this)
+    SContainer::FSlot& NewSlot = this->AddSlot();
+    NewSlot.AttachWidget(SlotWidget);
+    if (Index == Count)
     {
-        SetChildIndex(SlotWidget, Index);
+        Children.Add(&NewSlot);
     }
     else
     {
-        verifyf(!SlotWidget->IsParentValid(), TEXT("Cant add a child has parent"));
-
-        SContainer::FSlot& NewSlot = this->AddSlot();
-        NewSlot.AttachWidget(SlotWidget);
-        if (Index == Count)
-            Children.Add(&NewSlot);
-        else
-            Children.Insert(&NewSlot, Index);
-
-        if (OnStage())
-        {
-            UFairyApplication::Get()->BroadcastEvent(FUIEvents::AddedToStage, SlotWidget);
-        }
+        Children.Insert(&NewSlot, Index);
     }
+
+    if (OnStage())
+    {
+        UFairyApplication::Get()->BroadcastEvent(FUIEvents::AddedToStage, SlotWidget);
+    }
+
+    return NewSlot;
 }
 
 void SContainer::SetChildIndex(const TSharedRef<SWidget>& SlotWidget, int32 Index)
 {
     if (Index >= Children.Num())
+    {
         Index = Children.Num() - 1;
+    }
     int32 OldIndex = GetChildIndex(SlotWidget);
     verifyf(OldIndex != -1, TEXT("Not a child of this container"));
     if (OldIndex == Index) return;
@@ -127,11 +127,12 @@ void SContainer::OnArrangeChildren(const FGeometry& AllottedGeometry, FArrangedC
             const TSharedRef<SWidget>& CurWidget = CurChild.GetWidget();
             const FVector2D& CurChildPos = CurChild.PositionAttr.Get();
             const FVector2D& CurChildSize = CurChild.SizeAttr.Get();
-            const float CurChildScale = CurChild.ScaleAttr.Get();
+            const FVector2D& CurChildScale = CurChild.ScaleAttr.Get();
+            FVector2D FinalChildSize = CurChildSize * CurChildScale;
             if (ArrangedChildren.Accepts(CurWidget->GetVisibility()))
             {
                 ArrangedChildren.AddWidget(
-                    AllottedGeometry.MakeChild(CurWidget, CurChildPos, FSlateLayoutTransform(CurChildScale, CurChildPos))
+                    AllottedGeometry.MakeChild(CurWidget, FinalChildSize, FSlateLayoutTransform(CurChildPos))
                 );
                 //ArrangedChildren.AddWidget(
                 //    AllottedGeometry.MakeChild( CurWidget, FVector2D::ZeroVector, CurWidget.Get().GetDesiredSize() )

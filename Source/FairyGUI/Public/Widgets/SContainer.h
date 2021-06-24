@@ -21,9 +21,15 @@ public:
             return *this;
         }
 
+        FSlot& Scale(const TAttribute<FVector2D>& InScale)
+        {
+            ScaleAttr = InScale;
+            return *this;
+        }
+
         TAttribute<FVector2D> PositionAttr;
         TAttribute<FVector2D> SizeAttr;
-        TAttribute<float> ScaleAttr;
+        TAttribute<FVector2D> ScaleAttr;
     };
 
     SLATE_BEGIN_ARGS(SContainer) :
@@ -36,8 +42,8 @@ public:
 
     void Construct(const FArguments& InArgs);
 
-    void AddChild(const TSharedRef<SWidget>& SlotWidget);
-    void AddChildAt(const TSharedRef<SWidget>& SlotWidget, int32 Index);
+    SContainer::FSlot& AddChild(const TSharedRef<SDisplayObject>& SlotWidget);
+    SContainer::FSlot& AddChildAt(const TSharedRef<SDisplayObject>& SlotWidget, int32 Index);
 
     int32 GetChildIndex(const TSharedRef<SWidget>& SlotWidget) const;
     void SetChildIndex(const TSharedRef<SWidget>& SlotWidget, int32 Index);

@@ -1,11 +1,11 @@
 #include "UI/GObjectPool.h"
 #include "UI/FairyObject.h"
-#include "Package/UIPackage.h"
-#include "Package/UIPackageMgr.h"
+#include "Package/FairyPackage.h"
+#include "Package/FairyPackageMgr.h"
 
 UFairyObject* FGObjectPool::GetObject(const FString & URL)
 {
-    FString URL2 = UUIPackageMgr::Get()->NormalizeURL(URL);
+    FString URL2 = UFairyPackageMgr::Get()->NormalizeURL(URL);
     if (URL2.Len() == 0)
         return nullptr;
 
@@ -14,7 +14,7 @@ UFairyObject* FGObjectPool::GetObject(const FString & URL)
     if (arr.Num() > 0)
         ret = arr.Pop();
     //else
-        //ret = UUIPackageMgr::CreateObjectFromURL(GetOuter(), URL2);
+        //ret = UFairyPackageMgr::CreateObjectFromURL(GetOuter(), URL2);
     return ret;
 }
 

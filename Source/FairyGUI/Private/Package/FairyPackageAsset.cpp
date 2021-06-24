@@ -1,18 +1,18 @@
-#include "Package/UIPackageAsset.h"
+#include "Package/FairyPackageAsset.h"
 #include "EditorFramework/AssetImportData.h"
 
-UUIPackageAsset::UUIPackageAsset()
+UFairyPackageAsset::UFairyPackageAsset()
 {
-    UE_LOG(LogTemp, Warning, TEXT("UUIPackageAsset construction"));
+    UE_LOG(LogTemp, Warning, TEXT("UFairyPackageAsset construction"));
 }
 
-UUIPackageAsset::~UUIPackageAsset()
+UFairyPackageAsset::~UFairyPackageAsset()
 {
-    UE_LOG(LogTemp, Warning, TEXT("UUIPackageAsset destruction"));
+    UE_LOG(LogTemp, Warning, TEXT("UFairyPackageAsset destruction"));
 }
 
 #if WITH_EDITORONLY_DATA
-void UUIPackageAsset::GetAssetRegistryTags(TArray<FAssetRegistryTag>& OutTags) const
+void UFairyPackageAsset::GetAssetRegistryTags(TArray<FAssetRegistryTag>& OutTags) const
 {
     if (AssetImportData)
     {

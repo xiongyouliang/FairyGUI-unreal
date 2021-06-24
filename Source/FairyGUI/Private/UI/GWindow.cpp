@@ -1,8 +1,8 @@
 #include "UI/GWindow.h"
 #include "UI/GGraph.h"
 #include "UI/FairyRoot.h"
-#include "Package/UIPackage.h"
-#include "Package/UIPackageMgr.h"
+#include "Package/FairyPackage.h"
+#include "Package/FairyPackageMgr.h"
 #include "FairyApplication.h"
 
 UGWindow::UGWindow()
@@ -124,7 +124,7 @@ void UGWindow::ShowModalWait(int32 InRequestingCmd)
     if (!FUIConfig::Config.WindowModalWaiting.IsEmpty())
     {
         if (ModalWaitPane == nullptr)
-            ModalWaitPane = UUIPackageMgr::Get()->CreateObjectFromURL(GetOuter(), FUIConfig::Config.WindowModalWaiting);
+            ModalWaitPane = UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), FUIConfig::Config.WindowModalWaiting);
 
         LayoutModalWaitPane();
 

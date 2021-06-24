@@ -2,7 +2,7 @@
 
 #include "Widgets/SDisplayObject.h"
 #include "Relations.h"
-#include "Package/PackageItem.h"
+#include "Package/FairyPackageItem.h"
 #include "UIConfig.h"
 #include "FairyCommons.h"
 #include "Event/EventContext.h"
@@ -233,7 +233,7 @@ public:
 
 	template <typename T> T* As() const;
 
-	TSharedPtr<FPackageItem> GetPackageItem() const { return PackageItem; }
+	TSharedPtr<FFairyPackageItem> GetPackageItem() const { return PackageItem; }
 	TSharedRef<SDisplayObject> GetDisplayObject() const { return DisplayObject.ToSharedRef(); }
 
 	template <typename T> T GetProp(EObjectPropID PropID) const;
@@ -332,7 +332,7 @@ protected:
 
 	TSharedPtr<SDisplayObject> DisplayObject;
 
-	TSharedPtr<FPackageItem> PackageItem;
+	TSharedPtr<FFairyPackageItem> PackageItem;
 
 	virtual void HandleSizeChanged();
 	virtual void HandleGrayedChanged();

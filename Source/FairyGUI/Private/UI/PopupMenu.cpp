@@ -1,6 +1,6 @@
 #include "UI/PopupMenu.h"
 #include "UI/FairyRoot.h"
-#include "Package/UIPackage.h"
+#include "Package/FairyPackage.h"
 #include "UI/GController.h"
 #include "FairyApplication.h"
 
@@ -34,7 +34,7 @@ void UPopupMenu::Create(const FString& ResourceURL)
         }
     }
 
-    ContentPane = UUIPackageMgr::Get()->CreateObjectFromURL(GetOuter(), url)->As<UFairyComponent>();
+    ContentPane = UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), url)->As<UFairyComponent>();
     ContentPane->On(FUIEvents::AddedToStage).AddUObject(this, &UPopupMenu::OnAddedToStage);
 
     List = ContentPane->GetChild("list")->As<UGList>();

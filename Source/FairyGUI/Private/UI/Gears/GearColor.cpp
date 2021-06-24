@@ -1,6 +1,6 @@
 #include "UI/Gears/GearColor.h"
 #include "UI/FairyObject.h"
-#include "Package/UIPackage.h"
+#include "Package/FairyPackage.h"
 #include "UI/GController.h"
 #include "Tween/GTween.h"
 #include "Utils/ByteBuffer.h"
@@ -42,7 +42,7 @@ void FGearColor::Apply()
     if (Value == nullptr)
         Value = &Default;
 
-    if (TweenConfig.IsSet() && TweenConfig->bTween && UUIPackage::Constructing == 0 && !bDisableAllTweenEffect)
+    if (TweenConfig.IsSet() && TweenConfig->bTween && UFairyPackage::Constructing == 0 && !bDisableAllTweenEffect)
     {
         FColor curColor = Owner->GetProp<FColor>(EObjectPropID::Color);
         FColor curOutlineColor = Owner->GetProp<FColor>(EObjectPropID::OutlineColor);

@@ -1,6 +1,6 @@
 #include "UI/GLoader.h"
-#include "Package/UIPackage.h"
-#include "Package/UIPackageMgr.h"
+#include "Package/FairyPackage.h"
+#include "Package/FairyPackageMgr.h"
 #include "UI/FairyComponent.h"
 #include "Widgets/NTexture.h"
 #include "Widgets/SMovieClip.h"
@@ -193,7 +193,7 @@ void UGLoader::ClearContent()
 
 void UGLoader::LoadFromPackage(const FString& ItemURL)
 {
-    ContentItem = UUIPackageMgr::Get()->GetPackageItemByURL(ItemURL);
+    ContentItem = UFairyPackageMgr::Get()->GetPackageItemByURL(ItemURL);
 
     if (ContentItem.IsValid())
     {
@@ -219,7 +219,7 @@ void UGLoader::LoadFromPackage(const FString& ItemURL)
         }
         else if (ContentItem->Type == EPackageItemType::Component)
         {
-            UFairyObject* obj = UUIPackageMgr::Get()->CreateObjectFromURL(GetOuter(), ItemURL);
+            UFairyObject* obj = UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), ItemURL);
             if (obj == nullptr || !obj->IsA<UFairyComponent>())
                 SetErrorState();
             else

@@ -1,9 +1,9 @@
-#include "Package/PackageItem.h"
-#include "Package/UIPackage.h"
+#include "Package/FairyPackageItem.h"
+#include "Package/FairyPackage.h"
 #include "UI/FairyRoot.h"
 #include "Utils/ByteBuffer.h"
 
-FPackageItem::FPackageItem() :
+FFairyPackageItem::FFairyPackageItem() :
     Owner(nullptr),
     Type(EPackageItemType::Unknown),
     ObjectType(EObjectType::Component),
@@ -14,12 +14,12 @@ FPackageItem::FPackageItem() :
 {
 }
 
-void FPackageItem::Load()
+void FFairyPackageItem::Load()
 {
     Owner->GetItemAsset(AsShared());
 }
 
-TSharedPtr<FPackageItem> FPackageItem::GetBranch()
+TSharedPtr<FFairyPackageItem> FFairyPackageItem::GetBranch()
 {
     if (Branches.IsSet() && Owner->BranchIndex != -1)
     {
@@ -31,7 +31,7 @@ TSharedPtr<FPackageItem> FPackageItem::GetBranch()
     return AsShared();
 }
 
-TSharedPtr<FPackageItem> FPackageItem::GetHighResolution()
+TSharedPtr<FFairyPackageItem> FFairyPackageItem::GetHighResolution()
 {
     if (HighResolution.IsSet() && UFairyRoot::ContentScaleLevel > 0)
     {
@@ -43,7 +43,7 @@ TSharedPtr<FPackageItem> FPackageItem::GetHighResolution()
     return AsShared();
 }
 
-void FPackageItem::AddReferencedObjects(FReferenceCollector& Collector)
+void FFairyPackageItem::AddReferencedObjects(FReferenceCollector& Collector)
 {
     if (Texture != nullptr)
         Collector.AddReferencedObject(Texture);

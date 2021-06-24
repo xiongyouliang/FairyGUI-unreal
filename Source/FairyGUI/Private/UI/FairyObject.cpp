@@ -2,7 +2,7 @@
 #include "UI/GList.h"
 #include "UI/GGroup.h"
 #include "UI/GController.h"
-#include "Package/UIPackage.h"
+#include "Package/FairyPackage.h"
 #include "UI/FairyRoot.h"
 #include "UI/Gears/GearBase.h"
 #include "UI/Gears/GearDisplay.h"

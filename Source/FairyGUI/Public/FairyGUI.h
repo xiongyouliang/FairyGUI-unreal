@@ -1,8 +1,8 @@
 #pragma once
 
 #include "UI/UIObjectFactory.h"
-#include "Package/UIPackage.h"
-#include "Package/PackageItem.h"
+#include "Package/FairyPackage.h"
+#include "Package/FairyPackageItem.h"
 #include "UI/FairyComponent.h"
 #include "UI/GImage.h"
 #include "UI/GMovieClip.h"

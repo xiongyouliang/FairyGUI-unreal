@@ -1,6 +1,6 @@
 #include "UI/Transition.h"
 #include "UI/FairyComponent.h"
-#include "Package/UIPackage.h"
+#include "Package/FairyPackage.h"
 #include "UI/GController.h"
 #include "Utils/ByteBuffer.h"
 #include "Tween/GPath.h"

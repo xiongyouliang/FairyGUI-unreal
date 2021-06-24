@@ -5,8 +5,8 @@
 #include "FairyApplication.h"
 #include "UI/GWindow.h"
 #include "UI/GGraph.h"
-#include "Package/UIPackage.h"
-#include "Package/UIPackageMgr.h"
+#include "Package/FairyPackage.h"
+#include "Package/FairyPackageMgr.h"
 #include "Widgets/SContainer.h"
 #include "Widgets/Layout/SConstraintCanvas.h"
 
@@ -257,7 +257,7 @@ UFairyObject* UFairyRoot::GetModalWaitingPane()
     {
         if (ModalWaitPane == nullptr)
         {
-            ModalWaitPane = UUIPackageMgr::Get()->CreateObjectFromURL(GetOuter(), FUIConfig::Config.GlobalModalWaiting);
+            ModalWaitPane = UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), FUIConfig::Config.GlobalModalWaiting);
             ModalWaitPane->SetSortingOrder(INT_MAX);
         }
 
@@ -450,7 +450,7 @@ void UFairyRoot::ShowTooltips(const FString& Text)
             return;
         }
 
-        DefaultTooltipWin = UUIPackageMgr::Get()->CreateObjectFromURL(GetOuter(), resourceURL);
+        DefaultTooltipWin = UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), resourceURL);
         DefaultTooltipWin->SetTouchable(false);
     }
 

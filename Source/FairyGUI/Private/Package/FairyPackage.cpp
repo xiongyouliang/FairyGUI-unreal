@@ -1,15 +1,15 @@
-#include "Package/UIPackage.h"
+#include "Package/FairyPackage.h"
 #include "Sound/SoundBase.h"
 #include "FairyApplication.h"
-#include "Package/UIPackageAsset.h"
-#include "Package/PackageItem.h"
+#include "Package/FairyPackageAsset.h"
+#include "Package/FairyPackageItem.h"
 #include "UI/UIObjectFactory.h"
 #include "UI/FairyObject.h"
 #include "Widgets/NTexture.h"
 #include "Widgets/SMovieClip.h"
 #include "Widgets/BitmapFont.h"
 #include "Utils/ByteBuffer.h"
-#include "Package/UIPackageMgr.h"
+#include "Package/FairyPackageMgr.h"
 
 struct FAtlasSprite
 {
@@ -20,36 +20,36 @@ struct FAtlasSprite
         bRotated(false)
     {
     }
-    TSharedPtr<FPackageItem> Atlas;
+    TSharedPtr<FFairyPackageItem> Atlas;
     FBox2D Rect;
     FVector2D OriginalSize;
     FVector2D Offset;
     bool bRotated;
 };
 
-int32 UUIPackage::Constructing = 0;
+int32 UFairyPackage::Constructing = 0;
 
-UUIPackage::UUIPackage() :
+UFairyPackage::UFairyPackage() :
     BranchIndex(0)
 {
     if (HasAnyFlags(RF_ClassDefaultObject) == false)
     {
-        UE_LOG(LogTemp, Warning, TEXT("UUIPackage::UUIPackage()"));
+        UE_LOG(LogTemp, Warning, TEXT("UFairyPackage::UFairyPackage()"));
     }
 }
 
-UUIPackage::~UUIPackage()
+UFairyPackage::~UFairyPackage()
 {
     if (HasAnyFlags(RF_ClassDefaultObject) == false)
     {
-        UE_LOG(LogTemp, Warning, TEXT("UUIPackage::~UUIPackage()"));
+        UE_LOG(LogTemp, Warning, TEXT("UFairyPackage::~UFairyPackage()"));
         for (auto& it : Sprites) {
             delete it.Value;
         }
     }
 }
 
-TSharedPtr<FPackageItem> UUIPackage::GetItem(const FString& ItemID) const
+TSharedPtr<FFairyPackageItem> UFairyPackage::GetItem(const FString& ItemID) const
 {
     auto it = ItemsByID.Find(ItemID);
     if (it != nullptr)
@@ -58,7 +58,7 @@ TSharedPtr<FPackageItem> UUIPackage::GetItem(const FString& ItemID) const
         return nullptr;
 }
 
-TSharedPtr<FPackageItem> UUIPackage::GetItemByName(const FString& ResourceName)
+TSharedPtr<FFairyPackageItem> UFairyPackage::GetItemByName(const FString& ResourceName)
 {
     auto it = ItemsByName.Find(ResourceName);
     if (it != nullptr)
@@ -67,9 +67,9 @@ TSharedPtr<FPackageItem> UUIPackage::GetItemByName(const FString& ResourceName)
         return nullptr;
 }
 
-UFairyObject* UUIPackage::CreateObject(UObject* Owner, const FString& ResourceName)
+UFairyObject* UFairyPackage::CreateObject(UObject* Owner, const FString& ResourceName)
 {
-    TSharedPtr<FPackageItem> item = GetItemByName(ResourceName);
+    TSharedPtr<FFairyPackageItem> item = GetItemByName(ResourceName);
     //verifyf will break app, use a error log replace it in Dev/Test/Debug Build, include Editor;
 #if UE_BUILD_SHIPPING
     verifyf(item.IsValid(), TEXT("FairyGUI: resource not found - %s in  %s"), *ResourceName, *Name);
@@ -83,7 +83,7 @@ UFairyObject* UUIPackage::CreateObject(UObject* Owner, const FString& ResourceNa
     return CreateObject(Owner, item);
 }
 
-UFairyObject* UUIPackage::CreateObject(UObject* Owner, const TSharedPtr<FPackageItem>& Item)
+UFairyObject* UFairyPackage::CreateObject(UObject* Owner, const TSharedPtr<FFairyPackageItem>& Item)
 {
     UFairyObject* Object = FUIObjectFactory::NewObject(Owner, Item);
     if (Object == nullptr) {
@@ -96,7 +96,7 @@ UFairyObject* UUIPackage::CreateObject(UObject* Owner, const TSharedPtr<FPackage
     return Object;
 }
 
-void UUIPackage::Load(FByteBuffer* Buffer)
+void UFairyPackage::Load(FByteBuffer* Buffer)
 {
     if (Buffer->ReadUint() != 0x46475549)
     {
@@ -142,7 +142,7 @@ void UUIPackage::Load(FByteBuffer* Buffer)
         if (cnt > 0)
         {
             Buffer->ReadSArray(Branches, cnt);
-            FString CurBranch = UUIPackageMgr::Get()->GetBranch();
+            FString CurBranch = UFairyPackageMgr::Get()->GetBranch();
             if (!CurBranch.IsEmpty())
                 BranchIndex = Branches.IndexOfByKey(CurBranch);
         }
@@ -161,7 +161,7 @@ void UUIPackage::Load(FByteBuffer* Buffer)
         int32 nextPos = Buffer->ReadInt();
         nextPos += Buffer->GetPos();
 
-        TSharedPtr<FPackageItem> pi = MakeShared<FPackageItem>();
+        TSharedPtr<FFairyPackageItem> pi = MakeShared<FFairyPackageItem>();
         pi->Owner = this;
         pi->Type = (EPackageItemType)Buffer->ReadByte();
         pi->ID = Buffer->ReadS();
@@ -285,7 +285,7 @@ void UUIPackage::Load(FByteBuffer* Buffer)
         nextPos += Buffer->GetPos();
 
         const FString& itemId = Buffer->ReadS();
-        const TSharedPtr<FPackageItem>& pi = ItemsByID[Buffer->ReadS()];
+        const TSharedPtr<FFairyPackageItem>& pi = ItemsByID[Buffer->ReadS()];
 
         FAtlasSprite* sprite = new FAtlasSprite();
         sprite->Atlas = pi;
@@ -341,7 +341,7 @@ void UUIPackage::Load(FByteBuffer* Buffer)
     //}
 }
 
-void* UUIPackage::GetItemAsset(const TSharedPtr<FPackageItem>& Item)
+void* UFairyPackage::GetItemAsset(const TSharedPtr<FFairyPackageItem>& Item)
 {
     switch (Item->Type)
     {
@@ -375,14 +375,14 @@ void* UUIPackage::GetItemAsset(const TSharedPtr<FPackageItem>& Item)
     }
 }
 
-void UUIPackage::LoadAtlas(const TSharedPtr<FPackageItem>& Item)
+void UFairyPackage::LoadAtlas(const TSharedPtr<FFairyPackageItem>& Item)
 {
     UObject* Texture = StaticLoadObject(UTexture2D::StaticClass(), this, *Item->File);
     Item->Texture = NewObject<UNTexture>(this);
     Item->Texture->Init(Cast<UTexture2D>(Texture));
 }
 
-void UUIPackage::LoadImage(const TSharedPtr<FPackageItem>& Item)
+void UFairyPackage::LoadImage(const TSharedPtr<FFairyPackageItem>& Item)
 {
     FAtlasSprite* sprite = Sprites.FindRef(Item->ID);
     if (sprite != nullptr)
@@ -398,7 +398,7 @@ void UUIPackage::LoadImage(const TSharedPtr<FPackageItem>& Item)
     }
 }
 
-void UUIPackage::LoadMovieClip(const TSharedPtr<FPackageItem>& Item)
+void UFairyPackage::LoadMovieClip(const TSharedPtr<FFairyPackageItem>& Item)
 {
     TSharedPtr<FMovieClipData> Data = MakeShared<FMovieClipData>();
     Item->MovieClipData = Data;
@@ -446,7 +446,7 @@ void UUIPackage::LoadMovieClip(const TSharedPtr<FPackageItem>& Item)
     Item->RawData.Reset();
 }
 
-void UUIPackage::LoadFont(const TSharedPtr<FPackageItem>& Item)
+void UFairyPackage::LoadFont(const TSharedPtr<FFairyPackageItem>& Item)
 {
     TSharedPtr<FBitmapFont> BitmapFont = MakeShared<FBitmapFont>();
     Item->BitmapFont = BitmapFont;
@@ -501,7 +501,7 @@ void UUIPackage::LoadFont(const TSharedPtr<FPackageItem>& Item)
         }
         else
         {
-            TSharedPtr<FPackageItem> CharImg = GetItem(img);
+            TSharedPtr<FFairyPackageItem> CharImg = GetItem(img);
             if (CharImg.IsValid())
             {
                 CharImg = CharImg->GetBranch();
@@ -542,7 +542,7 @@ void UUIPackage::LoadFont(const TSharedPtr<FPackageItem>& Item)
     Item->RawData.Reset();
 }
 
-void UUIPackage::LoadSound(const TSharedPtr<FPackageItem>& Item)
+void UFairyPackage::LoadSound(const TSharedPtr<FFairyPackageItem>& Item)
 {
     TSharedPtr<FSlateSound> Sound = MakeShared<FSlateSound>();
     Item->Sound = Sound;

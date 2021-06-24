@@ -134,9 +134,6 @@ void SContainer::OnArrangeChildren(const FGeometry& AllottedGeometry, FArrangedC
                 ArrangedChildren.AddWidget(
                     AllottedGeometry.MakeChild(CurWidget, FinalChildSize, FSlateLayoutTransform(CurChildPos))
                 );
-                //ArrangedChildren.AddWidget(
-                //    AllottedGeometry.MakeChild( CurWidget, FVector2D::ZeroVector, CurWidget.Get().GetDesiredSize() )
-                //);
             }   
         }
     }

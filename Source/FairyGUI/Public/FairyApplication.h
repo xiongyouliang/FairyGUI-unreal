@@ -10,7 +10,7 @@
 #include "UI/UIConfig.h"
 #include "FairyApplication.generated.h"
 
-class UUIPackage;
+class UFairyPackage;
 class UNTexture;
 class UFairyObject;
 class UFairyRoot;
@@ -163,8 +163,8 @@ private:
 
 	static UFairyApplication* Instance;
 
-	friend class UUIPackageMgr;
-	friend class UUIPackage;
+	friend class UFairyPackageMgr;
+	friend class UFairyPackage;
 	friend class UFairyRoot;
 	friend class FGTween;
 	friend class UDragDropManager;

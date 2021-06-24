@@ -1,8 +1,8 @@
 #include "UI/GController.h"
 #include "UI/FairyComponent.h"
-#include "Package/UIPackage.h"
+#include "Package/FairyPackage.h"
 #include "Utils/ByteBuffer.h"
-#include "Package/UIPackageMgr.h"
+#include "Package/FairyPackageMgr.h"
 
 UGController::UGController() :
     SelectedIndex(-1),
@@ -167,13 +167,13 @@ void UGController::Setup(FByteBuffer* Buffer)
             break;
 
         case 2:
-            HomePageIndex = PageNames.Find(UUIPackageMgr::Get()->GetBranch());
+            HomePageIndex = PageNames.Find(UFairyPackageMgr::Get()->GetBranch());
             if (HomePageIndex == INDEX_NONE)
                 HomePageIndex = 0;
             break;
 
         case 3:
-            HomePageIndex = PageNames.Find(UUIPackageMgr::Get()->GetVar(Buffer->ReadS()));
+            HomePageIndex = PageNames.Find(UFairyPackageMgr::Get()->GetVar(Buffer->ReadS()));
             if (HomePageIndex == INDEX_NONE)
                 HomePageIndex = 0;
             break;

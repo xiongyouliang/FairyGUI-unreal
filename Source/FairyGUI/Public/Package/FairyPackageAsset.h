@@ -2,17 +2,17 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "UIPackageAsset.generated.h"
+#include "FairyPackageAsset.generated.h"
 
 UCLASS()
-class FAIRYGUI_API UUIPackageAsset : public UObject
+class FAIRYGUI_API UFairyPackageAsset : public UObject
 {
     GENERATED_BODY()
 
 public:
 
-    UUIPackageAsset();
-    ~UUIPackageAsset();
+    UFairyPackageAsset();
+    ~UFairyPackageAsset();
 
     UPROPERTY(EditAnywhere)
     TArray<uint8> Data;

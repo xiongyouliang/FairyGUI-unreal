@@ -2,8 +2,8 @@
 #include "Framework/Application/SlateApplication.h"
 #include "Slate/SGameLayerManager.h"
 #include "UI/FairyRoot.h"
-#include "Package/UIPackage.h"
-#include "Package/UIPackageMgr.h"
+#include "Package/FairyPackage.h"
+#include "Package/FairyPackageMgr.h"
 #include "UI/UIObjectFactory.h"
 #include "Tween/TweenManager.h"
 #include "Widgets/NTexture.h"
@@ -233,7 +233,7 @@ void UFairyApplication::PlaySound(const FString& URL, float VolumnScale)
 	if (!bSoundEnabled)
 		return;
 
-	TSharedPtr<FPackageItem> SoundItem = UUIPackageMgr::Get()->GetPackageItemByURL(URL);
+	TSharedPtr<FFairyPackageItem> SoundItem = UFairyPackageMgr::Get()->GetPackageItemByURL(URL);
 	if (SoundItem.IsValid())
 	{
 		SoundItem->Load();

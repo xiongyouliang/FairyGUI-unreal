@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "FieldTypes.h"
-#include "Package/PackageItem.h"
+#include "Package/FairyPackageItem.h"
 
 class UFairyComponent;
 class UGLoader;
@@ -16,11 +16,11 @@ public:
     static void SetExtension(const FString& URL, FGComponentCreator Creator);
     static void SetExtension(const FString& URL, TSubclassOf<UFairyComponent> ClassType);
 
-    static UFairyObject* NewObject(UObject* Outer, const TSharedPtr<FPackageItem>& PackageItem);
+    static UFairyObject* NewObject(UObject* Outer, const TSharedPtr<FFairyPackageItem>& PackageItem);
     static UFairyObject* NewObject(UObject* Outer, EObjectType Type);
 
     static FGLoaderCreator LoaderCreator;
-    static void ResolvePackageItemExtension(const TSharedPtr<FPackageItem>& PackageItem);
+    static void ResolvePackageItemExtension(const TSharedPtr<FFairyPackageItem>& PackageItem);
 
 public:
     static TMap<FString, FGComponentCreator> PackageItemExtensions;

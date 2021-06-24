@@ -104,7 +104,7 @@ private:
     TSharedPtr<class SMovieClip> Content;
     UPROPERTY(Transient)
     UFairyObject* Content2;
-    TSharedPtr<FPackageItem> ContentItem;
+    TSharedPtr<FFairyPackageItem> ContentItem;
     FString URL;
     ELoaderFillType Fill;
     EAlignType Align;

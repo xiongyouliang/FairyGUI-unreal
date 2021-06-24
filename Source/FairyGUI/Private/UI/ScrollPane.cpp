@@ -2,7 +2,7 @@
 #include "Engine/World.h"
 #include "Engine/GameViewportClient.h"
 #include "TimerManager.h"
-#include "Package/UIPackageMgr.h"
+#include "Package/FairyPackageMgr.h"
 #include "UI/GList.h"
 #include "UI/GController.h"
 #include "UI/GScrollBar.h"
@@ -103,7 +103,7 @@ void UScrollPane::Setup(FByteBuffer* Buffer)
             const FString& res = vtScrollBarRes.Len() == 0 ? FUIConfig::Config.VerticalScrollBar : vtScrollBarRes;
             if (res.Len() > 0)
             {
-                VtScrollBar = Cast<UGScrollBar>(UUIPackageMgr::Get()->CreateObjectFromURL(GetOuter(), res));
+                VtScrollBar = Cast<UGScrollBar>(UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), res));
                 if (VtScrollBar == nullptr)
                 {
                     UE_LOG(LogFairyGUI, Warning, TEXT("cannot create scrollbar from %s"), *res);
@@ -120,7 +120,7 @@ void UScrollPane::Setup(FByteBuffer* Buffer)
             const FString& res = hzScrollBarRes.Len() == 0 ? FUIConfig::Config.HorizontalScrollBar : hzScrollBarRes;
             if (res.Len() > 0)
             {
-                HzScrollBar = Cast<UGScrollBar>(UUIPackageMgr::Get()->CreateObjectFromURL(GetOuter(), res));
+                HzScrollBar = Cast<UGScrollBar>(UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), res));
                 if (HzScrollBar == nullptr)
                 {
                     UE_LOG(LogFairyGUI, Warning, TEXT("cannot create scrollbar from %s"), *res);
@@ -150,7 +150,7 @@ void UScrollPane::Setup(FByteBuffer* Buffer)
 
     if (headerRes.Len() > 0)
     {
-        Header = Cast<UFairyComponent>(UUIPackageMgr::Get()->CreateObjectFromURL(GetOuter(), headerRes));
+        Header = Cast<UFairyComponent>(UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), headerRes));
         if (Header == nullptr)
         {
             UE_LOG(LogFairyGUI, Warning, TEXT("cannot create UScrollPane header from %s"), *headerRes);
@@ -164,7 +164,7 @@ void UScrollPane::Setup(FByteBuffer* Buffer)
 
     if (footerRes.Len() > 0)
     {
-        Footer = Cast<UFairyComponent>(UUIPackageMgr::Get()->CreateObjectFromURL(GetOuter(), footerRes));
+        Footer = Cast<UFairyComponent>(UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), footerRes));
         if (Footer == nullptr)
         {
             UE_LOG(LogFairyGUI, Warning, TEXT("cannot create UScrollPane footer from %s"), *footerRes);

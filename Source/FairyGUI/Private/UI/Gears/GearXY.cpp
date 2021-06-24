@@ -1,6 +1,6 @@
 #include "UI/Gears/GearXY.h"
 #include "UI/FairyComponent.h"
-#include "Package/UIPackage.h"
+#include "Package/FairyPackage.h"
 #include "UI/GController.h"
 #include "Tween/GTween.h"
 #include "Utils/ByteBuffer.h"
@@ -63,7 +63,7 @@ void FGearXY::Apply()
         EndPt.Y = Value->Y;
     }
 
-    if (TweenConfig.IsSet() && TweenConfig->bTween && UUIPackage::Constructing == 0 && !bDisableAllTweenEffect)
+    if (TweenConfig.IsSet() && TweenConfig->bTween && UFairyPackage::Constructing == 0 && !bDisableAllTweenEffect)
     {
         FGTweener* tweener = FGTween::GetTween(TweenConfig->Handle);
         if (tweener != nullptr)

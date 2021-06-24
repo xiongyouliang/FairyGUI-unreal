@@ -41,7 +41,7 @@ protected:
 
 private:
     TSharedPtr<class SFImage> Content;
-    TSharedPtr<FPackageItem> ContentItem;
+    TSharedPtr<FFairyPackageItem> ContentItem;
     FString URL;
     ELoaderFillType Fill;
     EAlignType Align;

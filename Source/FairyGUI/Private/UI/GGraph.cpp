@@ -138,9 +138,7 @@ void UGGraph::SetProp(EObjectPropID PropID, const FNVariant& InValue)
 void UGGraph::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
     UFairyObject::SetupBeforeAdd(Buffer, BeginPos);
-
     Buffer->Seek(BeginPos, 5);
-
     int32 type = Buffer->ReadByte();
     if (type != 0)
     {
@@ -152,18 +150,26 @@ void UGGraph::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
         if (roundedRect)
         {
             for (int32 i = 0; i < 4; i++)
+            {
                 cornerRadius[i] = Buffer->ReadFloat();
+            }
         }
 
         if (type == 1)
         {
             if (roundedRect)
+            {
                 DrawRoundRect(lineWidth, lineColor, fillColor, cornerRadius.X, cornerRadius.Y, cornerRadius.Z, cornerRadius.W);
+            }
             else
+            {
                 DrawRect(lineWidth, lineColor, fillColor);
+            }
         }
         else if (type == 2)
+        {
             DrawEllipse(lineWidth, lineColor, fillColor);
+        }
         else if (type == 3)
         {
             int32 cnt = Buffer->ReadShort() / 2;
@@ -186,9 +192,10 @@ void UGGraph::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
             if (cnt > 0)
             {
                 for (int32 i = 0; i < cnt; i++)
+                {
                     distances.Add(Buffer->ReadFloat());
+                }
             }
-
             DrawRegularPolygon(sides, lineWidth, lineColor, fillColor, startAngle, distances);
         }
     }

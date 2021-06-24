@@ -9,23 +9,23 @@ class FByteBuffer;
 struct FMovieClipData;
 struct FBitmapFont;
 
-class UUIPackage;
+class UFairyPackage;
 class UNTexture;
 class UFairyComponent;
 
-class FAIRYGUI_API FPackageItem : public FGCObject, public TSharedFromThis<FPackageItem>
+class FAIRYGUI_API FFairyPackageItem : public FGCObject, public TSharedFromThis<FFairyPackageItem>
 {
 public:
-    FPackageItem();
+    FFairyPackageItem();
 
     void Load();
-    TSharedPtr<FPackageItem> GetBranch();
-    TSharedPtr<FPackageItem> GetHighResolution();
+    TSharedPtr<FFairyPackageItem> GetBranch();
+    TSharedPtr<FFairyPackageItem> GetHighResolution();
 
     virtual void AddReferencedObjects(FReferenceCollector& Collector) override;
 
 public:
-    UUIPackage* Owner;
+    UFairyPackage* Owner;
 
     EPackageItemType Type;
     EObjectType ObjectType;

@@ -3,8 +3,8 @@
 #include "UI/GObjectPool.h"
 #include "UI/GController.h"
 #include "UI/GScrollBar.h"
-#include "Package/UIPackage.h"
-#include "Package/UIPackageMgr.h"
+#include "Package/FairyPackage.h"
+#include "Package/FairyPackageMgr.h"
 #include "Utils/ByteBuffer.h"
 #include "Widgets/SContainer.h"
 
@@ -1461,7 +1461,7 @@ bool UGList::HandleScroll1(bool forceUpdate)
                 url = ItemProvider.Execute(curIndex % NumItems);
                 if (url.Len() == 0)
                     url = DefaultItem;
-                url = UUIPackageMgr::Get()->NormalizeURL(url);
+                url = UFairyPackageMgr::Get()->NormalizeURL(url);
             }
 
             if (ii.Obj != nullptr && ii.Obj->GetResourceURL().Compare(url) != 0)
@@ -1628,7 +1628,7 @@ bool UGList::HandleScroll2(bool forceUpdate)
                 url = ItemProvider.Execute(curIndex % NumItems);
                 if (url.Len() == 0)
                     url = DefaultItem;
-                url = UUIPackageMgr::Get()->NormalizeURL(url);
+                url = UFairyPackageMgr::Get()->NormalizeURL(url);
             }
 
             if (ii.Obj != nullptr && ii.Obj->GetResourceURL().Compare(url) != 0)
@@ -1843,7 +1843,7 @@ void UGList::HandleScroll3(bool forceUpdate)
                     url = ItemProvider.Execute(i % NumItems);
                     if (url.Len() == 0)
                         url = DefaultItem;
-                    url = UUIPackageMgr::Get()->NormalizeURL(url);
+                    url = UFairyPackageMgr::Get()->NormalizeURL(url);
                 }
 
                 ii.Obj = Pool->GetObject(url);

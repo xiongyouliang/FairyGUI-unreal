@@ -4,8 +4,8 @@
 #include "UI/Relations.h"
 #include "UI/TranslationHelper.h"
 #include "UI/UIObjectFactory.h"
-#include "Package/UIPackage.h"
-#include "Package/UIPackageMgr.h"
+#include "Package/FairyPackage.h"
+#include "Package/FairyPackageMgr.h"
 #include "UI/GController.h"
 #include "UI/Transition.h"
 #include "UI/FairyRoot.h"
@@ -989,7 +989,7 @@ void UFairyComponent::ConstructFromResource()
 
 void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, int32 PoolIndex)
 {
-	TSharedPtr<FPackageItem> ContentItem = PackageItem->GetBranch();
+	TSharedPtr<FFairyPackageItem> ContentItem = PackageItem->GetBranch();
 
 	if (!ContentItem->bTranslated)
 	{
@@ -1069,7 +1069,7 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 	Buffer->Seek(0, 2);
 
 	// Parse Children
-	UFairyObject* Child;
+	UFairyObject* Child = nullptr;
 	int32 childCount = Buffer->ReadShort();
 	for (int32 i = 0; i < childCount; i++)
 	{
@@ -1088,13 +1088,13 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 			const FString& src = Buffer->ReadS();
 			const FString& pkgId = Buffer->ReadS();
 
-			TSharedPtr<FPackageItem> pi;
+			TSharedPtr<FFairyPackageItem> pi;
 			if (!src.IsEmpty())
 			{
-				UUIPackage* pkg;
+				UFairyPackage* pkg;
 				if (!pkgId.IsEmpty()) 
 				{
-					pkg = UUIPackageMgr::Get()->GetPackageByID(pkgId);
+					pkg = UFairyPackageMgr::Get()->GetPackageByID(pkgId);
 				}
 				else 
 				{
@@ -1174,7 +1174,7 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 	int32 i2 = Buffer->ReadInt();
 	if (!hitTestId.IsEmpty())
 	{
-		TSharedPtr<FPackageItem> pi = ContentItem->Owner->GetItem(hitTestId);
+		TSharedPtr<FFairyPackageItem> pi = ContentItem->Owner->GetItem(hitTestId);
 		/*if (pi != nullptr && pi->pixelHitTestData != nullptr)
 			setHitArea(new PixelHitTest(pi->pixelHitTestData, i1, i2));*/
 	}

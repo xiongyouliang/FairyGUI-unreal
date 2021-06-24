@@ -117,7 +117,7 @@ void UGImage::SetProp(EObjectPropID PropID, const FNVariant& InValue)
 
 void UGImage::ConstructFromResource()
 {
-	TSharedPtr<FPackageItem> ContentItem = PackageItem->GetBranch();
+	TSharedPtr<FFairyPackageItem> ContentItem = PackageItem->GetBranch();
 	InitSize = SourceSize = ContentItem->Size;
 
 	ContentItem = ContentItem->GetHighResolution();

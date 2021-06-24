@@ -121,7 +121,7 @@ void UGMovieClip::SetProp(EObjectPropID PropID, const FNVariant& InValue)
 
 void UGMovieClip::ConstructFromResource()
 {
-    TSharedPtr<FPackageItem> contentItem = PackageItem->GetBranch();
+    TSharedPtr<FFairyPackageItem> contentItem = PackageItem->GetBranch();
     SourceSize = contentItem->Size;
     InitSize = SourceSize;
 

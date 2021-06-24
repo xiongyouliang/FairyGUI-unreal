@@ -2,21 +2,21 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "UIPackageMgr.generated.h"
+#include "FairyPackageMgr.generated.h"
 
-class FPackageItem;
+class FFairyPackageItem;
 class UFairyObject;
 class FByteBuffer;
-class UUIPackageAsset;
+class UFairyPackageAsset;
 
 
 UCLASS(BlueprintType)
-class FAIRYGUI_API UUIPackageMgr : public UObject
+class FAIRYGUI_API UFairyPackageMgr : public UObject
 {
 	GENERATED_BODY()
 public:
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	static UUIPackageMgr* Get();
+	static UFairyPackageMgr* Get();
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	const FString& GetBranch() { return Branch; }
@@ -33,17 +33,17 @@ public:
 
 	// Package Manager Interface start
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	UUIPackage* AddPackage(UUIPackageAsset* InAsset);
+	UFairyPackage* AddPackage(UFairyPackageAsset* InAsset);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	UUIPackage* GetPackageByName(const FString& PackageName);
+	UFairyPackage* GetPackageByName(const FString& PackageName);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	UUIPackage* GetPackageByID(const FString& PackageID);
+	UFairyPackage* GetPackageByID(const FString& PackageID);
 
 	FString ConvertToItemURL(const FString& PackageName, const FString& ResourceName);
 	FString NormalizeURL(const FString& URL);
-	TSharedPtr<FPackageItem> GetPackageItemByURL(const FString& URL);
+	TSharedPtr<FFairyPackageItem> GetPackageItemByURL(const FString& URL);
 	
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
@@ -63,16 +63,16 @@ public:
 	UGWindow* CreateWindow(UObject* Outer, const FString& PackageName, const FString& ResourceName);
 
 private:
-	UUIPackageMgr();
-	~UUIPackageMgr();
+	UFairyPackageMgr();
+	~UFairyPackageMgr();
 
 	UPROPERTY()
-	TMap<FString, UUIPackage*> PackageInstByID;
+	TMap<FString, UFairyPackage*> PackageInstByID;
 	UPROPERTY()
-	TMap<FString, UUIPackage*> PackageInstByName;
+	TMap<FString, UFairyPackage*> PackageInstByName;
 	TMap<FString, FString> Vars;
 	FString Branch;
 
-	static UUIPackageMgr* Instance;
+	static UFairyPackageMgr* Instance;
 };
 

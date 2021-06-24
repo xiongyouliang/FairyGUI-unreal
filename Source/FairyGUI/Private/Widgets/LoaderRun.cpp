@@ -4,10 +4,10 @@
 #include "Framework/Application/SlateApplication.h"
 #include "Framework/Text/DefaultLayoutBlock.h"
 #include "Framework/Text/RunUtils.h"
-#include "Package/UIPackage.h"
-#include "Package/PackageItem.h"
+#include "Package/FairyPackage.h"
+#include "Package/FairyPackageItem.h"
 #include "UI/GLoader.h"
-#include "Package/UIPackageMgr.h"
+#include "Package/FairyPackageMgr.h"
 
 TSharedRef< FLoaderRun > FLoaderRun::Create(const FHTMLElement& InHTMLElement, const TSharedRef< const FString >& InText, int16 InBaseline, const FTextRange& InRange)
 {
@@ -29,7 +29,7 @@ FLoaderRun::FLoaderRun(const FHTMLElement& InHTMLElement, const TSharedRef< cons
     const FString& Src = HTMLElement.Attributes.Get("src");
     if (Src.Len() > 0)
     {
-        TSharedPtr<FPackageItem> pi = UUIPackageMgr::Get()->GetPackageItemByURL(Src);
+        TSharedPtr<FFairyPackageItem> pi = UFairyPackageMgr::Get()->GetPackageItemByURL(Src);
         if (pi.IsValid())
             SourceSize = pi->Size;
     }

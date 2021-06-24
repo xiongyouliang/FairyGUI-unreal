@@ -1,6 +1,6 @@
 #include "UI/UIObjectFactory.h"
-#include "Package/UIPackage.h"
-#include "Package/PackageItem.h"
+#include "Package/FairyPackage.h"
+#include "Package/FairyPackageItem.h"
 #include "UI/FairyComponent.h"
 #include "UI/GImage.h"
 #include "UI/GMovieClip.h"
@@ -19,7 +19,7 @@
 #include "UI/GScrollBar.h"
 #include "UI/GList.h"
 #include "UI/GTree.h"
-#include "Package/UIPackageMgr.h"
+#include "Package/FairyPackageMgr.h"
 
 TMap<FString, FGComponentCreator> FUIObjectFactory::PackageItemExtensions;
 FGLoaderCreator FUIObjectFactory::LoaderCreator;
@@ -31,7 +31,7 @@ void FUIObjectFactory::SetExtension(const FString& URL, FGComponentCreator Creat
         UE_LOG(LogFairyGUI, Warning, TEXT("Invaild url: %s"), *URL);
         return;
     }
-    TSharedPtr<FPackageItem> PackageItem = UUIPackageMgr::Get()->GetPackageItemByURL(URL);
+    TSharedPtr<FFairyPackageItem> PackageItem = UFairyPackageMgr::Get()->GetPackageItemByURL(URL);
     if (PackageItem.IsValid())
         PackageItem->ExtensionCreator = Creator;
 
@@ -45,7 +45,7 @@ void FUIObjectFactory::SetExtension(const FString& URL, TSubclassOf<UFairyCompon
     }));
 }
 
-UFairyObject* FUIObjectFactory::NewObject(UObject* Outer, const TSharedPtr<FPackageItem>& PackageItem)
+UFairyObject* FUIObjectFactory::NewObject(UObject* Outer, const TSharedPtr<FFairyPackageItem>& PackageItem)
 {
     UFairyObject* obj = nullptr;
     if (PackageItem->ExtensionCreator.IsBound())
@@ -117,7 +117,7 @@ UFairyObject* FUIObjectFactory::NewObject(UObject* Outer, EObjectType Type)
     }
 }
 
-void FUIObjectFactory::ResolvePackageItemExtension(const TSharedPtr<FPackageItem>& PackageItem)
+void FUIObjectFactory::ResolvePackageItemExtension(const TSharedPtr<FFairyPackageItem>& PackageItem)
 {
     auto it = PackageItemExtensions.Find("ui://" + PackageItem->Owner->GetID() + PackageItem->ID);
     if (it != nullptr)

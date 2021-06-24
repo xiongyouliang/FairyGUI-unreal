@@ -1,10 +1,10 @@
 #pragma once
 
-#include "GObject.h"
+#include "UI/FairyObject.h"
 #include "GLoader3D.generated.h"
 
 UCLASS(BlueprintType, Blueprintable)
-class FAIRYGUI_API UGLoader3D : public UGObject
+class FAIRYGUI_API UGLoader3D : public UFairyObject
 {
     GENERATED_BODY()
 

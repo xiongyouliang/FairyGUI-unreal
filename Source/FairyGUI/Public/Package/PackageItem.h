@@ -11,7 +11,7 @@ struct FBitmapFont;
 
 class UUIPackage;
 class UNTexture;
-class UGComponent;
+class UFairyComponent;
 
 class FAIRYGUI_API FPackageItem : public FGCObject, public TSharedFromThis<FPackageItem>
 {

@@ -4,10 +4,10 @@
 #include "Framework/Application/SlateApplication.h"
 #include "Framework/Text/DefaultLayoutBlock.h"
 #include "Framework/Text/RunUtils.h"
-#include "UI/UIPackage.h"
-#include "UI/PackageItem.h"
+#include "Package/UIPackage.h"
+#include "Package/PackageItem.h"
 #include "UI/GLoader.h"
-#include "UI/UIPackageMgr.h"
+#include "Package/UIPackageMgr.h"
 
 TSharedRef< FLoaderRun > FLoaderRun::Create(const FHTMLElement& InHTMLElement, const TSharedRef< const FString >& InText, int16 InBaseline, const FTextRange& InRange)
 {

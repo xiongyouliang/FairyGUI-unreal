@@ -1,18 +1,18 @@
 #pragma once
 
-#include "GComponent.h"
+#include "UI/FairyComponent.h"
 #include "GList.generated.h"
 
 class FGObjectPool;
 
-DECLARE_DELEGATE_TwoParams(FListItemRenderer, int32, UGObject*);
+DECLARE_DELEGATE_TwoParams(FListItemRenderer, int32, UFairyObject*);
 DECLARE_DELEGATE_RetVal_OneParam(FString, FListItemProvider, int32);
 
-DECLARE_DYNAMIC_DELEGATE_TwoParams(FDynListItemRenderer, int32, Index, UGObject*, Obj);
+DECLARE_DYNAMIC_DELEGATE_TwoParams(FDynListItemRenderer, int32, Index, UFairyObject*, Obj);
 DECLARE_DYNAMIC_DELEGATE_RetVal_OneParam(FString, FDynListItemProvider, int32, Index);
 
 UCLASS(BlueprintType, NotBlueprintable)
-class FAIRYGUI_API UGList : public UGComponent
+class FAIRYGUI_API UGList : public UFairyComponent
 {
     GENERATED_BODY()
 
@@ -66,21 +66,21 @@ public:
     void SetSelectionMode(EListSelectionMode InMode) { SelectionMode = InMode; }
 
     FGObjectPool* GetItemPool() const { return Pool; }
-    UGObject* GetFromPool();
-    UGObject* GetFromPool(const FString& URL);
-    void ReturnToPool(UGObject* Obj);
+    UFairyObject* GetFromPool();
+    UFairyObject* GetFromPool(const FString& URL);
+    void ReturnToPool(UFairyObject* Obj);
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    UGObject* AddItemFromPool(const FString& URL = "");
+    UFairyObject* AddItemFromPool(const FString& URL = "");
 
-    virtual UGObject* AddChildAt(UGObject* Child, int32 Index) override;
+    virtual UFairyObject* AddChildAt(UFairyObject* Child, int32 Index) override;
     virtual void RemoveChildAt(int32 Index) override;
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     void RemoveChildToPoolAt(int32 Index);
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    void RemoveChildToPool(UGObject* Child);
+    void RemoveChildToPool(UFairyObject* Child);
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     void RemoveChildrenToPool(int32 BeginIndex = 0, int32 EndIndex = -1);
@@ -190,13 +190,13 @@ protected:
     virtual void SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos) override;
     virtual void SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos) override;
 
-    virtual void DispatchItemEvent(UGObject* Obj, UEventContext* Context);
+    virtual void DispatchItemEvent(UFairyObject* Obj, UEventContext* Context);
     virtual void ReadItems(FByteBuffer* Buffer);
-    virtual void SetupItem(FByteBuffer* Buffer, UGObject* Obj);
+    virtual void SetupItem(FByteBuffer* Buffer, UFairyObject* Obj);
 
 private:
-    void ClearSelectionExcept(UGObject* Obj);
-    void SetSelectionOnEvent(UGObject* Obj, UEventContext* Context);
+    void ClearSelectionExcept(UFairyObject* Obj);
+    void SetSelectionOnEvent(UFairyObject* Obj, UEventContext* Context);
 
     UFUNCTION()
     void OnClickItemHandler(UEventContext* Context);
@@ -257,7 +257,7 @@ private:
     struct FItemInfo
     {
         FVector2D Size;
-        UGObject* Obj;
+        UFairyObject* Obj;
         uint32 UpdateFlag;
         bool bSelected;
 

@@ -1,11 +1,11 @@
 #pragma once
 
-#include "GObject.h"
+#include "UI/FairyObject.h"
 #include "Event/EventContext.h"
 #include "GMovieClip.generated.h"
 
 UCLASS(BlueprintType)
-class FAIRYGUI_API UGMovieClip : public UGObject
+class FAIRYGUI_API UGMovieClip : public UFairyObject
 {
     GENERATED_BODY()
 

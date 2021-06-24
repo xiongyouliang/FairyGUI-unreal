@@ -1,6 +1,6 @@
 #include "UI/Gears/GearLook.h"
-#include "UI/GObject.h"
-#include "UI/UIPackage.h"
+#include "UI/FairyObject.h"
+#include "Package/UIPackage.h"
 #include "UI/GController.h"
 #include "Tween/GTween.h"
 #include "Utils/ByteBuffer.h"
@@ -13,7 +13,7 @@ FGearLook::FValue::FValue() :
 {
 }
 
-FGearLook::FGearLook(UGObject* InOwner) : FGearBase(InOwner)
+FGearLook::FGearLook(UFairyObject* InOwner) : FGearBase(InOwner)
 {
     Type = EType::Look;
 }

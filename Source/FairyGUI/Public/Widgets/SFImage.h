@@ -12,7 +12,7 @@ public:
     SLATE_BEGIN_ARGS(SFImage) :
         _GObject(nullptr)
     {}
-        SLATE_ARGUMENT(UGObject*, GObject)
+        SLATE_ARGUMENT(UFairyObject*, GObject)
     SLATE_END_ARGS()
 
     

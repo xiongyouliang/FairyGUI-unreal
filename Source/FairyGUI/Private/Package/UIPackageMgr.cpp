@@ -1,9 +1,9 @@
-#include "UI/UIPackageMgr.h"
+#include "Package/UIPackageMgr.h"
 
 #include "FairyApplication.h"
 #include "FairyCommons.h"
-#include "UIPackageAsset.h"
-#include "UI/UIPackage.h"
+#include "Package/UIPackageAsset.h"
+#include "Package/UIPackage.h"
 #include "UI/UIObjectFactory.h"
 #include "UI/GWindow.h"
 #include "Utils/ByteBuffer.h"
@@ -211,7 +211,7 @@ void UUIPackageMgr::RemoveAllPackages()
 	PackageInstByName.Reset();
 }
 
-UGObject* UUIPackageMgr::CreateObject(UObject* Outer, const FString& PackageName, const FString& ResourceName)
+UFairyObject* UUIPackageMgr::CreateObject(UObject* Outer, const FString& PackageName, const FString& ResourceName)
 {
 	UUIPackage* pkg = GetPackageByName(PackageName);
 	if (pkg) {
@@ -223,7 +223,7 @@ UGObject* UUIPackageMgr::CreateObject(UObject* Outer, const FString& PackageName
 	}
 }
 
-UGObject* UUIPackageMgr::CreateObjectFromURL(UObject* Outer, const FString& URL)
+UFairyObject* UUIPackageMgr::CreateObjectFromURL(UObject* Outer, const FString& URL)
 {
 	TSharedPtr<FPackageItem> PackageItem = GetPackageItemByURL(URL);
 	if (PackageItem.IsValid()) {
@@ -237,10 +237,10 @@ UGObject* UUIPackageMgr::CreateObjectFromURL(UObject* Outer, const FString& URL)
 
 UGWindow* UUIPackageMgr::CreateWindow(UObject* Outer, const FString& PackageName, const FString& ResourceName)
 {
-	UGObject* ContentPane = CreateObject(Outer, PackageName, ResourceName);
-	verifyf(ContentPane->IsA<UGComponent>(), TEXT("Window content should be a component"));
+	UFairyObject* ContentPane = CreateObject(Outer, PackageName, ResourceName);
+	verifyf(ContentPane->IsA<UFairyComponent>(), TEXT("Window content should be a component"));
 	UGWindow* Window = NewObject<UGWindow>(Outer);
-	Window->SetContentPane(Cast<UGComponent>(ContentPane));
+	Window->SetContentPane(Cast<UFairyComponent>(ContentPane));
 
 	return Window;
 }

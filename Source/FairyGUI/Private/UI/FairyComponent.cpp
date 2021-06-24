@@ -1,21 +1,21 @@
-#include "UI/GComponent.h"
+#include "UI/FairyComponent.h"
 #include "UI/GButton.h"
 #include "UI/GGroup.h"
 #include "UI/Relations.h"
 #include "UI/TranslationHelper.h"
 #include "UI/UIObjectFactory.h"
-#include "UI/UIPackage.h"
-#include "UI/UIPackageMgr.h"
+#include "Package/UIPackage.h"
+#include "Package/UIPackageMgr.h"
 #include "UI/GController.h"
 #include "UI/Transition.h"
-#include "UI/GRoot.h"
+#include "UI/FairyRoot.h"
 #include "Utils/ByteBuffer.h"
 #include "Widgets/SContainer.h"
 #include "Tween/GTween.h"
 
 static FThreadSafeCounter FairyComponentCount;
 
-UGComponent::UGComponent() :
+UFairyComponent::UFairyComponent() :
 	bBuildingDisplayList(false),
 	AlignOffset(ForceInit),
 	ApexIndex(0),
@@ -25,31 +25,30 @@ UGComponent::UGComponent() :
 {
 	if (HasAnyFlags(RF_ClassDefaultObject) == false)
 	{
-		UE_LOG(LogFairyGUI, Warning, TEXT("UGComponent::UGComponent(...), Count:%d"), FairyComponentCount.GetValue());
+		UE_LOG(LogFairyGUI, Warning, TEXT("UFairyComponent::UFairyComponent(...), Count:%d"), FairyComponentCount.GetValue());
 		FairyComponentCount.Increment();
 	}
 }
 
-UGComponent::~UGComponent()
+UFairyComponent::~UFairyComponent()
 {
 	if (HasAnyFlags(RF_ClassDefaultObject) == false)
 	{
 		FairyComponentCount.Decrement();
-		UE_LOG(LogFairyGUI, Warning, TEXT("UGComponent::~UGComponent(...), Count:%d"), FairyComponentCount.GetValue());
+		UE_LOG(LogFairyGUI, Warning, TEXT("UFairyComponent::~UFairyComponent(...), Count:%d"), FairyComponentCount.GetValue());
 	}
 }
 
-void UGComponent::ReleaseSlateResources(bool bReleaseChildren)
+void UFairyComponent::ReleaseSlateResources(bool bReleaseChildren)
 {
 	Container.Reset();
-	RootContainer.Reset();
 
 	Super::ReleaseSlateResources(bReleaseChildren);
 }
 
-UGObject* UGComponent::AddChild(UGObject* Child)
+UFairyObject* UFairyComponent::AddChild(UFairyObject* Child)
 {
-	if ( UGComponent* Component = Cast<UGComponent>(Child) ) 
+	if ( UFairyComponent* Component = Cast<UFairyComponent>(Child) ) 
 	{
 		Component->MakeSlateWidget();
 	}
@@ -57,7 +56,7 @@ UGObject* UGComponent::AddChild(UGObject* Child)
 	return Child;
 }
 
-UGObject* UGComponent::AddChildAt(UGObject* Child, int32 Index)
+UFairyObject* UFairyComponent::AddChildAt(UFairyObject* Child, int32 Index)
 {
 	verifyf(Child != nullptr, TEXT("Argument must be non-nil"));
 	verifyf(Index >= 0 && Index <= Children.Num(), TEXT("Invalid child index"));
@@ -100,13 +99,13 @@ UGObject* UGComponent::AddChildAt(UGObject* Child, int32 Index)
 	return Child;
 }
 
-int32 UGComponent::GetInsertPosForSortingChild(UGObject* Child)
+int32 UFairyComponent::GetInsertPosForSortingChild(UFairyObject* Child)
 {
 	int32 cnt = Children.Num();
 	int32 i;
 	for (i = 0; i < cnt; i++)
 	{
-		UGObject* Obj = Children[i];
+		UFairyObject* Obj = Children[i];
 		if (Obj == Child)
 			continue;
 
@@ -116,7 +115,7 @@ int32 UGComponent::GetInsertPosForSortingChild(UGObject* Child)
 	return i;
 }
 
-void UGComponent::RemoveChild(UGObject* Child)
+void UFairyComponent::RemoveChild(UFairyObject* Child)
 {
 	verifyf(Child != nullptr, TEXT("Argument must be non-nil"));
 
@@ -125,11 +124,11 @@ void UGComponent::RemoveChild(UGObject* Child)
 		RemoveChildAt(ChildIndex);
 }
 
-void UGComponent::RemoveChildAt(int32 Index)
+void UFairyComponent::RemoveChildAt(int32 Index)
 {
 	verifyf(Index >= 0 && Index < Children.Num(), TEXT("Invalid child index"));
 
-	UGObject* Child = Children[Index];
+	UFairyObject* Child = Children[Index];
 
 	Child->Parent = nullptr;
 
@@ -148,7 +147,7 @@ void UGComponent::RemoveChildAt(int32 Index)
 	SetBoundsChangedFlag();
 }
 
-void UGComponent::RemoveChildren(int32 BeginIndex, int32 EndIndex)
+void UFairyComponent::RemoveChildren(int32 BeginIndex, int32 EndIndex)
 {
 	if (EndIndex < 0 || EndIndex >= Children.Num())
 		EndIndex = Children.Num() - 1;
@@ -157,14 +156,14 @@ void UGComponent::RemoveChildren(int32 BeginIndex, int32 EndIndex)
 		RemoveChildAt(BeginIndex);
 }
 
-UGObject* UGComponent::GetChildAt(int32 Index, TSubclassOf<UGObject> ClassType) const
+UFairyObject* UFairyComponent::GetChildAt(int32 Index, TSubclassOf<UFairyObject> ClassType) const
 {
 	verifyf(Index >= 0 && Index < Children.Num(), TEXT("Invalid child index"));
 
 	return Children[Index];
 }
 
-UGObject* UGComponent::GetChild(const FString& ChildName, TSubclassOf<UGObject> ClassType) const
+UFairyObject* UFairyComponent::GetChild(const FString& ChildName, TSubclassOf<UFairyObject> ClassType) const
 {
 	for (const auto& Child : Children)
 	{
@@ -175,10 +174,10 @@ UGObject* UGComponent::GetChild(const FString& ChildName, TSubclassOf<UGObject> 
 	return nullptr;
 }
 
-UGObject* UGComponent::GetChildByPath(const FString& Path, TSubclassOf<UGObject> ClassType) const
+UFairyObject* UFairyComponent::GetChildByPath(const FString& Path, TSubclassOf<UFairyObject> ClassType) const
 {
-	const UGComponent* Com = this;
-	UGObject* Obj = nullptr;
+	const UFairyComponent* Com = this;
+	UFairyObject* Obj = nullptr;
 
 	int32 Index1 = 0, Index2 = -1;
 	while ((Index2 = Path.Find(TEXT("."), ESearchCase::IgnoreCase, ESearchDir::FromStart, Index1)) != -1
@@ -189,7 +188,7 @@ UGObject* UGComponent::GetChildByPath(const FString& Path, TSubclassOf<UGObject>
 
 		if (Com == nullptr)
 		{
-			Com = Cast<UGComponent>(Obj);
+			Com = Cast<UFairyComponent>(Obj);
 			if (Com == nullptr)
 			{
 				Obj = nullptr;
@@ -208,7 +207,7 @@ UGObject* UGComponent::GetChildByPath(const FString& Path, TSubclassOf<UGObject>
 	return Obj;
 }
 
-UGObject* UGComponent::GetChildInGroup(const UGGroup* InGroup, const FString& ChildName, TSubclassOf<UGObject> ClassType) const
+UFairyObject* UFairyComponent::GetChildInGroup(const UGGroup* InGroup, const FString& ChildName, TSubclassOf<UFairyObject> ClassType) const
 {
 	verifyf(InGroup != nullptr, TEXT("Argument must be non-nil"));
 
@@ -221,7 +220,7 @@ UGObject* UGComponent::GetChildInGroup(const UGGroup* InGroup, const FString& Ch
 	return nullptr;
 }
 
-UGObject* UGComponent::GetChildByID(const FString& ChildID) const
+UFairyObject* UFairyComponent::GetChildByID(const FString& ChildID) const
 {
 	for (const auto& Obj : Children)
 	{
@@ -232,14 +231,14 @@ UGObject* UGComponent::GetChildByID(const FString& ChildID) const
 	return nullptr;
 }
 
-int32 UGComponent::GetChildIndex(const UGObject* Child) const
+int32 UFairyComponent::GetChildIndex(const UFairyObject* Child) const
 {
 	verifyf(Child != nullptr, TEXT("Argument must be non-nil"));
 
 	return Children.IndexOfByKey(Child);
 }
 
-void UGComponent::SetChildIndex(UGObject* Child, int32 Index)
+void UFairyComponent::SetChildIndex(UFairyObject* Child, int32 Index)
 {
 	verifyf(Child != nullptr, TEXT("Argument must be non-nil"));
 
@@ -259,7 +258,7 @@ void UGComponent::SetChildIndex(UGObject* Child, int32 Index)
 	MoveChild(Child, OldIndex, Index);
 }
 
-int UGComponent::SetChildIndexBefore(UGObject* Child, int32 Index)
+int UFairyComponent::SetChildIndexBefore(UFairyObject* Child, int32 Index)
 {
 	verifyf(Child != nullptr, TEXT("Argument must be non-nil"));
 
@@ -282,7 +281,7 @@ int UGComponent::SetChildIndexBefore(UGObject* Child, int32 Index)
 		return MoveChild(Child, OldIndex, Index);
 }
 
-int32 UGComponent::MoveChild(UGObject* Child, int32 OldIndex, int32 Index)
+int32 UFairyComponent::MoveChild(UFairyObject* Child, int32 OldIndex, int32 Index)
 {
 	int32 cnt = Children.Num();
 	if (Index > cnt)
@@ -304,7 +303,7 @@ int32 UGComponent::MoveChild(UGObject* Child, int32 OldIndex, int32 Index)
 		{
 			for (int32 i = 0; i < Index; i++)
 			{
-				UGObject* Obj = Children[i];
+				UFairyObject* Obj = Children[i];
 				if (Obj->DisplayObject->IsParentValid())
 					DisplayIndex++;
 			}
@@ -314,7 +313,7 @@ int32 UGComponent::MoveChild(UGObject* Child, int32 OldIndex, int32 Index)
 		{
 			for (int32 i = cnt - 1; i > Index; i--)
 			{
-				UGObject* Obj = Children[i];
+				UFairyObject* Obj = Children[i];
 				if (Obj->DisplayObject->IsParentValid())
 					DisplayIndex++;
 			}
@@ -329,7 +328,7 @@ int32 UGComponent::MoveChild(UGObject* Child, int32 OldIndex, int32 Index)
 	return Index;
 }
 
-void UGComponent::SwapChildren(UGObject* Child1, UGObject* Child2)
+void UFairyComponent::SwapChildren(UFairyObject* Child1, UFairyObject* Child2)
 {
 	verifyf(Child1 != nullptr, TEXT("Argument1 must be non-nil"));
 	verifyf(Child2 != nullptr, TEXT("Argument2 must be non-nil"));
@@ -343,26 +342,26 @@ void UGComponent::SwapChildren(UGObject* Child1, UGObject* Child2)
 	SwapChildrenAt(Index1, Index2);
 }
 
-void UGComponent::SwapChildrenAt(int32 Index1, int32 Index2)
+void UFairyComponent::SwapChildrenAt(int32 Index1, int32 Index2)
 {
-	UGObject* Child1 = Children[Index1];
-	UGObject* Child2 = Children[Index2];
+	UFairyObject* Child1 = Children[Index1];
+	UFairyObject* Child2 = Children[Index2];
 
 	SetChildIndex(Child1, Index2);
 	SetChildIndex(Child2, Index1);
 }
 
-int32 UGComponent::NumChildren() const
+int32 UFairyComponent::NumChildren() const
 {
 	return Children.Num();
 }
 
-bool UGComponent::IsAncestorOf(const UGObject* Obj) const
+bool UFairyComponent::IsAncestorOf(const UFairyObject* Obj) const
 {
 	if (Obj == nullptr)
 		return false;
 
-	UGComponent* Com = Obj->Parent.Get();
+	UFairyComponent* Com = Obj->Parent.Get();
 	while (Com != nullptr)
 	{
 		if (Com == this)
@@ -373,7 +372,7 @@ bool UGComponent::IsAncestorOf(const UGObject* Obj) const
 	return false;
 }
 
-bool UGComponent::IsChildInView(UGObject* Child) const
+bool UFairyComponent::IsChildInView(UFairyObject* Child) const
 {
 	if (ScrollPane != nullptr)
 	{
@@ -387,7 +386,7 @@ bool UGComponent::IsChildInView(UGObject* Child) const
 		return true;
 }
 
-int32 UGComponent::GetFirstChildInView() const
+int32 UFairyComponent::GetFirstChildInView() const
 {
 	int32 i = 0;
 	for (auto& Obj : Children)
@@ -400,7 +399,7 @@ int32 UGComponent::GetFirstChildInView() const
 	return -1;
 }
 
-UGController* UGComponent::GetController(const FString& ControllerName) const
+UGController* UFairyComponent::GetController(const FString& ControllerName) const
 {
 	for (const auto& Controller : Controllers)
 	{
@@ -411,21 +410,21 @@ UGController* UGComponent::GetController(const FString& ControllerName) const
 	return nullptr;
 }
 
-void UGComponent::AddController(UGController* Controller)
+void UFairyComponent::AddController(UGController* Controller)
 {
 	verifyf(Controller != nullptr, TEXT("Argument must be non-nil"));
 
 	Controllers.Add(Controller);
 }
 
-UGController* UGComponent::GetControllerAt(int32 Index) const
+UGController* UFairyComponent::GetControllerAt(int32 Index) const
 {
 	verifyf(Index >= 0 && Index < Controllers.Num(), TEXT("Invalid controller index"));
 
 	return Controllers[Index];
 }
 
-void UGComponent::RemoveController(UGController* Controller)
+void UFairyComponent::RemoveController(UGController* Controller)
 {
 	verifyf(Controller != nullptr, TEXT("Argument must be non-nil"));
 
@@ -436,7 +435,7 @@ void UGComponent::RemoveController(UGController* Controller)
 	Controllers.RemoveAt(Index);
 }
 
-void UGComponent::ApplyController(UGController* Controller)
+void UFairyComponent::ApplyController(UGController* Controller)
 {
 	ApplyingController = Controller;
 
@@ -448,13 +447,13 @@ void UGComponent::ApplyController(UGController* Controller)
 	Controller->RunActions();
 }
 
-void UGComponent::ApplyAllControllers()
+void UFairyComponent::ApplyAllControllers()
 {
 	for (const auto& Controller : Controllers)
 		ApplyController(Controller);
 }
 
-UTransition* UGComponent::GetTransition(const FString& TransitionName) const
+UTransition* UFairyComponent::GetTransition(const FString& TransitionName) const
 {
 	for (const auto& Transition : Transitions)
 	{
@@ -465,18 +464,18 @@ UTransition* UGComponent::GetTransition(const FString& TransitionName) const
 	return nullptr;
 }
 
-UTransition* UGComponent::GetTransitionAt(int32 Index) const
+UTransition* UFairyComponent::GetTransitionAt(int32 Index) const
 {
 	verifyf(Index >= 0 && Index < Transitions.Num(), TEXT("Invalid transition index"));
 
 	return Transitions[Index];
 }
 
-void UGComponent::AdjustRadioGroupDepth(UGObject* Obj, UGController* Controller)
+void UFairyComponent::AdjustRadioGroupDepth(UFairyObject* Obj, UGController* Controller)
 {
 	int32 cnt = Children.Num();
 	int32 i;
-	UGObject* Child;
+	UFairyObject* Child;
 	int32 myIndex = -1, maxIndex = -1;
 	for (i = 0; i < cnt; i++)
 	{
@@ -499,22 +498,22 @@ void UGComponent::AdjustRadioGroupDepth(UGObject* Obj, UGController* Controller)
 	}
 }
 
-bool UGComponent::IsOpaque() const
+bool UFairyComponent::IsOpaque() const
 {
 	return DisplayObject->IsOpaque();
 }
 
-void UGComponent::SetOpaque(bool bInOpaque)
+void UFairyComponent::SetOpaque(bool bInOpaque)
 {
 	DisplayObject->SetOpaque(bInOpaque);
 }
 
-void UGComponent::SetMargin(const FMargin& InMargin)
+void UFairyComponent::SetMargin(const FMargin& InMargin)
 {
 	Margin = InMargin;
 }
 
-void UGComponent::SetChildrenRenderOrder(EChildrenRenderOrder InRenderOrder)
+void UFairyComponent::SetChildrenRenderOrder(EChildrenRenderOrder InRenderOrder)
 {
 	if (ChildrenRenderOrder != InRenderOrder)
 	{
@@ -523,7 +522,7 @@ void UGComponent::SetChildrenRenderOrder(EChildrenRenderOrder InRenderOrder)
 	}
 }
 
-void UGComponent::SetApexIndex(int32 InApexIndex)
+void UFairyComponent::SetApexIndex(int32 InApexIndex)
 {
 	if (ApexIndex != InApexIndex)
 	{
@@ -534,7 +533,7 @@ void UGComponent::SetApexIndex(int32 InApexIndex)
 	}
 }
 
-float UGComponent::GetViewWidth() const
+float UFairyComponent::GetViewWidth() const
 {
 	if (ScrollPane != nullptr)
 		return ScrollPane->GetViewSize().X;
@@ -542,51 +541,67 @@ float UGComponent::GetViewWidth() const
 		return Size.X - Margin.Left - Margin.Right;
 }
 
-void UGComponent::SetViewWidth(float InViewWidth)
+void UFairyComponent::SetViewWidth(float InViewWidth)
 {
 	if (ScrollPane != nullptr)
+	{
 		ScrollPane->SetViewWidth(InViewWidth);
+	}
 	else
+	{
 		SetWidth(InViewWidth + Margin.Left + Margin.Right);
+	}	
 }
 
-float UGComponent::GetViewHeight() const
+float UFairyComponent::GetViewHeight() const
 {
 	if (ScrollPane != nullptr)
+	{
 		return ScrollPane->GetViewSize().Y;
+	}
 	else
+	{
 		return Size.Y - Margin.Top - Margin.Bottom;
+	}
 }
 
-void UGComponent::SetViewHeight(float InViewHeight)
+void UFairyComponent::SetViewHeight(float InViewHeight)
 {
 	if (ScrollPane != nullptr)
+	{
 		ScrollPane->SetViewHeight(InViewHeight);
+	}
 	else
+	{
 		SetHeight(InViewHeight + Margin.Top + Margin.Bottom);
+	}
 }
 
-void UGComponent::SetBoundsChangedFlag()
+void UFairyComponent::SetBoundsChangedFlag()
 {
 	if (bBoundsChanged)
+	{
 		return;
+	}
 
 	if (ScrollPane == nullptr && !bTrackBounds)
+	{
 		return;
+	}
 
 	bBoundsChanged = true;
 
-	//DelayCall(UpdateBoundsTimerHandle, this, &UGComponent::EnsureBoundsCorrect);
+	//DelayCall(UpdateBoundsTimerHandle, this, &UFairyComponent::EnsureBoundsCorrect);
 	EnsureBoundsCorrect();
 }
 
-void UGComponent::EnsureBoundsCorrect()
+void UFairyComponent::EnsureBoundsCorrect()
 {
 	if (bBoundsChanged)
 		UpdateBounds();
 }
 
-void UGComponent::UpdateBounds()
+void UFairyComponent::UpdateBounds()
 {
 	float ax, ay, aw, ah;
 	if (Children.Num() > 0)
@@ -599,7 +614,7 @@ void UGComponent::UpdateBounds()
 		int32 cnt = Children.Num();
 		for (int32 i = 0; i < cnt; ++i)
 		{
-			UGObject* child = Children[i];
+			UFairyObject* child = Children[i];
 			tmp = child->GetX();
 			if (tmp < ax)
 				ax = tmp;
@@ -626,26 +641,30 @@ void UGComponent::UpdateBounds()
 	SetBounds(ax, ay, aw, ah);
 }
 
-void UGComponent::SetBounds(float ax, float ay, float aw, float ah)
+void UFairyComponent::SetBounds(float ax, float ay, float aw, float ah)
 {
 	bBoundsChanged = false;
 	if (ScrollPane != nullptr)
 		ScrollPane->SetContentSize(FVector2D(FMath::CeilToFloat(ax + aw), FMath::CeilToFloat(ay + ah)));
 }
 
-void UGComponent::ChildStateChanged(UGObject* Child)
+void UFairyComponent::ChildStateChanged(UFairyObject* Child)
 {
 	if (bBuildingDisplayList)
+	{
 		return;
+	}
 
 	int32 cnt = Children.Num();
 	if (Cast<UGGroup>(Child) != nullptr)
 	{
 		for (int32 i = 0; i < cnt; ++i)
 		{
-			UGObject* Obj = Children[i];
+			UFairyObject* Obj = Children[i];
 			if (Obj->GetGroup() == Child)
+			{
 				ChildStateChanged(Obj);
+			}
 		}
 	}
 
@@ -658,14 +677,17 @@ void UGComponent::ChildStateChanged(UGObject* Child)
 				int32 index = 0;
 				for (int32 i = 0; i < cnt; i++)
 				{
-					UGObject* Obj = Children[i];
+					UFairyObject* Obj = Children[i];
 					if (Obj == Child)
+					{
 						break;
+					}
 
 					if (Obj->DisplayObject->IsParentValid())
+					{
 						index++;
+					}
 				}
-
 				Container->AddChildAt(Child->DisplayObject.ToSharedRef(), index);
 			}
 			else if (ChildrenRenderOrder == EChildrenRenderOrder::Descent)
@@ -673,14 +695,17 @@ void UGComponent::ChildStateChanged(UGObject* Child)
 				int32 index = 0;
 				for (int32 i = cnt - 1; i >= 0; i--)
 				{
-					UGObject* Obj = Children[i];
+					UFairyObject* Obj = Children[i];
 					if (Obj == Child)
+					{
 						break;
+					}
 
 					if (Obj->DisplayObject->IsParentValid())
+					{
 						index++;
+					}
 				}
-
 				Container->AddChildAt(Child->DisplayObject.ToSharedRef(), index);
 			}
 			else
@@ -702,7 +727,7 @@ void UGComponent::ChildStateChanged(UGObject* Child)
 	}
 }
 
-void UGComponent::ChildSortingOrderChanged(UGObject* Child, int32 OldValue, int32 NewValue)
+void UFairyComponent::ChildSortingOrderChanged(UFairyObject* Child, int32 OldValue, int32 NewValue)
 {
 	if (NewValue == 0)
 	{
@@ -723,11 +748,11 @@ void UGComponent::ChildSortingOrderChanged(UGObject* Child, int32 OldValue, int3
 	}
 }
 
-void UGComponent::BuildNativeDisplayList(bool bImmediatelly)
+void UFairyComponent::BuildNativeDisplayList(bool bImmediatelly)
 {
 	//if (!bImmediatelly)
 	//{
-	//    DelayCall(BuildDisplayListTimerHandle, this, &UGComponent::BuildNativeDisplayList, true);
+	//    DelayCall(BuildDisplayListTimerHandle, this, &UFairyComponent::BuildNativeDisplayList, true);
 	//    return;
 	//}
 
@@ -738,50 +763,56 @@ void UGComponent::BuildNativeDisplayList(bool bImmediatelly)
 	switch (ChildrenRenderOrder)
 	{
 	case EChildrenRenderOrder::Ascent:
-	{
-		for (int32 i = 0; i < cnt; i++)
 		{
-			UGObject* Child = Children[i];
-			if (Child->InternalVisible())
-				Container->AddChild(Child->DisplayObject.ToSharedRef());
+			for (int32 i = 0; i < cnt; i++)
+			{
+				UFairyObject* Child = Children[i];
+				if (Child->InternalVisible())
+				{
+					Container->AddChild(Child->DisplayObject.ToSharedRef());
+				}
+			}
 		}
-	}
-	break;
+		break;
 	case EChildrenRenderOrder::Descent:
-	{
-		for (int32 i = 0; i < cnt; i++)
 		{
-			UGObject* Child = Children[i];
-			if (Child->InternalVisible())
-				Container->AddChild(Child->DisplayObject.ToSharedRef());
+			for (int32 i = 0; i < cnt; i++)
+			{
+				UFairyObject* Child = Children[i];
+				if (Child->InternalVisible())
+				{
+					Container->AddChild(Child->DisplayObject.ToSharedRef());
+				}
+			}
 		}
-	}
-	break;
-
+		break;
 	case EChildrenRenderOrder::Arch:
-	{
-		int32 ai = FMath::Min(ApexIndex, cnt);
-		for (int32 i = 0; i < ai; i++)
 		{
-			UGObject* Child = Children[i];
-			if (Child->InternalVisible())
-				Container->AddChild(Child->DisplayObject.ToSharedRef());
+			int32 ai = FMath::Min(ApexIndex, cnt);
+			for (int32 i = 0; i < ai; i++)
+			{
+				UFairyObject* Child = Children[i];
+				if (Child->InternalVisible())
+				{
+					Container->AddChild(Child->DisplayObject.ToSharedRef());
+				}
+			}
+			for (int32 i = cnt - 1; i >= ai; i--)
+			{
+				UFairyObject* Child = Children[i];
+				if (Child->InternalVisible())
+				{
+					Container->AddChild(Child->DisplayObject.ToSharedRef());
+				}
+			}
 		}
-		for (int32 i = cnt - 1; i >= ai; i--)
-		{
-			UGObject* Child = Children[i];
-			if (Child->InternalVisible())
-				Container->AddChild(Child->DisplayObject.ToSharedRef());
-		}
-	}
-	break;
-
+		break;
 	default:
 		break;
 	}
 }
 
-FVector2D UGComponent::GetSnappingPosition(const FVector2D& InPoint)
+FVector2D UFairyComponent::GetSnappingPosition(const FVector2D& InPoint)
 {
 	int32 cnt = Children.Num();
 	if (cnt == 0)
@@ -789,7 +820,7 @@ FVector2D UGComponent::GetSnappingPosition(const FVector2D& InPoint)
 
 	EnsureBoundsCorrect();
 
-	UGObject* Obj = nullptr;
+	UFairyObject* Obj = nullptr;
 
 	FVector2D ret = InPoint;
 
@@ -808,7 +839,7 @@ FVector2D UGComponent::GetSnappingPosition(const FVector2D& InPoint)
 				}
 				else
 				{
-					UGObject* prev = Children[i - 1];
+					UFairyObject* prev = Children[i - 1];
 					if (ret.Y < prev->GetY() + prev->GetHeight() / 2) //top half part
 						ret.Y = prev->GetY();
 					else //bottom half part
@@ -838,7 +869,7 @@ FVector2D UGComponent::GetSnappingPosition(const FVector2D& InPoint)
 				}
 				else
 				{
-					UGObject* prev = Children[i - 1];
+					UFairyObject* prev = Children[i - 1];
 					if (ret.X < prev->GetX() + prev->GetWidth() / 2) // top half part
 						ret.X = prev->GetX();
 					else //bottom half part
@@ -854,7 +885,7 @@ FVector2D UGComponent::GetSnappingPosition(const FVector2D& InPoint)
 	return ret;
 }
 
-void UGComponent::SetupOverflow(EOverflowType InOverflow)
+void UFairyComponent::SetupOverflow(EOverflowType InOverflow)
 {
 	if (InOverflow == EOverflowType::Hidden)
 	{
@@ -865,13 +896,13 @@ void UGComponent::SetupOverflow(EOverflowType InOverflow)
 	Container->SetPosition(Margin.GetTopLeft());
 }
 
-void UGComponent::SetupScroll(FByteBuffer* Buffer)
+void UFairyComponent::SetupScroll(FByteBuffer* Buffer)
 {
 	ScrollPane = NewObject<UScrollPane>(this);
 	ScrollPane->Setup(Buffer);
 }
 
-void UGComponent::HandleSizeChanged()
+void UFairyComponent::HandleSizeChanged()
 {
 	Super::HandleSizeChanged();
 
@@ -894,9 +925,9 @@ void UGComponent::HandleSizeChanged()
 	}*/
 }
 
-void UGComponent::HandleGrayedChanged()
+void UFairyComponent::HandleGrayedChanged()
 {
-	UGObject::HandleGrayedChanged();
+	UFairyObject::HandleGrayedChanged();
 
 	UGController* Controller = GetController("grayed");
 	if (Controller != nullptr)
@@ -908,33 +939,33 @@ void UGComponent::HandleGrayedChanged()
 	}
 }
 
-void UGComponent::HandleControllerChanged(UGController* Controller)
+void UFairyComponent::HandleControllerChanged(UGController* Controller)
 {
-	UGObject::HandleControllerChanged(Controller);
+	UFairyObject::HandleControllerChanged(Controller);
 
 	if (ScrollPane != nullptr)
 		ScrollPane->HandleControllerChanged(Controller);
 }
 
-void UGComponent::OnAddedToStageHandler(UEventContext* Context)
+void UFairyComponent::OnAddedToStageHandler(UEventContext* Context)
 {
 	for (auto& Transition : Transitions)
 		Transition->OnOwnerAddedToStage();
 }
 
-void UGComponent::OnRemovedFromStageHandler(UEventContext* Context)
+void UFairyComponent::OnRemovedFromStageHandler(UEventContext* Context)
 {
 	for (auto& Transition : Transitions)
 		Transition->OnOwnerRemovedFromStage();
 }
 
-void UGComponent::ConstructFromResource()
+void UFairyComponent::ConstructFromResource()
 {
 	MakeSlateWidget();
 	ConstructFromResource(nullptr, 0);
 }
 
-void UGComponent::ConstructFromResource(TArray<UGObject*>* ObjectPool, int32 PoolIndex)
+void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, int32 PoolIndex)
 {
 	TSharedPtr<FPackageItem> ContentItem = PackageItem->GetBranch();
 
@@ -1011,7 +1042,7 @@ void UGComponent::ConstructFromResource(TArray<UGObject*>* ObjectPool, int32 Poo
 
 	Buffer->Seek(0, 2);
 
-	UGObject* Child;
+	UFairyObject* Child;
 	int32 childCount = Buffer->ReadShort();
 	for (int32 i = 0; i < childCount; i++)
 	{
@@ -1141,8 +1172,8 @@ void UGComponent::ConstructFromResource(TArray<UGObject*>* ObjectPool, int32 Poo
 	}
 
 	if (Transitions.Num() > 0) {
-		On(FUIEvents::AddedToStage).AddUObject(this, &UGComponent::OnAddedToStageHandler);
-		On(FUIEvents::RemovedFromStage).AddUObject(this, &UGComponent::OnRemovedFromStageHandler);
+		On(FUIEvents::AddedToStage).AddUObject(this, &UFairyComponent::OnAddedToStageHandler);
+		On(FUIEvents::RemovedFromStage).AddUObject(this, &UFairyComponent::OnRemovedFromStageHandler);
 	}
 
 	ApplyAllControllers();
@@ -1159,31 +1190,27 @@ void UGComponent::ConstructFromResource(TArray<UGObject*>* ObjectPool, int32 Poo
 	OnConstruct();
 }
 
-void UGComponent::ConstructExtension(FByteBuffer* Buffer)
+void UFairyComponent::ConstructExtension(FByteBuffer* Buffer)
 {
 }
 
-void UGComponent::OnConstruct()
+void UFairyComponent::OnConstruct()
 {
 	K2_OnConstruct();
 }
 
-void UGComponent::MakeSlateWidget()
+void UFairyComponent::MakeSlateWidget()
 {
 	if (!DisplayObject.IsValid())
 	{
-		DisplayObject = RootContainer = Container = SNew(SContainer).GObject(this);
+		DisplayObject = Container = SNew(SContainer).GObject(this);
 		DisplayObject->SetOpaque(false);
-
-		//Container = SNew(SContainer).GObject(this);
-		//Container->SetOpaque(false);
-		//RootContainer->AddChild(Container.ToSharedRef());
 	}
 }
 
-void UGComponent::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
+void UFairyComponent::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
-	UGObject::SetupAfterAdd(Buffer, BeginPos);
+	UFairyObject::SetupAfterAdd(Buffer, BeginPos);
 
 	Buffer->Seek(BeginPos, 4);
 
@@ -1208,7 +1235,7 @@ void UGComponent::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 			FString Target = Buffer->ReadS();
 			EObjectPropID PropID = (EObjectPropID)Buffer->ReadShort();
 			FString Value = Buffer->ReadS();
-			UGObject* Obj = GetChildByPath(Target);
+			UFairyObject* Obj = GetChildByPath(Target);
 			if (Obj != nullptr)
 				Obj->SetProp(PropID, FNVariant(Value));
 		}

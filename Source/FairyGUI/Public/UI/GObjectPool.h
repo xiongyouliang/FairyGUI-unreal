@@ -3,16 +3,16 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 
-class UGObject;
+class UFairyObject;
 
 class FGObjectPool : public FGCObject
 {
 public:
-    UGObject* GetObject(const FString& URL);
-    void ReturnObject(UGObject* Obj);
+    UFairyObject* GetObject(const FString& URL);
+    void ReturnObject(UFairyObject* Obj);
 
     virtual void AddReferencedObjects(FReferenceCollector& Collector) override;
 
 private:
-    TMap<FString, TArray<UGObject*>> Pool;
+    TMap<FString, TArray<UFairyObject*>> Pool;
 };

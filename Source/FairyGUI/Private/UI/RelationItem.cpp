@@ -1,10 +1,10 @@
 #include "UI/RelationItem.h"
 #include "UI/Relations.h"
-#include "UI/GComponent.h"
+#include "UI/FairyComponent.h"
 #include "UI/GGroup.h"
 #include "UI/Transition.h"
 
-FRelationItem::FRelationItem(UGObject* InOwner) :
+FRelationItem::FRelationItem(UFairyObject* InOwner) :
     TargetData(ForceInit)
 {
     Owner = InOwner;
@@ -15,7 +15,7 @@ FRelationItem::~FRelationItem()
     ReleaseRefTarget();
 }
 
-void FRelationItem::SetTarget(UGObject* InTarget)
+void FRelationItem::SetTarget(UFairyObject* InTarget)
 {
     if (Target.Get() != InTarget)
     {
@@ -146,7 +146,7 @@ void FRelationItem::ApplyOnSelfSizeChanged(float DeltaWidth, float DeltaHeight, 
     }
 }
 
-void FRelationItem::ApplyOnXYChanged(UGObject* InTarget, const FRelationDef& info, float dx, float dy)
+void FRelationItem::ApplyOnXYChanged(UFairyObject* InTarget, const FRelationDef& info, float dx, float dy)
 {
     float tmp;
 
@@ -229,7 +229,7 @@ void FRelationItem::ApplyOnXYChanged(UGObject* InTarget, const FRelationDef& inf
     }
 }
 
-void FRelationItem::ApplyOnSizeChanged(UGObject* InTarget, const FRelationDef& info)
+void FRelationItem::ApplyOnSizeChanged(UFairyObject* InTarget, const FRelationDef& info)
 {
     float pos = 0, pivot = 0, delta = 0;
     if (info.Axis == 0)
@@ -531,7 +531,7 @@ void FRelationItem::ApplyOnSizeChanged(UGObject* InTarget, const FRelationDef& i
     }
 }
 
-void FRelationItem::AddRefTarget(UGObject* InTarget)
+void FRelationItem::AddRefTarget(UFairyObject* InTarget)
 {
     if (!InTarget)
         return;

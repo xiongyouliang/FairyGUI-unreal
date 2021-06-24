@@ -1,11 +1,11 @@
 #pragma once
 
-#include "GObject.h"
+#include "UI/FairyObject.h"
 #include "Widgets/NTextFormat.h"
 #include "GTextInput.generated.h"
 
 UCLASS(BlueprintType)
-class FAIRYGUI_API UGTextInput : public UGObject
+class FAIRYGUI_API UGTextInput : public UFairyObject
 {
     GENERATED_BODY()
 

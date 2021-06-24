@@ -5,7 +5,7 @@
 class FAIRYGUI_API FGearSize : public FGearBase
 {
 public:
-    FGearSize(UGObject* InOwner);
+    FGearSize(UFairyObject* InOwner);
     virtual ~FGearSize();
 
     virtual void Apply() override;

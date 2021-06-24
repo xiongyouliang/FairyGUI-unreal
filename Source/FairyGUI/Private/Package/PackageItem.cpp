@@ -1,6 +1,6 @@
-#include "UI/PackageItem.h"
-#include "UI/UIPackage.h"
-#include "UI/GRoot.h"
+#include "Package/PackageItem.h"
+#include "Package/UIPackage.h"
+#include "UI/FairyRoot.h"
 #include "Utils/ByteBuffer.h"
 
 FPackageItem::FPackageItem() :
@@ -33,9 +33,9 @@ TSharedPtr<FPackageItem> FPackageItem::GetBranch()
 
 TSharedPtr<FPackageItem> FPackageItem::GetHighResolution()
 {
-    if (HighResolution.IsSet() && UGRoot::ContentScaleLevel > 0)
+    if (HighResolution.IsSet() && UFairyRoot::ContentScaleLevel > 0)
     {
-        FString ItemID = HighResolution.GetValue()[UGRoot::ContentScaleLevel - 1];
+        FString ItemID = HighResolution.GetValue()[UFairyRoot::ContentScaleLevel - 1];
         if (!ItemID.IsEmpty())
             return Owner->GetItem(ItemID);
     }

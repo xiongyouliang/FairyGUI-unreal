@@ -5,8 +5,8 @@
 #include "Event/EventContext.h"
 #include "Transition.generated.h"
 
-class UGObject;
-class UGComponent;
+class UFairyObject;
+class UFairyComponent;
 class UGController;
 class FByteBuffer;
 class FGTweener;
@@ -88,7 +88,7 @@ public:
     void ClearHooks();
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    void SetTarget(const FString& InLabel, UGObject* InTarget);
+    void SetTarget(const FString& InLabel, UFairyObject* InTarget);
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     void SetDuration(const FString& InLabel, float InDuration);
@@ -128,7 +128,7 @@ private:
     void ApplyValue(FTransitionItem* Item);
     void DecodeValue(FTransitionItem* Item, FByteBuffer* Buffer, struct FTransitionItemData* Value);
 
-    UGComponent* Owner;
+    UFairyComponent* Owner;
     TArray<FTransitionItem*> Items;
     int32 TotalTimes;
     int32 TotalTasks;

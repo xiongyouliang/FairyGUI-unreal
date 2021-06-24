@@ -1,7 +1,7 @@
 #include "UI/GLoader.h"
-#include "UI/UIPackage.h"
-#include "UI/UIPackageMgr.h"
-#include "UI/GComponent.h"
+#include "Package/UIPackage.h"
+#include "Package/UIPackageMgr.h"
+#include "UI/FairyComponent.h"
 #include "Widgets/NTexture.h"
 #include "Widgets/SMovieClip.h"
 #include "Widgets/SContainer.h"
@@ -219,12 +219,12 @@ void UGLoader::LoadFromPackage(const FString& ItemURL)
         }
         else if (ContentItem->Type == EPackageItemType::Component)
         {
-            UGObject* obj = UUIPackageMgr::Get()->CreateObjectFromURL(GetOuter(), ItemURL);
-            if (obj == nullptr || !obj->IsA<UGComponent>())
+            UFairyObject* obj = UUIPackageMgr::Get()->CreateObjectFromURL(GetOuter(), ItemURL);
+            if (obj == nullptr || !obj->IsA<UFairyComponent>())
                 SetErrorState();
             else
             {
-                Content2 = Cast<UGComponent>(obj);
+                Content2 = Cast<UFairyComponent>(obj);
                 Container->AddChild(Content2->GetDisplayObject());
                 UpdateLayout();
             }
@@ -373,7 +373,7 @@ FNVariant UGLoader::GetProp(EObjectPropID PropID) const
     case EObjectPropID::TimeScale:
         return FNVariant(Content->GetTimeScale());
     default:
-        return UGObject::GetProp(PropID);
+        return UFairyObject::GetProp(PropID);
     }
 }
 
@@ -397,14 +397,14 @@ void UGLoader::SetProp(EObjectPropID PropID, const FNVariant& InValue)
         Content->Advance(InValue.AsFloat());
         break;
     default:
-        UGObject::SetProp(PropID, InValue);
+        UFairyObject::SetProp(PropID, InValue);
         break;
     }
 }
 
 void UGLoader::HandleSizeChanged()
 {
-    UGObject::HandleSizeChanged();
+    UFairyObject::HandleSizeChanged();
 
     if (!bUpdatingLayout)
         UpdateLayout();
@@ -412,7 +412,7 @@ void UGLoader::HandleSizeChanged()
 
 void UGLoader::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
-    UGObject::SetupBeforeAdd(Buffer, BeginPos);
+    UFairyObject::SetupBeforeAdd(Buffer, BeginPos);
 
     Buffer->Seek(BeginPos, 5);
 

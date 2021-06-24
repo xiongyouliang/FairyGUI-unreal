@@ -5,7 +5,7 @@
 class FAIRYGUI_API FGearLook : public FGearBase
 {
 public:
-    FGearLook(UGObject* InOwner);
+    FGearLook(UFairyObject* InOwner);
     virtual ~FGearLook();
 
     virtual void Apply() override;

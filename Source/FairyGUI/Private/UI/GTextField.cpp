@@ -185,7 +185,7 @@ FNVariant UGTextField::GetProp(EObjectPropID PropID) const
     case EObjectPropID::FontSize:
         return FNVariant(Content->GetTextFormat().Size);
     default:
-        return UGObject::GetProp(PropID);
+        return UFairyObject::GetProp(PropID);
     }
 }
 
@@ -206,14 +206,14 @@ void UGTextField::SetProp(EObjectPropID PropID, const FNVariant& InValue)
         ApplyFormat();
         break;
     default:
-        UGObject::SetProp(PropID, InValue);
+        UFairyObject::SetProp(PropID, InValue);
         break;
     }
 }
 
 void UGTextField::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
-    UGObject::SetupBeforeAdd(Buffer, BeginPos);
+    UFairyObject::SetupBeforeAdd(Buffer, BeginPos);
 
     Buffer->Seek(BeginPos, 5);
 
@@ -252,7 +252,7 @@ void UGTextField::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 
 void UGTextField::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
-    UGObject::SetupAfterAdd(Buffer, BeginPos);
+    UFairyObject::SetupAfterAdd(Buffer, BeginPos);
 
     ApplyFormat();
 

@@ -5,7 +5,7 @@
 #include "UIPackage.generated.h"
 
 class FPackageItem;
-class UGObject;
+class UFairyObject;
 class FByteBuffer;
 class UUIPackageAsset;
 
@@ -30,8 +30,8 @@ public:
     TSharedPtr<FPackageItem> GetItemByName(const FString& ResourceName);
     void* GetItemAsset(const TSharedPtr<FPackageItem>& Item);
 
-    UGObject* CreateObject(UObject* Owner, const FString& ResourceName);
-    UGObject* CreateObject(UObject* Owner, const TSharedPtr<FPackageItem>& Item);
+    UFairyObject* CreateObject(UObject* Owner, const FString& ResourceName);
+    UFairyObject* CreateObject(UObject* Owner, const TSharedPtr<FPackageItem>& Item);
 
 private:
     void Load(FByteBuffer* Buffer);

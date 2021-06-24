@@ -5,7 +5,7 @@
 class FAIRYGUI_API FGearFontSize : public FGearBase
 {
 public:
-    FGearFontSize(UGObject* InOwner);
+    FGearFontSize(UFairyObject* InOwner);
     virtual ~FGearFontSize();
 
     virtual void Apply() override;

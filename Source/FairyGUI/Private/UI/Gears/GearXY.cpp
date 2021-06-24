@@ -1,11 +1,11 @@
 #include "UI/Gears/GearXY.h"
-#include "UI/GComponent.h"
-#include "UI/UIPackage.h"
+#include "UI/FairyComponent.h"
+#include "Package/UIPackage.h"
 #include "UI/GController.h"
 #include "Tween/GTween.h"
 #include "Utils/ByteBuffer.h"
 
-FGearXY::FGearXY(UGObject* InOwner) :
+FGearXY::FGearXY(UFairyObject* InOwner) :
     FGearBase(InOwner),
     bPositionsInPercent(false)
 {

@@ -1,21 +1,21 @@
 // Copyright 1998-2019 Epic Games, Inc. All Rights Reserved.
 
-#include "UI/GVisual.h"
+#include "UI/FairyVisual.h"
 #include "Engine/UserInterfaceSettings.h"
 
 /////////////////////////////////////////////////////
 // UVisual
 
-UGVisual::UGVisual(const FObjectInitializer& ObjectInitializer)
+UFairyVisual::UFairyVisual(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }
 
-void UGVisual::ReleaseSlateResources(bool bReleaseChildren)
+void UFairyVisual::ReleaseSlateResources(bool bReleaseChildren)
 {
 }
 
-void UGVisual::BeginDestroy()
+void UFairyVisual::BeginDestroy()
 {
 	Super::BeginDestroy();
 
@@ -23,7 +23,7 @@ void UGVisual::BeginDestroy()
 	ReleaseSlateResources(bReleaseChildren);
 }
 
-bool UGVisual::NeedsLoadForServer() const
+bool UFairyVisual::NeedsLoadForServer() const
 {
 	const UUserInterfaceSettings* UISettings = GetDefault<UUserInterfaceSettings>(UUserInterfaceSettings::StaticClass());
 	check(UISettings);

@@ -1,9 +1,9 @@
 #pragma once
 
 #include "UI/UIObjectFactory.h"
-#include "UI/UIPackage.h"
-#include "UI/PackageItem.h"
-#include "UI/GComponent.h"
+#include "Package/UIPackage.h"
+#include "Package/PackageItem.h"
+#include "UI/FairyComponent.h"
 #include "UI/GImage.h"
 #include "UI/GMovieClip.h"
 #include "UI/GTextField.h"

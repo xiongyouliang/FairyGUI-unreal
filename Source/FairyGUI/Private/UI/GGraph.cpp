@@ -118,7 +118,7 @@ FNVariant UGGraph::GetProp(EObjectPropID PropID) const
     case EObjectPropID::Color:
         return FNVariant(Content->Graphics.GetColor());
     default:
-        return UGObject::GetProp(PropID);
+        return UFairyObject::GetProp(PropID);
     }
 }
 
@@ -130,14 +130,14 @@ void UGGraph::SetProp(EObjectPropID PropID, const FNVariant& InValue)
         SetColor(InValue.AsColor());
         break;
     default:
-        UGObject::SetProp(PropID, InValue);
+        UFairyObject::SetProp(PropID, InValue);
         break;
     }
 }
 
 void UGGraph::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
-    UGObject::SetupBeforeAdd(Buffer, BeginPos);
+    UFairyObject::SetupBeforeAdd(Buffer, BeginPos);
 
     Buffer->Seek(BeginPos, 5);
 

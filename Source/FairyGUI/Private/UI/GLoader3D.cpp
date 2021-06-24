@@ -1,7 +1,7 @@
 #include "UI/GLoader3D.h"
-#include "UI/UIPackage.h"
-#include "UI/UIPackageMgr.h"
-#include "UI/GComponent.h"
+#include "Package/UIPackage.h"
+#include "Package/UIPackageMgr.h"
+#include "UI/FairyComponent.h"
 #include "Widgets/NTexture.h"
 #include "Widgets/SMovieClip.h"
 #include "Widgets/SContainer.h"
@@ -189,7 +189,7 @@ FNVariant UGLoader3D::GetProp(EObjectPropID PropID) const
         return FNVariant(GetColor());
         break;
     default:
-        return UGObject::GetProp(PropID);
+        return UFairyObject::GetProp(PropID);
     }
 }
 
@@ -201,14 +201,14 @@ void UGLoader3D::SetProp(EObjectPropID PropID, const FNVariant& InValue)
         SetColor(InValue.AsColor());
         break;
     default:
-        UGObject::SetProp(PropID, InValue);
+        UFairyObject::SetProp(PropID, InValue);
         break;
     }
 }
 
 void UGLoader3D::HandleSizeChanged()
 {
-    UGObject::HandleSizeChanged();
+    UFairyObject::HandleSizeChanged();
 
     if (!bUpdatingLayout)
         UpdateLayout();
@@ -216,7 +216,7 @@ void UGLoader3D::HandleSizeChanged()
 
 void UGLoader3D::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
-    UGObject::SetupBeforeAdd(Buffer, BeginPos);
+    UFairyObject::SetupBeforeAdd(Buffer, BeginPos);
 
     Buffer->Seek(BeginPos, 5);
 }

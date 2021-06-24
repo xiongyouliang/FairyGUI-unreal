@@ -1,8 +1,8 @@
 #include "UI/GController.h"
-#include "UI/GComponent.h"
-#include "UI/UIPackage.h"
+#include "UI/FairyComponent.h"
+#include "Package/UIPackage.h"
 #include "Utils/ByteBuffer.h"
-#include "UI/UIPackageMgr.h"
+#include "Package/UIPackageMgr.h"
 
 UGController::UGController() :
     SelectedIndex(-1),
@@ -29,7 +29,7 @@ void UGController::SetSelectedIndex(int32 Index, bool bTriggerEvent)
 
         PreviousIndex = SelectedIndex;
         SelectedIndex = Index;
-        Cast<UGComponent>(GetOuter())->ApplyController(this);
+        Cast<UFairyComponent>(GetOuter())->ApplyController(this);
 
         if (bTriggerEvent)
             OnChangedEvent.Broadcast(this);

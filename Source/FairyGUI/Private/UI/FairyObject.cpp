@@ -1,9 +1,9 @@
-#include "UI/GObject.h"
+#include "UI/FairyObject.h"
 #include "UI/GList.h"
 #include "UI/GGroup.h"
 #include "UI/GController.h"
-#include "UI/UIPackage.h"
-#include "UI/GRoot.h"
+#include "Package/UIPackage.h"
+#include "UI/FairyRoot.h"
 #include "UI/Gears/GearBase.h"
 #include "UI/Gears/GearDisplay.h"
 #include "UI/Gears/GearDisplay2.h"
@@ -11,12 +11,12 @@
 #include "Utils/ByteBuffer.h"
 #include "FairyApplication.h"
 
-TWeakObjectPtr<UGObject> UGObject::DraggingObject;
-FVector2D UGObject::GlobalDragStart;
-FBox2D UGObject::GlobalRect;
-bool UGObject::bUpdateInDragging = false;
+TWeakObjectPtr<UFairyObject> UFairyObject::DraggingObject;
+FVector2D UFairyObject::GlobalDragStart;
+FBox2D UFairyObject::GlobalRect;
+bool UFairyObject::bUpdateInDragging = false;
 
-UGObject::UGObject() :
+UFairyObject::UFairyObject() :
 	SourceSize(ForceInit),
 	InitSize(ForceInit),
 	MinSize(ForceInit),
@@ -42,7 +42,7 @@ UGObject::UGObject() :
 	Relations = new FRelations(this);
 }
 
-UGObject::~UGObject()
+UFairyObject::~UFairyObject()
 {
 	for (int32 i = 0; i < 10; i++)
 	{
@@ -61,7 +61,7 @@ UGObject::~UGObject()
 	}
 }
 
-void UGObject::ReleaseSlateResources(bool bReleaseChildren)
+void UFairyObject::ReleaseSlateResources(bool bReleaseChildren)
 {
 	Super::ReleaseSlateResources(bReleaseChildren);
 	if (DisplayObject.IsValid())
@@ -70,7 +70,7 @@ void UGObject::ReleaseSlateResources(bool bReleaseChildren)
 	}
 }
 
-void UGObject::BeginDestroy()
+void UFairyObject::BeginDestroy()
 {
 	Super::BeginDestroy();
 	if (Parent.IsValid())
@@ -84,17 +84,17 @@ void UGObject::BeginDestroy()
 	}
 }
 
-void UGObject::SetX(float InX)
+void UFairyObject::SetX(float InX)
 {
 	SetPosition(FVector2D(InX, Position.Y));
 }
 
-void UGObject::SetY(float InY)
+void UFairyObject::SetY(float InY)
 {
 	SetPosition(FVector2D(Position.X, InY));
 }
 
-void UGObject::SetPosition(const FVector2D& InPosition)
+void UFairyObject::SetPosition(const FVector2D& InPosition)
 {
 	if (Position != InPosition)
 	{
@@ -123,12 +123,12 @@ void UGObject::SetPosition(const FVector2D& InPosition)
 	}
 }
 
-float UGObject::GetXMin() const
+float UFairyObject::GetXMin() const
 {
 	return bPivotAsAnchor ? (Position.X - Size.X * Pivot.X) : Position.X;
 }
 
-void UGObject::SetXMin(float InXMin)
+void UFairyObject::SetXMin(float InXMin)
 {
 	if (bPivotAsAnchor)
 	{
@@ -140,12 +140,12 @@ void UGObject::SetXMin(float InXMin)
 	}
 }
 
-float UGObject::GetYMin() const
+float UFairyObject::GetYMin() const
 {
 	return bPivotAsAnchor ? (Position.Y - Size.Y * Pivot.Y) : Position.Y;
 }
 
-void UGObject::SetYMin(float InYMin)
+void UFairyObject::SetYMin(float InYMin)
 {
 	if (bPivotAsAnchor)
 	{
@@ -157,7 +157,7 @@ void UGObject::SetYMin(float InYMin)
 	}
 }
 
-void UGObject::SetSize(const FVector2D& InSize, bool bIgnorePivot)
+void UFairyObject::SetSize(const FVector2D& InSize, bool bIgnorePivot)
 {
 	if (RawSize != InSize)
 	{
@@ -229,7 +229,7 @@ void UGObject::SetSize(const FVector2D& InSize, bool bIgnorePivot)
 	}
 }
 
-void UGObject::SetSizeDirectly(const FVector2D& InSize)
+void UFairyObject::SetSizeDirectly(const FVector2D& InSize)
 {
 	RawSize = InSize;
 	Size = InSize;
@@ -243,9 +243,9 @@ void UGObject::SetSizeDirectly(const FVector2D& InSize)
 	}
 }
 
-void UGObject::Center(bool bRestraint)
+void UFairyObject::Center(bool bRestraint)
 {
-	UGComponent* Root = nullptr;
+	UFairyComponent* Root = nullptr;
 	if (Parent.IsValid())
 	{
 		Root = Parent.Get();
@@ -263,7 +263,7 @@ void UGObject::Center(bool bRestraint)
 	}
 }
 
-void UGObject::MakeFullScreen(bool bRestraint)
+void UFairyObject::MakeFullScreen(bool bRestraint)
 {
 	SetSize(UFairyApplication::Get()->GetUIRoot(this)->GetSize());
 	if (bRestraint)
@@ -272,7 +272,7 @@ void UGObject::MakeFullScreen(bool bRestraint)
 	}
 }
 
-void UGObject::SetPivot(const FVector2D& InPivot, bool bAsAnchor)
+void UFairyObject::SetPivot(const FVector2D& InPivot, bool bAsAnchor)
 {
 	if (Pivot != InPivot || bPivotAsAnchor != bAsAnchor)
 	{
@@ -283,7 +283,7 @@ void UGObject::SetPivot(const FVector2D& InPivot, bool bAsAnchor)
 	}
 }
 
-void UGObject::SetScale(const FVector2D& InScale)
+void UFairyObject::SetScale(const FVector2D& InScale)
 {
 	if (Scale != InScale)
 	{
@@ -293,12 +293,12 @@ void UGObject::SetScale(const FVector2D& InScale)
 	}
 }
 
-void UGObject::SetSkew(const FVector2D& InSkew)
+void UFairyObject::SetSkew(const FVector2D& InSkew)
 {
 	Skew = InSkew;
 }
 
-void UGObject::SetRotation(float InRotation)
+void UFairyObject::SetRotation(float InRotation)
 {
 	if (Rotation != InRotation)
 	{
@@ -308,7 +308,7 @@ void UGObject::SetRotation(float InRotation)
 	}
 }
 
-void UGObject::UpdateTransform()
+void UFairyObject::UpdateTransform()
 {
 	FScale2D Scale2D = FScale2D(Scale);
 	FQuat2D Quat2D = FQuat2D(FMath::DegreesToRadians(Rotation));
@@ -316,7 +316,7 @@ void UGObject::UpdateTransform()
 	DisplayObject->SetRenderTransform(FSlateRenderTransform(Matrix, Position));
 }
 
-void UGObject::SetAlpha(float InAlpha)
+void UFairyObject::SetAlpha(float InAlpha)
 {
 	if (Alpha != InAlpha)
 	{
@@ -326,7 +326,7 @@ void UGObject::SetAlpha(float InAlpha)
 	}
 }
 
-void UGObject::SetGrayed(bool InBGrayed)
+void UFairyObject::SetGrayed(bool InBGrayed)
 {
 	if (bGrayed != InBGrayed)
 	{
@@ -336,7 +336,7 @@ void UGObject::SetGrayed(bool InBGrayed)
 	}
 }
 
-void UGObject::SetVisible(bool bInVisible)
+void UFairyObject::SetVisible(bool bInVisible)
 {
 	if (bVisible != bInVisible)
 	{
@@ -353,32 +353,32 @@ void UGObject::SetVisible(bool bInVisible)
 	}
 }
 
-bool UGObject::InternalVisible() const
+bool UFairyObject::InternalVisible() const
 {
 	return bInternalVisible && (!Group.IsValid() || Group->InternalVisible());
 }
 
-bool UGObject::InternalVisible2() const
+bool UFairyObject::InternalVisible2() const
 {
 	return bVisible && (!Group.IsValid() || Group->InternalVisible2());
 }
 
-bool UGObject::InternalVisible3() const
+bool UFairyObject::InternalVisible3() const
 {
 	return bVisible && bInternalVisible;
 }
 
-bool UGObject::IsTouchable() const
+bool UFairyObject::IsTouchable() const
 {
 	return DisplayObject->IsTouchable();
 }
 
-void UGObject::SetTouchable(bool bInTouchable)
+void UFairyObject::SetTouchable(bool bInTouchable)
 {
 	DisplayObject->SetTouchable(bInTouchable);
 }
 
-void UGObject::SetSortingOrder(int32 InSortingOrder)
+void UFairyObject::SetSortingOrder(int32 InSortingOrder)
 {
 	if (InSortingOrder < 0)
 		InSortingOrder = 0;
@@ -391,7 +391,7 @@ void UGObject::SetSortingOrder(int32 InSortingOrder)
 	}
 }
 
-void UGObject::SetGroup(UGGroup* InGroup)
+void UFairyObject::SetGroup(UGGroup* InGroup)
 {
 	if (Group.Get() != InGroup)
 	{
@@ -406,45 +406,45 @@ void UGObject::SetGroup(UGGroup* InGroup)
 	}
 }
 
-const FString& UGObject::GetText() const
+const FString& UFairyObject::GetText() const
 {
 	return G_EMPTY_STRING;
 }
 
-void UGObject::SetText(const FString& InText)
+void UFairyObject::SetText(const FString& InText)
 {
 }
 
-const FString& UGObject::GetIcon() const
+const FString& UFairyObject::GetIcon() const
 {
 	return G_EMPTY_STRING;
 }
 
-void UGObject::SetIcon(const FString& InIcon)
+void UFairyObject::SetIcon(const FString& InIcon)
 {
 }
 
-void UGObject::SetTooltips(const FString& InTooltips)
+void UFairyObject::SetTooltips(const FString& InTooltips)
 {
 	Tooltips = InTooltips;
 	if (!Tooltips.IsEmpty())
 	{
-		On(FUIEvents::RollOver).AddUObject(this, &UGObject::OnRollOverHandler);
-		On(FUIEvents::RollOut).AddUObject(this, &UGObject::OnRollOutHandler);
+		On(FUIEvents::RollOver).AddUObject(this, &UFairyObject::OnRollOverHandler);
+		On(FUIEvents::RollOut).AddUObject(this, &UFairyObject::OnRollOutHandler);
 	}
 }
 
-void UGObject::OnRollOverHandler(UEventContext* Context)
+void UFairyObject::OnRollOverHandler(UEventContext* Context)
 {
 	UFairyApplication::Get()->GetUIRoot(this)->ShowTooltips(Tooltips);
 }
 
-void UGObject::OnRollOutHandler(UEventContext* Context)
+void UFairyObject::OnRollOutHandler(UEventContext* Context)
 {
 	UFairyApplication::Get()->GetUIRoot(this)->HideTooltips();
 }
 
-void UGObject::SetDraggable(bool bInDraggable)
+void UFairyObject::SetDraggable(bool bInDraggable)
 {
 	if (bDraggable != bInDraggable)
 	{
@@ -453,7 +453,7 @@ void UGObject::SetDraggable(bool bInDraggable)
 	}
 }
 
-FBox2D UGObject::GetDragBounds() const
+FBox2D UFairyObject::GetDragBounds() const
 {
 	if (DragBounds.IsSet())
 		return DragBounds.GetValue();
@@ -461,7 +461,7 @@ FBox2D UGObject::GetDragBounds() const
 		return FBox2D(FVector2D::ZeroVector, FVector2D::ZeroVector);
 }
 
-void UGObject::SetDragBounds(const FBox2D& InBounds)
+void UFairyObject::SetDragBounds(const FBox2D& InBounds)
 {
 	if (InBounds.Min == InBounds.Max && InBounds.Min == FVector2D::ZeroVector)
 		DragBounds.Reset();
@@ -469,17 +469,17 @@ void UGObject::SetDragBounds(const FBox2D& InBounds)
 		DragBounds = InBounds;
 }
 
-void UGObject::StartDrag(int32 UserIndex, int32 PointerIndex)
+void UFairyObject::StartDrag(int32 UserIndex, int32 PointerIndex)
 {
 	DragBegin(UserIndex, PointerIndex);
 }
 
-void UGObject::StopDrag()
+void UFairyObject::StopDrag()
 {
 	DragEnd();
 }
 
-FString UGObject::GetResourceURL() const
+FString UFairyObject::GetResourceURL() const
 {
 	if (PackageItem.IsValid())
 		return "ui://" + PackageItem->Owner->GetID() + PackageItem->ID;
@@ -487,7 +487,7 @@ FString UGObject::GetResourceURL() const
 		return G_EMPTY_STRING;
 }
 
-FString UGObject::GetResourceName() const
+FString UFairyObject::GetResourceName() const
 {
 	if (PackageItem.IsValid())
 		return PackageItem->Name;
@@ -495,7 +495,7 @@ FString UGObject::GetResourceName() const
 		return G_EMPTY_STRING;
 }
 
-FString UGObject::GetPackageName() const
+FString UFairyObject::GetPackageName() const
 {
 	if (PackageItem.IsValid())
 		return PackageItem->Owner->GetName();
@@ -503,7 +503,7 @@ FString UGObject::GetPackageName() const
 		return G_EMPTY_STRING;
 }
 
-FVector2D UGObject::LocalToGlobal(const FVector2D& InPoint)
+FVector2D UFairyObject::LocalToGlobal(const FVector2D& InPoint)
 {
 	FVector2D Point = InPoint;
 	if (bPivotAsAnchor)
@@ -512,24 +512,24 @@ FVector2D UGObject::LocalToGlobal(const FVector2D& InPoint)
 	return DisplayObject->GetCachedGeometry().LocalToAbsolute(Point);
 }
 
-FBox2D UGObject::LocalToGlobalRect(const FBox2D& InRect)
+FBox2D UFairyObject::LocalToGlobalRect(const FBox2D& InRect)
 {
 	FVector2D v0 = LocalToGlobal(InRect.Min);
 	FVector2D v1 = LocalToGlobal(InRect.Max);
 	return FBox2D(v0, v1);
 }
 
-FVector2D UGObject::LocalToRoot(const FVector2D& InPoint)
+FVector2D UFairyObject::LocalToRoot(const FVector2D& InPoint)
 {
 	return UFairyApplication::Get()->GetUIRoot(this)->GlobalToLocal(LocalToGlobal(InPoint));
 }
 
-FBox2D UGObject::LocalToRootRect(const FBox2D& InRect)
+FBox2D UFairyObject::LocalToRootRect(const FBox2D& InRect)
 {
 	return UFairyApplication::Get()->GetUIRoot(this)->GlobalToLocalRect(LocalToGlobalRect(InRect));
 }
 
-FVector2D UGObject::GlobalToLocal(const FVector2D& InPoint)
+FVector2D UFairyObject::GlobalToLocal(const FVector2D& InPoint)
 {
 	FVector2D Point = DisplayObject->GetCachedGeometry().AbsoluteToLocal(InPoint);
 	if (bPivotAsAnchor)
@@ -537,34 +537,34 @@ FVector2D UGObject::GlobalToLocal(const FVector2D& InPoint)
 	return Point;
 }
 
-FBox2D UGObject::GlobalToLocalRect(const FBox2D& InRect)
+FBox2D UFairyObject::GlobalToLocalRect(const FBox2D& InRect)
 {
 	FVector2D v0 = GlobalToLocal(InRect.Min);
 	FVector2D v1 = GlobalToLocal(InRect.Max);
 	return FBox2D(v0, v1);
 }
 
-FVector2D UGObject::RootToLocal(const FVector2D& InPoint)
+FVector2D UFairyObject::RootToLocal(const FVector2D& InPoint)
 {
 	return GlobalToLocal(UFairyApplication::Get()->GetUIRoot(this)->LocalToGlobal(InPoint));
 }
 
-FBox2D UGObject::RootToLocalRect(const FBox2D& InRect)
+FBox2D UFairyObject::RootToLocalRect(const FBox2D& InRect)
 {
 	return GlobalToLocalRect(UFairyApplication::Get()->GetUIRoot(this)->LocalToGlobalRect(InRect));
 }
 
-void UGObject::AddRelation(UGObject* Obj, ERelationType RelationType, bool bUsePercent)
+void UFairyObject::AddRelation(UFairyObject* Obj, ERelationType RelationType, bool bUsePercent)
 {
 	Relations->Add(Obj, RelationType, bUsePercent);
 }
 
-void UGObject::RemoveRelation(UGObject* Obj, ERelationType RelationType)
+void UFairyObject::RemoveRelation(UFairyObject* Obj, ERelationType RelationType)
 {
 	Relations->Remove(Obj, RelationType);
 }
 
-FGearBase* UGObject::GetGear(int32 Index)
+FGearBase* UFairyObject::GetGear(int32 Index)
 {
 	FGearBase* gear = Gears[Index];
 	if (gear == nullptr)
@@ -575,7 +575,7 @@ FGearBase* UGObject::GetGear(int32 Index)
 	return gear;
 }
 
-void UGObject::UpdateGear(int32 Index)
+void UFairyObject::UpdateGear(int32 Index)
 {
 	if (bUnderConstruct || bGearLocked)
 		return;
@@ -585,18 +585,18 @@ void UGObject::UpdateGear(int32 Index)
 		gear->UpdateState();
 }
 
-bool UGObject::CheckGearController(int32 Index, UGController* Controller)
+bool UFairyObject::CheckGearController(int32 Index, UGController* Controller)
 {
 	return Gears[Index] != nullptr && Gears[Index]->GetController() == Controller;
 }
 
-void UGObject::UpdateGearFromRelations(int32 Index, const FVector2D& Delta)
+void UFairyObject::UpdateGearFromRelations(int32 Index, const FVector2D& Delta)
 {
 	if (Gears[Index] != nullptr)
 		Gears[Index]->UpdateFromRelations(Delta);
 }
 
-uint32 UGObject::AddDisplayLock()
+uint32 UFairyObject::AddDisplayLock()
 {
 	FGearDisplay* gearDisplay = (FGearDisplay*)Gears[0];
 	if (gearDisplay != nullptr && gearDisplay->GetController() != nullptr)
@@ -610,7 +610,7 @@ uint32 UGObject::AddDisplayLock()
 		return 0;
 }
 
-void UGObject::ReleaseDisplayLock(uint32 Token)
+void UFairyObject::ReleaseDisplayLock(uint32 Token)
 {
 	FGearDisplay* gearDisplay = (FGearDisplay*)Gears[0];
 	if (gearDisplay != nullptr && gearDisplay->GetController() != nullptr)
@@ -620,7 +620,7 @@ void UGObject::ReleaseDisplayLock(uint32 Token)
 	}
 }
 
-void UGObject::CheckGearDisplay()
+void UFairyObject::CheckGearDisplay()
 {
 	if (bHandlingController)
 		return;
@@ -639,18 +639,18 @@ void UGObject::CheckGearDisplay()
 	}
 }
 
-void UGObject::RemoveFromParent()
+void UFairyObject::RemoveFromParent()
 {
 	if (Parent.IsValid())
 		Parent->RemoveChild(this);
 }
 
-UGObject* UGObject::CastTo(TSubclassOf<UGObject> ClassType) const
+UFairyObject* UFairyObject::CastTo(TSubclassOf<UFairyObject> ClassType) const
 {
-	return const_cast<UGObject*>(this);
+	return const_cast<UFairyObject*>(this);
 }
 
-FNVariant UGObject::GetProp(EObjectPropID PropID) const
+FNVariant UFairyObject::GetProp(EObjectPropID PropID) const
 {
 	switch (PropID)
 	{
@@ -663,7 +663,7 @@ FNVariant UGObject::GetProp(EObjectPropID PropID) const
 	}
 }
 
-void UGObject::SetProp(EObjectPropID PropID, const FNVariant& InValue)
+void UFairyObject::SetProp(EObjectPropID PropID, const FNVariant& InValue)
 {
 	switch (PropID)
 	{
@@ -676,18 +676,18 @@ void UGObject::SetProp(EObjectPropID PropID, const FNVariant& InValue)
 	}
 }
 
-bool UGObject::DispatchEvent(const FName& EventType, const FNVariant& Data)
+bool UFairyObject::DispatchEvent(const FName& EventType, const FNVariant& Data)
 {
 	return UFairyApplication::Get()->DispatchEvent(EventType, DisplayObject.ToSharedRef(), Data);
 }
 
-bool UGObject::HasEventListener(const FName& EventType) const
+bool UFairyObject::HasEventListener(const FName& EventType) const
 {
-	const FUnifiedEventDelegate& Delegate = const_cast<UGObject*>(this)->GetEventDelegate(EventType);
+	const FUnifiedEventDelegate& Delegate = const_cast<UFairyObject*>(this)->GetEventDelegate(EventType);
 	return Delegate.Func.IsBound() || ( Delegate.DynFunc != nullptr && Delegate.DynFunc->IsBound() );
 }
 
-void UGObject::InvokeEventDelegate(UEventContext* Context)
+void UFairyObject::InvokeEventDelegate(UEventContext* Context)
 {
 	FUnifiedEventDelegate& Delegate = GetEventDelegate(Context->GetType());
 	Delegate.Func.Broadcast(Context);
@@ -695,7 +695,7 @@ void UGObject::InvokeEventDelegate(UEventContext* Context)
 		Delegate.DynFunc->Broadcast(Context);
 }
 
-UGObject::FUnifiedEventDelegate& UGObject::GetEventDelegate(const FName& EventType)
+UFairyObject::FUnifiedEventDelegate& UFairyObject::GetEventDelegate(const FName& EventType)
 {
 	FUnifiedEventDelegate* Delegate = EventDelegates.Find(EventType);
 	if (Delegate == nullptr)
@@ -712,41 +712,41 @@ UGObject::FUnifiedEventDelegate& UGObject::GetEventDelegate(const FName& EventTy
 	return *Delegate;
 }
 
-FGUIEventMDelegate& UGObject::On(const FName& EventType)
+FGUIEventMDelegate& UFairyObject::On(const FName& EventType)
 {
 	return GetEventDelegate(EventType).Func;
 }
 
-void UGObject::ConstructFromResource()
+void UFairyObject::ConstructFromResource()
 {
 }
 
-void UGObject::HandlePositionChanged()
+void UFairyObject::HandlePositionChanged()
 {
 	DisplayObject->SetPosition(bPivotAsAnchor ? (Position - Size * Pivot) : Position);
 }
 
-void UGObject::HandleSizeChanged()
+void UFairyObject::HandleSizeChanged()
 {
 	DisplayObject->SetSize(Size);
 }
 
-void UGObject::HandleAlphaChanged()
+void UFairyObject::HandleAlphaChanged()
 {
 	DisplayObject->SetRenderOpacity(Alpha);
 }
 
-void UGObject::HandleGrayedChanged()
+void UFairyObject::HandleGrayedChanged()
 {
 	DisplayObject->SetEnabled(!bGrayed);
 }
 
-void UGObject::HandleVisibleChanged()
+void UFairyObject::HandleVisibleChanged()
 {
 	DisplayObject->SetVisible(InternalVisible2());
 }
 
-void UGObject::HandleControllerChanged(UGController* Controller)
+void UFairyObject::HandleControllerChanged(UGController* Controller)
 {
 	bHandlingController = true;
 	for (int32 i = 0; i < 10; i++)
@@ -761,7 +761,7 @@ void UGObject::HandleControllerChanged(UGController* Controller)
 	CheckGearDisplay();
 }
 
-void UGObject::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
+void UFairyObject::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
 	Buffer->Seek(BeginPos, 0);
 	Buffer->Skip(5);
@@ -830,7 +830,7 @@ void UGObject::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 		UserData = str;
 }
 
-void UGObject::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
+void UFairyObject::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
 	Buffer->Seek(BeginPos, 1);
 
@@ -857,30 +857,30 @@ void UGObject::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 	}
 }
 
-void UGObject::InitDrag()
+void UFairyObject::InitDrag()
 {
 	if (bDraggable)
 	{
-		OnTouchBegin.AddUniqueDynamic(this, &UGObject::OnTouchBeginHandler);
-		OnTouchMove.AddUniqueDynamic(this, &UGObject::OnTouchMoveHandler);
-		OnTouchEnd.AddUniqueDynamic(this, &UGObject::OnTouchEndHandler);
+		OnTouchBegin.AddUniqueDynamic(this, &UFairyObject::OnTouchBeginHandler);
+		OnTouchMove.AddUniqueDynamic(this, &UFairyObject::OnTouchMoveHandler);
+		OnTouchEnd.AddUniqueDynamic(this, &UFairyObject::OnTouchEndHandler);
 	}
 	else
 	{
-		OnTouchBegin.RemoveDynamic(this, &UGObject::OnTouchBeginHandler);
-		OnTouchMove.RemoveDynamic(this, &UGObject::OnTouchMoveHandler);
-		OnTouchEnd.RemoveDynamic(this, &UGObject::OnTouchEndHandler);
+		OnTouchBegin.RemoveDynamic(this, &UFairyObject::OnTouchBeginHandler);
+		OnTouchMove.RemoveDynamic(this, &UFairyObject::OnTouchMoveHandler);
+		OnTouchEnd.RemoveDynamic(this, &UFairyObject::OnTouchEndHandler);
 	}
 }
 
-void UGObject::DragBegin(int32 UserIndex, int32 PointerIndex)
+void UFairyObject::DragBegin(int32 UserIndex, int32 PointerIndex)
 {
 	if (DispatchEvent(FUIEvents::DragStart))
 		return;
 
 	if (DraggingObject.IsValid())
 	{
-		UGObject* tmp = DraggingObject.Get();
+		UFairyObject* tmp = DraggingObject.Get();
 		DraggingObject->StopDrag();
 		DraggingObject.Reset();
 		tmp->DispatchEvent(FUIEvents::DragEnd);
@@ -893,11 +893,11 @@ void UGObject::DragBegin(int32 UserIndex, int32 PointerIndex)
 
 	UFairyApplication::Get()->AddMouseCaptor(UserIndex, PointerIndex, this);
 
-	OnTouchMove.AddUniqueDynamic(this, &UGObject::OnTouchMoveHandler);
-	OnTouchEnd.AddUniqueDynamic(this, &UGObject::OnTouchEndHandler);
+	OnTouchMove.AddUniqueDynamic(this, &UFairyObject::OnTouchMoveHandler);
+	OnTouchEnd.AddUniqueDynamic(this, &UFairyObject::OnTouchEndHandler);
 }
 
-void UGObject::DragEnd()
+void UFairyObject::DragEnd()
 {
 	if (DraggingObject.Get() == this)
 	{
@@ -906,14 +906,14 @@ void UGObject::DragEnd()
 	}
 }
 
-void UGObject::OnTouchBeginHandler(UEventContext* Context)
+void UFairyObject::OnTouchBeginHandler(UEventContext* Context)
 {
 	DragTouchStartPos = Context->GetPointerPosition();
 	bDragTesting = true;
 	Context->CaptureTouch();
 }
 
-void UGObject::OnTouchMoveHandler(UEventContext* Context)
+void UFairyObject::OnTouchMoveHandler(UEventContext* Context)
 {
 	if (DraggingObject.Get() != this && bDragTesting)
 	{
@@ -965,7 +965,7 @@ void UGObject::OnTouchMoveHandler(UEventContext* Context)
 	}
 }
 
-void UGObject::OnTouchEndHandler(UEventContext* Context)
+void UFairyObject::OnTouchEndHandler(UEventContext* Context)
 {
 	if (DraggingObject.Get() == this)
 	{

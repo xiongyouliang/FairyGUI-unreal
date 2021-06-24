@@ -1,10 +1,10 @@
 #pragma once
 
-#include "GObject.h"
+#include "UI/FairyObject.h"
 #include "GLoader.generated.h"
 
 UCLASS(BlueprintType, Blueprintable)
-class FAIRYGUI_API UGLoader : public UGObject
+class FAIRYGUI_API UGLoader : public UFairyObject
 {
     GENERATED_BODY()
 
@@ -103,7 +103,7 @@ private:
     TSharedPtr<class SContainer> Container;
     TSharedPtr<class SMovieClip> Content;
     UPROPERTY(Transient)
-    UGObject* Content2;
+    UFairyObject* Content2;
     TSharedPtr<FPackageItem> ContentItem;
     FString URL;
     ELoaderFillType Fill;

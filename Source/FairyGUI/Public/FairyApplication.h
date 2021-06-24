@@ -12,8 +12,8 @@
 
 class UUIPackage;
 class UNTexture;
-class UGObject;
-class UGRoot;
+class UFairyObject;
+class UFairyRoot;
 class UDragDropManager;
 
 UCLASS(BlueprintType)
@@ -32,7 +32,7 @@ private:
 		bool bClickCancelled;
 		int32 ClickCount;
 		TArray<TWeakPtr<SWidget>> DownPath;
-		TArray<TWeakObjectPtr<UGObject>> MouseCaptors;
+		TArray<TWeakObjectPtr<UFairyObject>> MouseCaptors;
 		FPointerEvent Event;
 
 		FTouchInfo();
@@ -61,7 +61,7 @@ public:
 	void AddUIRoot(UObject* WorldContextObject);
 
 	UFUNCTION(BlueprintPure, Category = "FairyGUI | FairyApplication")
-	UGRoot* GetUIRoot(UObject* WorldContextObject);
+	UFairyRoot* GetUIRoot(UObject* WorldContextObject);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI | FairyApplication")
 	void RemoveUIRoot(UObject* WorldContextObject);
@@ -73,7 +73,7 @@ public:
 	int32 GetTouchCount() const;
 
 	UFUNCTION(BlueprintPure, Category = "FairyGUI")
-	UGObject* GetObjectUnderPoint(const FVector2D& ScreenspacePosition);
+	UFairyObject* GetObjectUnderPoint(const FVector2D& ScreenspacePosition);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	void CancelClick(int32 InUserIndex = -1, int32 InPointerIndex = -1);
@@ -97,8 +97,8 @@ public:
 	void BubbleEvent(const FName& EventType, const TSharedRef<SWidget>& Initiator, const FNVariant& Data = FNVariant::Null);
 	void BroadcastEvent(const FName& EventType, const TSharedRef<SWidget>& Initiator, const FNVariant& Data = FNVariant::Null);
 
-	void AddMouseCaptor(int32 InUserIndex, int32 InPointerIndex, UGObject* InTarget);
-	void RemoveMouseCaptor(int32 InUserIndex, int32 InPointerIndex, UGObject* InTarget);
+	void AddMouseCaptor(int32 InUserIndex, int32 InPointerIndex, UFairyObject* InTarget);
+	void RemoveMouseCaptor(int32 InUserIndex, int32 InPointerIndex, UFairyObject* InTarget);
 	bool HasMouseCaptor(int32 InUserIndex, int32 InPointerIndex);
 
 	FReply OnWidgetMouseButtonDown(const TSharedRef<SWidget>& Widget, const FGeometry& MyGeometry, const FPointerEvent& MouseEvent);
@@ -109,12 +109,15 @@ public:
 	void OnWidgetMouseLeave(const TSharedRef<SWidget>& Widget, const FPointerEvent& MouseEvent);
 	FReply OnWidgetMouseWheel(const TSharedRef<SWidget>& Widget, const FGeometry& MyGeometry, const FPointerEvent& MouseEvent);
 
-	UGObject* GetWidgetGObject(const TSharedPtr<SWidget>& InWidget);
+	UFairyObject* GetWidgetGObject(const TSharedPtr<SWidget>& InWidget);
 
 	//UGameViewportClient* GetViewportClient() const { return ViewportClient; }
 	//const TSharedPtr<SWidget>& GetViewportWidget() const { return ViewportWidget; }
 
 	void CallAfterSlateTick(FSimpleDelegate Callback);
+
+	float GetDPIScale() { return DPIScale; }
+	void SetDPIScale(float NewDPIScale) { DPIScale = NewDPIScale; }
 
 private:
 	void OnCreate();
@@ -124,13 +127,13 @@ private:
 	void PreviewUpEvent(const FPointerEvent& MouseEvent);
 	void PreviewMoveEvent(const FPointerEvent& MouseEvent);
 
-	void GetDescendants(const TSharedRef<SWidget>& InWidget, TArray<UGObject*>& OutArray);
-	void GetPathToRoot(const TSharedRef<SWidget>& InWidget, TArray<UGObject*>& OutArray);
+	void GetDescendants(const TSharedRef<SWidget>& InWidget, TArray<UFairyObject*>& OutArray);
+	void GetPathToRoot(const TSharedRef<SWidget>& InWidget, TArray<UFairyObject*>& OutArray);
 
 	UEventContext* BorrowEventContext();
 	void ReturnEventContext(UEventContext* Context);
 
-	void InternalBubbleEvent(const FName& EventType, const TArray<UGObject*>& CallChain, const FNVariant& Data);
+	void InternalBubbleEvent(const FName& EventType, const TArray<UFairyObject*>& CallChain, const FNVariant& Data);
 
 	FTouchInfo* GetTouchInfo(const FPointerEvent& MouseEvent);
 	FTouchInfo* GetTouchInfo(int32 InUserIndex, int32 InPointerIndex);
@@ -139,7 +142,7 @@ private:
 
 private:
 	UPROPERTY()
-	TMap<UWorld*, UGRoot*> UIRoots;
+	TMap<UWorld*, UFairyRoot*> UIRoots;
 	UPROPERTY()
 	TMap<UWorld*, UDragDropManager*> DragDropManagers;
 
@@ -156,11 +159,13 @@ private:
 	bool bSoundEnabled;
 	float SoundVolumeScale;
 
+	float DPIScale; // Slate widget Layout DPIScale
+
 	static UFairyApplication* Instance;
 
 	friend class UUIPackageMgr;
 	friend class UUIPackage;
-	friend class UGRoot;
+	friend class UFairyRoot;
 	friend class FGTween;
 	friend class UDragDropManager;
 };

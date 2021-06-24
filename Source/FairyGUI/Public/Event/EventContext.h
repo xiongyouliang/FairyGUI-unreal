@@ -7,7 +7,7 @@
 #include "Utils/NVariant.h"
 #include "EventContext.generated.h"
 
-class UGObject;
+class UFairyObject;
 class SDisplayObject;
 
 UCLASS(BlueprintType)
@@ -17,13 +17,13 @@ class FAIRYGUI_API UEventContext : public UObject
 
 public:
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    UGObject* GetSender() const
+    UFairyObject* GetSender() const
     {
         return Sender;
     }
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    UGObject* GetInitiator() const
+    UFairyObject* GetInitiator() const
     {
         return Initiator;
     }
@@ -116,8 +116,8 @@ public:
     }
 
 private:
-    UGObject* Sender;
-    UGObject* Initiator;
+    UFairyObject* Sender;
+    UFairyObject* Initiator;
     FName Type;
     bool bStopped;
     bool bDefaultPrevented;

@@ -25,14 +25,7 @@ void SDisplayObject::Construct(const SDisplayObject::FArguments& InArgs)
 
 const FVector2D& SDisplayObject::GetPosition() const
 {
-    if (!GetRenderTransform().IsSet())
-    {
-        return FVector2D::ZeroVector;
-    }
-    else
-    {
-        return GetRenderTransform()->GetTranslation();
-    }
+    return LocalPosition;
 }
 
 void SDisplayObject::SetPosition(const FVector2D& InPosition)
@@ -49,22 +42,13 @@ void SDisplayObject::SetX(float InX)
 
 void SDisplayObject::SetY(float InY)
 {
-    //if (!GetRenderTransform().IsSet())
-    //{
-    //    SetRenderTransform( FSlateRenderTransform(FVector2D(0, InY)) );
-    //}
-    //else
-    //{
-    //    SetRenderTransform(FSlateRenderTransform(GetRenderTransform()->GetMatrix(),
-    //        FVector2D(GetRenderTransform()->GetTranslation().X, InY)) );
-    //}
     LocalPosition.Y = InY;
     UpdateRenderTransform();
 }
 
 void SDisplayObject::UpdateRenderTransform()
 {
-    float DPIScale = 0.6666;
+    float DPIScale = UFairyApplication::Get()->GetDPIScale();
     FVector2D FinalPosition = LocalPosition / DPIScale;
     if (!GetRenderTransform().IsSet())
     {

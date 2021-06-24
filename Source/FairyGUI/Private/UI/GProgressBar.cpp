@@ -143,7 +143,7 @@ void UGProgressBar::Update(float InValue)
     }
 }
 
-bool UGProgressBar::SetFillAmount(UGObject* Bar, float Amount)
+bool UGProgressBar::SetFillAmount(UFairyObject* Bar, float Amount)
 {
     UGImage* image = nullptr;
     UGLoader* loader = nullptr;
@@ -160,7 +160,7 @@ bool UGProgressBar::SetFillAmount(UGObject* Bar, float Amount)
 
 void UGProgressBar::HandleSizeChanged()
 {
-    UGComponent::HandleSizeChanged();
+    UFairyComponent::HandleSizeChanged();
 
     BarMaxSize = GetSize() - BarMaxSizeDelta;
 
@@ -195,7 +195,7 @@ void UGProgressBar::ConstructExtension(FByteBuffer* Buffer)
 
 void UGProgressBar::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
-    UGComponent::SetupAfterAdd(Buffer, BeginPos);
+    UFairyComponent::SetupAfterAdd(Buffer, BeginPos);
 
     if (!Buffer->Seek(BeginPos, 6))
     {

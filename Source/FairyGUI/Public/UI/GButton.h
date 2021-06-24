@@ -1,13 +1,13 @@
 #pragma once
 
-#include "GComponent.h"
+#include "UI/FairyComponent.h"
 #include "GButton.generated.h"
 
 class UGController;
 class UGTextField;
 
 UCLASS(BlueprintType, Blueprintable)
-class FAIRYGUI_API UGButton : public UGComponent
+class FAIRYGUI_API UGButton : public UFairyComponent
 {
     GENERATED_BODY()
 
@@ -92,8 +92,8 @@ private:
     void OnRemovedFromStageHandler(UEventContext* Context);
 
     EButtonMode Mode;
-    UGObject* TitleObject;
-    UGObject* IconObject;
+    UFairyObject* TitleObject;
+    UFairyObject* IconObject;
     UGController* ButtonController;
     UGController* RelatedController;
     FString RelatedPageID;

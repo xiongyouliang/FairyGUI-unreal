@@ -98,7 +98,7 @@ FNVariant UGImage::GetProp(EObjectPropID PropID) const
 	case EObjectPropID::Color:
 		return FNVariant(GetColor());
 	default:
-		return UGObject::GetProp(PropID);
+		return UFairyObject::GetProp(PropID);
 	}
 }
 
@@ -110,7 +110,7 @@ void UGImage::SetProp(EObjectPropID PropID, const FNVariant& InValue)
 		SetColor(InValue.AsColor());
 		break;
 	default:
-		UGObject::SetProp(PropID, InValue);
+		UFairyObject::SetProp(PropID, InValue);
 		break;
 	}
 }
@@ -139,7 +139,7 @@ void UGImage::ConstructFromResource()
 
 void UGImage::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
-	UGObject::SetupBeforeAdd(Buffer, BeginPos);
+	UFairyObject::SetupBeforeAdd(Buffer, BeginPos);
 
 	Buffer->Seek(BeginPos, 5);
 

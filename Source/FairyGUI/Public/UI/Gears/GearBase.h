@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 #include "Tween/GTween.h"
 
-class UGObject;
+class UFairyObject;
 class UGController;
 class FByteBuffer;
 
@@ -38,7 +38,7 @@ public:
         FontSize
     };
 
-    FGearBase(UGObject* InOwner);
+    FGearBase(UFairyObject* InOwner);
     virtual ~FGearBase();
 
     EType GetType() const { return Type; }
@@ -54,7 +54,7 @@ public:
 
     void Setup(FByteBuffer* Buffer);
 
-    static FGearBase* Create(UGObject* InOwner, EType InType);
+    static FGearBase* Create(UFairyObject* InOwner, EType InType);
     static bool bDisableAllTweenEffect;
 
 protected:
@@ -62,7 +62,7 @@ protected:
     virtual void Init();
 
     EType Type;
-    UGObject* Owner;
+    UFairyObject* Owner;
     UGController* Controller;
     TOptional<FGearTweenConfig> TweenConfig;
 };

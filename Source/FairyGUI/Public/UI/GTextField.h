@@ -1,11 +1,11 @@
 #pragma once
 
-#include "GObject.h"
+#include "UI/FairyObject.h"
 #include "Widgets/NTextFormat.h"
 #include "GTextField.generated.h"
 
 UCLASS(BlueprintType)
-class FAIRYGUI_API UGTextField : public UGObject
+class FAIRYGUI_API UGTextField : public UFairyObject
 {
     GENERATED_BODY()
 

@@ -1,6 +1,6 @@
 #include "UI/DragDropManager.h"
 #include "FairyApplication.h"
-#include "UI/GRoot.h"
+#include "UI/FairyRoot.h"
 
 //UDragDropManager* UDragDropManager::Get()
 //{
@@ -35,7 +35,7 @@ void UDragDropManager::StartDrag(const FString& InIcon, const FNVariant& InUserD
 	if (Agent->GetParent() != nullptr)
 		return;
 
-	UGRoot* TargetUIRoot = UFairyApplication::Get()->GetUIRoot(this);
+	UFairyRoot* TargetUIRoot = UFairyApplication::Get()->GetUIRoot(this);
 	UserData = InUserData;
 	Agent->SetURL(InIcon);
 	TargetUIRoot->AddChild(Agent);
@@ -67,10 +67,10 @@ void UDragDropManager::OnDragEnd(UEventContext* Context)
 
 	Agent->RemoveFromParent();
 
-	UGObject* obj = UFairyApplication::Get()->GetObjectUnderPoint(Context->GetPointerPosition());
+	UFairyObject* obj = UFairyApplication::Get()->GetObjectUnderPoint(Context->GetPointerPosition());
 	while (obj != nullptr)
 	{
-		if (obj->IsA<UGComponent>())
+		if (obj->IsA<UFairyComponent>())
 		{
 			if (obj->HasEventListener(FUIEvents::Drop))
 			{

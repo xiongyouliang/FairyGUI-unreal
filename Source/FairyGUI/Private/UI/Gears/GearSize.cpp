@@ -1,11 +1,11 @@
 #include "UI/Gears/GearSize.h"
-#include "UI/GObject.h"
-#include "UI/UIPackage.h"
+#include "UI/FairyObject.h"
+#include "Package/UIPackage.h"
 #include "UI/GController.h"
 #include "Tween/GTween.h"
 #include "Utils/ByteBuffer.h"
 
-FGearSize::FGearSize(UGObject* InOwner) : FGearBase(InOwner)
+FGearSize::FGearSize(UFairyObject* InOwner) : FGearBase(InOwner)
 {
     Type = EType::Size;
 }

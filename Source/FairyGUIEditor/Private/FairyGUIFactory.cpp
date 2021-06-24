@@ -3,7 +3,7 @@
 #include "EditorFramework/AssetImportData.h"
 #include "Misc/Paths.h"
 #include "Misc/FileHelper.h"
-#include "UIPackageAsset.h"
+#include "Package/UIPackageAsset.h"
 
 UFairyGUIFactory::UFairyGUIFactory()
 {

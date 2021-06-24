@@ -1,12 +1,12 @@
 #pragma once
 
-#include "GComponent.h"
+#include "UI/FairyComponent.h"
 #include "GScrollBar.generated.h"
 
-class UScrollPane;
+class UFairyScrollPane;
 
 UCLASS(BlueprintType, Blueprintable)
-class FAIRYGUI_API UGScrollBar : public UGComponent
+class FAIRYGUI_API UGScrollBar : public UFairyComponent
 {
     GENERATED_BODY()
 
@@ -32,10 +32,10 @@ private:
     void OnArrowButton1Click(UEventContext* Context);
     void OnArrowButton2Click(UEventContext* Context);
 
-    UGObject* GripObject;
-    UGObject* ArrowButton1;
-    UGObject* ArrowButton2;
-    UGObject* BarObject;
+    UFairyObject* GripObject;
+    UFairyObject* ArrowButton1;
+    UFairyObject* ArrowButton2;
+    UFairyObject* BarObject;
     UScrollPane* Target;
 
     bool bVertical;

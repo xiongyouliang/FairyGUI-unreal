@@ -7,8 +7,8 @@
 #include "Event/EventContext.h"
 #include "ScrollPane.generated.h"
 
-class UGObject;
-class UGComponent;
+class UFairyObject;
+class UFairyComponent;
 class UGScrollBar;
 class UGController;
 class FByteBuffer;
@@ -26,10 +26,10 @@ public:
     void Setup(FByteBuffer* Buffer);
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    UGComponent* GetHeader() const { return Header; }
+    UFairyComponent* GetHeader() const { return Header; }
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    UGComponent* GetFooter() const { return Footer; }
+    UFairyComponent* GetFooter() const { return Footer; }
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     UGScrollBar* GetVtScrollBar() const { return VtScrollBar; }
@@ -82,12 +82,12 @@ public:
     void ScrollBottom(bool bAnimation = false);
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    void ScrollToView(UGObject* Obj, bool bAnimation = false, bool bSetFirst = false);
+    void ScrollToView(UFairyObject* Obj, bool bAnimation = false, bool bSetFirst = false);
 
     void ScrollToView(const FBox2D& Rect, bool bAnimation = false, bool bSetFirst = false);
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    bool IsChildInView(UGObject* Obj) const;
+    bool IsChildInView(UFairyObject* Obj) const;
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     int32 GetPageX() const;
@@ -196,7 +196,7 @@ private:
     void OnBarTweenComplete(FGTweener* Tweener);
 
 private:
-    UGComponent* Owner;
+    UFairyComponent* Owner;
     TSharedPtr<SContainer> MaskContainer;
     TSharedPtr<SContainer> Container;
     UPROPERTY(Transient)
@@ -204,9 +204,9 @@ private:
     UPROPERTY(Transient)
     UGScrollBar* VtScrollBar;
     UPROPERTY(Transient)
-    UGComponent* Header;
+    UFairyComponent* Header;
     UPROPERTY(Transient)
-    UGComponent* Footer;
+    UFairyComponent* Footer;
 
     EScrollType ScrollType;
     FMargin ScrollBarMargin;
@@ -257,7 +257,7 @@ private:
     static int32 GestureFlag;
     static TWeakObjectPtr<UScrollPane> DraggingPane;
 
-    friend class UGComponent;
+    friend class UFairyComponent;
     friend class UGList;
     friend class UGScrollBar;
 };

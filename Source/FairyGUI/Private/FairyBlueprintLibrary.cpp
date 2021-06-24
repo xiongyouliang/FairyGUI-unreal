@@ -144,7 +144,7 @@ void UFairyBlueprintLibrary::KillTween(UPARAM(ref) FTweenerHandle& Handle, bool 
 	FGTween::Kill(Handle, bSetComplete);
 }
 
-void UFairyBlueprintLibrary::SetPackageItemExtension(const FString& URL, TSubclassOf<UGComponent> ClassType)
+void UFairyBlueprintLibrary::SetPackageItemExtension(const FString& URL, TSubclassOf<UFairyComponent> ClassType)
 {
 	FUIObjectFactory::SetExtension(URL, ClassType);
 }

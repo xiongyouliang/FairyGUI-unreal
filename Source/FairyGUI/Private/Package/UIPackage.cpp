@@ -1,15 +1,15 @@
-#include "UI/UIPackage.h"
+#include "Package/UIPackage.h"
 #include "Sound/SoundBase.h"
 #include "FairyApplication.h"
-#include "UIPackageAsset.h"
-#include "UI/PackageItem.h"
+#include "Package/UIPackageAsset.h"
+#include "Package/PackageItem.h"
 #include "UI/UIObjectFactory.h"
-#include "UI/GObject.h"
+#include "UI/FairyObject.h"
 #include "Widgets/NTexture.h"
 #include "Widgets/SMovieClip.h"
 #include "Widgets/BitmapFont.h"
 #include "Utils/ByteBuffer.h"
-#include "UI/UIPackageMgr.h"
+#include "Package/UIPackageMgr.h"
 
 struct FAtlasSprite
 {
@@ -67,7 +67,7 @@ TSharedPtr<FPackageItem> UUIPackage::GetItemByName(const FString& ResourceName)
         return nullptr;
 }
 
-UGObject* UUIPackage::CreateObject(UObject* Owner, const FString& ResourceName)
+UFairyObject* UUIPackage::CreateObject(UObject* Owner, const FString& ResourceName)
 {
     TSharedPtr<FPackageItem> item = GetItemByName(ResourceName);
     //verifyf will break app, use a error log replace it in Dev/Test/Debug Build, include Editor;
@@ -83,9 +83,9 @@ UGObject* UUIPackage::CreateObject(UObject* Owner, const FString& ResourceName)
     return CreateObject(Owner, item);
 }
 
-UGObject* UUIPackage::CreateObject(UObject* Owner, const TSharedPtr<FPackageItem>& Item)
+UFairyObject* UUIPackage::CreateObject(UObject* Owner, const TSharedPtr<FPackageItem>& Item)
 {
-    UGObject* Object = FUIObjectFactory::NewObject(Owner, Item);
+    UFairyObject* Object = FUIObjectFactory::NewObject(Owner, Item);
     if (Object == nullptr) {
         return nullptr;
     }

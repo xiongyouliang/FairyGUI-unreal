@@ -109,7 +109,7 @@ FNVariant UGLabel::GetProp(EObjectPropID PropID) const
     case EObjectPropID::FontSize:
         return FNVariant(GetTitleFontSize());
     default:
-        return UGComponent::GetProp(PropID);
+        return UFairyComponent::GetProp(PropID);
     }
 }
 
@@ -134,7 +134,7 @@ void UGLabel::SetProp(EObjectPropID PropID, const FNVariant& InValue)
         SetTitleFontSize(InValue.AsInt());
         break;
     default:
-        UGComponent::SetProp(PropID, InValue);
+        UFairyComponent::SetProp(PropID, InValue);
         break;
     }
 }
@@ -147,7 +147,7 @@ void UGLabel::ConstructExtension(FByteBuffer* Buffer)
 
 void UGLabel::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
-    UGComponent::SetupAfterAdd(Buffer, BeginPos);
+    UFairyComponent::SetupAfterAdd(Buffer, BeginPos);
 
     if (!Buffer->Seek(BeginPos, 6))
         return;

@@ -9,12 +9,12 @@
 #include "UI/Gears/GearSize.h"
 #include "UI/Gears/GearText.h"
 #include "UI/Gears/GearXY.h"
-#include "UI/GComponent.h"
+#include "UI/FairyComponent.h"
 #include "Utils/ByteBuffer.h"
 
 bool FGearBase::bDisableAllTweenEffect = false;
 
-FGearBase* FGearBase::Create(UGObject* InOwner, EType InType)
+FGearBase* FGearBase::Create(UFairyObject* InOwner, EType InType)
 {
     FGearBase* Gear = nullptr;
     switch (InType)
@@ -63,7 +63,7 @@ FGearTweenConfig::FGearTweenConfig():
 {
 }
 
-FGearBase::FGearBase(UGObject* InOwner) : Owner(InOwner)
+FGearBase::FGearBase(UFairyObject* InOwner) : Owner(InOwner)
 {
 }
 

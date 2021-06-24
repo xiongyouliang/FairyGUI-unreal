@@ -2,32 +2,33 @@
 
 #include "Widgets/SDisplayObject.h"
 #include "Relations.h"
-#include "PackageItem.h"
+#include "Package/PackageItem.h"
 #include "UIConfig.h"
 #include "FairyCommons.h"
 #include "Event/EventContext.h"
 #include "Utils/NVariant.h"
-#include "UI/GVisual.h"
-#include "GObject.generated.h"
+#include "UI/FairyVisual.h"
+
+#include "FairyObject.generated.h"
 
 class FByteBuffer;
 class FRelations;
 class FGearBase;
 
 class UGGroup;
-class UGComponent;
+class UFairyComponent;
 class UGTreeNode;
 class UGController;
-class UGRoot;
+class UFairyRoot;
 
 UCLASS(BlueprintType)
-class FAIRYGUI_API UGObject : public UGVisual
+class FAIRYGUI_API UFairyObject : public UFairyVisual
 {
 	GENERATED_BODY()
 
 public:
-	UGObject();
-	virtual ~UGObject();
+	UFairyObject();
+	virtual ~UFairyObject();
 
 	// ~ UGVisual Interface
 	virtual void ReleaseSlateResources(bool bReleaseChildren) override;
@@ -208,10 +209,10 @@ public:
 	FRelations* GetRelations() { return Relations; }
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	void AddRelation(UGObject* Obj, ERelationType RelationType, bool bUsePercent = false);
+	void AddRelation(UFairyObject* Obj, ERelationType RelationType, bool bUsePercent = false);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	void RemoveRelation(UGObject* Obj, ERelationType RelationType);
+	void RemoveRelation(UFairyObject* Obj, ERelationType RelationType);
 
 	FGearBase* GetGear(int32 Index);
 	bool CheckGearController(int32 Index, UGController* Controller);
@@ -219,7 +220,7 @@ public:
 	void ReleaseDisplayLock(uint32 Token);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	UGComponent* GetParent() const { return Parent.Get(); }
+	UFairyComponent* GetParent() const { return Parent.Get(); }
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	void RemoveFromParent();
@@ -228,7 +229,7 @@ public:
 	bool OnStage() const { return DisplayObject->OnStage(); }
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI", meta = (DeterminesOutputType = "ClassType"))
-	UGObject* CastTo(TSubclassOf<UGObject> ClassType) const;
+	UFairyObject* CastTo(TSubclassOf<UFairyObject> ClassType) const;
 
 	template <typename T> T* As() const;
 
@@ -324,10 +325,10 @@ public:
 	bool bUnderConstruct = false;
 	bool bGearLocked = false;
 
-	static UGObject* GetDraggingObject() { return DraggingObject.Get(); }
+	static UFairyObject* GetDraggingObject() { return DraggingObject.Get(); }
 
 protected:
-	TWeakObjectPtr<UGComponent> Parent;
+	TWeakObjectPtr<UFairyComponent> Parent;
 
 	TSharedPtr<SDisplayObject> DisplayObject;
 
@@ -408,25 +409,25 @@ private:
 	FSimpleMulticastDelegate OnPositionChangedEvent;
 	FSimpleMulticastDelegate OnSizeChangedEvent;
 
-	static TWeakObjectPtr<UGObject> DraggingObject;
+	static TWeakObjectPtr<UFairyObject> DraggingObject;
 	static FVector2D GlobalDragStart;
 	static FBox2D GlobalRect;
 	static bool bUpdateInDragging;
 
-	friend class UGComponent;
+	friend class UFairyComponent;
 	friend class UGGroup;
 	friend class FRelationItem;
 	friend class FUIObjectFactory;
 };
 
 template <typename T>
-inline T* UGObject::As() const
+inline T* UFairyObject::As() const
 {
 	return const_cast<T*>(Cast<T>(this));
 }
 
 template <typename T>
-inline T UGObject::GetProp(EObjectPropID PropID) const
+inline T UFairyObject::GetProp(EObjectPropID PropID) const
 {
 	return GetProp(PropID).As<T>();
 }

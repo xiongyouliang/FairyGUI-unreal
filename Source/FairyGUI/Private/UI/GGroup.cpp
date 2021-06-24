@@ -1,5 +1,5 @@
 #include "UI/GGroup.h"
-#include "UI/GComponent.h"
+#include "UI/FairyComponent.h"
 #include "Utils/ByteBuffer.h"
 #include "Widgets/SDisplayObject.h"
 
@@ -121,7 +121,7 @@ void UGGroup::UpdateBounds()
 {
     int32 cnt = Parent->NumChildren();
     int32 i;
-    UGObject* child;
+    UFairyObject* child;
     float ax = FLT_MAX, ay = FLT_MAX;
     float ar = FLT_MIN, ab = FLT_MIN;
     float tmp;
@@ -186,7 +186,7 @@ void UGGroup::HandleLayout()
         int32 cnt = Parent->NumChildren();
         for (int32 i = 0; i < cnt; i++)
         {
-            UGObject* child = Parent->GetChildAt(i);
+            UFairyObject* child = Parent->GetChildAt(i);
             if (child->GetGroup() != this)
                 continue;
             if (bExcludeInvisibles && !child->InternalVisible3())
@@ -203,7 +203,7 @@ void UGGroup::HandleLayout()
         int32 cnt = Parent->NumChildren();
         for (int32 i = 0; i < cnt; i++)
         {
-            UGObject* child = Parent->GetChildAt(i);
+            UFairyObject* child = Parent->GetChildAt(i);
             if (child->GetGroup() != this)
                 continue;
             if (bExcludeInvisibles && !child->InternalVisible3())
@@ -228,7 +228,7 @@ void UGGroup::MoveChildren(const FVector2D& Delta)
     int32 cnt = Parent->NumChildren();
     for (int32 i = 0; i < cnt; i++)
     {
-        UGObject* child = Parent->GetChildAt(i);
+        UFairyObject* child = Parent->GetChildAt(i);
         if (child->GetGroup() == this)
         {
             child->SetPosition(child->GetPosition() + Delta);
@@ -267,7 +267,7 @@ void UGGroup::ResizeChildren(const FVector2D& Delta)
         int32 j = 0;
         for (int32 i = 0; i < cnt; i++)
         {
-            UGObject* child = Parent->GetChildAt(i);
+            UFairyObject* child = Parent->GetChildAt(i);
             if (child->GetGroup() != this)
                 continue;
 
@@ -291,13 +291,13 @@ void UGGroup::ResizeChildren(const FVector2D& Delta)
         {
             if (Layout == EGroupLayoutType::Horizontal)
             {
-                UGObject* child = Parent->GetChildAt(MainChildIndex);
+                UFairyObject* child = Parent->GetChildAt(MainChildIndex);
                 TotalSize += MainGridMinSize - child->GetWidth();
                 child->SizePercentInGroup = MainGridMinSize / TotalSize;
             }
             else
             {
-                UGObject* child = Parent->GetChildAt(MainChildIndex);
+                UFairyObject* child = Parent->GetChildAt(MainChildIndex);
                 TotalSize += MainGridMinSize - child->GetHeight();
                 child->SizePercentInGroup = MainGridMinSize / TotalSize;
             }
@@ -305,7 +305,7 @@ void UGGroup::ResizeChildren(const FVector2D& Delta)
 
         for (int32 i = 0; i < cnt; i++)
         {
-            UGObject* child = Parent->GetChildAt(i);
+            UFairyObject* child = Parent->GetChildAt(i);
             if (child->GetGroup() != this)
                 continue;
 
@@ -328,7 +328,7 @@ void UGGroup::ResizeChildren(const FVector2D& Delta)
         remainSize = GetWidth() - (NumChildren - 1) * ColumnGap;
         if (MainChildIndex != -1 && remainSize >= TotalSize)
         {
-            UGObject* child = Parent->GetChildAt(MainChildIndex);
+            UFairyObject* child = Parent->GetChildAt(MainChildIndex);
             child->SetSize(FVector2D(remainSize - (TotalSize - MainGridMinSize), child->RawSize.Y + Delta.Y), true);
             remainSize -= child->GetWidth();
             remainPercent -= child->SizePercentInGroup;
@@ -338,7 +338,7 @@ void UGGroup::ResizeChildren(const FVector2D& Delta)
         float curX = GetX();
         for (int32 i = 0; i < cnt; i++)
         {
-            UGObject* child = Parent->GetChildAt(i);
+            UFairyObject* child = Parent->GetChildAt(i);
             if (child->GetGroup() != this)
                 continue;
 
@@ -365,7 +365,7 @@ void UGGroup::ResizeChildren(const FVector2D& Delta)
         remainSize = GetHeight() - (NumChildren - 1) * LineGap;
         if (MainChildIndex != -1 && remainSize >= TotalSize)
         {
-            UGObject* child = Parent->GetChildAt(MainChildIndex);
+            UFairyObject* child = Parent->GetChildAt(MainChildIndex);
             child->SetSize(FVector2D(child->RawSize.X + Delta.X, remainSize - (TotalSize - MainGridMinSize)), true);
             remainSize -= child->GetHeight();
             remainPercent -= child->SizePercentInGroup;
@@ -375,7 +375,7 @@ void UGGroup::ResizeChildren(const FVector2D& Delta)
         float curY = GetY();
         for (int32 i = 0; i < cnt; i++)
         {
-            UGObject* child = Parent->GetChildAt(i);
+            UFairyObject* child = Parent->GetChildAt(i);
             if (child->GetGroup() != this)
                 continue;
 
@@ -403,7 +403,7 @@ void UGGroup::ResizeChildren(const FVector2D& Delta)
 
 void UGGroup::HandleAlphaChanged()
 {
-    UGObject::HandleAlphaChanged();
+    UFairyObject::HandleAlphaChanged();
 
     if (bUnderConstruct)
         return;
@@ -411,7 +411,7 @@ void UGGroup::HandleAlphaChanged()
     int32 cnt = Parent->NumChildren();
     for (int32 i = 0; i < cnt; i++)
     {
-        UGObject* child = Parent->GetChildAt(i);
+        UFairyObject* child = Parent->GetChildAt(i);
         if (child->GetGroup() == this)
             child->SetAlpha(Alpha);
     }
@@ -425,7 +425,7 @@ void UGGroup::HandleVisibleChanged()
     int32 cnt = Parent->NumChildren();
     for (int32 i = 0; i < cnt; i++)
     {
-        UGObject* child = Parent->GetChildAt(i);
+        UFairyObject* child = Parent->GetChildAt(i);
         if (child->GetGroup() == this)
             child->HandleVisibleChanged();
     }
@@ -433,7 +433,7 @@ void UGGroup::HandleVisibleChanged()
 
 void UGGroup::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
-    UGObject::SetupBeforeAdd(Buffer, BeginPos);
+    UFairyObject::SetupBeforeAdd(Buffer, BeginPos);
 
     Buffer->Seek(BeginPos, 5);
 
@@ -450,7 +450,7 @@ void UGGroup::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 
 void UGGroup::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
-    UGObject::SetupAfterAdd(Buffer, BeginPos);
+    UFairyObject::SetupAfterAdd(Buffer, BeginPos);
 
     if (!bVisible)
         HandleVisibleChanged();

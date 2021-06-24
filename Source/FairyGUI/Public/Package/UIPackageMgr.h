@@ -5,7 +5,7 @@
 #include "UIPackageMgr.generated.h"
 
 class FPackageItem;
-class UGObject;
+class UFairyObject;
 class FByteBuffer;
 class UUIPackageAsset;
 
@@ -54,10 +54,10 @@ public:
 	// Package Manager Interface end
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI", meta = (DisplayName = "Create UI", DeterminesOutputType = "ClassType"))
-	UGObject* CreateObject(UObject* Outer, const FString& PackageName, const FString& ResourceName);
+	UFairyObject* CreateObject(UObject* Outer, const FString& PackageName, const FString& ResourceName);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI", meta = (DisplayName = "Create UI From URL", DeterminesOutputType = "ClassType"))
-	UGObject* CreateObjectFromURL(UObject* Outer, const FString& URL);
+	UFairyObject* CreateObjectFromURL(UObject* Outer, const FString& URL);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	UGWindow* CreateWindow(UObject* Outer, const FString& PackageName, const FString& ResourceName);

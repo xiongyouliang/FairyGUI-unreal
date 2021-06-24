@@ -4,7 +4,7 @@
 #include "UObject/NoExportTypes.h"
 #include "Slate.h"
 
-class UGObject;
+class UFairyObject;
 
 class FAIRYGUI_API SDisplayObject : public SWidget
 {
@@ -14,7 +14,7 @@ public:
         _Tag(SDisplayObject::SDisplayObjectTag)
     {
     }
-        SLATE_ARGUMENT(UGObject*, GObject)
+        SLATE_ARGUMENT(UFairyObject*, GObject)
         SLATE_ARGUMENT(FName, Tag)
     SLATE_END_ARGS()
 
@@ -54,7 +54,7 @@ public:
 
     bool OnStage() const;
 
-    TWeakObjectPtr<class UGObject> GObject;
+    TWeakObjectPtr<class UFairyObject> GObject;
 
 protected:
     virtual FVector2D ComputeDesiredSize(float LayoutScaleMultiplier) const override;

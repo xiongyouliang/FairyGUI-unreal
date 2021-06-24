@@ -23,7 +23,7 @@ void FPlayTransitionAction::Setup(FByteBuffer* Buffer)
 
 void FPlayTransitionAction::Enter(UGController* Controller)
 {
-    UTransition* trans = Cast<UGComponent>(Controller->GetOuter())->GetTransition(TransitionName);
+    UTransition* trans = Cast<UFairyComponent>(Controller->GetOuter())->GetTransition(TransitionName);
     if (trans != nullptr)
     {
         if (CurrentTransition != nullptr && CurrentTransition->IsPlaying())

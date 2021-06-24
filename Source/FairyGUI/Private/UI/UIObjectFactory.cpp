@@ -1,7 +1,7 @@
 #include "UI/UIObjectFactory.h"
-#include "UI/UIPackage.h"
-#include "UI/PackageItem.h"
-#include "UI/GComponent.h"
+#include "Package/UIPackage.h"
+#include "Package/PackageItem.h"
+#include "UI/FairyComponent.h"
 #include "UI/GImage.h"
 #include "UI/GMovieClip.h"
 #include "UI/GTextField.h"
@@ -19,7 +19,7 @@
 #include "UI/GScrollBar.h"
 #include "UI/GList.h"
 #include "UI/GTree.h"
-#include "UI/UIPackageMgr.h"
+#include "Package/UIPackageMgr.h"
 
 TMap<FString, FGComponentCreator> FUIObjectFactory::PackageItemExtensions;
 FGLoaderCreator FUIObjectFactory::LoaderCreator;
@@ -38,16 +38,16 @@ void FUIObjectFactory::SetExtension(const FString& URL, FGComponentCreator Creat
     PackageItemExtensions.Add(URL, Creator);
 }
 
-void FUIObjectFactory::SetExtension(const FString& URL, TSubclassOf<UGComponent> ClassType)
+void FUIObjectFactory::SetExtension(const FString& URL, TSubclassOf<UFairyComponent> ClassType)
 {
     SetExtension(URL, FGComponentCreator::CreateLambda([ClassType]() {
-        return ::NewObject<UGComponent>(GetTransientPackage(), ClassType);
+        return ::NewObject<UFairyComponent>(GetTransientPackage(), ClassType);
     }));
 }
 
-UGObject* FUIObjectFactory::NewObject(UObject* Outer, const TSharedPtr<FPackageItem>& PackageItem)
+UFairyObject* FUIObjectFactory::NewObject(UObject* Outer, const TSharedPtr<FPackageItem>& PackageItem)
 {
-    UGObject* obj = nullptr;
+    UFairyObject* obj = nullptr;
     if (PackageItem->ExtensionCreator.IsBound())
     {
         obj = PackageItem->ExtensionCreator.Execute();
@@ -65,7 +65,7 @@ UGObject* FUIObjectFactory::NewObject(UObject* Outer, const TSharedPtr<FPackageI
     return obj;
 }
 
-UGObject* FUIObjectFactory::NewObject(UObject* Outer, EObjectType Type)
+UFairyObject* FUIObjectFactory::NewObject(UObject* Outer, EObjectType Type)
 {
     switch (Type)
     {
@@ -74,7 +74,7 @@ UGObject* FUIObjectFactory::NewObject(UObject* Outer, EObjectType Type)
     case EObjectType::MovieClip:
         return ::NewObject<UGMovieClip>(Outer);
     case EObjectType::Component:
-        return ::NewObject<UGComponent>(Outer);
+        return ::NewObject<UFairyComponent>(Outer);
     case EObjectType::Text:
         return ::NewObject<UGTextField>(Outer);
     case EObjectType::RichText:

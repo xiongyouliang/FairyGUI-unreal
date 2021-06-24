@@ -140,7 +140,7 @@ void UGSlider::UpdateWithPercent(float Percent, bool bManual)
 
 void UGSlider::HandleSizeChanged()
 {
-    UGComponent::HandleSizeChanged();
+    UFairyComponent::HandleSizeChanged();
 
     BarMaxSize = GetSize() - BarMaxSizeDelta;
 
@@ -187,7 +187,7 @@ void UGSlider::ConstructExtension(FByteBuffer* Buffer)
 
 void UGSlider::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
-    UGComponent::SetupAfterAdd(Buffer, BeginPos);
+    UFairyComponent::SetupAfterAdd(Buffer, BeginPos);
 
     if (!Buffer->Seek(BeginPos, 6))
     {

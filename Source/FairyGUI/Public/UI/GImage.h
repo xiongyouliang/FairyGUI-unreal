@@ -1,10 +1,10 @@
 #pragma once
 
-#include "GObject.h"
+#include "UI/FairyObject.h"
 #include "GImage.generated.h"
 
 UCLASS(BlueprintType)
-class FAIRYGUI_API UGImage : public UGObject
+class FAIRYGUI_API UGImage : public UFairyObject
 {
 	GENERATED_BODY()
 

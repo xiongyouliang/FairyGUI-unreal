@@ -5,7 +5,7 @@
 #include "ControllerAction/ControllerAction.h"
 #include "GController.generated.h"
 
-class UGComponent;
+class UFairyComponent;
 class FByteBuffer;
 
 UCLASS(BlueprintType)

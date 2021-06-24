@@ -1,9 +1,9 @@
 #include "UI/Gears/GearText.h"
-#include "UI/GObject.h"
+#include "UI/FairyObject.h"
 #include "UI/GController.h"
 #include "Utils/ByteBuffer.h"
 
-FGearText::FGearText(UGObject* InOwner) : FGearBase(InOwner)
+FGearText::FGearText(UFairyObject* InOwner) : FGearBase(InOwner)
 {
     Type = EType::Text;
 }

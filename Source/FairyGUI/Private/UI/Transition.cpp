@@ -1,6 +1,6 @@
 #include "UI/Transition.h"
-#include "UI/GComponent.h"
-#include "UI/UIPackage.h"
+#include "UI/FairyComponent.h"
+#include "Package/UIPackage.h"
 #include "UI/GController.h"
 #include "Utils/ByteBuffer.h"
 #include "Tween/GPath.h"
@@ -142,7 +142,7 @@ struct FTransitionItem
 
     //running properties
     FGTweener* Tweener;
-    UGObject* Target;
+    UFairyObject* Target;
     uint32 DisplayLockToken;
 
     FTransitionItem(ETransitionActionType aType);
@@ -260,7 +260,7 @@ void UTransition::Play(int32 InTimes, float InDelay, float InStartTime, float In
 
         if (item->Target != nullptr && item->Type == ETransitionActionType::Transition)
         {
-            UTransition* trans = Cast<UGComponent>(item->Target)->GetTransition(item->TransData->Name);
+            UTransition* trans = Cast<UFairyComponent>(item->Target)->GetTransition(item->TransData->Name);
             if (trans == this)
                 trans = nullptr;
             if (trans != nullptr)
@@ -547,7 +547,7 @@ void UTransition::ClearHooks()
     }
 }
 
-void UTransition::SetTarget(const FString& InLabel, UGObject* InTarget)
+void UTransition::SetTarget(const FString& InLabel, UFairyObject* InTarget)
 {
     for (auto& item : Items)
     {
@@ -841,7 +841,7 @@ void UTransition::SkipAnimations()
     int32 frame;
     float playStartTime;
     float playTotalTime;
-    UGObject* target;
+    UFairyObject* target;
 
     int32 cnt = Items.Num();
     for (int32 i = 0; i < cnt; i++)
@@ -1243,7 +1243,7 @@ void UTransition::ApplyValue(FTransitionItem* item)
 
 void UTransition::Setup(FByteBuffer* Buffer)
 {
-    Owner = Cast<UGComponent>(GetOuter());
+    Owner = Cast<UFairyComponent>(GetOuter());
 
     Name = Buffer->ReadS();
     Options = Buffer->ReadInt();

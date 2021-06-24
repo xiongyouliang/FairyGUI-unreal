@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 #include "FieldTypes.h"
 
-class UGObject;
+class UFairyObject;
 
 struct FAIRYGUI_API FRelationDef
 {
@@ -19,11 +19,11 @@ struct FAIRYGUI_API FRelationDef
 class FAIRYGUI_API FRelationItem
 {
 public:
-    FRelationItem(UGObject* InOwner);
+    FRelationItem(UFairyObject* InOwner);
     ~FRelationItem();
 
-    UGObject* GetTarget() const { return Target.Get(); }
-    void SetTarget(UGObject* InTarget);
+    UFairyObject* GetTarget() const { return Target.Get(); }
+    void SetTarget(UFairyObject* InTarget);
 
     void Add(ERelationType RelationType, bool bUsePercent);
     void InternalAdd(ERelationType RelationType, bool bUsePercent);
@@ -33,15 +33,15 @@ public:
     void ApplyOnSelfSizeChanged(float DeltaWidth, float DeltaHeight, bool bApplyPivot);
 
 private:
-    void ApplyOnXYChanged(UGObject* InTarget, const FRelationDef& info, float dx, float dy);
-    void ApplyOnSizeChanged(UGObject* InTarget, const FRelationDef& info);
-    void AddRefTarget(UGObject* InTarget);
+    void ApplyOnXYChanged(UFairyObject* InTarget, const FRelationDef& info, float dx, float dy);
+    void ApplyOnSizeChanged(UFairyObject* InTarget, const FRelationDef& info);
+    void AddRefTarget(UFairyObject* InTarget);
     void ReleaseRefTarget();
     void OnTargetXYChanged();
     void OnTargetSizeChanged();
 
-    UGObject* Owner;
-    TWeakObjectPtr<UGObject> Target;
+    UFairyObject* Owner;
+    TWeakObjectPtr<UFairyObject> Target;
     TArray<FRelationDef> Defs;
     FVector4 TargetData;
 

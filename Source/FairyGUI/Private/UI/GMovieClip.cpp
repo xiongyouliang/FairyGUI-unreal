@@ -90,7 +90,7 @@ FNVariant UGMovieClip::GetProp(EObjectPropID PropID) const
     case EObjectPropID::TimeScale:
         return FNVariant(Content->GetTimeScale());
     default:
-        return UGObject::GetProp(PropID);
+        return UFairyObject::GetProp(PropID);
     }
 }
 
@@ -114,7 +114,7 @@ void UGMovieClip::SetProp(EObjectPropID PropID, const FNVariant& InValue)
         Content->Advance(InValue.AsFloat());
         break;
     default:
-        UGObject::SetProp(PropID, InValue);
+        UFairyObject::SetProp(PropID, InValue);
         break;
     }
 }
@@ -135,7 +135,7 @@ void UGMovieClip::ConstructFromResource()
 
 void UGMovieClip::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
-    UGObject::SetupBeforeAdd(Buffer, BeginPos);
+    UFairyObject::SetupBeforeAdd(Buffer, BeginPos);
 
     Buffer->Seek(BeginPos, 5);
 

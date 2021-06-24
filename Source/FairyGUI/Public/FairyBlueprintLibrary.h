@@ -69,5 +69,5 @@ public:
 	static void KillTween(UPARAM(ref) FTweenerHandle& Handle, bool bSetComplete = false);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	static void SetPackageItemExtension(const FString& URL, TSubclassOf<UGComponent> ClassType);
+	static void SetPackageItemExtension(const FString& URL, TSubclassOf<UFairyComponent> ClassType);
 };

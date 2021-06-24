@@ -5,11 +5,11 @@
 #include "CoreMinimal.h"
 #include "UObject/ObjectMacros.h"
 #include "UObject/Object.h"
-#include "GVisual.generated.h"
+#include "FairyVisual.generated.h"
 
 /** The base class for elements in UMG: slots and widgets. */
 UCLASS(DefaultToInstanced)
-class FAIRYGUI_API UGVisual : public UObject
+class FAIRYGUI_API UFairyVisual : public UObject
 {
 	GENERATED_UCLASS_BODY()
 

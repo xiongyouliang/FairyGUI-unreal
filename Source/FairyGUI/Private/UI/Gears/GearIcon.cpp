@@ -1,9 +1,9 @@
 #include "UI/Gears/GearIcon.h"
-#include "UI/GObject.h"
+#include "UI/FairyObject.h"
 #include "UI/GController.h"
 #include "Utils/ByteBuffer.h"
 
-FGearIcon::FGearIcon(UGObject * InOwner) :FGearBase(InOwner)
+FGearIcon::FGearIcon(UFairyObject * InOwner) :FGearBase(InOwner)
 {
     Type = EType::Icon;
 }

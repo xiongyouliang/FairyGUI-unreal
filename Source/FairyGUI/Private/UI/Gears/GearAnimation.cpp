@@ -1,5 +1,5 @@
 #include "UI/Gears/GearAnimation.h"
-#include "UI/GObject.h"
+#include "UI/FairyObject.h"
 #include "UI/GController.h"
 #include "Utils/ByteBuffer.h"
 
@@ -8,7 +8,7 @@ FGearAnimation::FValue::FValue() :
 {
 }
 
-FGearAnimation::FGearAnimation(UGObject* InOwner) : FGearBase(InOwner)
+FGearAnimation::FGearAnimation(UFairyObject* InOwner) : FGearBase(InOwner)
 {
     Type = EType::Animation;
 }

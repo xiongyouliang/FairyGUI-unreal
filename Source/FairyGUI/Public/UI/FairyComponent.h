@@ -1,34 +1,35 @@
 #pragma once
 
-#include "GObject.h"
-#include "ScrollPane.h"
-#include "GComponent.generated.h"
+#include "UI/FairyObject.h"
+#include "UI/ScrollPane.h"
+
+#include "FairyComponent.generated.h"
 
 class UGController;
 class UTransition;
 class SContainer;
 
 UCLASS(BlueprintType, Blueprintable)
-class FAIRYGUI_API UGComponent : public UGObject
+class FAIRYGUI_API UFairyComponent : public UFairyObject
 {
 	GENERATED_BODY()
 
 public:
-	UGComponent();
-	virtual ~UGComponent();
+	UFairyComponent();
+	virtual ~UFairyComponent();
 
 	// ~ UGVisual Interface
 	virtual void ReleaseSlateResources(bool bReleaseChildren) override;
 
 	// ~ child operation start
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	UGObject* AddChild(UGObject* Child);
+	UFairyObject* AddChild(UFairyObject* Child);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	virtual UGObject* AddChildAt(UGObject* Child, int32 Index);
+	virtual UFairyObject* AddChildAt(UFairyObject* Child, int32 Index);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	void RemoveChild(UGObject* Child);
+	void RemoveChild(UFairyObject* Child);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	virtual void RemoveChildAt(int32 Index);
@@ -37,31 +38,31 @@ public:
 	void RemoveChildren(int32 BeginIndex = 0, int32 EndIndex = -1);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI", meta = (DeterminesOutputType = "ClassType"))
-	UGObject* GetChildAt(int32 Index, TSubclassOf<UGObject> ClassType = nullptr) const;
+	UFairyObject* GetChildAt(int32 Index, TSubclassOf<UFairyObject> ClassType = nullptr) const;
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI", meta = (DeterminesOutputType = "ClassType"))
-	UGObject* GetChild(const FString& ChildName, TSubclassOf<UGObject> ClassType = nullptr) const;
+	UFairyObject* GetChild(const FString& ChildName, TSubclassOf<UFairyObject> ClassType = nullptr) const;
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI", meta = (DeterminesOutputType = "ClassType"))
-	UGObject* GetChildByPath(const FString& Path, TSubclassOf<UGObject> ClassType = nullptr) const;
+	UFairyObject* GetChildByPath(const FString& Path, TSubclassOf<UFairyObject> ClassType = nullptr) const;
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI", meta = (DeterminesOutputType = "ClassType"))
-	UGObject* GetChildInGroup(const UGGroup* Group, const FString& ChildName, TSubclassOf<UGObject> ClassType = nullptr) const;
+	UFairyObject* GetChildInGroup(const UGGroup* Group, const FString& ChildName, TSubclassOf<UFairyObject> ClassType = nullptr) const;
 
-	UGObject* GetChildByID(const FString& ChildID) const;
-	const TArray<UGObject*>& GetChildren() const { return Children; }
-
-	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	int32 GetChildIndex(const UGObject* Child) const;
+	UFairyObject* GetChildByID(const FString& ChildID) const;
+	const TArray<UFairyObject*>& GetChildren() const { return Children; }
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	void SetChildIndex(UGObject* Child, int32 Index);
+	int32 GetChildIndex(const UFairyObject* Child) const;
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	int32 SetChildIndexBefore(UGObject* Child, int32 Index);
+	void SetChildIndex(UFairyObject* Child, int32 Index);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	void SwapChildren(UGObject* Child1, UGObject* Child2);
+	int32 SetChildIndexBefore(UFairyObject* Child, int32 Index);
+
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+	void SwapChildren(UFairyObject* Child1, UFairyObject* Child2);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	void SwapChildrenAt(int32 Index1, int32 Index2);
@@ -70,10 +71,10 @@ public:
 	int32 NumChildren() const;
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	bool IsAncestorOf(const UGObject* Obj) const;
+	bool IsAncestorOf(const UFairyObject* Obj) const;
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	virtual bool IsChildInView(UGObject* Child) const;
+	virtual bool IsChildInView(UFairyObject* Child) const;
 	// ~ child operation end
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
@@ -119,8 +120,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	void SetApexIndex(int32 InApedIndex);
 
-	//UGObject* getMask() const;
-	//void setMask(UGObject* value, bool inverted = false);
+	//UFairyObject* getMask() const;
+	//void setMask(UFairyObject* value, bool inverted = false);
 
 	//IHitTest* getHitArea() const { return _hitArea; }
 	//void setHitArea(IHitTest* value);
@@ -168,12 +169,12 @@ public:
 	virtual FVector2D GetSnappingPosition(const FVector2D& InPoint);
 
 	//internal use
-	void ChildSortingOrderChanged(UGObject* Child, int32 OldValue, int32 NewValue);
-	void ChildStateChanged(UGObject* Child);
-	void AdjustRadioGroupDepth(UGObject* Child, UGController* Controller);
+	void ChildSortingOrderChanged(UFairyObject* Child, int32 OldValue, int32 NewValue);
+	void ChildStateChanged(UFairyObject* Child);
+	void AdjustRadioGroupDepth(UFairyObject* Child, UGController* Controller);
 
 	virtual void ConstructFromResource() override;
-	void ConstructFromResource(TArray<UGObject*>* ObjectPool, int32 PoolIndex);
+	void ConstructFromResource(TArray<UFairyObject*>* ObjectPool, int32 PoolIndex);
 
 	bool bBuildingDisplayList;
 
@@ -194,7 +195,7 @@ protected:
 	void SetupScroll(FByteBuffer* Buffer);
 
 	UPROPERTY(Transient)
-	TArray<UGObject*> Children;
+	TArray<UFairyObject*> Children;
 	UPROPERTY(Transient)
 	TArray<UGController*> Controllers;
 	UPROPERTY(Transient)
@@ -203,7 +204,7 @@ protected:
 	UScrollPane* ScrollPane;
 
 	// Slate Resource
-	TSharedPtr<SContainer> RootContainer;
+	//TSharedPtr<SContainer> RootContainer;
 	TSharedPtr<SContainer> Container;
 	void MakeSlateWidget();
 
@@ -215,8 +216,8 @@ protected:
 	uint8 bTrackBounds : 1;
 
 private:
-	int32 GetInsertPosForSortingChild(UGObject* Child);
-	int32 MoveChild(UGObject* Child, int32 OldIndex, int32 NewIndex);
+	int32 GetInsertPosForSortingChild(UFairyObject* Child);
+	int32 MoveChild(UFairyObject* Child, int32 OldIndex, int32 NewIndex);
 
 	void BuildNativeDisplayList(bool bImmediatelly = false);
 

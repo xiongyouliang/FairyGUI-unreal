@@ -2,7 +2,7 @@
 #include "UI/GController.h"
 #include "Utils/ByteBuffer.h"
 
-FGearDisplay::FGearDisplay(UGObject* InOwner) :
+FGearDisplay::FGearDisplay(UFairyObject* InOwner) :
     FGearBase(InOwner),
     Visible(0),
     DisplayLockToken(1)

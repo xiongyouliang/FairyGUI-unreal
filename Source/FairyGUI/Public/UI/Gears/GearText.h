@@ -5,7 +5,7 @@
 class FAIRYGUI_API FGearText : public FGearBase
 {
 public:
-    FGearText(UGObject* InOwner);
+    FGearText(UFairyObject* InOwner);
     virtual ~FGearText();
 
     virtual void Apply() override;

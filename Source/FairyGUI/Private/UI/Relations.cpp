@@ -1,8 +1,8 @@
 #include "UI/Relations.h"
-#include "UI/GComponent.h"
+#include "UI/FairyComponent.h"
 #include "Utils/ByteBuffer.h"
 
-FRelations::FRelations(UGObject* InOwner) :
+FRelations::FRelations(UFairyObject* InOwner) :
     Handling(nullptr)
 {
     Owner = InOwner;
@@ -12,12 +12,12 @@ FRelations::~FRelations()
 {
 }
 
-void FRelations::Add(UGObject * InTarget, ERelationType ERelationType)
+void FRelations::Add(UFairyObject * InTarget, ERelationType ERelationType)
 {
     Add(InTarget, ERelationType, false);
 }
 
-void FRelations::Add(UGObject * InTarget, ERelationType ERelationType, bool bUsePercent)
+void FRelations::Add(UFairyObject * InTarget, ERelationType ERelationType, bool bUsePercent)
 {
     verifyf(InTarget, TEXT("target is null"));
 
@@ -35,7 +35,7 @@ void FRelations::Add(UGObject * InTarget, ERelationType ERelationType, bool bUse
     Items.Add(newItem);
 }
 
-void FRelations::Remove(UGObject * InTarget, ERelationType ERelationType)
+void FRelations::Remove(UFairyObject * InTarget, ERelationType ERelationType)
 {
     int32 Index = 0;
     while (Index < Items.Num())
@@ -56,7 +56,7 @@ void FRelations::Remove(UGObject * InTarget, ERelationType ERelationType)
     }
 }
 
-bool FRelations::Contains(UGObject * InTarget)
+bool FRelations::Contains(UFairyObject * InTarget)
 {
     for (auto& it : Items)
     {
@@ -67,7 +67,7 @@ bool FRelations::Contains(UGObject * InTarget)
     return false;
 }
 
-void FRelations::ClearFor(UGObject * InTarget)
+void FRelations::ClearFor(UFairyObject * InTarget)
 {
     int32 Index = 0;
     while (Index < Items.Num())
@@ -111,14 +111,14 @@ bool FRelations::IsEmpty() const
 void FRelations::Setup(FByteBuffer * Buffer, bool bParentToChild)
 {
     int32 cnt = Buffer->ReadByte();
-    UGObject* target;
+    UFairyObject* target;
     for (int32 i = 0; i < cnt; i++)
     {
         int16 targetIndex = Buffer->ReadShort();
         if (targetIndex == -1)
             target = Owner->GetParent();
         else if (bParentToChild)
-            target = (Cast<UGComponent>(Owner))->GetChildAt(targetIndex);
+            target = (Cast<UFairyComponent>(Owner))->GetChildAt(targetIndex);
         else
             target = Owner->GetParent()->GetChildAt(targetIndex);
 

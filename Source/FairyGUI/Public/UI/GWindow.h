@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GComponent.h"
+#include "UI/FairyComponent.h"
 #include "GWindow.generated.h"
 
 class FAIRYGUI_API IUISource
@@ -15,7 +15,7 @@ public:
 DECLARE_DYNAMIC_DELEGATE(FWindowDynDelegate);
 
 UCLASS(BlueprintType, Blueprintable)
-class FAIRYGUI_API UGWindow : public UGComponent
+class FAIRYGUI_API UGWindow : public UFairyComponent
 {
     GENERATED_BODY()
 public:
@@ -59,34 +59,34 @@ public:
     void AddUISource(TSharedPtr<IUISource> UISource);
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    UGComponent* GetContentPane() const { return ContentPane; }
+    UFairyComponent* GetContentPane() const { return ContentPane; }
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    void SetContentPane(UGComponent* Obj);
+    void SetContentPane(UFairyComponent* Obj);
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    UGComponent* GetFrame() const { return FrameObject; }
+    UFairyComponent* GetFrame() const { return FrameObject; }
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    UGObject* GetCloseButton() const { return CloseButton; }
+    UFairyObject* GetCloseButton() const { return CloseButton; }
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    void SetCloseButton(UGObject* Obj);
+    void SetCloseButton(UFairyObject* Obj);
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    UGObject* GetDragArea() const { return DragArea; }
+    UFairyObject* GetDragArea() const { return DragArea; }
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    void SetDragArea(UGObject* Obj);
+    void SetDragArea(UFairyObject* Obj);
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    UGObject* GetContentArea() const { return ContentArea; }
+    UFairyObject* GetContentArea() const { return ContentArea; }
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    void SetContentArea(UGObject* Obj) { ContentArea = Obj; }
+    void SetContentArea(UFairyObject* Obj) { ContentArea = Obj; }
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    UGObject* GetModalWaitingPane() const { return ModalWaitPane; }
+    UFairyObject* GetModalWaitingPane() const { return ModalWaitPane; }
 
     virtual void OnShown();
     virtual void OnHide();
@@ -118,7 +118,7 @@ protected:
     void CloseEventHandler(UEventContext* Context);
 
     UPROPERTY(Transient)
-    UGComponent* ContentPane;
+    UFairyComponent* ContentPane;
 
 private:
     void LayoutModalWaitPane();
@@ -132,15 +132,15 @@ private:
     void OnRemovedFromStageHandler(UEventContext* Context);
 
     UPROPERTY(Transient)
-    UGObject* ModalWaitPane;
+    UFairyObject* ModalWaitPane;
     UPROPERTY(Transient)
-    UGComponent* FrameObject;
+    UFairyComponent* FrameObject;
     UPROPERTY(Transient)
-    UGObject* CloseButton;
+    UFairyObject* CloseButton;
     UPROPERTY(Transient)
-    UGObject* DragArea;
+    UFairyObject* DragArea;
     UPROPERTY(Transient)
-    UGObject* ContentArea;
+    UFairyObject* ContentArea;
 
     int32 RequestingCmd;
     TArray<TSharedPtr<IUISource>> UISources;

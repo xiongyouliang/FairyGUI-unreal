@@ -5,7 +5,7 @@
 class FAIRYGUI_API FGearAnimation : public FGearBase
 {
 public:
-    FGearAnimation(UGObject* InOwner);
+    FGearAnimation(UFairyObject* InOwner);
     virtual ~FGearAnimation();
 
     virtual void Apply() override;

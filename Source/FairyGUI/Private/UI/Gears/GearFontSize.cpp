@@ -1,9 +1,9 @@
 #include "UI/Gears/GearFontSize.h"
-#include "UI/GObject.h"
+#include "UI/FairyObject.h"
 #include "UI/GController.h"
 #include "Utils/ByteBuffer.h"
 
-FGearFontSize::FGearFontSize(UGObject* InOwner) : FGearBase(InOwner)
+FGearFontSize::FGearFontSize(UFairyObject* InOwner) : FGearBase(InOwner)
 {
     Type = EType::FontSize;
 }

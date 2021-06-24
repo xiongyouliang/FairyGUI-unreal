@@ -60,19 +60,19 @@ public:
     int32 GetItemCount() const;
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    UGComponent* GetContentPane() const { return ContentPane; }
+    UFairyComponent* GetContentPane() const { return ContentPane; }
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     UGList* GetList() const { return List; }
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    void Show(UGObject* AtObject, EPopupDirection Dir = EPopupDirection::Auto);
+    void Show(UFairyObject* AtObject, EPopupDirection Dir = EPopupDirection::Auto);
 
 protected:
     void Create(const FString& ResourceURL);
 
     UPROPERTY(Transient)
-    UGComponent* ContentPane;
+    UFairyComponent* ContentPane;
     UGList* List;
 
 private:

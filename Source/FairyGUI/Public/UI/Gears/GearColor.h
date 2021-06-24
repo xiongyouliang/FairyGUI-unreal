@@ -5,7 +5,7 @@
 class FAIRYGUI_API FGearColor : public FGearBase
 {
 public:
-    FGearColor(UGObject* InOwner);
+    FGearColor(UFairyObject* InOwner);
     virtual ~FGearColor();
 
     virtual void Apply() override;

@@ -1,6 +1,6 @@
 #include "UI/Gears/GearColor.h"
-#include "UI/GObject.h"
-#include "UI/UIPackage.h"
+#include "UI/FairyObject.h"
+#include "Package/UIPackage.h"
 #include "UI/GController.h"
 #include "Tween/GTween.h"
 #include "Utils/ByteBuffer.h"
@@ -9,7 +9,7 @@ FGearColor::FValue::FValue()
 {
 }
 
-FGearColor::FGearColor(UGObject* InOwner) : FGearBase(InOwner)
+FGearColor::FGearColor(UFairyObject* InOwner) : FGearBase(InOwner)
 {
     Type = EType::Color;
 }

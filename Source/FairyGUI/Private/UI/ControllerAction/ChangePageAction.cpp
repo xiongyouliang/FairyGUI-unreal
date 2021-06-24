@@ -16,11 +16,11 @@ void FChangePageAction::Enter(UGController* Controller)
     if (ControllerName.IsEmpty())
         return;
 
-    UGComponent* gcom;
+    UFairyComponent* gcom;
     if (!ObjectID.IsEmpty())
-        gcom = Cast<UGComponent>(Cast<UGComponent>(Controller->GetOuter())->GetChildByID(ObjectID));
+        gcom = Cast<UFairyComponent>(Cast<UFairyComponent>(Controller->GetOuter())->GetChildByID(ObjectID));
     else
-        gcom = Cast<UGComponent>(Controller->GetOuter());
+        gcom = Cast<UFairyComponent>(Controller->GetOuter());
     if (gcom != nullptr)
     {
         UGController* cc = gcom->GetController(ControllerName);

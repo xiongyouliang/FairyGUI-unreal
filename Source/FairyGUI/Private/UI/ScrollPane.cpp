@@ -2,7 +2,7 @@
 #include "Engine/World.h"
 #include "Engine/GameViewportClient.h"
 #include "TimerManager.h"
-#include "UI/UIPackageMgr.h"
+#include "Package/UIPackageMgr.h"
 #include "UI/GList.h"
 #include "UI/GController.h"
 #include "UI/GScrollBar.h"
@@ -34,8 +34,8 @@ UScrollPane::~UScrollPane()
 
 void UScrollPane::Setup(FByteBuffer* Buffer)
 {
-    Owner = Cast<UGComponent>(GetOuter());
-    Container = Owner->Container;
+    Owner = Cast<UFairyComponent>(GetOuter());
+    Container = SNew(SContainer);
     ScrollStep = FUIConfig::Config.DefaultScrollStep;
     DecelerationRate = FUIConfig::Config.DefaultScrollDecelerationRate;
     bTouchEffect = FUIConfig::Config.DefaultScrollTouchEffect;
@@ -45,8 +45,7 @@ void UScrollPane::Setup(FByteBuffer* Buffer)
 
     MaskContainer = SNew(SContainer);
     MaskContainer->SetOpaque(false);
-    Owner->RootContainer->RemoveChild(Container.ToSharedRef());
-    Owner->RootContainer->AddChild(MaskContainer.ToSharedRef());
+    Owner->Container->AddChild(MaskContainer.ToSharedRef());
     MaskContainer->AddChild(Container.ToSharedRef());
 
     Owner->On(FUIEvents::MouseWheel).AddUObject(this, &UScrollPane::OnMouseWheel);
@@ -112,7 +111,7 @@ void UScrollPane::Setup(FByteBuffer* Buffer)
                 else
                 {
                     VtScrollBar->SetScrollPane(this, true);
-                    Owner->RootContainer->AddChild(VtScrollBar->GetDisplayObject());
+                    Container->AddChild(VtScrollBar->GetDisplayObject());
                 }
             }
         }
@@ -129,7 +128,7 @@ void UScrollPane::Setup(FByteBuffer* Buffer)
                 else
                 {
                     HzScrollBar->SetScrollPane(this, false);
-                    Owner->RootContainer->AddChild(HzScrollBar->GetDisplayObject());
+                    Container->AddChild(HzScrollBar->GetDisplayObject());
                 }
             }
         }
@@ -151,7 +150,7 @@ void UScrollPane::Setup(FByteBuffer* Buffer)
 
     if (headerRes.Len() > 0)
     {
-        Header = Cast<UGComponent>(UUIPackageMgr::Get()->CreateObjectFromURL(GetOuter(), headerRes));
+        Header = Cast<UFairyComponent>(UUIPackageMgr::Get()->CreateObjectFromURL(GetOuter(), headerRes));
         if (Header == nullptr)
         {
             UE_LOG(LogFairyGUI, Warning, TEXT("cannot create UScrollPane header from %s"), *headerRes);
@@ -159,13 +158,13 @@ void UScrollPane::Setup(FByteBuffer* Buffer)
         else
         {
             Header->SetVisible(false);
-            Owner->RootContainer->AddChild(Header->GetDisplayObject());
+            Container->AddChild(Header->GetDisplayObject());
         }
     }
 
     if (footerRes.Len() > 0)
     {
-        Footer = Cast<UGComponent>(UUIPackageMgr::Get()->CreateObjectFromURL(GetOuter(), footerRes));
+        Footer = Cast<UFairyComponent>(UUIPackageMgr::Get()->CreateObjectFromURL(GetOuter(), footerRes));
         if (Footer == nullptr)
         {
             UE_LOG(LogFairyGUI, Warning, TEXT("cannot create UScrollPane footer from %s"), *footerRes);
@@ -173,7 +172,7 @@ void UScrollPane::Setup(FByteBuffer* Buffer)
         else
         {
             Footer->SetVisible(false);
-            Owner->RootContainer->AddChild(Footer->GetDisplayObject());
+            Container->AddChild(Footer->GetDisplayObject());
         }
     }
 
@@ -287,7 +286,7 @@ void UScrollPane::ScrollBottom(bool bAnimation)
     SetPercY(1, bAnimation);
 }
 
-void UScrollPane::ScrollToView(UGObject* Obj, bool bAnimation, bool bSetFirst)
+void UScrollPane::ScrollToView(UFairyObject* Obj, bool bAnimation, bool bSetFirst)
 {
     Owner->EnsureBoundsCorrect();
     if (bNeedRefresh)
@@ -352,7 +351,7 @@ void UScrollPane::ScrollToView(const FBox2D& Rect, bool bAnimation, bool bSetFir
         Refresh();
 }
 
-bool UScrollPane::IsChildInView(UGObject* Obj) const
+bool UScrollPane::IsChildInView(UFairyObject* Obj) const
 {
     if (OverlapSize.Y > 0)
     {
@@ -893,7 +892,7 @@ void UScrollPane::UpdateScrollBarVisible2(UGScrollBar* Bar)
 
 void UScrollPane::OnBarTweenComplete(FGTweener* Tweener)
 {
-    UGObject* bar = (UGObject*)Tweener->GetTarget();
+    UFairyObject* bar = (UFairyObject*)Tweener->GetTarget();
     bar->SetAlpha(1);
     bar->SetVisible(false);
 }
@@ -1380,7 +1379,7 @@ void UScrollPane::OnTouchMove(UEventContext* Context)
     if (!bTouchEffect)
         return;
 
-    if ((DraggingPane.IsValid() && DraggingPane.Get() != this) || UGObject::GetDraggingObject() != nullptr)
+    if ((DraggingPane.IsValid() && DraggingPane.Get() != this) || UFairyObject::GetDraggingObject() != nullptr)
         return;
 
     FVector2D pt = Owner->GlobalToLocal(Context->GetPointerPosition());

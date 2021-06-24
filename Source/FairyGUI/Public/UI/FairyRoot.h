@@ -1,21 +1,21 @@
 #pragma once
 
-#include "GComponent.h"
-#include "GRoot.generated.h"
+#include "UI/FairyComponent.h"
+#include "FairyRoot.generated.h"
 
 class UGGraph;
 class UGWindow;
 
 UCLASS(BlueprintType, NotBlueprintable)
-class FAIRYGUI_API UGRoot : public UGComponent
+class FAIRYGUI_API UFairyRoot : public UFairyComponent
 {
     GENERATED_BODY()
 
 public:
     static int32 ContentScaleLevel;
 
-    UGRoot();
-    virtual ~UGRoot();
+    UFairyRoot();
+    virtual ~UFairyRoot();
 
     // ~ UGVisual Interface
     virtual void ReleaseSlateResources(bool bReleaseChildren) override;
@@ -45,7 +45,7 @@ public:
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     UGWindow* GetTopWindow() const;
 
-    UGObject* GetModalWaitingPane();
+    UFairyObject* GetModalWaitingPane();
     UGGraph* GetModalLayer();
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
@@ -55,25 +55,25 @@ public:
     bool IsModalWaiting() const;
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    void ShowPopup(UGObject* Popup, UGObject* AtObject, EPopupDirection Direction);
+    void ShowPopup(UFairyObject* Popup, UFairyObject* AtObject, EPopupDirection Direction);
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    void TogglePopup(UGObject* Popup, UGObject* AtObject = nullptr, EPopupDirection Direction = EPopupDirection::Auto);
+    void TogglePopup(UFairyObject* Popup, UFairyObject* AtObject = nullptr, EPopupDirection Direction = EPopupDirection::Auto);
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    void HidePopup(UGObject* Popup = nullptr);
+    void HidePopup(UFairyObject* Popup = nullptr);
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     bool HasAnyPopup() const;
 
-    FVector2D GetPoupPosition(UGObject* Popup, UGObject* AtObject, EPopupDirection Direction);
+    FVector2D GetPoupPosition(UFairyObject* Popup, UFairyObject* AtObject, EPopupDirection Direction);
     void CheckPopups(SWidget* ClickTarget);
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     void ShowTooltips(const FString& Text);
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    void ShowTooltipsWin(UGObject* InTooltipWin);
+    void ShowTooltipsWin(UFairyObject* InTooltipWin);
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     void HideTooltips();
@@ -85,7 +85,7 @@ private:
 
     void CreateModalLayer();
     void AdjustModalLayer();
-    void ClosePopup(UGObject* Popup);
+    void ClosePopup(UFairyObject* Popup);
 
     //void UdateContentScaleLevel();
 
@@ -95,16 +95,16 @@ private:
     UGGraph* ModalLayer;
 
     UPROPERTY(Transient)
-    UGObject* ModalWaitPane;
+    UFairyObject* ModalWaitPane;
 
     UPROPERTY(Transient)
-    UGObject* TooltipWin;
+    UFairyObject* TooltipWin;
 
     UPROPERTY(Transient)
-    UGObject* DefaultTooltipWin;
+    UFairyObject* DefaultTooltipWin;
 
-    TArray<UGObject*> PopupStack;
-    TArray<UGObject*> JustClosedPopups;
+    TArray<UFairyObject*> PopupStack;
+    TArray<UFairyObject*> JustClosedPopups;
     FTimerHandle ShowTooltipsTimerHandle;
 
     friend class UFairyApplication;

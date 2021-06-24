@@ -1,9 +1,9 @@
 #include "FairyApplication.h"
 #include "Framework/Application/SlateApplication.h"
 #include "Slate/SGameLayerManager.h"
-#include "UI/GRoot.h"
-#include "UI/UIPackage.h"
-#include "UI/UIPackageMgr.h"
+#include "UI/FairyRoot.h"
+#include "Package/UIPackage.h"
+#include "Package/UIPackageMgr.h"
 #include "UI/UIObjectFactory.h"
 #include "Tween/TweenManager.h"
 #include "Widgets/NTexture.h"
@@ -95,8 +95,11 @@ void UFairyApplication::AddUIRoot(UObject* WorldContextObject)
 	UWorld* World = WorldContextObject->GetWorld();
 	if (World && World->IsGameWorld())
 	{
-		UGRoot* NewUIRoot = NewObject<UGRoot>(WorldContextObject);
-		NewUIRoot->MakeSlateWidget();
+		UGameViewportClient* ViewportClient = World->GetGameViewport();
+		this->DPIScale = ViewportClient->GetDPIScale();
+
+		UFairyRoot* NewUIRoot = NewObject<UFairyRoot>(WorldContextObject);
+		//NewUIRoot->MakeSlateWidget();
 		NewUIRoot->AddToViewport();
 		UIRoots.Add(World, NewUIRoot);
 
@@ -105,7 +108,7 @@ void UFairyApplication::AddUIRoot(UObject* WorldContextObject)
 	}
 }
 
-UGRoot* UFairyApplication::GetUIRoot(UObject* WorldContextObject)
+UFairyRoot* UFairyApplication::GetUIRoot(UObject* WorldContextObject)
 {
 	UE_LOG(LogTemp, Warning, TEXT("UFairyApplication::GetUIRoot(...)"));
 	UWorld* World = WorldContextObject->GetWorld();
@@ -125,7 +128,7 @@ void UFairyApplication::RemoveUIRoot(UObject* WorldContextObject)
 	UWorld* World = WorldContextObject->GetWorld();
 	if (World && World->IsGameWorld() && UIRoots.Num() != 0)
 	{
-		UGRoot* TargetUIRoot = UIRoots[World];
+		UFairyRoot* TargetUIRoot = UIRoots[World];
 		TargetUIRoot->RemoveFromViewport();
 
 		UIRoots.Remove(World);
@@ -204,7 +207,7 @@ int32 UFairyApplication::GetTouchCount() const
 	return Count;
 }
 
-UGObject* UFairyApplication::GetObjectUnderPoint(const FVector2D& ScreenspacePosition)
+UFairyObject* UFairyApplication::GetObjectUnderPoint(const FVector2D& ScreenspacePosition)
 {
 	TSharedRef<SWindow> TopWindow = FSlateApplication::Get().GetActiveTopLevelWindow().ToSharedRef();
 	TArray<TSharedRef<SWindow>> Windows;
@@ -250,7 +253,7 @@ void UFairyApplication::SetSoundVolumeScale(float VolumnScale)
 
 bool UFairyApplication::DispatchEvent(const FName& EventType, const TSharedRef<SWidget>& Initiator, const FNVariant& Data)
 {
-	UGObject* Obj = GetWidgetGObject(Initiator);
+	UFairyObject* Obj = GetWidgetGObject(Initiator);
 	if (Obj == nullptr)
 		return false;
 
@@ -269,7 +272,7 @@ bool UFairyApplication::DispatchEvent(const FName& EventType, const TSharedRef<S
 
 void UFairyApplication::BubbleEvent(const FName& EventType, const TSharedRef<SWidget>& Initiator, const FNVariant& Data)
 {
-	TArray<UGObject*> CallChain;
+	TArray<UFairyObject*> CallChain;
 	GetPathToRoot(Initiator, CallChain);
 	if (CallChain.Num() == 0)
 		return;
@@ -277,7 +280,7 @@ void UFairyApplication::BubbleEvent(const FName& EventType, const TSharedRef<SWi
 	InternalBubbleEvent(EventType, CallChain, Data);
 }
 
-void UFairyApplication::InternalBubbleEvent(const FName& EventType, const TArray<UGObject*>& CallChain, const FNVariant& Data)
+void UFairyApplication::InternalBubbleEvent(const FName& EventType, const TArray<UFairyObject*>& CallChain, const FNVariant& Data)
 {
 	UEventContext* Context = BorrowEventContext();
 	Context->Type = EventType;
@@ -304,7 +307,7 @@ void UFairyApplication::InternalBubbleEvent(const FName& EventType, const TArray
 
 void UFairyApplication::BroadcastEvent(const FName& EventType, const TSharedRef<SWidget>& Initiator, const FNVariant& Data)
 {
-	TArray<UGObject*> CallChain;
+	TArray<UFairyObject*> CallChain;
 	GetDescendants(Initiator, CallChain);
 	if (CallChain.Num() == 0)
 		return;
@@ -323,7 +326,7 @@ void UFairyApplication::BroadcastEvent(const FName& EventType, const TSharedRef<
 	ReturnEventContext(Context);
 }
 
-UGObject* UFairyApplication::GetWidgetGObject(const TSharedPtr<SWidget>& InWidget)
+UFairyObject* UFairyApplication::GetWidgetGObject(const TSharedPtr<SWidget>& InWidget)
 {
 	if (!InWidget.IsValid())
 		return nullptr;
@@ -333,7 +336,7 @@ UGObject* UFairyApplication::GetWidgetGObject(const TSharedPtr<SWidget>& InWidge
 	{
 		if (Ptr->GetTag() == SDisplayObject::SDisplayObjectTag)
 		{
-			const TWeakObjectPtr<UGObject>& ObjPtr = StaticCastSharedPtr<SDisplayObject>(Ptr)->GObject;
+			const TWeakObjectPtr<UFairyObject>& ObjPtr = StaticCastSharedPtr<SDisplayObject>(Ptr)->GObject;
 			if (ObjPtr.IsValid())
 				return ObjPtr.Get();
 		}
@@ -344,14 +347,14 @@ UGObject* UFairyApplication::GetWidgetGObject(const TSharedPtr<SWidget>& InWidge
 	return nullptr;
 }
 
-void UFairyApplication::GetPathToRoot(const TSharedRef<SWidget>& InWidget, TArray<UGObject*>& OutArray)
+void UFairyApplication::GetPathToRoot(const TSharedRef<SWidget>& InWidget, TArray<UFairyObject*>& OutArray)
 {
 	TSharedPtr<SWidget> Ptr = InWidget;
 	while (Ptr.IsValid())
 	{
 		if (Ptr->GetTag() == SDisplayObject::SDisplayObjectTag)
 		{
-			const TWeakObjectPtr<UGObject>& ObjPtr = StaticCastSharedPtr<SDisplayObject>(Ptr)->GObject;
+			const TWeakObjectPtr<UFairyObject>& ObjPtr = StaticCastSharedPtr<SDisplayObject>(Ptr)->GObject;
 			if (ObjPtr.IsValid())
 				OutArray.Add(ObjPtr.Get());
 		}
@@ -360,7 +363,7 @@ void UFairyApplication::GetPathToRoot(const TSharedRef<SWidget>& InWidget, TArra
 	}
 }
 
-void UFairyApplication::GetDescendants(const TSharedRef<SWidget>& InWidget, TArray<UGObject*>& OutArray)
+void UFairyApplication::GetDescendants(const TSharedRef<SWidget>& InWidget, TArray<UFairyObject*>& OutArray)
 {
 	if (InWidget->GetTag() == SDisplayObject::SDisplayObjectTag)
 	{
@@ -400,14 +403,14 @@ void UFairyApplication::ReturnEventContext(UEventContext* Context)
 	EventContextPool.Add(Context);
 }
 
-void UFairyApplication::AddMouseCaptor(int32 InUserIndex, int32 InPointerIndex, UGObject* InTarget)
+void UFairyApplication::AddMouseCaptor(int32 InUserIndex, int32 InPointerIndex, UFairyObject* InTarget)
 {
 	FTouchInfo* TouchInfo = GetTouchInfo(InUserIndex, InPointerIndex);
 	if (TouchInfo != nullptr && !TouchInfo->MouseCaptors.Contains(InTarget))
 		TouchInfo->MouseCaptors.Add(InTarget);
 }
 
-void UFairyApplication::RemoveMouseCaptor(int32 InUserIndex, int32 InPointerIndex, UGObject* InTarget)
+void UFairyApplication::RemoveMouseCaptor(int32 InUserIndex, int32 InPointerIndex, UFairyObject* InTarget)
 {
 	FTouchInfo* TouchInfo = GetTouchInfo(InUserIndex, InPointerIndex);
 	if (TouchInfo != nullptr)
@@ -527,7 +530,7 @@ FReply UFairyApplication::OnWidgetMouseButtonDown(const TSharedRef<SWidget>& Wid
 {
 	FTouchInfo* TouchInfo = GetTouchInfo(MouseEvent);
 
-	UGObject* InitialGObject = nullptr;
+	UFairyObject* InitialGObject = nullptr;
 	TSharedPtr<SWidget> Ptr = Widget;
 	while (Ptr.IsValid())
 	{
@@ -557,7 +560,7 @@ FReply UFairyApplication::OnWidgetMouseButtonUp(const TSharedRef<SWidget>& Widge
 	if (TouchInfo == nullptr)
 		return FReply::Handled().ReleaseMouseCapture();
 
-	TArray<UGObject*> CallChain;
+	TArray<UFairyObject*> CallChain;
 	GetPathToRoot(Widget, CallChain);
 	if (CallChain.Num() > 0)
 	{

@@ -31,7 +31,7 @@ void SContainer::AddChildAt(const TSharedRef<SWidget>& SlotWidget, int32 Index)
     {
         verifyf(!SlotWidget->IsParentValid(), TEXT("Cant add a child has parent"));
 
-        FSlotBase& NewSlot = *new FSlotBase();
+        SContainer::FSlot& NewSlot = this->AddSlot();
         NewSlot.AttachWidget(SlotWidget);
         if (Index == Count)
             Children.Add(&NewSlot);
@@ -107,7 +107,9 @@ void SContainer::RemoveChildren(int32 BeginIndex, int32 EndIndex)
         }
     }
     else
+    {
         Children.Empty();
+    }
 }
 
 int32 SContainer::NumChildren() const
@@ -121,13 +123,19 @@ void SContainer::OnArrangeChildren(const FGeometry& AllottedGeometry, FArrangedC
     {
         for (int32 ChildIndex = 0; ChildIndex < Children.Num(); ++ChildIndex)
         {
-            const FSlotBase& CurChild = Children[ChildIndex];
+            const SContainer::FSlot& CurChild = Children[ChildIndex];
             const TSharedRef<SWidget>& CurWidget = CurChild.GetWidget();
+            const FVector2D& CurChildPos = CurChild.PositionAttr.Get();
+            const FVector2D& CurChildSize = CurChild.SizeAttr.Get();
+            const float CurChildScale = CurChild.ScaleAttr.Get();
             if (ArrangedChildren.Accepts(CurWidget->GetVisibility()))
             {
                 ArrangedChildren.AddWidget(
-                    AllottedGeometry.MakeChild( CurWidget, FVector2D::ZeroVector, CurWidget.Get().GetDesiredSize() )
+                    AllottedGeometry.MakeChild(CurWidget, CurChildPos, FSlateLayoutTransform(CurChildScale, CurChildPos))
                 );
+                //ArrangedChildren.AddWidget(
+                //    AllottedGeometry.MakeChild( CurWidget, FVector2D::ZeroVector, CurWidget.Get().GetDesiredSize() )
+                //);
             }   
         }
     }

@@ -1,6 +1,6 @@
 #include "UI/PopupMenu.h"
-#include "UI/GRoot.h"
-#include "UI/UIPackage.h"
+#include "UI/FairyRoot.h"
+#include "Package/UIPackage.h"
 #include "UI/GController.h"
 #include "FairyApplication.h"
 
@@ -34,7 +34,7 @@ void UPopupMenu::Create(const FString& ResourceURL)
         }
     }
 
-    ContentPane = UUIPackageMgr::Get()->CreateObjectFromURL(GetOuter(), url)->As<UGComponent>();
+    ContentPane = UUIPackageMgr::Get()->CreateObjectFromURL(GetOuter(), url)->As<UFairyComponent>();
     ContentPane->On(FUIEvents::AddedToStage).AddUObject(this, &UPopupMenu::OnAddedToStage);
 
     List = ContentPane->GetChild("list")->As<UGList>();
@@ -167,7 +167,7 @@ bool UPopupMenu::IsItemChecked(const FString& Name) const
 
 bool UPopupMenu::RemoveItem(const FString& Name)
 {
-    UGObject* item = List->GetChild(Name);
+    UFairyObject* item = List->GetChild(Name);
     if (item != nullptr)
     {
         int32 index = List->GetChildIndex(item);
@@ -193,7 +193,7 @@ int32 UPopupMenu::GetItemCount() const
     return List->NumChildren();
 }
 
-void UPopupMenu::Show(UGObject * AtObject, EPopupDirection Dir)
+void UPopupMenu::Show(UFairyObject * AtObject, EPopupDirection Dir)
 {
     UFairyApplication::Get()->GetUIRoot(this)->ShowPopup(ContentPane, AtObject, Dir);
 }

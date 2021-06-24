@@ -1,13 +1,13 @@
 #include "UI/GComboBox.h"
-#include "UI/UIPackage.h"
-#include "UI/UIPackageMgr.h"
+#include "Package/UIPackage.h"
+#include "Package/UIPackageMgr.h"
 #include "UI/GTextField.h"
 #include "UI/GTextInput.h"
 #include "UI/GLabel.h"
 #include "UI/GButton.h"
 #include "UI/GController.h"
 #include "UI/GList.h"
-#include "UI/GRoot.h"
+#include "UI/FairyRoot.h"
 #include "Utils/ByteBuffer.h"
 
 UGComboBox::UGComboBox() :
@@ -207,7 +207,7 @@ void UGComboBox::RenderDropdownList()
     int32 cnt = Items.Num();
     for (int32 i = 0; i < cnt; i++)
     {
-        UGObject* Obj = ListObject->AddItemFromPool();
+        UFairyObject* Obj = ListObject->AddItemFromPool();
         Obj->SetText(Items[i]);
         Obj->SetIcon((Icons.Num() > 0 && i < Icons.Num()) ? Icons[i] : G_EMPTY_STRING);
         Obj->Name = i < Values.Num() ? Values[i] : G_EMPTY_STRING;
@@ -216,7 +216,7 @@ void UGComboBox::RenderDropdownList()
 
 void UGComboBox::HandleControllerChanged(UGController* Controller)
 {
-    UGComponent::HandleControllerChanged(Controller);
+    UFairyComponent::HandleControllerChanged(Controller);
 
     if (SelectionController == Controller)
         SetSelectedIndex(Controller->GetSelectedIndex());
@@ -232,7 +232,7 @@ void UGComboBox::HandleGrayedChanged()
             SetState(UGButton::UP);
     }
     else
-        UGComponent::HandleGrayedChanged();
+        UFairyComponent::HandleGrayedChanged();
 }
 
 UGTextField* UGComboBox::GetTextField() const
@@ -264,7 +264,7 @@ FNVariant UGComboBox::GetProp(EObjectPropID PropID) const
     case EObjectPropID::FontSize:
         return FNVariant(GetTitleFontSize());
     default:
-        return UGComponent::GetProp(PropID);
+        return UFairyComponent::GetProp(PropID);
     }
 }
 
@@ -289,7 +289,7 @@ void UGComboBox::SetProp(EObjectPropID PropID, const FNVariant& InValue)
         SetTitleFontSize(InValue.AsInt());
         break;
     default:
-        UGComponent::SetProp(PropID, InValue);
+        UFairyComponent::SetProp(PropID, InValue);
         break;
     }
 }
@@ -305,7 +305,7 @@ void UGComboBox::ConstructExtension(FByteBuffer* Buffer)
     const FString& dropdownResource = Buffer->ReadS();
     if (!dropdownResource.IsEmpty())
     {
-        DropdownObject = Cast<UGComponent>(UUIPackageMgr::Get()->CreateObjectFromURL(this, dropdownResource));
+        DropdownObject = Cast<UFairyComponent>(UUIPackageMgr::Get()->CreateObjectFromURL(this, dropdownResource));
         verifyf(DropdownObject != nullptr, TEXT("should be a component."));
 
         ListObject = Cast<UGList>(DropdownObject->GetChild("list"));
@@ -330,7 +330,7 @@ void UGComboBox::ConstructExtension(FByteBuffer* Buffer)
 
 void UGComboBox::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
-    UGComponent::SetupAfterAdd(Buffer, BeginPos);
+    UFairyComponent::SetupAfterAdd(Buffer, BeginPos);
 
     if (!Buffer->Seek(BeginPos, 6))
         return;
@@ -391,10 +391,10 @@ void UGComboBox::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 
 void UGComboBox::OnClickItem(UEventContext* Context)
 {
-    if (DropdownObject->GetParent()->IsA<UGRoot>())
-        ((UGRoot*)DropdownObject->GetParent())->HidePopup(DropdownObject);
+    if (DropdownObject->GetParent()->IsA<UFairyRoot>())
+        ((UFairyRoot*)DropdownObject->GetParent())->HidePopup(DropdownObject);
     SelectedIndex = INT_MIN;
-    SetSelectedIndex(ListObject->GetChildIndex(Cast<UGObject>(Context->GetData().AsUObject())));
+    SetSelectedIndex(ListObject->GetChildIndex(Cast<UFairyObject>(Context->GetData().AsUObject())));
 
     DispatchEvent(FUIEvents::Changed);
 }

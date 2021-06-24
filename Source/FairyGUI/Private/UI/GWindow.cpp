@@ -1,8 +1,8 @@
 #include "UI/GWindow.h"
 #include "UI/GGraph.h"
-#include "UI/GRoot.h"
-#include "UI/UIPackage.h"
-#include "UI/UIPackageMgr.h"
+#include "UI/FairyRoot.h"
+#include "Package/UIPackage.h"
+#include "Package/UIPackageMgr.h"
 #include "FairyApplication.h"
 
 UGWindow::UGWindow()
@@ -18,7 +18,7 @@ UGWindow::~UGWindow()
 {
 }
 
-void UGWindow::SetContentPane(UGComponent* Obj)
+void UGWindow::SetContentPane(UFairyComponent* Obj)
 {
     if (ContentPane != Obj)
     {
@@ -34,7 +34,7 @@ void UGWindow::SetContentPane(UGComponent* Obj)
             AddChild(ContentPane);
             SetSize(ContentPane->GetSize());
             ContentPane->AddRelation(this, ERelationType::Size);
-            FrameObject = Cast<UGComponent>(ContentPane->GetChild("frame"));
+            FrameObject = Cast<UFairyComponent>(ContentPane->GetChild("frame"));
             if (FrameObject != nullptr)
             {
                 SetCloseButton(FrameObject->GetChild("closeButton"));
@@ -47,7 +47,7 @@ void UGWindow::SetContentPane(UGComponent* Obj)
     }
 }
 
-void UGWindow::SetCloseButton(UGObject * Obj)
+void UGWindow::SetCloseButton(UFairyObject * Obj)
 {
     if (CloseButton != Obj)
     {
@@ -59,7 +59,7 @@ void UGWindow::SetCloseButton(UGObject * Obj)
     }
 }
 
-void UGWindow::SetDragArea(UGObject * Obj)
+void UGWindow::SetDragArea(UFairyObject * Obj)
 {
     if (DragArea != Obj)
     {

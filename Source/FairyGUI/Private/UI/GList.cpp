@@ -3,8 +3,8 @@
 #include "UI/GObjectPool.h"
 #include "UI/GController.h"
 #include "UI/GScrollBar.h"
-#include "UI/UIPackage.h"
-#include "UI/UIPackageMgr.h"
+#include "Package/UIPackage.h"
+#include "Package/UIPackageMgr.h"
 #include "Utils/ByteBuffer.h"
 #include "Widgets/SContainer.h"
 
@@ -131,14 +131,14 @@ void UGList::SetAutoResizeItem(bool bFlag)
     }
 }
 
-UGObject* UGList::GetFromPool()
+UFairyObject* UGList::GetFromPool()
 {
     return GetFromPool(G_EMPTY_STRING);
 }
 
-UGObject* UGList::GetFromPool(const FString& URL)
+UFairyObject* UGList::GetFromPool(const FString& URL)
 {
-    UGObject* ret;
+    UFairyObject* ret;
     if (URL.Len() == 0)
         ret = Pool->GetObject(DefaultItem);
     else
@@ -148,21 +148,21 @@ UGObject* UGList::GetFromPool(const FString& URL)
     return ret;
 }
 
-void UGList::ReturnToPool(UGObject* Obj)
+void UGList::ReturnToPool(UFairyObject* Obj)
 {
     Pool->ReturnObject(Obj);
 }
 
-UGObject* UGList::AddItemFromPool(const FString& URL)
+UFairyObject* UGList::AddItemFromPool(const FString& URL)
 {
-    UGObject* Obj = GetFromPool(URL);
+    UFairyObject* Obj = GetFromPool(URL);
 
     return AddChild(Obj);
 }
 
-UGObject* UGList::AddChildAt(UGObject* Child, int32 Index)
+UFairyObject* UGList::AddChildAt(UFairyObject* Child, int32 Index)
 {
-    UGComponent::AddChildAt(Child, Index);
+    UFairyComponent::AddChildAt(Child, Index);
     if (Child->IsA<UGButton>())
     {
         UGButton* Button = (UGButton*)Child;
@@ -177,10 +177,10 @@ UGObject* UGList::AddChildAt(UGObject* Child, int32 Index)
 
 void UGList::RemoveChildAt(int32 Index)
 {
-    UGObject* Child = Children[Index];
+    UFairyObject* Child = Children[Index];
     Child->OnClick.RemoveDynamic(this, &UGList::OnClickItemHandler);
 
-    UGComponent::RemoveChildAt(Index);
+    UFairyComponent::RemoveChildAt(Index);
 }
 
 void UGList::RemoveChildToPoolAt(int32 Index)
@@ -189,7 +189,7 @@ void UGList::RemoveChildToPoolAt(int32 Index)
     RemoveChildAt(Index);
 }
 
-void UGList::RemoveChildToPool(UGObject* Child)
+void UGList::RemoveChildToPool(UFairyObject* Child)
 {
     ReturnToPool(Child);
     RemoveChild(Child);
@@ -362,7 +362,7 @@ void UGList::ClearSelection()
     }
 }
 
-void UGList::ClearSelectionExcept(UGObject* Obj)
+void UGList::ClearSelectionExcept(UFairyObject* Obj)
 {
     if (bVirtual)
     {
@@ -486,12 +486,12 @@ void UGList::HandleArrowKey(int32 Direction)
         }
         else if (Layout == EListLayoutType::FlowHorizontal || Layout == EListLayoutType::Pagination)
         {
-            UGObject* current = Children[index];
+            UFairyObject* current = Children[index];
             int32 k = 0;
             int32 i;
             for (i = index - 1; i >= 0; i--)
             {
-                UGObject* obj = Children[i];
+                UFairyObject* obj = Children[i];
                 if (obj->GetY() != current->GetY())
                 {
                     current = obj;
@@ -501,7 +501,7 @@ void UGList::HandleArrowKey(int32 Direction)
             }
             for (; i >= 0; i--)
             {
-                UGObject* obj = Children[i];
+                UFairyObject* obj = Children[i];
                 if (obj->GetY() != current->GetY())
                 {
                     ClearSelection();
@@ -524,13 +524,13 @@ void UGList::HandleArrowKey(int32 Direction)
         }
         else if (Layout == EListLayoutType::FlowVertical)
         {
-            UGObject* current = Children[index];
+            UFairyObject* current = Children[index];
             int32 k = 0;
             int32 cnt = Children.Num();
             int32 i;
             for (i = index + 1; i < cnt; i++)
             {
-                UGObject* obj = Children[i];
+                UFairyObject* obj = Children[i];
                 if (obj->GetX() != current->GetX())
                 {
                     current = obj;
@@ -540,7 +540,7 @@ void UGList::HandleArrowKey(int32 Direction)
             }
             for (; i < cnt; i++)
             {
-                UGObject* obj = Children[i];
+                UFairyObject* obj = Children[i];
                 if (obj->GetX() != current->GetX())
                 {
                     ClearSelection();
@@ -563,13 +563,13 @@ void UGList::HandleArrowKey(int32 Direction)
         }
         else if (Layout == EListLayoutType::FlowHorizontal || Layout == EListLayoutType::Pagination)
         {
-            UGObject* current = Children[index];
+            UFairyObject* current = Children[index];
             int32 k = 0;
             int32 cnt = Children.Num();
             int32 i;
             for (i = index + 1; i < cnt; i++)
             {
-                UGObject* obj = Children[i];
+                UFairyObject* obj = Children[i];
                 if (obj->GetY() != current->GetY())
                 {
                     current = obj;
@@ -579,7 +579,7 @@ void UGList::HandleArrowKey(int32 Direction)
             }
             for (; i < cnt; i++)
             {
-                UGObject* obj = Children[i];
+                UFairyObject* obj = Children[i];
                 if (obj->GetY() != current->GetY())
                 {
                     ClearSelection();
@@ -602,12 +602,12 @@ void UGList::HandleArrowKey(int32 Direction)
         }
         else if (Layout == EListLayoutType::FlowVertical)
         {
-            UGObject* current = Children[index];
+            UFairyObject* current = Children[index];
             int32 k = 0;
             int32 i;
             for (i = index - 1; i >= 0; i--)
             {
-                UGObject* obj = Children[i];
+                UFairyObject* obj = Children[i];
                 if (obj->GetX() != current->GetX())
                 {
                     current = obj;
@@ -617,7 +617,7 @@ void UGList::HandleArrowKey(int32 Direction)
             }
             for (; i >= 0; i--)
             {
-                UGObject* obj = Children[i];
+                UFairyObject* obj = Children[i];
                 if (obj->GetX() != current->GetX())
                 {
                     ClearSelection();
@@ -632,7 +632,7 @@ void UGList::HandleArrowKey(int32 Direction)
 
 void UGList::OnClickItemHandler(UEventContext* Context)
 {
-    UGObject* Obj = Context->GetSender();
+    UFairyObject* Obj = Context->GetSender();
     if (Obj->IsA<UGButton>() && SelectionMode != EListSelectionMode::None)
         SetSelectionOnEvent(Obj, Context);
 
@@ -642,12 +642,12 @@ void UGList::OnClickItemHandler(UEventContext* Context)
     DispatchItemEvent(Obj, Context);
 }
 
-void UGList::DispatchItemEvent(UGObject* Obj, UEventContext* Context)
+void UGList::DispatchItemEvent(UFairyObject* Obj, UEventContext* Context)
 {
     DispatchEvent(FUIEvents::ClickItem, FNVariant(Obj));
 }
 
-void UGList::SetSelectionOnEvent(UGObject* Obj, UEventContext* Context)
+void UGList::SetSelectionOnEvent(UFairyObject* Obj, UEventContext* Context)
 {
     bool bDontChangeLastIndex = false;
     UGButton* Button = Cast<UGButton>(Obj);
@@ -749,7 +749,7 @@ void UGList::ResizeToFit(int32 ItemCount, int32 InMinSize)
     else
     {
         int32 i = ItemCount - 1;
-        UGObject* obj = nullptr;
+        UFairyObject* obj = nullptr;
         while (i >= 0)
         {
             obj = GetChildAt(i);
@@ -787,12 +787,12 @@ void UGList::ResizeToFit(int32 ItemCount, int32 InMinSize)
 
 int32 UGList::GetFirstChildInView() const
 {
-    return ChildIndexToItemIndex(UGComponent::GetFirstChildInView());
+    return ChildIndexToItemIndex(UFairyComponent::GetFirstChildInView());
 }
 
 void UGList::HandleSizeChanged()
 {
-    UGComponent::HandleSizeChanged();
+    UFairyComponent::HandleSizeChanged();
 
     SetBoundsChangedFlag();
     if (bVirtual)
@@ -801,7 +801,7 @@ void UGList::HandleSizeChanged()
 
 void UGList::HandleControllerChanged(UGController* Controller)
 {
-    UGComponent::HandleControllerChanged(Controller);
+    UFairyComponent::HandleControllerChanged(Controller);
 
     if (SelectionController == Controller)
         SetSelectedIndex(Controller->GetSelectedIndex());
@@ -869,7 +869,7 @@ void UGList::ScrollToView(int32 Index, bool bAnimation, bool bSetFirst)
     }
     else
     {
-        UGObject* obj = GetChildAt(Index);
+        UFairyObject* obj = GetChildAt(Index);
         if (ScrollPane != nullptr)
             ScrollPane->ScrollToView(obj, bAnimation, bSetFirst);
         else if (Parent.IsValid() && Parent->GetScrollPane() != nullptr)
@@ -962,7 +962,7 @@ void UGList::SetVirtual(bool bInLoop)
 
         if (ItemSize.X == 0 || ItemSize.Y == 0)
         {
-            UGObject* obj = GetFromPool();
+            UFairyObject* obj = GetFromPool();
             verifyf(obj != nullptr, TEXT("Virtual List must have a default list item resource."));
             ItemSize = obj->GetSize();
             ItemSize.X = FMath::CeilToFloat(ItemSize.X);
@@ -1090,7 +1090,7 @@ FVector2D UGList::GetSnappingPosition(const FVector2D& InPoint)
         return ret;
     }
     else
-        return UGComponent::GetSnappingPosition(InPoint);
+        return UFairyComponent::GetSnappingPosition(InPoint);
 }
 
 void UGList::CheckVirtualList()
@@ -1578,7 +1578,7 @@ bool UGList::HandleScroll1(bool forceUpdate)
     childCount = Children.Num();
     for (int32 i = 0; i < childCount; i++)
     {
-        UGObject* obj = VirtualItems[newFirstIndex + i].Obj;
+        UFairyObject* obj = VirtualItems[newFirstIndex + i].Obj;
         if (Children[i] != obj)
             SetChildIndex(obj, i);
     }
@@ -1745,7 +1745,7 @@ bool UGList::HandleScroll2(bool forceUpdate)
     childCount = Children.Num();
     for (int32 i = 0; i < childCount; i++)
     {
-        UGObject* obj = VirtualItems[newFirstIndex + i].Obj;
+        UFairyObject* obj = VirtualItems[newFirstIndex + i].Obj;
         if (Children[i] != obj)
             SetChildIndex(obj, i);
     }
@@ -1805,7 +1805,7 @@ void UGList::HandleScroll3(bool forceUpdate)
         ii.UpdateFlag = ItemInfoVer;
     }
 
-    UGObject* lastObj = nullptr;
+    UFairyObject* lastObj = nullptr;
     int32 insertIndex = 0;
     for (int32 i = startIndex; i < lastIndex; i++)
     {
@@ -1940,7 +1940,7 @@ void UGList::HandleArchOrder1()
         int32 cnt = NumChildren();
         for (int32 i = 0; i < cnt; i++)
         {
-            UGObject* obj = GetChildAt(i);
+            UFairyObject* obj = GetChildAt(i);
             if (!bFoldInvisibleItems || obj->IsVisible())
             {
                 dist = FMath::Abs(mid - obj->GetY() - obj->GetHeight() / 2);
@@ -1965,7 +1965,7 @@ void UGList::HandleArchOrder2()
         int32 cnt = NumChildren();
         for (int32 i = 0; i < cnt; i++)
         {
-            UGObject* obj = GetChildAt(i);
+            UFairyObject* obj = GetChildAt(i);
             if (!bFoldInvisibleItems || obj->IsVisible())
             {
                 dist = FMath::Abs(mid - obj->GetX() - obj->GetWidth() / 2);
@@ -2020,7 +2020,7 @@ void UGList::UpdateBounds()
     int32 cnt = Children.Num();
     int32 i;
     int32 j = 0;
-    UGObject* child;
+    UFairyObject* child;
     float curX = 0;
     float curY = 0;
     float cw, ch;
@@ -2369,7 +2369,7 @@ void UGList::UpdateBounds()
 
 void UGList::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
-    UGComponent::SetupBeforeAdd(Buffer, BeginPos);
+    UFairyComponent::SetupBeforeAdd(Buffer, BeginPos);
 
     Buffer->Seek(BeginPos, 5);
 
@@ -2440,7 +2440,7 @@ void UGList::ReadItems(FByteBuffer* Buffer)
             }
         }
 
-        UGObject* obj = GetFromPool(*str);
+        UFairyObject* obj = GetFromPool(*str);
         if (obj != nullptr)
         {
             AddChild(obj);
@@ -2451,7 +2451,7 @@ void UGList::ReadItems(FByteBuffer* Buffer)
     }
 }
 
-void UGList::SetupItem(FByteBuffer* Buffer, UGObject* Obj)
+void UGList::SetupItem(FByteBuffer* Buffer, UFairyObject* Obj)
 {
     const FString* str;
     UGButton* btn = Cast<UGButton>(Obj);
@@ -2467,7 +2467,7 @@ void UGList::SetupItem(FByteBuffer* Buffer, UGObject* Obj)
     if ((str = Buffer->ReadSP()) != nullptr)
         Obj->Name = *str;
 
-    UGComponent* gcom = Cast<UGComponent>(Obj);
+    UFairyComponent* gcom = Cast<UFairyComponent>(Obj);
     if (gcom != nullptr)
     {
         int32 cnt = Buffer->ReadShort();
@@ -2486,7 +2486,7 @@ void UGList::SetupItem(FByteBuffer* Buffer, UGObject* Obj)
                 const FString& target = Buffer->ReadS();
                 EObjectPropID PropID = (EObjectPropID)Buffer->ReadShort();
                 FString value = Buffer->ReadS();
-                UGObject* obj2 = gcom->GetChildByPath(target);
+                UFairyObject* obj2 = gcom->GetChildByPath(target);
                 if (obj2 != nullptr)
                     obj2->SetProp(PropID, FNVariant(value));
             }
@@ -2496,7 +2496,7 @@ void UGList::SetupItem(FByteBuffer* Buffer, UGObject* Obj)
 
 void UGList::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
-    UGComponent::SetupAfterAdd(Buffer, BeginPos);
+    UFairyComponent::SetupAfterAdd(Buffer, BeginPos);
 
     Buffer->Seek(BeginPos, 6);
 

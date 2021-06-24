@@ -150,7 +150,7 @@ void UGButton::SetState(const FString& InState)
             FNVariant Color(FColor(c, c, c, 255));
             for (int32 i = 0; i < cnt; i++)
             {
-                UGObject* Obj = this->GetChildAt(i);
+                UFairyObject* Obj = this->GetChildAt(i);
                 if (!Obj->IsA<UGTextField>())
                     Obj->SetProp(EObjectPropID::Color, Color);
             }
@@ -160,7 +160,7 @@ void UGButton::SetState(const FString& InState)
             FNVariant Color(FColor::White);
             for (int32 i = 0; i < cnt; i++)
             {
-                UGObject* Obj = this->GetChildAt(i);
+                UFairyObject* Obj = this->GetChildAt(i);
                 if (!Obj->IsA<UGTextField>())
                     Obj->SetProp(EObjectPropID::Color, Color);
             }
@@ -236,7 +236,7 @@ FNVariant UGButton::GetProp(EObjectPropID PropID) const
     case EObjectPropID::Selected:
         return FNVariant(IsSelected());
     default:
-        return UGComponent::GetProp(PropID);
+        return UFairyComponent::GetProp(PropID);
     }
 }
 
@@ -264,7 +264,7 @@ void UGButton::SetProp(EObjectPropID PropID, const FNVariant& InValue)
         SetSelected(InValue.AsBool());
         break;
     default:
-        UGComponent::SetProp(PropID, InValue);
+        UFairyComponent::SetProp(PropID, InValue);
         break;
     }
 }
@@ -302,7 +302,7 @@ void UGButton::ConstructExtension(FByteBuffer* Buffer)
 
 void UGButton::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
-    UGComponent::SetupAfterAdd(Buffer, BeginPos);
+    UFairyComponent::SetupAfterAdd(Buffer, BeginPos);
 
     if (!Buffer->Seek(BeginPos, 6))
         return;
@@ -339,7 +339,7 @@ void UGButton::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 
 void UGButton::HandleControllerChanged(UGController* Controller)
 {
-    UGObject::HandleControllerChanged(Controller);
+    UFairyObject::HandleControllerChanged(Controller);
 
     if (RelatedController == Controller)
         SetSelected(RelatedPageID == Controller->GetSelectedPageID());

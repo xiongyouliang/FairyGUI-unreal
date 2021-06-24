@@ -1,16 +1,16 @@
-#include "UI/GRoot.h"
+#include "UI/FairyRoot.h"
 #include "Engine/World.h"
 #include "Engine/GameViewportClient.h"
 #include "Slate.h"
 #include "FairyApplication.h"
 #include "UI/GWindow.h"
 #include "UI/GGraph.h"
-#include "UI/UIPackage.h"
-#include "UI/UIPackageMgr.h"
+#include "Package/UIPackage.h"
+#include "Package/UIPackageMgr.h"
 #include "Widgets/SContainer.h"
 #include "Widgets/Layout/SConstraintCanvas.h"
 
-int32 UGRoot::ContentScaleLevel = 0;
+int32 UFairyRoot::ContentScaleLevel = 0;
 
 class SRootContainer : public SContainer
 {
@@ -30,29 +30,29 @@ void SRootContainer::OnArrangeChildren(const FGeometry& AllottedGeometry, FArran
     SContainer::OnArrangeChildren(AllottedGeometry, ArrangedChildren);
 }
 
-UGRoot::UGRoot() :
+UFairyRoot::UFairyRoot() :
     Super()
 {
-    UE_LOG(LogTemp, Warning, TEXT("UGRoot::UGRoot()"))
+    UE_LOG(LogTemp, Warning, TEXT("UFairyRoot::UFairyRoot()"))
 }
 
-UGRoot::~UGRoot()
+UFairyRoot::~UFairyRoot()
 {
-    UE_LOG(LogTemp, Warning, TEXT("UGRoot::~UGRoot()"))
+    UE_LOG(LogTemp, Warning, TEXT("UFairyRoot::~UFairyRoot()"))
 }
 
-void UGRoot::ReleaseSlateResources(bool bReleaseChildren)
+void UFairyRoot::ReleaseSlateResources(bool bReleaseChildren)
 {
     Super::ReleaseSlateResources(bReleaseChildren);
 }
 
-void UGRoot::BeginDestroy()
+void UFairyRoot::BeginDestroy()
 {
     Super::BeginDestroy();
-    UE_LOG(LogTemp, Warning, TEXT("UGRoot::BeginDestroy(...)"));
+    UE_LOG(LogTemp, Warning, TEXT("UFairyRoot::BeginDestroy(...)"));
 }
 
-void UGRoot::AddToViewport()
+void UFairyRoot::AddToViewport()
 {
     UWorld* World = GetWorld();
     if (World && World->IsGameWorld())
@@ -61,17 +61,17 @@ void UGRoot::AddToViewport()
         //TSharedRef<SConstraintCanvas> FullScreenCanvas = SNew(SConstraintCanvas);
         
         TSharedRef<SRootContainer> NewRootContainer = SNew(SRootContainer).GObject(this);
+        Container = NewRootContainer;
+        DisplayObject = NewRootContainer;
         FullScreenWidget = NewRootContainer;
 
 
         NewRootContainer->SetOpaque(false);
-        NewRootContainer->AddChild(RootContainer.ToSharedRef());
-
         ViewportClient->AddViewportWidgetContent(NewRootContainer, 100);
     }
 }
 
-void UGRoot::RemoveFromViewport()
+void UFairyRoot::RemoveFromViewport()
 {
     if (!HasAnyFlags(RF_BeginDestroyed))
     {
@@ -95,18 +95,18 @@ void UGRoot::RemoveFromViewport()
     }
 }
 
-void UGRoot::ShowWindow(UGWindow* Window)
+void UFairyRoot::ShowWindow(UGWindow* Window)
 {
     AddChild(Window);
     AdjustModalLayer();
 }
 
-void UGRoot::HideWindow(UGWindow* Window)
+void UFairyRoot::HideWindow(UGWindow* Window)
 {
     Window->Hide();
 }
 
-void UGRoot::HideWindowImmediately(UGWindow* Window)
+void UFairyRoot::HideWindowImmediately(UGWindow* Window)
 {
     if (Window->GetParent() == this)
         RemoveChild(Window);
@@ -114,7 +114,7 @@ void UGRoot::HideWindowImmediately(UGWindow* Window)
     AdjustModalLayer();
 }
 
-void UGRoot::BringToFront(UGWindow* Window)
+void UFairyRoot::BringToFront(UGWindow* Window)
 {
     int32 cnt = NumChildren();
     int32 i;
@@ -129,7 +129,7 @@ void UGRoot::BringToFront(UGWindow* Window)
 
     for (; i >= 0; i--)
     {
-        UGObject* g = GetChildAt(i);
+        UFairyObject* g = GetChildAt(i);
         if (g == Window)
         {
             return;
@@ -147,9 +147,9 @@ void UGRoot::BringToFront(UGWindow* Window)
     }
 }
 
-void UGRoot::CloseAllExceptModals()
+void UFairyRoot::CloseAllExceptModals()
 {
-    TArray<UGObject*> map;
+    TArray<UFairyObject*> map;
     map.Append(Children);
 
     for (const auto& child : map)
@@ -161,9 +161,9 @@ void UGRoot::CloseAllExceptModals()
     }
 }
 
-void UGRoot::CloseAllWindows()
+void UFairyRoot::CloseAllWindows()
 {
-    TArray<UGObject*> map;
+    TArray<UFairyObject*> map;
     map.Append(Children);
 
     for (const auto& child : map)
@@ -175,12 +175,12 @@ void UGRoot::CloseAllWindows()
     }
 }
 
-UGWindow* UGRoot::GetTopWindow() const
+UGWindow* UFairyRoot::GetTopWindow() const
 {
     int32 cnt = NumChildren();
     for (int32 i = cnt - 1; i >= 0; i--)
     {
-        UGObject* child = GetChildAt(i);
+        UFairyObject* child = GetChildAt(i);
         if (child->IsA<UGWindow>())
         {
             return (UGWindow*)child;
@@ -190,7 +190,7 @@ UGWindow* UGRoot::GetTopWindow() const
     return nullptr;
 }
 
-UGGraph* UGRoot::GetModalLayer()
+UGGraph* UFairyRoot::GetModalLayer()
 {
     if (ModalLayer == nullptr)
         CreateModalLayer();
@@ -198,7 +198,7 @@ UGGraph* UGRoot::GetModalLayer()
     return ModalLayer;
 }
 
-void UGRoot::CreateModalLayer()
+void UFairyRoot::CreateModalLayer()
 {
     ModalLayer = NewObject<UGGraph>();
     ModalLayer->SetSize(Size);
@@ -206,7 +206,7 @@ void UGRoot::CreateModalLayer()
     ModalLayer->AddRelation(this, ERelationType::Size);
 }
 
-void UGRoot::AdjustModalLayer()
+void UFairyRoot::AdjustModalLayer()
 {
     if (ModalLayer == nullptr)
         CreateModalLayer();
@@ -218,7 +218,7 @@ void UGRoot::AdjustModalLayer()
 
     for (int32 i = cnt - 1; i >= 0; i--)
     {
-        UGObject* child = GetChildAt(i);
+        UFairyObject* child = GetChildAt(i);
         if (child->IsA<UGWindow>() && ((UGWindow*)child)->IsModal())
         {
             if (ModalLayer->GetParent() == nullptr)
@@ -233,25 +233,25 @@ void UGRoot::AdjustModalLayer()
         RemoveChild(ModalLayer);
 }
 
-bool UGRoot::HasModalWindow() const
+bool UFairyRoot::HasModalWindow() const
 {
     return ModalLayer != nullptr && ModalLayer->GetParent() != nullptr;
 }
 
-void UGRoot::ShowModalWait()
+void UFairyRoot::ShowModalWait()
 {
     GetModalWaitingPane();
     if (ModalWaitPane)
         AddChild(ModalWaitPane);
 }
 
-void UGRoot::CloseModalWait()
+void UFairyRoot::CloseModalWait()
 {
     if (ModalWaitPane != nullptr && ModalWaitPane->GetParent() != nullptr)
         RemoveChild(ModalWaitPane);
 }
 
-UGObject* UGRoot::GetModalWaitingPane()
+UFairyObject* UFairyRoot::GetModalWaitingPane()
 {
     if (!FUIConfig::Config.GlobalModalWaiting.IsEmpty())
     {
@@ -270,12 +270,12 @@ UGObject* UGRoot::GetModalWaitingPane()
         return nullptr;
 }
 
-bool UGRoot::IsModalWaiting() const
+bool UFairyRoot::IsModalWaiting() const
 {
     return (ModalWaitPane != nullptr) && ModalWaitPane->OnStage();
 }
 
-void UGRoot::ShowPopup(UGObject* Popup, UGObject* AtObject, EPopupDirection Direction)
+void UFairyRoot::ShowPopup(UFairyObject* Popup, UFairyObject* AtObject, EPopupDirection Direction)
 {
     if (PopupStack.Num() > 0)
         HidePopup(Popup);
@@ -284,7 +284,7 @@ void UGRoot::ShowPopup(UGObject* Popup, UGObject* AtObject, EPopupDirection Dire
 
     if (AtObject != nullptr)
     {
-        UGObject* p = AtObject;
+        UFairyObject* p = AtObject;
         while (p != nullptr)
         {
             if (p->GetParent() == this)
@@ -309,7 +309,7 @@ void UGRoot::ShowPopup(UGObject* Popup, UGObject* AtObject, EPopupDirection Dire
     Popup->SetPosition(pos);
 }
 
-void UGRoot::TogglePopup(UGObject* Popup, UGObject* AtObject, EPopupDirection Direction)
+void UFairyRoot::TogglePopup(UFairyObject* Popup, UFairyObject* AtObject, EPopupDirection Direction)
 {
     int32 Index;
     if (JustClosedPopups.Find(Popup, Index))
@@ -318,7 +318,7 @@ void UGRoot::TogglePopup(UGObject* Popup, UGObject* AtObject, EPopupDirection Di
     ShowPopup(Popup, AtObject, Direction);
 }
 
-void UGRoot::HidePopup(UGObject* Popup)
+void UFairyRoot::HidePopup(UFairyObject* Popup)
 {
     if (Popup != nullptr)
     {
@@ -340,7 +340,7 @@ void UGRoot::HidePopup(UGObject* Popup)
     }
 }
 
-void UGRoot::ClosePopup(UGObject* Popup)
+void UFairyRoot::ClosePopup(UFairyObject* Popup)
 {
     if (Popup != nullptr && Popup->GetParent() != nullptr)
     {
@@ -351,7 +351,7 @@ void UGRoot::ClosePopup(UGObject* Popup)
     }
 }
 
-void UGRoot::CheckPopups(SWidget* ClickTarget)
+void UFairyRoot::CheckPopups(SWidget* ClickTarget)
 {
     if (IsPendingKill())
     {
@@ -368,7 +368,7 @@ void UGRoot::CheckPopups(SWidget* ClickTarget)
         {
             if (Ptr->GetTag() == SDisplayObject::SDisplayObjectTag)
             {
-                UGObject* Obj = static_cast<SDisplayObject*>(Ptr)->GObject.Get();
+                UFairyObject* Obj = static_cast<SDisplayObject*>(Ptr)->GObject.Get();
 
                 int32 k;
                 if (PopupStack.Find(Obj, k))
@@ -388,7 +388,7 @@ void UGRoot::CheckPopups(SWidget* ClickTarget)
         {
             for (int32 i = PopupStack.Num() - 1; i >= 0; i--)
             {
-                UGObject* popup = PopupStack[i];
+                UFairyObject* popup = PopupStack[i];
                 if (popup != nullptr)
                 {
                     JustClosedPopups.Add(popup);
@@ -400,12 +400,12 @@ void UGRoot::CheckPopups(SWidget* ClickTarget)
     }
 }
 
-bool UGRoot::HasAnyPopup() const
+bool UFairyRoot::HasAnyPopup() const
 {
     return PopupStack.Num() > 0;
 }
 
-FVector2D UGRoot::GetPoupPosition(UGObject* Popup, UGObject* AtObject, EPopupDirection Direction)
+FVector2D UFairyRoot::GetPoupPosition(UFairyObject* Popup, UFairyObject* AtObject, EPopupDirection Direction)
 {
     FVector2D pos;
     FVector2D size;
@@ -439,7 +439,7 @@ FVector2D UGRoot::GetPoupPosition(UGObject* Popup, UGObject* AtObject, EPopupDir
     return RetPosition.RoundToVector();
 }
 
-void UGRoot::ShowTooltips(const FString& Text)
+void UFairyRoot::ShowTooltips(const FString& Text)
 {
     if (DefaultTooltipWin == nullptr)
     {
@@ -458,7 +458,7 @@ void UGRoot::ShowTooltips(const FString& Text)
     ShowTooltipsWin(DefaultTooltipWin);
 }
 
-void UGRoot::ShowTooltipsWin(UGObject* InTooltipWin)
+void UFairyRoot::ShowTooltipsWin(UFairyObject* InTooltipWin)
 {
     HideTooltips();
 
@@ -466,12 +466,12 @@ void UGRoot::ShowTooltipsWin(UGObject* InTooltipWin)
     UWorld* World = GetWorld();
     World->GetTimerManager().SetTimer(
         ShowTooltipsTimerHandle,
-        FTimerDelegate::CreateUObject(this, &UGRoot::DoShowTooltipsWin),
+        FTimerDelegate::CreateUObject(this, &UFairyRoot::DoShowTooltipsWin),
         0.1f,
         false);
 }
 
-void UGRoot::DoShowTooltipsWin()
+void UFairyRoot::DoShowTooltipsWin()
 {
     if (TooltipWin == nullptr)
         return;
@@ -494,7 +494,7 @@ void UGRoot::DoShowTooltipsWin()
     AddChild(TooltipWin);
 }
 
-void UGRoot::HideTooltips()
+void UFairyRoot::HideTooltips()
 {
     if (TooltipWin != nullptr)
     {
@@ -503,3 +503,5 @@ void UGRoot::HideTooltips()
         TooltipWin = nullptr;
     }
 }
+
+typedef UFairyRoot UFairyRoot;

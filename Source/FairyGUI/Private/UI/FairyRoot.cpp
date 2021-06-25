@@ -21,9 +21,10 @@ public:
 void SRootContainer::OnArrangeChildren(const FGeometry& AllottedGeometry, FArrangedChildren& ArrangedChildren) const
 {
     const FVector2D& LocalSize = AllottedGeometry.GetLocalSize();
-    const FVector2D& AbsoluteSize = AllottedGeometry.GetAbsoluteSize();
-    if (GObject.IsValid() && (AbsoluteSize != GObject->GetSize()))
+    //const FVector2D& AbsoluteSize = AllottedGeometry.GetAbsoluteSize();
+    if (GObject.IsValid() && (LocalSize != GObject->GetSize()))
     {
+        UE_LOG(LogFairyGUI, Log, TEXT("FairyRoot Widget Size:(%f, %f)"), LocalSize.X, LocalSize.Y);
         GObject->SetSize(LocalSize);
     }
 

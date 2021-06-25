@@ -63,16 +63,16 @@ UFairyObject::~UFairyObject()
 
 void UFairyObject::ReleaseSlateResources(bool bReleaseChildren)
 {
-	Super::ReleaseSlateResources(bReleaseChildren);
 	if (DisplayObject.IsValid())
 	{
 		DisplayObject.Reset();
 	}
+
+	Super::ReleaseSlateResources(bReleaseChildren);
 }
 
 void UFairyObject::BeginDestroy()
 {
-	Super::BeginDestroy();
 	if (Parent.IsValid())
 	{
 		Parent.Reset();
@@ -82,6 +82,7 @@ void UFairyObject::BeginDestroy()
 	{
 		Group.Reset();
 	}
+	Super::BeginDestroy();
 }
 
 void UFairyObject::SetX(float InX)

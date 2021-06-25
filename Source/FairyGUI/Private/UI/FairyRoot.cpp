@@ -43,6 +43,10 @@ UFairyRoot::~UFairyRoot()
 
 void UFairyRoot::ReleaseSlateResources(bool bReleaseChildren)
 {
+    if (FullScreenWidget.IsValid())
+    {
+        FullScreenWidget.Reset();
+    }
     Super::ReleaseSlateResources(bReleaseChildren);
 }
 
@@ -77,7 +81,7 @@ void UFairyRoot::RemoveFromViewport()
     {
         if (FullScreenWidget.IsValid())
         {
-            TSharedPtr<SWidget> WidgetHost = FullScreenWidget.Pin();
+            TSharedPtr<SWidget> WidgetHost = FullScreenWidget;
 
             // If this is a game world remove the widget from the current world's viewport.
             UWorld* World = GetWorld();

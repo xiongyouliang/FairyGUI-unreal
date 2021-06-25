@@ -79,7 +79,8 @@ public:
     void HideTooltips();
 
 private:
-    TWeakPtr<SWidget> FullScreenWidget;
+    TSharedPtr<SWidget> FullScreenWidget;
+
     void AddToViewport();
     void RemoveFromViewport();
 

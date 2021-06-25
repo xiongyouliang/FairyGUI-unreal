@@ -41,7 +41,10 @@ UFairyComponent::~UFairyComponent()
 
 void UFairyComponent::ReleaseSlateResources(bool bReleaseChildren)
 {
-	Container.Reset();
+	if (Container.IsValid())
+	{
+		Container.Reset();
+	}
 
 	Super::ReleaseSlateResources(bReleaseChildren);
 }

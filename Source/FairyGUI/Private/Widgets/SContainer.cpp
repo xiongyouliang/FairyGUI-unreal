@@ -24,7 +24,7 @@ SContainer::FSlot& SContainer::AddChildAt(const TSharedRef<SDisplayObject>& Slot
     verifyf(Index >= 0 && Index <= Count, TEXT("Invalid child index"));
     verifyf(!SlotWidget->IsParentValid(), TEXT("Cant add a child has parent"));
 
-    SContainer::FSlot& NewSlot = this->AddSlot();
+    SContainer::FSlot& NewSlot = SContainer::Slot();
     NewSlot.AttachWidget(SlotWidget);
     if (Index == Count)
     {

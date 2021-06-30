@@ -362,13 +362,17 @@ int32 UFairyComponent::NumChildren() const
 bool UFairyComponent::IsAncestorOf(const UFairyObject* Obj) const
 {
 	if (Obj == nullptr)
+	{
 		return false;
+	}
 
 	UFairyComponent* Com = Obj->Parent.Get();
 	while (Com != nullptr)
 	{
 		if (Com == this)
+		{
 			return true;
+		}
 
 		Com = Com->Parent.Get();
 	}
@@ -383,10 +387,21 @@ bool UFairyComponent::IsChildInView(UFairyObject* Child) const
 	}
 	else if (DisplayObject->GetClipping() != EWidgetClipping::Inherit)
 	{
-		return Child->GetX() + Child->GetWidth() >= 0 && Child->GetX() <= GetWidth() && Child->GetY() + Child->GetHeight() >= 0 && Child->GetY() <= GetHeight();
+		// this calculation is NOT a rigorous way, it is not consider shear(or skew) effect;
+		FVector2D ChildPos = Child->GetPosition();
+		FVector2D ChildSize = Child->GetSize();
+		FVector2D ChildScale = Child->GetScale();
+
+		FVector2D ContainerSize = this->GetSize();
+		FVector2D ContainerScale = this->GetScale();
+ 
+		return (ChildPos.X + ChildSize.X*ChildScale.X >= 0 && ChildPos.X < ContainerSize.X*ContainerScale.X) && (ChildPos.Y + ChildSize.Y*ChildScale.Y >= 0 && ChildSize.Y <= ContainerSize.Y*ContainerScale.Y);
+		//return Child->GetX() + Child->GetWidth() >= 0 && Child->GetX() <= GetWidth() && Child->GetY() + Child->GetHeight() >= 0 && Child->GetY() <= GetHeight();
 	}
 	else
+	{
 		return true;
+	}
 }
 
 int32 UFairyComponent::GetFirstChildInView() const
@@ -539,9 +554,13 @@ void UFairyComponent::SetApexIndex(int32 InApexIndex)
 float UFairyComponent::GetViewWidth() const
 {
 	if (ScrollPane != nullptr)
+	{
 		return ScrollPane->GetViewSize().X;
+	}
 	else
+	{
 		return Size.X - Margin.Left - Margin.Right;
+	}
 }
 
 void UFairyComponent::SetViewWidth(float InViewWidth)
@@ -552,7 +571,7 @@ void UFairyComponent::SetViewWidth(float InViewWidth)
 	}
 	else
 	{
-		SetWidth(InViewWidth + Margin.Left + Margin.Right);
+		//SetWidth(InViewWidth + Margin.Left + Margin.Right);
 	}	
 }
 
@@ -576,7 +595,7 @@ void UFairyComponent::SetViewHeight(float InViewHeight)
 	}
 	else
 	{
-		SetHeight(InViewHeight + Margin.Top + Margin.Bottom);
+		//SetHeight(InViewHeight + Margin.Top + Margin.Bottom);
 	}
 }
 
@@ -601,45 +620,52 @@ void UFairyComponent::SetBoundsChangedFlag()
 void UFairyComponent::EnsureBoundsCorrect()
 {
 	if (bBoundsChanged)
+	{
 		UpdateBounds();
+	}
 }
 
 void UFairyComponent::UpdateBounds()
 {
-	float ax, ay, aw, ah;
+	float ax = 0.0f;
+	float ay = 0.0f;
+	float aw = 0.0f;
+	float ah = 0.0f;
 	if (Children.Num() > 0)
 	{
 		ax = FLT_MAX;
 		ay = FLT_MAX;
-		float ar = -FLT_MAX, ab = -FLT_MAX;
-		float tmp;
+		float ar = FLT_MIN;
+		float ab = FLT_MIN;
+		float tmp = 0.0f;
 
-		int32 cnt = Children.Num();
-		for (int32 i = 0; i < cnt; ++i)
+		int32 ChildNum = Children.Num();
+		for (int32 i = 0; i < ChildNum; ++i)
 		{
 			UFairyObject* child = Children[i];
-			tmp = child->GetX();
-			if (tmp < ax)
-				ax = tmp;
-			tmp = child->GetY();
-			if (tmp < ay)
-				ay = tmp;
-			tmp = child->GetX() + child->GetWidth();
+			const FVector2D ChildPos = child->GetPosition();
+			const FVector2D ChildSize = child->GetSize();
+			if (ChildPos.X < ax)
+			{
+				ax = ChildPos.X;
+			}
+			if (ChildPos.Y < ay)
+			{
+				ay = ChildPos.Y;
+			}
+			tmp = ChildPos.X + ChildSize.X;
 			if (tmp > ar)
+			{
 				ar = tmp;
-			tmp = child->GetY() + child->GetHeight();
+			}
+			tmp = ChildPos.Y + ChildSize.Y;
 			if (tmp > ab)
+			{
 				ab = tmp;
+			}
 		}
 		aw = ar - ax;
 		ah = ab - ay;
-	}
-	else
-	{
-		ax = 0;
-		ay = 0;
-		aw = 0;
-		ah = 0;
 	}
 	SetBounds(ax, ay, aw, ah);
 }
@@ -648,7 +674,9 @@ void UFairyComponent::SetBounds(float ax, float ay, float aw, float ah)
 {
 	bBoundsChanged = false;
 	if (ScrollPane != nullptr)
+	{
 		ScrollPane->SetContentSize(FVector2D(FMath::CeilToFloat(ax + aw), FMath::CeilToFloat(ay + ah)));
+	}
 }
 
 void UFairyComponent::ChildStateChanged(UFairyObject* Child)
@@ -740,14 +768,21 @@ void UFairyComponent::ChildSortingOrderChanged(UFairyObject* Child, int32 OldVal
 	else
 	{
 		if (OldValue == 0)
+		{
 			SortingChildCount++;
+		}
 
 		int32 OldIndex = Children.IndexOfByKey(Child);
 		int32 Index = GetInsertPosForSortingChild(Child);
 		if (OldIndex < Index)
+		{
 			MoveChild(Child, OldIndex, Index - 1);
+
+		}
 		else
+		{
 			MoveChild(Child, OldIndex, Index);
+		}
 	}
 }
 
@@ -761,7 +796,9 @@ void UFairyComponent::BuildNativeDisplayList(bool bImmediatelly)
 
 	int32 cnt = Children.Num();
 	if (cnt == 0)
+	{
 		return;
+	}
 
 	switch (ChildrenRenderOrder)
 	{
@@ -829,9 +866,11 @@ void UFairyComponent::BuildNativeDisplayList(bool bImmediatelly)
 
 FVector2D UFairyComponent::GetSnappingPosition(const FVector2D& InPoint)
 {
-	int32 cnt = Children.Num();
-	if (cnt == 0)
+	int32 ChildNum = Children.Num();
+	if (ChildNum == 0)
+	{
 		return InPoint;
+	}
 
 	EnsureBoundsCorrect();
 
@@ -842,10 +881,11 @@ FVector2D UFairyComponent::GetSnappingPosition(const FVector2D& InPoint)
 	int32 i = 0;
 	if (ret.Y != 0)
 	{
-		for (; i < cnt; i++)
+		for (; i < ChildNum; i++)
 		{
 			Obj = Children[i];
-			if (ret.Y < Obj->GetY())
+			const FVector2D& CurChildPos = Obj->GetPosition();
+			if (ret.Y < CurChildPos.Y)
 			{
 				if (i == 0)
 				{
@@ -855,27 +895,39 @@ FVector2D UFairyComponent::GetSnappingPosition(const FVector2D& InPoint)
 				else
 				{
 					UFairyObject* prev = Children[i - 1];
-					if (ret.Y < prev->GetY() + prev->GetHeight() / 2) //top half part
-						ret.Y = prev->GetY();
+					const FVector2D& PreChildPos = prev->GetPosition();
+					const FVector2D& PreChildSize = prev->GetSize();
+					if (ret.Y < PreChildPos.Y + PreChildSize.Y / 2) //top half part
+					{
+						ret.Y = PreChildPos.Y;
+					}
 					else //bottom half part
-						ret.Y = Obj->GetY();
+					{
+						ret.Y = CurChildPos.Y;
+					}
 					break;
 				}
 			}
 		}
 
-		if (i == cnt)
-			ret.Y = Obj->GetY();
+		if (i == ChildNum)
+		{
+			const FVector2D& Pos = Obj->GetPosition();
+			ret.Y = Pos.Y;
+		}
 	}
 
 	if (ret.X != 0)
 	{
 		if (i > 0)
+		{
 			i--;
-		for (; i < cnt; i++)
+		}
+		for (; i < ChildNum; i++)
 		{
 			Obj = Children[i];
-			if (ret.X < Obj->GetX())
+			const FVector2D& CurChildPos = Obj->GetPosition();
+			if (ret.X < CurChildPos.X)
 			{
 				if (i == 0)
 				{
@@ -885,16 +937,25 @@ FVector2D UFairyComponent::GetSnappingPosition(const FVector2D& InPoint)
 				else
 				{
 					UFairyObject* prev = Children[i - 1];
-					if (ret.X < prev->GetX() + prev->GetWidth() / 2) // top half part
-						ret.X = prev->GetX();
+					const FVector2D& PreChildPos = prev->GetPosition();
+					const FVector2D& PreChildSize = prev->GetSize();
+					if (ret.X < PreChildPos.X + PreChildSize.X / 2) // top half part
+					{
+						ret.X = PreChildPos.X;
+					}
 					else //bottom half part
-						ret.X = Obj->GetX();
+					{
+						ret.X = CurChildPos.X;
+					}
 					break;
 				}
 			}
 		}
-		if (i == cnt)
-			ret.X = Obj->GetX();
+		if (i == ChildNum)
+		{
+			const FVector2D& Pos = Obj->GetPosition();
+			ret.X = Pos.X;
+		}
 	}
 
 	return ret;
@@ -917,28 +978,34 @@ void UFairyComponent::SetupScroll(FByteBuffer* Buffer)
 	ScrollPane->Setup(Buffer);
 }
 
-void UFairyComponent::HandleSizeChanged()
-{
-	Super::HandleSizeChanged();
-
-	if (ScrollPane != nullptr)
-		ScrollPane->OnOwnerSizeChanged();
-	else
-		Container->SetPosition(FVector2D(Margin.Left, Margin.Top));
-
-	if (DisplayObject->GetClipping() != EWidgetClipping::Inherit)
-		DisplayObject->SetCullingBoundsExtension(Margin);
-
-	/*
-	if (_hitArea)
-	{
-		PixelHitTest* test = dynamic_cast<PixelHitTest*>(_hitArea);
-		if (sourceSize.width != 0)
-			test->scaleX = _size.width / sourceSize.width;
-		if (sourceSize.height != 0)
-			test->scaleY = _size.height / sourceSize.height;
-	}*/
-}
+//void UFairyComponent::HandleSizeChanged()
+//{
+//	Super::HandleSizeChanged();
+//
+//	if (ScrollPane != nullptr)
+//	{
+//		ScrollPane->OnOwnerSizeChanged();
+//	}
+//	else
+//	{
+//		Container->SetPosition(FVector2D(Margin.Left, Margin.Top));
+//	}
+//
+//	if (DisplayObject->GetClipping() != EWidgetClipping::Inherit)
+//	{
+//		DisplayObject->SetCullingBoundsExtension(Margin);
+//	}
+//
+//	/*
+//	if (_hitArea)
+//	{
+//		PixelHitTest* test = dynamic_cast<PixelHitTest*>(_hitArea);
+//		if (sourceSize.width != 0)
+//			test->scaleX = _size.width / sourceSize.width;
+//		if (sourceSize.height != 0)
+//			test->scaleY = _size.height / sourceSize.height;
+//	}*/
+//}
 
 void UFairyComponent::HandleGrayedChanged()
 {
@@ -1006,10 +1073,13 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 	bUnderConstruct = true;
 
 	// Set this Fairy Object Size attribute
-	this->SourceSize.X = Buffer->ReadInt();
-	this->SourceSize.Y = Buffer->ReadInt();
-	this->InitSize = this->SourceSize;
-	this->SetSize(SourceSize);
+	//this->SourceSize.X = Buffer->ReadInt();
+	//this->SourceSize.Y = Buffer->ReadInt();
+	//this->InitSize = this->SourceSize;
+	float SizeX = Buffer->ReadInt();
+	float SizeY = Buffer->ReadInt();
+	this->UpdateSize(FVector2D(SizeX, SizeY));
+
 	if (Buffer->ReadBool())
 	{
 		this->MinSize.X = Buffer->ReadInt();
@@ -1021,9 +1091,10 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 	// Set this Object Pivot attribute
 	if (Buffer->ReadBool())
 	{
-		float f1 = Buffer->ReadFloat();
-		float f2 = Buffer->ReadFloat();
-		SetPivot(FVector2D(f1, f2), Buffer->ReadBool());
+		float PivotX = Buffer->ReadFloat();
+		float PivotY = Buffer->ReadFloat();
+		bool PivotAsAnchor = Buffer->ReadBool();
+		UpdatePivot(FVector2D(PivotX, PivotY), PivotAsAnchor);
 	}
 
 	// Set this Component Margin attribute

@@ -138,15 +138,17 @@ void UGSlider::UpdateWithPercent(float Percent, bool bManual)
     }
 }
 
-void UGSlider::HandleSizeChanged()
-{
-    UFairyComponent::HandleSizeChanged();
-
-    BarMaxSize = GetSize() - BarMaxSizeDelta;
-
-    if (!bUnderConstruct)
-        Update();
-}
+//void UGSlider::HandleSizeChanged()
+//{
+//    UFairyComponent::HandleSizeChanged();
+//
+//    BarMaxSize = GetSize() - BarMaxSizeDelta;
+//
+//    if (!bUnderConstruct)
+//    {
+//        Update();
+//    }
+//}
 
 void UGSlider::ConstructExtension(FByteBuffer* Buffer)
 {

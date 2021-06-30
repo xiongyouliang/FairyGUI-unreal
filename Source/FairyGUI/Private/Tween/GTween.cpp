@@ -94,61 +94,63 @@ FGTweener* FGTween::GetTween(UObject * Target)
 void FGTween::Action::MoveX(FGTweener* Tweener)
 {
     UFairyObject * target = Cast<UFairyObject>(Tweener->GetTarget());
-    target->SetX(Tweener->Value.X);
+    //target->SetX(Tweener->Value.X);
+    FVector2D Pos = target->GetPosition();
+    target->SetPosition(FVector2D(Tweener->Value.X, Pos.Y));
 }
 
 void FGTween::Action::MoveY(FGTweener* Tweener)
 {
     UFairyObject * target = Cast<UFairyObject>(Tweener->GetTarget());
-    target->SetY(Tweener->Value.X);
+    //target->SetY(Tweener->Value.X);
 }
 
 void FGTween::Action::Move(FGTweener* Tweener)
 {
     UFairyObject * target = Cast<UFairyObject>(Tweener->GetTarget());
-    target->SetPosition(Tweener->Value.GetVec2());
+    //target->SetPosition(Tweener->Value.GetVec2());
 }
 
 void FGTween::Action::SetWidth(FGTweener* Tweener)
 {
     UFairyObject * target = Cast<UFairyObject>(Tweener->GetTarget());
-    target->SetWidth(Tweener->Value.X);
+    //target->SetWidth(Tweener->Value.X);
 }
 
 void FGTween::Action::SetHeight(FGTweener* Tweener)
 {
     UFairyObject * target = Cast<UFairyObject>(Tweener->GetTarget());
-    target->SetHeight(Tweener->Value.X);
+    //target->SetHeight(Tweener->Value.X);
 }
 
 void FGTween::Action::SetSize(FGTweener* Tweener)
 {
     UFairyObject * target = Cast<UFairyObject>(Tweener->GetTarget());
-    target->SetSize(Tweener->Value.GetVec2());
+    //target->SetSize(Tweener->Value.GetVec2());
 }
 
 void FGTween::Action::ScaleX(FGTweener* Tweener)
 {
     UFairyObject * target = Cast<UFairyObject>(Tweener->GetTarget());
-    target->SetScaleX(Tweener->Value.X);
+    //target->SetScaleX(Tweener->Value.X);
 }
 
 void FGTween::Action::ScaleY(FGTweener* Tweener)
 {
     UFairyObject * target = Cast<UFairyObject>(Tweener->GetTarget());
-    target->SetScaleY(Tweener->Value.X);
+    //target->SetScaleY(Tweener->Value.X);
 }
 
 void FGTween::Action::ScaleXY(FGTweener* Tweener)
 {
     UFairyObject * target = Cast<UFairyObject>(Tweener->GetTarget());
-    target->SetScale(Tweener->Value.GetVec2());
+    //target->SetScale(Tweener->Value.GetVec2());
 }
 
 void FGTween::Action::Rotate(FGTweener* Tweener)
 {
     UFairyObject * target = Cast<UFairyObject>(Tweener->GetTarget());
-    target->SetRotation(Tweener->Value.X);
+    //target->SetRotation(Tweener->Value.X);
 }
 
 void FGTween::Action::SetAlpha(FGTweener* Tweener)

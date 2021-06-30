@@ -63,7 +63,7 @@ void UGLoader3D::LoadFromPackage(const FString& ItemURL)
     if (ContentItem.IsValid())
     {
         ContentItem = ContentItem->GetBranch();
-        SourceSize = ContentItem->Size;
+        //SourceSize = ContentItem->Size;
         ContentItem = ContentItem->GetHighResolution();
         ContentItem->Load();
 
@@ -96,6 +96,7 @@ void UGLoader3D::LoadExternal()
 
 void UGLoader3D::UpdateLayout()
 {
+    FVector2D SourceSize = GetSize();
     FVector2D contentSize = SourceSize;
 
     if (bAutoSize)
@@ -206,13 +207,15 @@ void UGLoader3D::SetProp(EObjectPropID PropID, const FNVariant& InValue)
     }
 }
 
-void UGLoader3D::HandleSizeChanged()
-{
-    UFairyObject::HandleSizeChanged();
-
-    if (!bUpdatingLayout)
-        UpdateLayout();
-}
+//void UGLoader3D::HandleSizeChanged()
+//{
+//    UFairyObject::HandleSizeChanged();
+//
+//    if (!bUpdatingLayout)
+//    {
+//        UpdateLayout();
+//    }
+//}
 
 void UGLoader3D::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 {

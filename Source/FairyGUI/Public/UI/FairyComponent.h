@@ -184,7 +184,7 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent, Category = "FairyGUI",  meta = ( DisplayName = "OnConstruct"))
 	void K2_OnConstruct();
 	virtual void SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos) override;
-	virtual void HandleSizeChanged() override;
+	//virtual void HandleSizeChanged() override;
 	virtual void HandleGrayedChanged() override;
 	virtual void HandleControllerChanged(UGController* Controller) override;
 
@@ -208,6 +208,7 @@ protected:
 	TSharedPtr<SContainer> Container;
 	void MakeSlateWidget();
 
+	// Component attribute
 	FMargin Margin;
 	FVector2D AlignOffset;
 	EChildrenRenderOrder ChildrenRenderOrder;

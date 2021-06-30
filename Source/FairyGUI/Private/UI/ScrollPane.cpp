@@ -1022,9 +1022,15 @@ void UScrollPane::AlignPosition(FVector2D& Pos, bool bInertialScrolling)
     {
         FVector2D tmp = Owner->GetSnappingPosition(-Pos);
         if (Pos.X < 0 && Pos.X > -OverlapSize.X)
+        {
             Pos.X = -tmp.X;
+
+        }
+
         if (Pos.Y < 0 && Pos.Y > -OverlapSize.Y)
+        {
             Pos.Y = -tmp.Y;
+        }
     }
 }
 

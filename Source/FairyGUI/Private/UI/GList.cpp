@@ -790,14 +790,16 @@ int32 UGList::GetFirstChildInView() const
     return ChildIndexToItemIndex(UFairyComponent::GetFirstChildInView());
 }
 
-void UGList::HandleSizeChanged()
-{
-    UFairyComponent::HandleSizeChanged();
-
-    SetBoundsChangedFlag();
-    if (bVirtual)
-        SetVirtualListChangedFlag(true);
-}
+//void UGList::HandleSizeChanged()
+//{
+//    UFairyComponent::HandleSizeChanged();
+//
+//    SetBoundsChangedFlag();
+//    if (bVirtual)
+//    {
+//        SetVirtualListChangedFlag(true);
+//    }
+//}
 
 void UGList::HandleControllerChanged(UGController* Controller)
 {
@@ -2109,9 +2111,11 @@ void UGList::UpdateBounds()
             {
                 child = GetChildAt(i);
                 if (bFoldInvisibleItems && !child->IsVisible())
+                {
                     continue;
+                }
 
-                lineSize += child->SourceSize.X;
+                lineSize += child->GetSize().X;
                 j++;
                 if (j == ColumnCount || i == cnt - 1)
                 {
@@ -2127,7 +2131,7 @@ void UGList::UpdateBounds()
 
                         if (j < i)
                         {
-                            child->SetSize(FVector2D(child->SourceSize.X + round(child->SourceSize.X * ratio), child->GetHeight()), true);
+                            child->SetSize(FVector2D(child->GetSize().X + round(child->GetSize().X * ratio), child->GetHeight()), true);
                             curX += FMath::CeilToFloat(child->GetWidth()) + ColumnGap;
                         }
                         else
@@ -2191,7 +2195,7 @@ void UGList::UpdateBounds()
                 if (bFoldInvisibleItems && !child->IsVisible())
                     continue;
 
-                lineSize += child->SourceSize.Y;
+                lineSize += child->GetSize().Y;
                 j++;
                 if (j == LineCount || i == cnt - 1)
                 {
@@ -2207,7 +2211,7 @@ void UGList::UpdateBounds()
 
                         if (j < i)
                         {
-                            child->SetSize(FVector2D(child->GetWidth(), child->SourceSize.Y + FMath::RoundToFloat(child->SourceSize.Y * ratio)), true);
+                            child->SetSize(FVector2D(child->GetWidth(), child->GetSize().Y + FMath::RoundToFloat(child->GetSize().Y * ratio)), true);
                             curY += FMath::CeilToFloat(child->GetHeight()) + LineGap;
                         }
                         else
@@ -2284,7 +2288,7 @@ void UGList::UpdateBounds()
                     k = 0;
                 }
 
-                lineSize += child->SourceSize.X;
+                lineSize += child->GetSize().X;
                 j++;
                 if (j == ColumnCount || i == cnt - 1)
                 {
@@ -2300,7 +2304,7 @@ void UGList::UpdateBounds()
 
                         if (j < i)
                         {
-                            child->SetSize(FVector2D(child->SourceSize.X + FMath::RoundToFloat(child->SourceSize.X * ratio),
+                            child->SetSize(FVector2D(child->GetSize().X + FMath::RoundToFloat(child->GetSize().X * ratio),
                                 LineCount > 0 ? eachHeight : child->GetHeight()), true);
                             curX += FMath::CeilToFloat(child->GetWidth()) + ColumnGap;
                         }

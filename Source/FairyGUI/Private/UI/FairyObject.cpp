@@ -17,16 +17,10 @@ FBox2D UFairyObject::GlobalRect;
 bool UFairyObject::bUpdateInDragging = false;
 
 UFairyObject::UFairyObject() :
-	SourceSize(ForceInit),
-	InitSize(ForceInit),
+	Size(ForceInit),
 	MinSize(ForceInit),
 	MaxSize(ForceInit),
-	Position(ForceInit),
-	Size(ForceInit),
-	RawSize(ForceInit),
-	Pivot(ForceInit),
-	Scale{ 1, 1 },
-	Skew(ForceInit),
+	RenderTransformPivot(FVector2D(0.5f, 0.5f)),
 	Alpha(1.0f),
 	bVisible(true),
 	bInternalVisible(true),
@@ -85,236 +79,54 @@ void UFairyObject::BeginDestroy()
 	Super::BeginDestroy();
 }
 
-void UFairyObject::SetX(float InX)
-{
-	SetPosition(FVector2D(InX, Position.Y));
-}
-
-void UFairyObject::SetY(float InY)
-{
-	SetPosition(FVector2D(Position.X, InY));
-}
-
 void UFairyObject::SetPosition(const FVector2D& InPosition)
 {
-	if (Position != InPosition)
+	RenderTransform.Translation = InPosition;
+	LocalPosition = InPosition;
+	UpdateRenderTransform();
+}
+
+void UFairyObject::UpdatePivot(const FVector2D& InPivot, bool bAsAnchor)
+{
+	if (RenderTransformPivot != InPivot || bPivotAsAnchor != bAsAnchor)
 	{
-		FVector2D delta = InPosition - Position;
-		Position = InPosition;
-
-		HandlePositionChanged();
-
-		UGGroup* g = Cast<UGGroup>(this);
-		if (g != nullptr)
-			g->MoveChildren(delta);
-
-		UpdateGear(1);
-
-		if (Parent.IsValid() && Parent->IsA<UGList>())
-		{
-			Parent->SetBoundsChangedFlag();
-			if (Group.IsValid())
-				Group->SetBoundsChangedFlag(true);
-
-			OnPositionChangedEvent.Broadcast();
-		}
-
-		if (DraggingObject.Get() == this && !bUpdateInDragging)
-			GlobalRect = LocalToGlobalRect(FBox2D(FVector2D(), Size));
+		RenderTransformPivot = InPivot;
+		bPivotAsAnchor = bAsAnchor;
+		DisplayObject->SetRenderTransformPivot(FVector2D(RenderTransformPivot.X, RenderTransformPivot.Y));
 	}
 }
 
-float UFairyObject::GetXMin() const
+void UFairyObject::UpdateScale(const FVector2D& InScale)
 {
-	return bPivotAsAnchor ? (Position.X - Size.X * Pivot.X) : Position.X;
+	RenderTransform.Scale = InScale;
+	UpdateRenderTransform();
 }
 
-void UFairyObject::SetXMin(float InXMin)
+void UFairyObject::UpdateSkew(const FVector2D& InSkew)
 {
-	if (bPivotAsAnchor)
-	{
-		SetPosition(FVector2D(InXMin + Size.X * Pivot.X, Position.Y));
-	}
-	else
-	{
-		SetPosition(FVector2D(InXMin, Position.Y));
-	}
+	RenderTransform.Shear = InSkew;
+	UpdateRenderTransform();
 }
 
-float UFairyObject::GetYMin() const
+void UFairyObject::UpdateRotation(float InRotation)
 {
-	return bPivotAsAnchor ? (Position.Y - Size.Y * Pivot.Y) : Position.Y;
+	RenderTransform.Angle = FMath::DegreesToRadians(InRotation);
+	UpdateRenderTransform();
 }
 
-void UFairyObject::SetYMin(float InYMin)
+void UFairyObject::UpdateRenderTransform()
 {
-	if (bPivotAsAnchor)
+	if (DisplayObject.IsValid())
 	{
-		SetPosition(FVector2D(Position.X, InYMin + Size.Y * Pivot.Y));
-	}
-	else
-	{
-		SetPosition(FVector2D(Position.X, InYMin));
-	}
-}
-
-void UFairyObject::SetSize(const FVector2D& InSize, bool bIgnorePivot)
-{
-	if (RawSize != InSize)
-	{
-		RawSize = InSize;
-		FVector2D ClampSize = InSize;
-		if (ClampSize.X < MinSize.X)
+		if (RenderTransform.IsIdentity())
 		{
-			ClampSize.X = MinSize.X;
-		}
-		else if (MaxSize.X > 0 && ClampSize.X > MaxSize.X)
-		{
-			ClampSize.X = MaxSize.X;
-		}
-			
-		if (ClampSize.Y < MinSize.Y)
-		{
-			ClampSize.Y = MinSize.Y;
-		}
-		else if (MaxSize.Y > 0 && ClampSize.Y > MaxSize.Y)
-		{
-			ClampSize.Y = MaxSize.Y;
-		}
-		FVector2D Delta = ClampSize - Size;
-		Size = ClampSize;
-
-		HandleSizeChanged();
-
-		if (Pivot.X != 0 || Pivot.Y != 0)
-		{
-			if (!bPivotAsAnchor)
-			{
-				if (!bIgnorePivot)
-				{
-					SetPosition(Position - Pivot * Delta);
-				}
-				else
-				{
-					HandlePositionChanged();
-				}
-			}
-			else
-			{
-				HandlePositionChanged();
-			}
+			DisplayObject->SetRenderTransform(TOptional<FSlateRenderTransform>());
 		}
 		else
 		{
-			HandlePositionChanged();
+			DisplayObject->SetRenderTransform(RenderTransform.ToSlateRenderTransform());
 		}
-
-		UGGroup* g = Cast<UGGroup>(this);
-		if (g != nullptr)
-		{
-			g->ResizeChildren(Delta);
-		}
-
-		UpdateGear(2);
-
-		if (Parent.IsValid())
-		{
-			Relations->OnOwnerSizeChanged(Delta, bPivotAsAnchor || !bIgnorePivot);
-			Parent->SetBoundsChangedFlag();
-			if (Group.IsValid())
-			{
-				Group->SetBoundsChangedFlag();
-			}
-		}
-		OnSizeChangedEvent.Broadcast();
 	}
-}
-
-void UFairyObject::SetSizeDirectly(const FVector2D& InSize)
-{
-	RawSize = InSize;
-	Size = InSize;
-	if (Size.X < 0)
-	{
-		Size.X = 0;
-	}
-	if (Size.Y < 0)
-	{
-		Size.Y = 0;
-	}
-}
-
-void UFairyObject::Center(bool bRestraint)
-{
-	UFairyComponent* Root = nullptr;
-	if (Parent.IsValid())
-	{
-		Root = Parent.Get();
-	}
-	else
-	{
-		Root = UFairyApplication::Get()->GetUIRoot(this);
-	}
-
-	SetPosition(((Root->Size - Size) / 2).RoundToVector());
-	if (bRestraint)
-	{
-		AddRelation(Root, ERelationType::Center_Center);
-		AddRelation(Root, ERelationType::Middle_Middle);
-	}
-}
-
-void UFairyObject::MakeFullScreen(bool bRestraint)
-{
-	SetSize(UFairyApplication::Get()->GetUIRoot(this)->GetSize());
-	if (bRestraint)
-	{
-		AddRelation(UFairyApplication::Get()->GetUIRoot(this), ERelationType::Size);
-	}
-}
-
-void UFairyObject::SetPivot(const FVector2D& InPivot, bool bAsAnchor)
-{
-	if (Pivot != InPivot || bPivotAsAnchor != bAsAnchor)
-	{
-		Pivot = InPivot;
-		bPivotAsAnchor = bAsAnchor;
-		DisplayObject->SetRenderTransformPivot(FVector2D(Pivot.X, Pivot.Y));
-		HandlePositionChanged();
-	}
-}
-
-void UFairyObject::SetScale(const FVector2D& InScale)
-{
-	if (Scale != InScale)
-	{
-		Scale = InScale;
-		UpdateTransform();
-		UpdateGear(2);
-	}
-}
-
-void UFairyObject::SetSkew(const FVector2D& InSkew)
-{
-	Skew = InSkew;
-}
-
-void UFairyObject::SetRotation(float InRotation)
-{
-	if (Rotation != InRotation)
-	{
-		Rotation = InRotation;
-		UpdateTransform();
-		UpdateGear(3);
-	}
-}
-
-void UFairyObject::UpdateTransform()
-{
-	FScale2D Scale2D = FScale2D(Scale);
-	FQuat2D Quat2D = FQuat2D(FMath::DegreesToRadians(Rotation));
-	FMatrix2x2 Matrix = Concatenate(Quat2D, Scale2D);
-	DisplayObject->SetRenderTransform(FSlateRenderTransform(Matrix, Position));
 }
 
 void UFairyObject::SetAlpha(float InAlpha)
@@ -508,7 +320,7 @@ FVector2D UFairyObject::LocalToGlobal(const FVector2D& InPoint)
 {
 	FVector2D Point = InPoint;
 	if (bPivotAsAnchor)
-		Point += Size * Pivot;
+		Point += Size * RenderTransformPivot;
 
 	return DisplayObject->GetCachedGeometry().LocalToAbsolute(Point);
 }
@@ -534,7 +346,7 @@ FVector2D UFairyObject::GlobalToLocal(const FVector2D& InPoint)
 {
 	FVector2D Point = DisplayObject->GetCachedGeometry().AbsoluteToLocal(InPoint);
 	if (bPivotAsAnchor)
-		Point -= Size * Pivot;
+		Point -= Size * RenderTransformPivot;
 	return Point;
 }
 
@@ -722,16 +534,6 @@ void UFairyObject::ConstructFromResource()
 {
 }
 
-void UFairyObject::HandlePositionChanged()
-{
-	DisplayObject->SetPosition(bPivotAsAnchor ? (Position - Size * Pivot) : Position);
-}
-
-void UFairyObject::HandleSizeChanged()
-{
-	DisplayObject->SetSize(Size);
-}
-
 void UFairyObject::HandleAlphaChanged()
 {
 	DisplayObject->SetRenderOpacity(Alpha);
@@ -767,59 +569,60 @@ void UFairyObject::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 	Buffer->Seek(BeginPos, 0);
 	Buffer->Skip(5);
 
-	ID = Buffer->ReadS();
-	Name = Buffer->ReadS();
-	float f1 = Buffer->ReadInt();
-	float f2 = Buffer->ReadInt();
-	SetPosition(FVector2D(f1, f2));
+	this->ID = Buffer->ReadS();
+	this->Name = Buffer->ReadS();
+
+	float PosX = Buffer->ReadInt();
+	float PosY = Buffer->ReadInt();
+	RenderTransform.Translation = FVector2D(PosX, PosY);
 
 	if (Buffer->ReadBool())
 	{
-		InitSize.X = Buffer->ReadInt();
-		InitSize.Y = Buffer->ReadInt();
-		SetSize(InitSize, true);
+		this->Size.X = Buffer->ReadInt();
+		this->Size.Y = Buffer->ReadInt();
 	}
 
 	if (Buffer->ReadBool())
 	{
-		MinSize.X = Buffer->ReadInt();
-		MaxSize.X = Buffer->ReadInt();
-		MinSize.Y = Buffer->ReadInt();
-		MaxSize.Y = Buffer->ReadInt();
+		this->MinSize.X = Buffer->ReadInt();
+		this->MaxSize.X = Buffer->ReadInt();
+		this->MinSize.Y = Buffer->ReadInt();
+		this->MaxSize.Y = Buffer->ReadInt();
 	}
 
 	if (Buffer->ReadBool())
 	{
-		f1 = Buffer->ReadFloat();
-		f2 = Buffer->ReadFloat();
-		SetScale(FVector2D(f1, f2));
+		float ScaleX = Buffer->ReadFloat();
+		float ScaleY = Buffer->ReadFloat();
+		RenderTransform.Scale = FVector2D(ScaleX, ScaleY);
 	}
 
 	if (Buffer->ReadBool())
 	{
-		f1 = Buffer->ReadFloat();
-		f2 = Buffer->ReadFloat();
-		SetSkew(FVector2D(f1, f2));
+		float SkewX = Buffer->ReadFloat();
+		float SkewY = Buffer->ReadFloat();
+		RenderTransform.Shear = FVector2D(SkewX, SkewY);
 	}
 
 	if (Buffer->ReadBool())
 	{
-		f1 = Buffer->ReadFloat();
-		f2 = Buffer->ReadFloat();
-		SetPivot(FVector2D(f1, f2), Buffer->ReadBool());
+		float PivotX = Buffer->ReadFloat();
+		float PivotY = Buffer->ReadFloat();
+		this->RenderTransformPivot = FVector2D(PivotX, PivotY);
+		this->bPivotAsAnchor = Buffer->ReadBool();
 	}
 
-	f1 = Buffer->ReadFloat();
-	if (f1 != 1)
+	float AlphaValue = Buffer->ReadFloat();
+	if (AlphaValue != 1)
 	{
-		SetAlpha(f1);
+		SetAlpha(AlphaValue);
 	}
 		
 
-	f1 = Buffer->ReadFloat();
-	if (f1 != 0)
+	float RotationValue = Buffer->ReadFloat();
+	if (RotationValue != 0)
 	{
-		SetRotation(f1);
+		RenderTransform.Angle = FMath::RadiansToDegrees(RotationValue);
 	}
 
 	if (!Buffer->ReadBool())
@@ -980,7 +783,6 @@ void UFairyObject::OnTouchMoveHandler(UEventContext* Context)
 		Pos = Parent->GlobalToLocal(Pos);
 
 		bUpdateInDragging = true;
-		SetPosition(Pos.RoundToVector());
 		bUpdateInDragging = false;
 
 		DispatchEvent(FUIEvents::DragMove);

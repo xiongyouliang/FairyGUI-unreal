@@ -198,7 +198,7 @@ void UGLoader::LoadFromPackage(const FString& ItemURL)
     if (ContentItem.IsValid())
     {
         ContentItem = ContentItem->GetBranch();
-        SourceSize = ContentItem->Size;
+        //SourceSize = ContentItem->Size;
         ContentItem = ContentItem->GetHighResolution();
         ContentItem->Load();
 
@@ -260,7 +260,7 @@ void UGLoader::UpdateLayout()
         }
         return;
     }
-
+    FVector2D SourceSize = GetSize();
     FVector2D contentSize = SourceSize;
 
     if (bAutoSize)
@@ -402,13 +402,15 @@ void UGLoader::SetProp(EObjectPropID PropID, const FNVariant& InValue)
     }
 }
 
-void UGLoader::HandleSizeChanged()
-{
-    UFairyObject::HandleSizeChanged();
-
-    if (!bUpdatingLayout)
-        UpdateLayout();
-}
+//void UGLoader::HandleSizeChanged()
+//{
+//    UFairyObject::HandleSizeChanged();
+//
+//    if (!bUpdatingLayout)
+//    {
+//        UpdateLayout();
+//    }
+//}
 
 void UGLoader::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 {

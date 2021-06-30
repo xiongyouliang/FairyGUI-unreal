@@ -122,15 +122,15 @@ void UGMovieClip::SetProp(EObjectPropID PropID, const FNVariant& InValue)
 void UGMovieClip::ConstructFromResource()
 {
     TSharedPtr<FFairyPackageItem> contentItem = PackageItem->GetBranch();
-    SourceSize = contentItem->Size;
-    InitSize = SourceSize;
+    //SourceSize = contentItem->Size;
+    //InitSize = SourceSize;
 
     contentItem = contentItem->GetHighResolution();
     contentItem->Load();
 
     Content->SetClipData(contentItem->MovieClipData);
 
-    SetSize(SourceSize);
+    SetSize(contentItem->Size);
 }
 
 void UGMovieClip::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)

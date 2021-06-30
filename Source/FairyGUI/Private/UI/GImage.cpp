@@ -118,7 +118,7 @@ void UGImage::SetProp(EObjectPropID PropID, const FNVariant& InValue)
 void UGImage::ConstructFromResource()
 {
 	TSharedPtr<FFairyPackageItem> ContentItem = PackageItem->GetBranch();
-	InitSize = SourceSize = ContentItem->Size;
+	//InitSize = SourceSize = ContentItem->Size;
 
 	ContentItem = ContentItem->GetHighResolution();
 	ContentItem->Load();
@@ -134,7 +134,7 @@ void UGImage::ConstructFromResource()
 		Content->SetScaleByTile(true);
 	}
 
-	SetSize(SourceSize);
+	//SetSize(SourceSize);
 }
 
 void UGImage::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)

@@ -53,18 +53,26 @@ TSharedPtr<FFairyPackageItem> UFairyPackage::GetItem(const FString& ItemID) cons
 {
     auto it = ItemsByID.Find(ItemID);
     if (it != nullptr)
+    {
         return *it;
+    }
     else
+    {
         return nullptr;
+    }
 }
 
 TSharedPtr<FFairyPackageItem> UFairyPackage::GetItemByName(const FString& ResourceName)
 {
     auto it = ItemsByName.Find(ResourceName);
     if (it != nullptr)
+    {
         return *it;
+    }
     else
+    {
         return nullptr;
+    }
 }
 
 UFairyObject* UFairyPackage::CreateObject(UObject* Owner, const FString& ResourceName)
@@ -86,7 +94,8 @@ UFairyObject* UFairyPackage::CreateObject(UObject* Owner, const FString& Resourc
 UFairyObject* UFairyPackage::CreateObject(UObject* Owner, const TSharedPtr<FFairyPackageItem>& Item)
 {
     UFairyObject* Object = FUIObjectFactory::NewObject(Owner, Item);
-    if (Object == nullptr) {
+    if (Object == nullptr) 
+    {
         return nullptr;
     }
 

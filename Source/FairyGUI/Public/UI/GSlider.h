@@ -44,7 +44,7 @@ public:
     bool bCanDrag;
 
 protected:
-    virtual void HandleSizeChanged() override;
+    //virtual void HandleSizeChanged() override;
     virtual void ConstructExtension(FByteBuffer* Buffer);
     virtual void SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos) override;
 

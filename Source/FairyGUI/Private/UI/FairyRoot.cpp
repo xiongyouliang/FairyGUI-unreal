@@ -25,7 +25,7 @@ void SRootContainer::OnArrangeChildren(const FGeometry& AllottedGeometry, FArran
     if (GObject.IsValid() && (LocalSize != GObject->GetSize()))
     {
         UE_LOG(LogFairyGUI, Log, TEXT("FairyRoot Widget Size:(%f, %f)"), LocalSize.X, LocalSize.Y);
-        GObject->SetSize(LocalSize);
+        GObject->UpdateSize(LocalSize);
     }
 
     SContainer::OnArrangeChildren(AllottedGeometry, ArrangedChildren);
@@ -429,7 +429,11 @@ FVector2D UFairyRoot::GetPoupPosition(UFairyObject* Popup, UFairyObject* AtObjec
     FVector2D RetPosition;
     RetPosition.X = pos.X;
     if (RetPosition.X + Popup->GetWidth() > GetWidth())
+    {
         RetPosition.X += size.X - Popup->GetWidth();
+
+    }
+
     RetPosition.Y = pos.Y + size.Y;
     if ((Direction == EPopupDirection::Auto && RetPosition.Y + Popup->GetHeight() > GetHeight()) || Direction == EPopupDirection::Up)
     {

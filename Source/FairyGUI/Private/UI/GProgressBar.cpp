@@ -158,15 +158,17 @@ bool UGProgressBar::SetFillAmount(UFairyObject* Bar, float Amount)
     return true;
 }
 
-void UGProgressBar::HandleSizeChanged()
-{
-    UFairyComponent::HandleSizeChanged();
-
-    BarMaxSize = GetSize() - BarMaxSizeDelta;
-
-    if (!bUnderConstruct)
-        Update(Value);
-}
+//void UGProgressBar::HandleSizeChanged()
+//{
+//    UFairyComponent::HandleSizeChanged();
+//
+//    BarMaxSize = GetSize() - BarMaxSizeDelta;
+//
+//    if (!bUnderConstruct)
+//    {
+//        Update(Value);
+//    }
+//}
 
 void UGProgressBar::ConstructExtension(FByteBuffer* Buffer)
 {

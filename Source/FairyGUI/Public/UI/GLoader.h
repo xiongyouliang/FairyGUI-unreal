@@ -89,7 +89,7 @@ public:
     virtual void SetProp(EObjectPropID PropID, const FNVariant& InValue);
 
 protected:
-    virtual void HandleSizeChanged() override;
+    //virtual void HandleSizeChanged() override;
     virtual void SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos) override;
 
     void LoadContent();

@@ -86,6 +86,18 @@ void UFairyObject::SetPosition(const FVector2D& InPosition)
 	UpdateRenderTransform();
 }
 
+void UFairyObject::SetPositionX(const float InPositionX)
+{
+	FVector2D NewPos = FVector2D(InPositionX, LocalPosition.Y);
+	SetPosition(NewPos);
+}
+
+void UFairyObject::SetPositionY(const float InPositionY)
+{
+	FVector2D NewPos = FVector2D(LocalPosition.X, InPositionY);
+	SetPosition(NewPos);
+}
+
 void UFairyObject::UpdatePivot(const FVector2D& InPivot, bool bAsAnchor)
 {
 	if (RenderTransformPivot != InPivot || bPivotAsAnchor != bAsAnchor)

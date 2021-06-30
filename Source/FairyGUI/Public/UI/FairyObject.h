@@ -44,11 +44,8 @@ public:
 	const FVector2D& GetPosition() const { return RenderTransform.Translation; }
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	void SetPosition(const FVector2D& InPosition);
-
-	float GetX() { return 0.0f; }
-	float GetY() { return 0.0f; }
-	void SetX(float) {};
-	void SetY(float) {}
+	void SetPositionX(const float InPositionX);
+	void SetPositionY(const float InPositionY);
 
 	float GetWidth() { return Size.X; }
 	float GetHeight() { return Size.Y; }

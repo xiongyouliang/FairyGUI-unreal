@@ -492,7 +492,7 @@ void UGList::HandleArrowKey(int32 Direction)
             for (i = index - 1; i >= 0; i--)
             {
                 UFairyObject* obj = Children[i];
-                if (obj->GetY() != current->GetY())
+                if (obj->GetPosition().Y != current->GetPosition().Y)
                 {
                     current = obj;
                     break;
@@ -502,7 +502,7 @@ void UGList::HandleArrowKey(int32 Direction)
             for (; i >= 0; i--)
             {
                 UFairyObject* obj = Children[i];
-                if (obj->GetY() != current->GetY())
+                if (obj->GetPosition().Y != current->GetPosition().Y)
                 {
                     ClearSelection();
                     AddSelection(i + k + 1, true);
@@ -531,7 +531,7 @@ void UGList::HandleArrowKey(int32 Direction)
             for (i = index + 1; i < cnt; i++)
             {
                 UFairyObject* obj = Children[i];
-                if (obj->GetX() != current->GetX())
+                if (obj->GetPosition().X != current->GetPosition().X)
                 {
                     current = obj;
                     break;
@@ -541,7 +541,7 @@ void UGList::HandleArrowKey(int32 Direction)
             for (; i < cnt; i++)
             {
                 UFairyObject* obj = Children[i];
-                if (obj->GetX() != current->GetX())
+                if (obj->GetPosition().X != current->GetPosition().X)
                 {
                     ClearSelection();
                     AddSelection(i - k - 1, true);
@@ -570,7 +570,7 @@ void UGList::HandleArrowKey(int32 Direction)
             for (i = index + 1; i < cnt; i++)
             {
                 UFairyObject* obj = Children[i];
-                if (obj->GetY() != current->GetY())
+                if (obj->GetPosition().Y != current->GetPosition().Y)
                 {
                     current = obj;
                     break;
@@ -580,7 +580,7 @@ void UGList::HandleArrowKey(int32 Direction)
             for (; i < cnt; i++)
             {
                 UFairyObject* obj = Children[i];
-                if (obj->GetY() != current->GetY())
+                if (obj->GetPosition().Y != current->GetPosition().Y)
                 {
                     ClearSelection();
                     AddSelection(i - k - 1, true);
@@ -608,7 +608,7 @@ void UGList::HandleArrowKey(int32 Direction)
             for (i = index - 1; i >= 0; i--)
             {
                 UFairyObject* obj = Children[i];
-                if (obj->GetX() != current->GetX())
+                if (obj->GetPosition().X != current->GetPosition().X)
                 {
                     current = obj;
                     break;
@@ -618,7 +618,7 @@ void UGList::HandleArrowKey(int32 Direction)
             for (; i >= 0; i--)
             {
                 UFairyObject* obj = Children[i];
-                if (obj->GetX() != current->GetX())
+                if (obj->GetPosition().X != current->GetPosition().X)
                 {
                     ClearSelection();
                     AddSelection(i + k + 1, true);
@@ -769,14 +769,14 @@ void UGList::ResizeToFit(int32 ItemCount, int32 InMinSize)
             float size;
             if (Layout == EListLayoutType::SingleColumn || Layout == EListLayoutType::FlowHorizontal)
             {
-                size = obj->GetY() + obj->GetHeight();
+                size = obj->GetPosition().Y + obj->GetHeight();
                 if (size < InMinSize)
                     size = InMinSize;
                 SetViewHeight(size);
             }
             else
             {
-                size = obj->GetX() + obj->GetWidth();
+                size = obj->GetPosition().X + obj->GetWidth();
                 if (size < InMinSize)
                     size = InMinSize;
                 SetViewWidth(size);
@@ -1238,7 +1238,7 @@ int32 UGList::GetIndexOnPos1(float& pos, bool forceUpdate)
 
     if (NumChildren() > 0 && !forceUpdate)
     {
-        float pos2 = GetChildAt(0)->GetY();
+        float pos2 = GetChildAt(0)->GetPosition().Y;
         if (pos2 + (LineGap > 0 ? 0 : -LineGap) > pos)
         {
             for (int32 i = FirstIndex - CurLineItemCount; i >= 0; i -= CurLineItemCount)
@@ -1302,7 +1302,7 @@ int32 UGList::GetIndexOnPos2(float& pos, bool forceUpdate)
 
     if (NumChildren() > 0 && !forceUpdate)
     {
-        float pos2 = GetChildAt(0)->GetX();
+        float pos2 = GetChildAt(0)->GetPosition().X;
         if (pos2 + (ColumnGap > 0 ? 0 : -ColumnGap) > pos)
         {
             for (int32 i = FirstIndex - CurLineItemCount; i >= 0; i -= CurLineItemCount)
@@ -1588,7 +1588,7 @@ bool UGList::HandleScroll1(bool forceUpdate)
     if (deltaSize != 0 || firstItemDeltaSize != 0)
         ScrollPane->ChangeContentSizeOnScrolling(0, deltaSize, 0, firstItemDeltaSize);
 
-    if (curIndex > 0 && NumChildren() > 0 && Container->GetPosition().Y <= 0 && GetChildAt(0)->GetY() > -Container->GetPosition().Y)
+    if (curIndex > 0 && NumChildren() > 0 && Container->GetPosition().Y <= 0 && GetChildAt(0)->GetPosition().Y > -Container->GetPosition().Y)
         return true;
     else
         return false;
@@ -1755,7 +1755,7 @@ bool UGList::HandleScroll2(bool forceUpdate)
     if (deltaSize != 0 || firstItemDeltaSize != 0)
         ScrollPane->ChangeContentSizeOnScrolling(deltaSize, 0, firstItemDeltaSize, 0);
 
-    if (curIndex > 0 && NumChildren() > 0 && Container->GetPosition().X <= 0 && GetChildAt(0)->GetX() > -Container->GetPosition().X)
+    if (curIndex > 0 && NumChildren() > 0 && Container->GetPosition().X <= 0 && GetChildAt(0)->GetPosition().X > -Container->GetPosition().X)
         return true;
     else
         return false;
@@ -1945,7 +1945,7 @@ void UGList::HandleArchOrder1()
             UFairyObject* obj = GetChildAt(i);
             if (!bFoldInvisibleItems || obj->IsVisible())
             {
-                dist = FMath::Abs(mid - obj->GetY() - obj->GetHeight() / 2);
+                dist = FMath::Abs(mid - obj->GetPosition().Y - obj->GetHeight() / 2);
                 if (dist < minDist)
                 {
                     minDist = dist;
@@ -1970,7 +1970,7 @@ void UGList::HandleArchOrder2()
             UFairyObject* obj = GetChildAt(i);
             if (!bFoldInvisibleItems || obj->IsVisible())
             {
-                dist = FMath::Abs(mid - obj->GetX() - obj->GetWidth() / 2);
+                dist = FMath::Abs(mid - obj->GetPosition().X - obj->GetWidth() / 2);
                 if (dist < minDist)
                 {
                     minDist = dist;
@@ -2017,17 +2017,21 @@ void UGList::HandleAlign(float contentWidth, float contentHeight)
 void UGList::UpdateBounds()
 {
     if (bVirtual)
+    {
         return;
+    }
 
     int32 cnt = Children.Num();
-    int32 i;
+    int32 i = 0;
     int32 j = 0;
-    UFairyObject* child;
+    UFairyObject* child = nullptr;
+    FVector2D curPos;
     float curX = 0;
     float curY = 0;
-    float cw, ch;
-    float maxWidth = 0;
-    float maxHeight = 0;
+    float cw = 0.0f;
+    float ch = 0.0f;
+    float maxWidth = 0.0f;
+    float maxHeight = 0.0f;
     float viewWidth = GetViewWidth();
     float viewHeight = GetViewHeight();
 
@@ -2036,19 +2040,30 @@ void UGList::UpdateBounds()
         for (i = 0; i < cnt; i++)
         {
             child = GetChildAt(i);
+            curPos = child->GetPosition();
             if (bFoldInvisibleItems && !child->IsVisible())
+            {
                 continue;
+            }
 
             if (curY != 0)
+            {
                 curY += LineGap;
-            child->SetY(curY);
+            }
+            child->SetPosition(FVector2D(curPos.X, curY));
             if (bAutoResizeItem)
+            {
                 child->SetSize(FVector2D(viewWidth, child->GetHeight()), true);
+            }
             curY += FMath::CeilToFloat(child->GetHeight());
             if (child->GetWidth() > maxWidth)
+            {
                 maxWidth = child->GetWidth();
+            }
         }
+
         ch = curY;
+
         if (ch <= viewHeight && bAutoResizeItem && ScrollPane != nullptr && ScrollPane->bDisplayInDemand && ScrollPane->VtScrollBar != nullptr)
         {
             viewWidth += ScrollPane->VtScrollBar->GetWidth();
@@ -2056,11 +2071,15 @@ void UGList::UpdateBounds()
             {
                 child = GetChildAt(i);
                 if (bFoldInvisibleItems && !child->IsVisible())
+                {
                     continue;
+                }
 
                 child->SetSize(FVector2D(viewWidth, child->GetHeight()), true);
                 if (child->GetWidth() > maxWidth)
+                {
                     maxWidth = child->GetWidth();
+                }
             }
         }
         cw = FMath::CeilToFloat(maxWidth);
@@ -2070,17 +2089,29 @@ void UGList::UpdateBounds()
         for (i = 0; i < cnt; i++)
         {
             child = GetChildAt(i);
+            
             if (bFoldInvisibleItems && !child->IsVisible())
+            {
                 continue;
+            }
 
+            curPos = child->GetPosition();
             if (curX != 0)
+            {
                 curX += ColumnGap;
-            child->SetX(curX);
+            }
+            child->SetPosition(FVector2D(curX, curPos.Y));
             if (bAutoResizeItem)
+            {
                 child->SetSize(FVector2D(child->GetWidth(), viewHeight), true);
+            }
+
             curX += FMath::CeilToFloat(child->GetWidth());
+
             if (child->GetHeight() > maxHeight)
+            {
                 maxHeight = child->GetHeight();
+            }
         }
         cw = curX;
         if (cw <= viewWidth && bAutoResizeItem && ScrollPane != nullptr && ScrollPane->bDisplayInDemand && ScrollPane->HzScrollBar != nullptr)
@@ -2090,11 +2121,16 @@ void UGList::UpdateBounds()
             {
                 child = GetChildAt(i);
                 if (bFoldInvisibleItems && !child->IsVisible())
+                {
                     continue;
+                }
 
                 child->SetSize(FVector2D(child->GetWidth(), viewHeight), true);
+
                 if (child->GetHeight() > maxHeight)
+                {
                     maxHeight = child->GetHeight();
+                }
             }
         }
         ch = FMath::CeilToFloat(maxHeight);
@@ -2125,7 +2161,9 @@ void UGList::UpdateBounds()
                     {
                         child = GetChildAt(j);
                         if (bFoldInvisibleItems && !child->IsVisible())
+                        {
                             continue;
+                        }
 
                         child->SetPosition(FVector2D(curX, curY));
 
@@ -2139,7 +2177,9 @@ void UGList::UpdateBounds()
                             child->SetSize(FVector2D(viewWidth - curX, child->GetHeight()), true);
                         }
                         if (child->GetHeight() > maxHeight)
+                        {
                             maxHeight = child->GetHeight();
+                        }
                     }
                     curY += FMath::CeilToFloat(maxHeight) + LineGap;
                     maxHeight = 0;

@@ -18,10 +18,10 @@ FGearXY::~FGearXY()
 
 void FGearXY::Init()
 {
-    Default = FVector4(Owner->GetX(),
-        Owner->GetY(),
-        Owner->GetX() / Owner->GetParent()->GetWidth(),
-        Owner->GetY() / Owner->GetParent()->GetHeight());
+    const FVector2D OwnerPos = Owner->GetPosition();
+    Default = FVector4(OwnerPos.X, OwnerPos.Y,
+        OwnerPos.X / Owner->GetParent()->GetWidth(),
+        OwnerPos.Y / Owner->GetParent()->GetHeight());
     Storage.Reset();
 }
 
@@ -69,17 +69,25 @@ void FGearXY::Apply()
         if (tweener != nullptr)
         {
             if (tweener->EndValue.GetVec2() != EndPt)
+            {
                 tweener->Kill(true);
+
+            }
             else
+            {
                 return;
+
+            }
         }
 
-        FVector2D OriginPt(Owner->GetX(), Owner->GetY());
+        FVector2D OriginPt = Owner->GetPosition();
 
         if (OriginPt != EndPt)
         {
             if (Owner->CheckGearController(0, Controller))
+            {
                 TweenConfig->DisplayLockToken = Owner->AddDisplayLock();
+            }
 
             TweenConfig->Handle = FGTween::To(OriginPt, EndPt, TweenConfig->Duration)
                 ->SetDelay(TweenConfig->Delay)
@@ -118,11 +126,11 @@ void FGearXY::OnTweenComplete()
 
 void FGearXY::UpdateState()
 {
+    const FVector2D& OwnerPos = Owner->GetPosition();
     Storage.Add(Controller->GetSelectedPageID(), FVector4(
-        Owner->GetX(),
-        Owner->GetY(),
-        Owner->GetX() / Owner->GetParent()->GetWidth(),
-        Owner->GetY() / Owner->GetParent()->GetHeight()));
+        OwnerPos.X, OwnerPos.Y,
+        OwnerPos.X / Owner->GetParent()->GetWidth(),
+        OwnerPos.Y / Owner->GetParent()->GetHeight()));
 }
 
 void FGearXY::UpdateFromRelations(const FVector2D& Delta)
@@ -131,8 +139,7 @@ void FGearXY::UpdateFromRelations(const FVector2D& Delta)
     {
         for (auto It = Storage.CreateIterator(); It; ++It)
         {
-            It->Value = FVector4(It->Value.X + Delta.X, It->Value.Y + Delta.Y,
-                It->Value.Z, It->Value.W);
+            It->Value = FVector4(It->Value.X + Delta.X, It->Value.Y + Delta.Y, It->Value.Z, It->Value.W);
         }
         Default.X += Delta.X;
         Default.Y += Delta.Y;

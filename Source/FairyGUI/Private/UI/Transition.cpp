@@ -940,49 +940,81 @@ void UTransition::OnTweenStart(FGTweener* Tweener)
             if (item->Target != Owner)
             {
                 if (!startValue->b1)
-                    Tweener->StartValue.X = item->Target->GetX();
+                {
+                    Tweener->StartValue.X = item->Target->GetPosition().X;
+                }
                 else if (startValue->b3) //percent
+                {
                     Tweener->StartValue.X = startValue->f1 * Owner->GetWidth();
+                }
 
                 if (!startValue->b2)
-                    Tweener->StartValue.Y = item->Target->GetY();
+                {
+                    Tweener->StartValue.Y = item->Target->GetPosition().Y;
+                }
                 else if (startValue->b3) //percent
+                {
                     Tweener->StartValue.Y = startValue->f2 * Owner->GetHeight();
+                }
 
                 if (!endValue->b1)
+                {
                     Tweener->EndValue.X = Tweener->StartValue.X;
+                }
                 else if (endValue->b3)
+                {
                     Tweener->EndValue.X = endValue->f1 * Owner->GetWidth();
+                }
 
                 if (!endValue->b2)
+                {
                     Tweener->EndValue.Y = Tweener->StartValue.Y;
+                }
                 else if (endValue->b3)
+                {
                     Tweener->EndValue.Y = endValue->f2 * Owner->GetHeight();
+                }
             }
             else
             {
                 if (!startValue->b1)
-                    Tweener->StartValue.X = item->Target->GetX() - OwnerBasePos.X;
+                {
+                    Tweener->StartValue.X = item->Target->GetPosition().X - OwnerBasePos.X;
+                }
                 if (!startValue->b2)
-                    Tweener->StartValue.Y = item->Target->GetY() - OwnerBasePos.Y;
+                {
+                    Tweener->StartValue.Y = item->Target->GetPosition().Y - OwnerBasePos.Y;
+                }
 
                 if (!endValue->b1)
+                {
                     Tweener->EndValue.X = Tweener->StartValue.X;
+                }
                 if (!endValue->b2)
+                {
                     Tweener->EndValue.Y = Tweener->StartValue.Y;
+                }
             }
         }
         else
         {
             if (!startValue->b1)
+            {
                 Tweener->StartValue.X = item->Target->GetWidth();
+            }
             if (!startValue->b2)
+            {
                 Tweener->StartValue.Y = item->Target->GetHeight();
+            }
 
             if (!endValue->b1)
+            {
                 Tweener->EndValue.X = Tweener->StartValue.X;
+            }
             if (!endValue->b2)
+            {
                 Tweener->EndValue.Y = Tweener->StartValue.Y;
+            }
         }
 
         if (item->TweenConfig->Path.IsValid())
@@ -1114,31 +1146,49 @@ void UTransition::ApplyValue(FTransitionItem* item)
         if (item->Target == Owner)
         {
             if (item->Data->b1 && item->Data->b2)
+            {
                 item->Target->SetPosition(item->Data->GetVec2() + OwnerBasePos);
+            }
             else if (item->Data->b1)
-                item->Target->SetX(item->Data->f1 + OwnerBasePos.X);
+            {
+                item->Target->SetPositionX(item->Data->f1 + OwnerBasePos.X);
+            }
             else
-                item->Target->SetY(item->Data->f2 + OwnerBasePos.Y);
+            {
+                item->Target->SetPositionY(item->Data->f2 + OwnerBasePos.Y);
+            }
         }
         else
         {
             if (item->Data->b3) //position in percent
             {
                 if (item->Data->b1 && item->Data->b2)
+                {
                     item->Target->SetPosition(item->Data->GetVec2() * Owner->GetSize());
+                }
                 else if (item->Data->b1)
-                    item->Target->SetX(item->Data->f1 * Owner->GetWidth());
+                {
+                    item->Target->SetPositionX(item->Data->f1 * Owner->GetWidth());
+                }
                 else if (item->Data->b2)
-                    item->Target->SetY(item->Data->f2 * Owner->GetHeight());
+                {
+                    item->Target->SetPositionY(item->Data->f2 * Owner->GetHeight());
+                }
             }
             else
             {
                 if (item->Data->b1 && item->Data->b2)
+                {
                     item->Target->SetPosition(item->Data->GetVec2());
+                }
                 else if (item->Data->b1)
-                    item->Target->SetX(item->Data->f1);
+                {
+                    item->Target->SetPositionX(item->Data->f1);
+                }
                 else if (item->Data->b2)
-                    item->Target->SetY(item->Data->f2);
+                {
+                    item->Target->SetPositionY(item->Data->f2);
+                }
             }
         }
     }

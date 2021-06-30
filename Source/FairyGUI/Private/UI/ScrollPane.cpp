@@ -355,15 +355,20 @@ bool UScrollPane::IsChildInView(UFairyObject* Obj) const
 {
     if (OverlapSize.Y > 0)
     {
-        float dist = Obj->GetY() + Container->GetPosition().Y;
+        float dist = Obj->GetPosition().Y + Container->GetPosition().Y;
         if (dist <= -Obj->GetHeight() || dist >= ViewSize.Y)
+        {
             return false;
+        }
     }
+
     if (OverlapSize.X > 0)
     {
-        float dist = Obj->GetX() + Container->GetPosition().X;
+        float dist = Obj->GetPosition().X + Container->GetPosition().X;
         if (dist <= -Obj->GetWidth() || dist >= ViewSize.X)
+        {
             return false;
+        }
     }
 
     return true;
@@ -544,30 +549,30 @@ void UScrollPane::SetSize(const FVector2D& InSize)
 {
     if (HzScrollBar != nullptr)
     {
-        HzScrollBar->SetY(InSize.Y - HzScrollBar->GetHeight());
+        HzScrollBar->SetPositionY(InSize.Y - HzScrollBar->GetHeight());
         if (VtScrollBar != nullptr)
         {
             HzScrollBar->SetWidth(InSize.X - VtScrollBar->GetWidth() - ScrollBarMargin.Left - ScrollBarMargin.Right);
             if (bDisplayOnLeft)
-                HzScrollBar->SetX(ScrollBarMargin.Left + VtScrollBar->GetWidth());
+                HzScrollBar->SetPositionX(ScrollBarMargin.Left + VtScrollBar->GetWidth());
             else
-                HzScrollBar->SetX(ScrollBarMargin.Left);
+                HzScrollBar->SetPositionX(ScrollBarMargin.Left);
         }
         else
         {
             HzScrollBar->SetWidth(InSize.X - ScrollBarMargin.Left - ScrollBarMargin.Right);
-            HzScrollBar->SetX(ScrollBarMargin.Left);
+            HzScrollBar->SetPositionX(ScrollBarMargin.Left);
         }
     }
     if (VtScrollBar != nullptr)
     {
         if (!bDisplayOnLeft)
-            VtScrollBar->SetX(InSize.X - VtScrollBar->GetWidth());
+            VtScrollBar->SetPositionX(InSize.X - VtScrollBar->GetWidth());
         if (HzScrollBar != nullptr)
             VtScrollBar->SetHeight(InSize.Y - HzScrollBar->GetHeight() - ScrollBarMargin.Top - ScrollBarMargin.Bottom);
         else
             VtScrollBar->SetHeight(InSize.Y - ScrollBarMargin.Top - ScrollBarMargin.Bottom);
-        VtScrollBar->SetY(ScrollBarMargin.Top);
+        VtScrollBar->SetPositionY(ScrollBarMargin.Top);
     }
 
     ViewSize = InSize;

@@ -67,9 +67,15 @@ void UGSlider::UpdateWithPercent(float Percent, bool bManual)
     {
         float newValue = Min + (Max - Min) * Percent;
         if (newValue < Min)
+        {
             newValue = Min;
+        }
+
         if (newValue > Max)
+        {
             newValue = Max;
+        }
+
         if (bWholeNumbers)
         {
             newValue = round(newValue);
@@ -80,7 +86,9 @@ void UGSlider::UpdateWithPercent(float Percent, bool bManual)
         {
             Value = newValue;
             if (DispatchEvent(FUIEvents::Changed))
+            {
                 return;
+            }
         }
     }
 
@@ -117,23 +125,32 @@ void UGSlider::UpdateWithPercent(float Percent, bool bManual)
     if (!bReverse)
     {
         if (BarObjectH != nullptr)
+        {
             BarObjectH->SetWidth(FMath::RoundToFloat(FullSize.X * Percent));
+        }
 
         if (BarObjectV != nullptr)
+        {
             BarObjectV->SetHeight(FMath::RoundToFloat(FullSize.Y * Percent));
-
+        }
     }
     else
     {
         if (BarObjectH != nullptr)
         {
-            BarObjectH->SetWidth(FMath::RoundToFloat(FullSize.X * Percent));
-            BarObjectH->SetX(BarStartPosition.X + (FullSize.X - BarObjectH->GetWidth()));
+            const FVector2D& OldSize = BarObjectH->GetSize();
+            
+            FVector2D NewSize = FVector2D(FMath::RoundToFloat(FullSize.X * Percent), OldSize.Y);
+            BarObjectH->SetSize(NewSize);
+
+            float NewPosX = BarStartPosition.X + (FullSize.X - BarObjectH->GetSize().X);
+            BarObjectH->SetPositionX(NewPosX);
         }
+
         if (BarObjectV != nullptr)
         {
             BarObjectV->SetHeight(round(FullSize.Y * Percent));
-            BarObjectV->SetY(BarStartPosition.Y + (FullSize.Y - BarObjectV->GetHeight()));
+            BarObjectV->SetPositionY(BarStartPosition.Y + (FullSize.Y - BarObjectV->GetSize().X));
         }
     }
 }
@@ -169,13 +186,13 @@ void UGSlider::ConstructExtension(FByteBuffer* Buffer)
     {
         BarMaxSize.X = BarObjectH->GetWidth();
         BarMaxSizeDelta.X = GetWidth() - BarMaxSize.X;
-        BarStartPosition.X = BarObjectH->GetX();
+        BarStartPosition.X = BarObjectH->GetPosition().X;
     }
     if (BarObjectV != nullptr)
     {
         BarMaxSize.Y = BarObjectV->GetHeight();
         BarMaxSizeDelta.Y = GetHeight() - BarMaxSize.Y;
-        BarStartPosition.Y = BarObjectV->GetY();
+        BarStartPosition.Y = BarObjectV->GetPosition().Y;
     }
 
     if (GripObject != nullptr)

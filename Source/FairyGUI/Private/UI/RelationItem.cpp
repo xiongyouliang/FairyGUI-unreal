@@ -107,23 +107,23 @@ void FRelationItem::ApplyOnSelfSizeChanged(float DeltaWidth, float DeltaHeight, 
         switch (it.Type)
         {
         case ERelationType::Center_Center:
-            Owner->SetX(OldPos.X - (0.5 - (bApplyPivot ? Owner->Pivot.X : 0)) * DeltaWidth);
+            Owner->SetPositionX(OldPos.X - (0.5 - (bApplyPivot ? Owner->Pivot.X : 0)) * DeltaWidth);
             break;
 
         case ERelationType::Right_Center:
         case ERelationType::Right_Left:
         case ERelationType::Right_Right:
-            Owner->SetX(OldPos.X - (1 - (bApplyPivot ? Owner->Pivot.X : 0)) * DeltaWidth);
+            Owner->SetPositionX(OldPos.X - (1 - (bApplyPivot ? Owner->Pivot.X : 0)) * DeltaWidth);
             break;
 
         case ERelationType::Middle_Middle:
-            Owner->SetY(OldPos.Y - (0.5 - (bApplyPivot ? Owner->Pivot.Y : 0)) * DeltaHeight);
+            Owner->SetPositionY(OldPos.Y - (0.5 - (bApplyPivot ? Owner->Pivot.Y : 0)) * DeltaHeight);
             break;
 
         case ERelationType::Bottom_Middle:
         case ERelationType::Bottom_Top:
         case ERelationType::Bottom_Bottom:
-            Owner->SetY(OldPos.Y - (1 - (bApplyPivot ? Owner->Pivot.Y : 0)) * DeltaHeight);
+            Owner->SetPositionY(OldPos.Y - (1 - (bApplyPivot ? Owner->Pivot.Y : 0)) * DeltaHeight);
             break;
 
         default:
@@ -162,7 +162,7 @@ void FRelationItem::ApplyOnXYChanged(UFairyObject* InTarget, const FRelationDef&
     case ERelationType::Right_Left:
     case ERelationType::Right_Center:
     case ERelationType::Right_Right:
-        Owner->SetX(OldPos.X + dx);
+        Owner->SetPositionX(OldPos.X + dx);
         break;
 
     case ERelationType::Top_Top:
@@ -172,7 +172,7 @@ void FRelationItem::ApplyOnXYChanged(UFairyObject* InTarget, const FRelationDef&
     case ERelationType::Bottom_Top:
     case ERelationType::Bottom_Middle:
     case ERelationType::Bottom_Bottom:
-        Owner->SetY(OldPos.Y + dy);
+        Owner->SetPositionY(OldPos.Y + dy);
         break;
 
     case ERelationType::Width:
@@ -293,7 +293,7 @@ void FRelationItem::ApplyOnSizeChanged(UFairyObject* InTarget, const FRelationDe
         }
         else if (pivot != 0)
         {
-            Owner->SetX(Owner->GetPosition().X + delta * (-pivot));
+            Owner->SetPositionX(Owner->GetPosition().X + delta * (-pivot));
         }
         break;
     case ERelationType::Left_Center:
@@ -303,7 +303,7 @@ void FRelationItem::ApplyOnSizeChanged(UFairyObject* InTarget, const FRelationDe
         }
         else
         {
-            Owner->SetX(Owner->GetPosition().X + delta * (0.5f - pivot));
+            Owner->SetPositionX(Owner->GetPosition().X + delta * (0.5f - pivot));
         }
         break;
     case ERelationType::Left_Right:
@@ -313,7 +313,7 @@ void FRelationItem::ApplyOnSizeChanged(UFairyObject* InTarget, const FRelationDe
         }
         else
         {
-            Owner->SetX(Owner->GetPosition().X + delta * (1 - pivot));
+            Owner->SetPositionX(Owner->GetPosition().X + delta * (1 - pivot));
         }
         break;
     case ERelationType::Center_Center:
@@ -323,7 +323,7 @@ void FRelationItem::ApplyOnSizeChanged(UFairyObject* InTarget, const FRelationDe
         }
         else
         {
-            Owner->SetX(Owner->GetPosition().X + delta * (0.5f - pivot));
+            Owner->SetPositionX(Owner->GetPosition().X + delta * (0.5f - pivot));
         }
         break;
     case ERelationType::Right_Left:
@@ -333,7 +333,7 @@ void FRelationItem::ApplyOnSizeChanged(UFairyObject* InTarget, const FRelationDe
         }
         else if (pivot != 0)
         {
-            Owner->SetX(Owner->GetPosition().X + delta * (-pivot));
+            Owner->SetPositionX(Owner->GetPosition().X + delta * (-pivot));
         }
         break;
     case ERelationType::Right_Center:
@@ -343,7 +343,7 @@ void FRelationItem::ApplyOnSizeChanged(UFairyObject* InTarget, const FRelationDe
         }
         else
         {
-            Owner->SetX(Owner->GetPosition().X + delta * (0.5f - pivot));
+            Owner->SetPositionX(Owner->GetPosition().X + delta * (0.5f - pivot));
         }
         break;
     case ERelationType::Right_Right:
@@ -354,7 +354,7 @@ void FRelationItem::ApplyOnSizeChanged(UFairyObject* InTarget, const FRelationDe
         }
         else
         {
-            Owner->SetX(Owner->GetPosition().X + delta * (1 - pivot));
+            Owner->SetPositionX(Owner->GetPosition().X + delta * (1 - pivot));
         }
         break;
     case ERelationType::Top_Top:
@@ -364,7 +364,7 @@ void FRelationItem::ApplyOnSizeChanged(UFairyObject* InTarget, const FRelationDe
         }
         else if (pivot != 0)
         {
-            Owner->SetY(Owner->GetPosition().Y + delta * (-pivot));
+            Owner->SetPositionY(Owner->GetPosition().Y + delta * (-pivot));
         }
         break;
     case ERelationType::Top_Middle:
@@ -374,7 +374,7 @@ void FRelationItem::ApplyOnSizeChanged(UFairyObject* InTarget, const FRelationDe
         }
         else
         {
-            Owner->SetY(Owner->GetPosition().Y + delta * (0.5f - pivot));
+            Owner->SetPositionY(Owner->GetPosition().Y + delta * (0.5f - pivot));
         }
         break;
     case ERelationType::Top_Bottom:
@@ -384,7 +384,7 @@ void FRelationItem::ApplyOnSizeChanged(UFairyObject* InTarget, const FRelationDe
         }
         else
         {
-            Owner->SetY(Owner->GetPosition().Y + delta * (1 - pivot));
+            Owner->SetPositionY(Owner->GetPosition().Y + delta * (1 - pivot));
         }
         break;
     case ERelationType::Middle_Middle:
@@ -395,7 +395,7 @@ void FRelationItem::ApplyOnSizeChanged(UFairyObject* InTarget, const FRelationDe
         }
         else
         {
-            Owner->SetY(Owner->GetPosition().Y + delta * (0.5f - pivot));
+            Owner->SetPositionY(Owner->GetPosition().Y + delta * (0.5f - pivot));
         }
         break;
     case ERelationType::Bottom_Top:
@@ -405,7 +405,7 @@ void FRelationItem::ApplyOnSizeChanged(UFairyObject* InTarget, const FRelationDe
         }
         else if (pivot != 0)
         {
-            Owner->SetY(Owner->GetPosition().Y + delta * (-pivot));
+            Owner->SetPositionY(Owner->GetPosition().Y + delta * (-pivot));
         }
         break;
     case ERelationType::Bottom_Middle:
@@ -416,7 +416,7 @@ void FRelationItem::ApplyOnSizeChanged(UFairyObject* InTarget, const FRelationDe
         }
         else
         {
-            Owner->SetY(Owner->GetPosition().Y + delta * (0.5f - pivot));
+            Owner->SetPositionY(Owner->GetPosition().Y + delta * (0.5f - pivot));
         }
         break;
     case ERelationType::Bottom_Bottom:
@@ -426,7 +426,7 @@ void FRelationItem::ApplyOnSizeChanged(UFairyObject* InTarget, const FRelationDe
         }
         else
         {
-            Owner->SetY(Owner->GetPosition().Y + delta * (1 - pivot));
+            Owner->SetPositionY(Owner->GetPosition().Y + delta * (1 - pivot));
         }
         break;
 

@@ -131,20 +131,30 @@ void UGGroup::UpdateBounds()
     {
         child = Parent->GetChildAt(i);
         if (child->GetGroup() != this || (bExcludeInvisibles && !child->InternalVisible3()))
+        {
             continue;
+        }
 
-        tmp = child->GetX();
+        tmp = child->GetPosition().X;
         if (tmp < ax)
+        {
             ax = tmp;
-        tmp = child->GetY();
+        }
+        tmp = child->GetPosition().Y;
         if (tmp < ay)
+        {
             ay = tmp;
-        tmp = child->GetX() + child->GetWidth();
+        }
+        tmp = child->GetPosition().X + child->GetWidth();
         if (tmp > ar)
+        {
             ar = tmp;
-        tmp = child->GetY() + child->GetHeight();
+        }
+        tmp = child->GetPosition().Y + child->GetHeight();
         if (tmp > ab)
+        {
             ab = tmp;
+        }
 
         empty = false;
     }
@@ -161,7 +171,9 @@ void UGGroup::UpdateBounds()
         h = ab - ay;
     }
     else
+    {
         w = h = 0;
+    }
 
     if ((Updating & 2) == 0)
     {
@@ -182,24 +194,31 @@ void UGGroup::HandleLayout()
 
     if (Layout == EGroupLayoutType::Horizontal)
     {
-        float curX = GetX();
+        float curX = GetPosition().X;
         int32 cnt = Parent->NumChildren();
         for (int32 i = 0; i < cnt; i++)
         {
             UFairyObject* child = Parent->GetChildAt(i);
             if (child->GetGroup() != this)
+            {
                 continue;
+            }
+
             if (bExcludeInvisibles && !child->InternalVisible3())
+            {
                 continue;
+            }
 
             child->SetXMin(curX);
             if (child->GetWidth() != 0)
+            {
                 curX += child->GetWidth() + ColumnGap;
+            }
         }
     }
     else if (Layout == EGroupLayoutType::Vertical)
     {
-        float curY = GetY();
+        float curY = GetPosition().Y;
         int32 cnt = Parent->NumChildren();
         for (int32 i = 0; i < cnt; i++)
         {
@@ -335,7 +354,7 @@ void UGGroup::ResizeChildren(const FVector2D& Delta)
             priorHandled = true;
         }
 
-        float curX = GetX();
+        float curX = GetPosition().X;
         for (int32 i = 0; i < cnt; i++)
         {
             UFairyObject* child = Parent->GetChildAt(i);
@@ -372,7 +391,7 @@ void UGGroup::ResizeChildren(const FVector2D& Delta)
             priorHandled = true;
         }
 
-        float curY = GetY();
+        float curY = GetPosition().Y;
         for (int32 i = 0; i < cnt; i++)
         {
             UFairyObject* child = Parent->GetChildAt(i);

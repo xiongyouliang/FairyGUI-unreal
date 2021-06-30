@@ -54,7 +54,9 @@ void UScrollPane::Setup(FByteBuffer* Buffer)
     Owner->On(FUIEvents::TouchEnd).AddUObject(this, &UScrollPane::OnTouchEnd);
     Owner->On(FUIEvents::RemovedFromStage).AddLambda([this](UEventContext*) {
         if (DraggingPane.Get() == this)
+        {
             DraggingPane.Reset();
+        }
     });
 
     ScrollType = (EScrollType)Buffer->ReadByte();
@@ -79,21 +81,36 @@ void UScrollPane::Setup(FByteBuffer* Buffer)
     bDisplayInDemand = (flags & 4) != 0;
     bPageMode = (flags & 8) != 0;
     if ((flags & 16) != 0)
+    {
         bTouchEffect = true;
+    }
     else if ((flags & 32) != 0)
+    {
         bTouchEffect = false;
+
+    }
+
     if ((flags & 64) != 0)
+    {
         bBouncebackEffect = true;
+    }
     else if ((flags & 128) != 0)
+    {
         bBouncebackEffect = false;
+    }
+
     bInertiaDisabled = (flags & 256) != 0;
     if ((flags & 512) == 0)
+    {
         MaskContainer->SetClipping(EWidgetClipping::ClipToBoundsAlways);
+    }
     bFloating = (flags & 1024) != 0;
     bDontClipMargin = (flags & 2048) != 0;
 
     if (scrollBarDisplay == EScrollBarDisplayType::Default)
+    {
         scrollBarDisplay = FUIConfig::Config.DefaultScrollBarDisplay;
+    }
 
     if (scrollBarDisplay != EScrollBarDisplayType::Hidden)
     {
@@ -137,16 +154,22 @@ void UScrollPane::Setup(FByteBuffer* Buffer)
         if (bScrollBarDisplayAuto)
         {
             if (VtScrollBar != nullptr)
+            {
                 VtScrollBar->SetVisible(false);
+            }
             if (HzScrollBar != nullptr)
+            {
                 HzScrollBar->SetVisible(false);
+            }
 
             Owner->On(FUIEvents::RollOver).AddUObject(this, &UScrollPane::OnRollOver);
             Owner->On(FUIEvents::RollOut).AddUObject(this, &UScrollPane::OnRollOut);
         }
     }
     else
+    {
         bMouseWheelEnabled = false;
+    }
 
     if (headerRes.Len() > 0)
     {
@@ -187,7 +210,9 @@ void UScrollPane::SetPosX(float Value, bool bAnimation)
     Owner->EnsureBoundsCorrect();
 
     if (LoopMode == 1)
+    {
         LoopCheckingNewPos(Value, 0);
+    }
 
     Value = FMath::Clamp(Value, 0.f, OverlapSize.X);
     if (Value != XPos)
@@ -202,7 +227,9 @@ void UScrollPane::SetPosY(float Value, bool bAnimation)
     Owner->EnsureBoundsCorrect();
 
     if (LoopMode == 2)
+    {
         LoopCheckingNewPos(Value, 1);
+    }
 
     Value = FMath::Clamp(Value, 0.f, OverlapSize.Y);
     if (Value != YPos)
@@ -247,33 +274,49 @@ bool UScrollPane::IsRightMost() const
 void UScrollPane::ScrollLeft(float Ratio, bool bAnimation)
 {
     if (bPageMode)
+    {
         SetPosX(XPos - PageSize.X * Ratio, bAnimation);
+    }
     else
+    {
         SetPosX(XPos - ScrollStep * Ratio, bAnimation);
+    }
 }
 
 void UScrollPane::ScrollRight(float Ratio, bool bAnimation)
 {
     if (bPageMode)
+    {
         SetPosX(XPos + PageSize.X * Ratio, bAnimation);
+    }
     else
+    {
         SetPosX(XPos + ScrollStep * Ratio, bAnimation);
+    }
 }
 
 void UScrollPane::ScrollUp(float Ratio, bool bAnimation)
 {
     if (bPageMode)
+    {
         SetPosY(YPos - PageSize.Y * Ratio, bAnimation);
+    }
     else
+    {
         SetPosY(YPos - ScrollStep * Ratio, bAnimation);
+    }
 }
 
 void UScrollPane::ScrollDown(float Ratio, bool bAnimation)
 {
     if (bPageMode)
+    {
         SetPosY(YPos + PageSize.Y * Ratio, bAnimation);
+    }
     else
+    {
         SetPosY(YPos + ScrollStep * Ratio, bAnimation);
+    }
 }
 
 void UScrollPane::ScrollTop(bool bAnimation)
@@ -290,7 +333,9 @@ void UScrollPane::ScrollToView(UFairyObject* Obj, bool bAnimation, bool bSetFirs
 {
     Owner->EnsureBoundsCorrect();
     if (bNeedRefresh)
+    {
         Refresh();
+    }
 
     FBox2D rect(Obj->GetPosition(), Obj->GetPosition() + Obj->GetSize());
     if (Obj->GetParent() != Owner)
@@ -305,7 +350,9 @@ void UScrollPane::ScrollToView(const FBox2D& Rect, bool bAnimation, bool bSetFir
 {
     Owner->EnsureBoundsCorrect();
     if (bNeedRefresh)
+    {
         Refresh();
+    }
 
     if (OverlapSize.Y > 0)
     {
@@ -313,18 +360,28 @@ void UScrollPane::ScrollToView(const FBox2D& Rect, bool bAnimation, bool bSetFir
         if (bSetFirst || Rect.Min.Y <= YPos || Rect.GetSize().Y >= ViewSize.Y)
         {
             if (bPageMode)
+            {
                 SetPosY(FMath::FloorToFloat(Rect.Min.Y / PageSize.Y) * PageSize.Y, bAnimation);
+            }
             else
+            {
                 SetPosY(Rect.Min.Y, bAnimation);
+            }
         }
         else if (Rect.Max.Y > bottom)
         {
             if (bPageMode)
+            {
                 SetPosY(FMath::FloorToFloat(Rect.Min.Y / PageSize.Y) * PageSize.Y, bAnimation);
+            }
             else if (Rect.GetSize().Y <= ViewSize.Y / 2)
+            {
                 SetPosY(Rect.Min.Y + Rect.GetSize().Y * 2 - ViewSize.Y, bAnimation);
+            }
             else
+            {
                 SetPosY(Rect.Max.Y - ViewSize.Y, bAnimation);
+            }
         }
     }
     if (OverlapSize.X > 0)
@@ -333,22 +390,32 @@ void UScrollPane::ScrollToView(const FBox2D& Rect, bool bAnimation, bool bSetFir
         if (bSetFirst || Rect.Min.X <= XPos || Rect.GetSize().X >= ViewSize.X)
         {
             if (bPageMode)
+            {
                 SetPosX(FMath::FloorToFloat(Rect.Min.X / PageSize.X) * PageSize.X, bAnimation);
+            }
             SetPosX(Rect.Min.X, bAnimation);
         }
         else if (Rect.Max.X > right)
         {
             if (bPageMode)
+            {
                 SetPosX(FMath::FloorToFloat(Rect.Min.X / PageSize.X) * PageSize.X, bAnimation);
+            }
             else if (Rect.GetSize().X <= ViewSize.X / 2)
+            {
                 SetPosX(Rect.Min.X + Rect.GetSize().X * 2 - ViewSize.X, bAnimation);
+            }
             else
+            {
                 SetPosX(Rect.Max.X - ViewSize.X, bAnimation);
+            }
         }
     }
 
     if (!bAnimation && bNeedRefresh)
+    {
         Refresh();
+    }
 }
 
 bool UScrollPane::IsChildInView(UFairyObject* Obj) const
@@ -377,11 +444,15 @@ bool UScrollPane::IsChildInView(UFairyObject* Obj) const
 int32 UScrollPane::GetPageX() const
 {
     if (!bPageMode)
+    {
         return 0;
+    }
 
     int32 page = FMath::FloorToInt(XPos / PageSize.X);
     if (XPos - page * PageSize.X > PageSize.X * 0.5f)
+    {
         page++;
+    }
 
     return page;
 }
@@ -389,22 +460,30 @@ int32 UScrollPane::GetPageX() const
 void UScrollPane::SetPageX(int32 Value, bool bAnimation)
 {
     if (!bPageMode)
+    {
         return;
+    }
 
     Owner->EnsureBoundsCorrect();
 
     if (OverlapSize.X > 0)
+    {
         SetPosX(Value * PageSize.X, bAnimation);
+    }
 }
 
 int32 UScrollPane::GetPageY() const
 {
     if (!bPageMode)
+    {
         return 0;
+    }
 
     int32 page = FMath::FloorToInt(YPos / PageSize.Y);
     if (YPos - page * PageSize.Y > PageSize.Y * 0.5f)
+    {
         page++;
+    }
 
     return page;
 }
@@ -412,12 +491,16 @@ int32 UScrollPane::GetPageY() const
 void UScrollPane::SetPageY(int32 Value, bool bAnimation)
 {
     if (!bPageMode)
+    {
         return;
+    }
 
     Owner->EnsureBoundsCorrect();
 
     if (OverlapSize.Y > 0)
+    {
         SetPosY(Value * PageSize.Y, bAnimation);
+    }
 }
 
 float UScrollPane::GetScrollingPosX() const
@@ -434,7 +517,9 @@ void UScrollPane::SetViewWidth(float Width)
 {
     Width = Width + Owner->Margin.Left + Owner->Margin.Right;
     if (VtScrollBar != nullptr && !bFloating)
+    {
         Width += VtScrollBar->GetWidth();
+    }
     Owner->SetWidth(Width);
 }
 
@@ -442,14 +527,18 @@ void UScrollPane::SetViewHeight(float Height)
 {
     Height = Height + Owner->Margin.Top + Owner->Margin.Bottom;
     if (HzScrollBar != nullptr && !bFloating)
+    {
         Height += HzScrollBar->GetHeight();
+    }
     Owner->SetHeight(Height);
 }
 
 void UScrollPane::LockHeader(int32 Size)
 {
     if (HeaderLockedSize == Size)
+    {
         return;
+    }
 
     const FVector2D& cpos = Container->GetPosition();
 
@@ -478,9 +567,13 @@ void UScrollPane::LockFooter(int32 Size)
         TweenChange.Set(0, 0);
         float max = OverlapSize.Component(RefreshBarAxis);
         if (max == 0)
+        {
             max = FMath::Max(ContentSize.Component(RefreshBarAxis) + FooterLockedSize - ViewSize.Component(RefreshBarAxis), 0.f);
+        }
         else
+        {
             max += FooterLockedSize;
+        }
         TweenChange.Component(RefreshBarAxis) = -max - TweenStart.Component(RefreshBarAxis);
         TweenDuration.Set(TWEEN_TIME_DEFAULT, TWEEN_TIME_DEFAULT);
         StartTween(2);
@@ -490,7 +583,9 @@ void UScrollPane::LockFooter(int32 Size)
 void UScrollPane::CancelDragging()
 {
     if (DraggingPane.Get() == this)
+    {
         DraggingPane.Reset();
+    }
 
     GestureFlag = 0;
     bDragged = false;
@@ -501,9 +596,13 @@ void UScrollPane::HandleControllerChanged(UGController* Controller)
     if (PageController == Controller)
     {
         if (ScrollType == EScrollType::Horizontal)
+        {
             SetPageX(Controller->GetSelectedIndex(), true);
+        }
         else
+        {
             SetPageY(Controller->GetSelectedIndex(), true);
+        }
     }
 }
 
@@ -513,9 +612,14 @@ void UScrollPane::UpdatePageController()
     {
         int32 index;
         if (ScrollType == EScrollType::Horizontal)
+        {
             index = GetPageX();
+
+        }
         else
+        {
             index = GetPageY();
+        }
         if (index < PageController->GetPageCount())
         {
             UGController* Controller = PageController;
@@ -1219,7 +1323,9 @@ void UScrollPane::CheckRefreshBar()
             Header->SetSize(vec);
         }
         else
+        {
             Header->SetVisible(false);
+        }
     }
 
     if (Footer != nullptr)
@@ -1233,20 +1339,30 @@ void UScrollPane::CheckRefreshBar()
 
             vec = Footer->GetPosition();
             if (max > 0)
+            {
                 vec.Component(RefreshBarAxis) = pos + ContentSize.Component(RefreshBarAxis);
+            }
             else
+            {
                 vec.Component(RefreshBarAxis) = FMath::Max(FMath::Min(pos + ViewSize.Component(RefreshBarAxis), ViewSize.Component(RefreshBarAxis) - FooterLockedSize), ViewSize.Component(RefreshBarAxis) - ContentSize.Component(RefreshBarAxis));
+            }
             Footer->SetPosition(vec);
 
             vec = Footer->GetSize();
             if (max > 0)
+            {
                 vec.Component(RefreshBarAxis) = -max - pos;
+            }
             else
+            {
                 vec.Component(RefreshBarAxis) = ViewSize.Component(RefreshBarAxis) - Footer->GetPosition().Component(RefreshBarAxis);
+            }
             Footer->SetSize(vec);
         }
         else
+        {
             Footer->SetVisible(false);
+        }
     }
 }
 
@@ -1262,12 +1378,18 @@ void UScrollPane::TweenUpdate()
     if (Tweening == 2)
     {
         if (OverlapSize.X > 0)
+        {
             XPos = FMath::Clamp(-nx, 0.f, OverlapSize.X);
+        }
         if (OverlapSize.Y > 0)
+        {
             YPos = FMath::Clamp(-ny, 0.f, OverlapSize.Y);
+        }
 
         if (bPageMode)
+        {
             UpdatePageController();
+        }
     }
 
     if (TweenChange.X == 0 && TweenChange.Y == 0)
@@ -1310,14 +1432,20 @@ float UScrollPane::RunTween(int32 Axis, float DeltaTime)
         float threshold1 = 0;
         float threshold2 = -OverlapSize.Component(Axis);
         if (HeaderLockedSize > 0 && RefreshBarAxis == Axis)
+        {
             threshold1 = HeaderLockedSize;
+        }
         if (FooterLockedSize > 0 && RefreshBarAxis == Axis)
         {
             float max = OverlapSize.Component(RefreshBarAxis);
             if (max == 0)
+            {
                 max = FMath::Max(ContentSize.Component(RefreshBarAxis) + FooterLockedSize - ViewSize.Component(RefreshBarAxis), 0.f);
+            }
             else
+            {
                 max += FooterLockedSize;
+            }
             threshold2 = -max;
         }
 
@@ -1353,7 +1481,9 @@ float UScrollPane::RunTween(int32 Axis, float DeltaTime)
         }
     }
     else
+    {
         newValue = Container->GetPosition().Component(Axis);
+    }
 
     return newValue;
 }
@@ -1361,7 +1491,9 @@ float UScrollPane::RunTween(int32 Axis, float DeltaTime)
 void UScrollPane::OnTouchBegin(UEventContext* Context)
 {
     if (!bTouchEffect)
+    {
         return;
+    }
 
     Context->CaptureTouch();
     FVector2D pt = Owner->GlobalToLocal(Context->GetPointerPosition());
@@ -1374,7 +1506,9 @@ void UScrollPane::OnTouchBegin(UEventContext* Context)
         bDragged = true;
     }
     else
+    {
         bDragged = false;
+    }
 
     ContainerPos = Container->GetPosition();
     BeginTouchPos = LastTouchPos = pt;
@@ -1388,18 +1522,26 @@ void UScrollPane::OnTouchBegin(UEventContext* Context)
 void UScrollPane::OnTouchMove(UEventContext* Context)
 {
     if (!bTouchEffect)
+    {
         return;
+    }
 
     if ((DraggingPane.IsValid() && DraggingPane.Get() != this) || UFairyObject::GetDraggingObject() != nullptr)
+    {
         return;
+    }
 
     FVector2D pt = Owner->GlobalToLocal(Context->GetPointerPosition());
 
     int32 sensitivity;
     if (FPlatformMisc::DesktopTouchScreen())
+    {
         sensitivity = 8;
+    }
     else
+    {
         sensitivity = FUIConfig::Config.TouchScrollSensitivity;
+    }
 
     float diff;
     bool sv = false, sh = false;
@@ -1412,13 +1554,17 @@ void UScrollPane::OnTouchMove(UEventContext* Context)
 
             diff = FMath::Abs(BeginTouchPos.Y - pt.Y);
             if (diff < sensitivity)
+            {
                 return;
+            }
 
             if ((GestureFlag & 2) != 0)
             {
                 float diff2 = FMath::Abs(BeginTouchPos.X - pt.X);
                 if (diff < diff2)
+                {
                     return;
+                }
             }
         }
 
@@ -1432,13 +1578,17 @@ void UScrollPane::OnTouchMove(UEventContext* Context)
 
             diff = FMath::Abs(BeginTouchPos.X - pt.X);
             if (diff < sensitivity)
+            {
                 return;
+            }
 
             if ((GestureFlag & 1) != 0)
             {
                 float diff2 = FMath::Abs(BeginTouchPos.Y - pt.Y);
                 if (diff < diff2)
+                {
                     return;
+                }
             }
         }
 
@@ -1455,7 +1605,9 @@ void UScrollPane::OnTouchMove(UEventContext* Context)
             {
                 diff = FMath::Abs(BeginTouchPos.X - pt.X);
                 if (diff < sensitivity)
+                {
                     return;
+                }
             }
         }
 
@@ -1469,20 +1621,32 @@ void UScrollPane::OnTouchMove(UEventContext* Context)
         if (newPos.Y > 0)
         {
             if (!bBouncebackEffect)
+            {
                 Container->SetY(0);
+            }
             else if (Header != nullptr && Header->MaxSize.Y != 0)
+            {
                 Container->SetY(((int32)FMath::Min(newPos.Y * 0.5f, Header->MaxSize.Y)));
+            }
             else
+            {
                 Container->SetY(((int32)FMath::Min(newPos.Y * 0.5f, ViewSize.Y * PULL_RATIO)));
+            }
         }
         else if (newPos.Y < -OverlapSize.Y)
         {
             if (!bBouncebackEffect)
+            {
                 Container->SetY(-OverlapSize.Y);
+            }
             else if (Footer != nullptr && Footer->MaxSize.Y > 0)
+            {
                 Container->SetY(((int32)FMath::Max((newPos.Y + OverlapSize.Y) * 0.5f, -Footer->MaxSize.Y) - OverlapSize.Y));
+            }
             else
+            {
                 Container->SetY(((int32)FMath::Max((newPos.Y + OverlapSize.Y) * 0.5f, -ViewSize.Y * PULL_RATIO) - OverlapSize.Y));
+            }
         }
         else
             Container->SetY(newPos.Y);
@@ -1493,57 +1657,87 @@ void UScrollPane::OnTouchMove(UEventContext* Context)
         if (newPos.X > 0)
         {
             if (!bBouncebackEffect)
+            {
                 Container->SetX(0);
+            }
             else if (Header != nullptr && Header->MaxSize.X != 0)
+            {
                 Container->SetX((int32)FMath::Min(newPos.X * 0.5f, Header->MaxSize.X));
+            }
             else
-                Container->SetX((int32)FMath::Min(newPos.X * 0.5f, ViewSize.X * PULL_RATIO));
+            {
+                Container->SetX((int32)FMath::Min(newPos.X * 0.5f, ViewSize.X* PULL_RATIO));
+            }
         }
         else if (newPos.X < 0 - OverlapSize.X)
         {
             if (!bBouncebackEffect)
+            {
                 Container->SetX(-OverlapSize.X);
+            }
             else if (Footer != nullptr && Footer->MaxSize.X > 0)
+            {
                 Container->SetX((int32)FMath::Max((newPos.X + OverlapSize.X) * 0.5f, -Footer->MaxSize.X) - OverlapSize.X);
+            }
             else
+            {
                 Container->SetX((int32)FMath::Max((newPos.X + OverlapSize.X) * 0.5f, -ViewSize.X * PULL_RATIO) - OverlapSize.X);
+            }
         }
         else
+        {
             Container->SetX(newPos.X);
+        }
     }
 
     float deltaTime = FSlateApplication::Get().GetDeltaTime();// GWorld->GetDeltaSeconds();
     float elapsed = GWorld->GetTimeSeconds() - LastMoveTime;
     elapsed = elapsed * 60 - 1;
     if (elapsed > 1)
+    {
         Velocity *= FMath::Pow(0.833f, elapsed);
+    }
     FVector2D deltaPosition = pt - LastTouchPos;
     if (!sh)
+    {
         deltaPosition.X = 0;
+    }
     if (!sv)
+    {
         deltaPosition.Y = 0;
+    }
     Velocity = FMath::Lerp(Velocity, deltaPosition / deltaTime, deltaTime * 10);
 
     FVector2D deltaGlobalPosition = LastTouchGlobalPos - Context->GetPointerPosition();
     if (deltaPosition.X != 0)
+    {
         VelocityScale = FMath::Abs(deltaGlobalPosition.X / deltaPosition.X);
+    }
     else if (deltaPosition.Y != 0)
+    {
         VelocityScale = FMath::Abs(deltaGlobalPosition.Y / deltaPosition.Y);
+    }
 
     LastTouchPos = pt;
     LastTouchGlobalPos = Context->GetPointerPosition();
     LastMoveTime = GWorld->GetTimeSeconds();
 
     if (OverlapSize.X > 0)
+    {
         XPos = FMath::Clamp(-Container->GetPosition().X, 0.f, OverlapSize.X);
+    }
     if (OverlapSize.Y > 0)
+    {
         YPos = FMath::Clamp(-Container->GetPosition().Y, 0.f, OverlapSize.Y);
+    }
 
     if (LoopMode != 0)
     {
         newPos = Container->GetPosition();
         if (LoopCheckingCurrent())
+        {
             ContainerPos += Container->GetPosition() - newPos;
+        }
     }
 
     DraggingPane = this;
@@ -1553,7 +1747,9 @@ void UScrollPane::OnTouchMove(UEventContext* Context)
     UpdateScrollBarPos();
     UpdateScrollBarVisible();
     if (bPageMode)
+    {
         UpdatePageController();
+    }
 
     Owner->DispatchEvent(FUIEvents::Scroll);
 }
@@ -1561,7 +1757,9 @@ void UScrollPane::OnTouchMove(UEventContext* Context)
 void UScrollPane::OnTouchEnd(UEventContext* Context)
 {
     if (DraggingPane.Get() == this)
+    {
         DraggingPane.Reset();
+    }
 
     GestureFlag = 0;
 
@@ -1601,9 +1799,13 @@ void UScrollPane::OnTouchEnd(UEventContext* Context)
     {
         TweenChange = endPos - TweenStart;
         if (TweenChange.X < -FUIConfig::Config.TouchDragSensitivity || TweenChange.Y < -FUIConfig::Config.TouchDragSensitivity)
+        {
             Owner->DispatchEvent(FUIEvents::PullDownRelease);
+        }
         else if (TweenChange.X > FUIConfig::Config.TouchDragSensitivity || TweenChange.Y > FUIConfig::Config.TouchDragSensitivity)
+        {
             Owner->DispatchEvent(FUIEvents::PullUpRelease);
+        }
 
         if (HeaderLockedSize > 0 && endPos.Component(RefreshBarAxis) == 0)
         {
@@ -1614,9 +1816,15 @@ void UScrollPane::OnTouchEnd(UEventContext* Context)
         {
             float max = OverlapSize.Component(RefreshBarAxis);
             if (max == 0)
+            {
                 max = FMath::Max(ContentSize.Component(RefreshBarAxis) + FooterLockedSize - ViewSize.Component(RefreshBarAxis), 0.f);
+
+            }
             else
+            {
                 max += FooterLockedSize;
+
+            }
             endPos.Component(RefreshBarAxis) = -max;
             TweenChange = endPos - TweenStart;
         }
@@ -1630,17 +1838,23 @@ void UScrollPane::OnTouchEnd(UEventContext* Context)
             float elapsed = GWorld->GetTimeSeconds() - LastMoveTime;
             elapsed = elapsed * 60 - 1;
             if (elapsed > 1)
+            {
                 Velocity *= FMath::Pow(0.833f, elapsed);
+            }
 
             endPos = UpdateTargetAndDuration(TweenStart);
         }
         else
+        {
             TweenDuration.Set(TWEEN_TIME_DEFAULT, TWEEN_TIME_DEFAULT);
+        }
         FVector2D oldChange = endPos - TweenStart;
 
         LoopCheckingTarget(endPos);
         if (bPageMode || bSnapToItem)
+        {
             AlignPosition(endPos, true);
+        }
 
         TweenChange = endPos - TweenStart;
         if (TweenChange.X == 0 && TweenChange.Y == 0)
@@ -1662,11 +1876,15 @@ void UScrollPane::OnTouchEnd(UEventContext* Context)
 void UScrollPane::OnMouseWheel(UEventContext* Context)
 {
     if (!bMouseWheelEnabled)
+    {
         return;
+    }
 
     float delta = -Context->GetPointerEvent().GetWheelDelta();
     if (bSnapToItem && FMath::Abs(delta) < 1)
+    {
         delta = FMath::Sign(delta);
+    }
 
     if (OverlapSize.X > 0 && OverlapSize.Y == 0)
     {

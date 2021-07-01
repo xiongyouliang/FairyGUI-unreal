@@ -825,14 +825,18 @@ void UGList::ScrollToView(int32 Index, bool bAnimation, bool bSetFirst)
     if (bVirtual)
     {
         if (NumItems == 0)
+        {
             return;
+        }
 
         CheckVirtualList();
 
         verifyf(Index >= 0 && Index < VirtualItems.Num(), TEXT("Invalid child index"));
 
         if (bLoop)
+        {
             Index = FMath::FloorToFloat(FirstIndex / NumItems) * NumItems + Index;
+        }
 
         FBox2D rect;
         FItemInfo& ii = VirtualItems[Index];
@@ -840,7 +844,9 @@ void UGList::ScrollToView(int32 Index, bool bAnimation, bool bSetFirst)
         {
             float pos = 0;
             for (int32 i = CurLineItemCount - 1; i < Index; i += CurLineItemCount)
+            {
                 pos += VirtualItems[i].Size.Y + LineGap;
+            }
             rect.Min.Set(0, pos);
             rect.Max = rect.Min + FVector2D(ItemSize.X, ii.Size.Y);
         }
@@ -848,7 +854,9 @@ void UGList::ScrollToView(int32 Index, bool bAnimation, bool bSetFirst)
         {
             float pos = 0;
             for (int32 i = CurLineItemCount - 1; i < Index; i += CurLineItemCount)
+            {
                 pos += VirtualItems[i].Size.X + ColumnGap;
+            }
             rect.Min.Set(pos, 0);
             rect.Max = rect.Min + FVector2D(ii.Size.X, ItemSize.Y);
         }
@@ -861,8 +869,10 @@ void UGList::ScrollToView(int32 Index, bool bAnimation, bool bSetFirst)
         }
 
         if (ScrollPane != nullptr)
+        {
             ScrollPane->ScrollToView(rect, bAnimation, bSetFirst);
-        else if (Parent.IsValid() && Parent->GetScrollPane() != nullptr)
+        }
+        else if (Parent && Parent->GetScrollPane() != nullptr)
         {
             FBox2D rect2 = LocalToGlobalRect(rect);
             rect2 = Parent->GlobalToLocalRect(rect2);
@@ -873,9 +883,13 @@ void UGList::ScrollToView(int32 Index, bool bAnimation, bool bSetFirst)
     {
         UFairyObject* obj = GetChildAt(Index);
         if (ScrollPane != nullptr)
+        {
             ScrollPane->ScrollToView(obj, bAnimation, bSetFirst);
-        else if (Parent.IsValid() && Parent->GetScrollPane() != nullptr)
+        }
+        else if (Parent && Parent->GetScrollPane() != nullptr)
+        {
             Parent->GetScrollPane()->ScrollToView(obj, bAnimation, bSetFirst);
+        }
     }
 }
 
@@ -892,7 +906,9 @@ int32 UGList::ChildIndexToItemIndex(int32 Index) const
             {
                 Index--;
                 if (Index < 0)
+                {
                     return i;
+                }
             }
         }
 
@@ -902,7 +918,9 @@ int32 UGList::ChildIndexToItemIndex(int32 Index) const
     {
         Index += FirstIndex;
         if (bLoop && NumItems > 0)
+        {
             Index = Index % NumItems;
+        }
 
         return Index;
     }
@@ -923,12 +941,19 @@ int32 UGList::ItemIndexToChildIndex(int32 Index) const
         {
             int32 j = FirstIndex % NumItems;
             if (Index >= j)
+            {
                 Index = Index - j;
+
+            }
             else
+            {
                 Index = NumItems - j + Index;
+            }
         }
         else
+        {
             Index -= FirstIndex;
+        }
 
         return Index;
     }
@@ -976,13 +1001,17 @@ void UGList::SetVirtual(bool bInLoop)
         {
             ScrollPane->ScrollStep = ItemSize.Y;
             if (bLoop)
+            {
                 ScrollPane->LoopMode = 2;
+            }
         }
         else
         {
             ScrollPane->ScrollStep = ItemSize.X;
             if (bLoop)
+            {
                 ScrollPane->LoopMode = 1;
+            }
         }
 
         On(FUIEvents::Scroll).AddUObject(this, &UGList::OnScrollHandler);
@@ -992,10 +1021,7 @@ void UGList::SetVirtual(bool bInLoop)
 
 int32 UGList::GetNumItems() const
 {
-    if (bVirtual)
-        return NumItems;
-    else
-        return Children.Num();
+    return bVirtual ? NumItems : Children.Num();
 }
 
 void UGList::SetNumItems(int32 InNumItems)
@@ -1005,10 +1031,7 @@ void UGList::SetNumItems(int32 InNumItems)
         verifyf(ItemRenderer.IsBound(), TEXT("Set itemRenderer first!"));
 
         NumItems = InNumItems;
-        if (bLoop)
-            RealNumItems = NumItems * 6;
-        else
-            RealNumItems = NumItems;
+        RealNumItems = bLoop ? NumItems * 6 : NumItems;
 
         int32 oldCount = VirtualItems.Num();
         if (RealNumItems > oldCount)
@@ -1024,11 +1047,15 @@ void UGList::SetNumItems(int32 InNumItems)
         else
         {
             for (int32 i = RealNumItems; i < oldCount; i++)
+            {
                 VirtualItems[i].bSelected = false;
+            }
         }
 
         if (VirtualListChanged != 0)
+        {
             CancelDelayCall(RefreshTimerHandle);
+        }
 
         DoRefreshVirtualList();
     }
@@ -1040,9 +1067,13 @@ void UGList::SetNumItems(int32 InNumItems)
             for (int32 i = cnt; i < InNumItems; i++)
             {
                 if (!ItemProvider.IsBound())
+                {
                     AddItemFromPool();
+                }
                 else
+                {
                     AddItemFromPool(ItemProvider.Execute(i));
+                }
             }
         }
         else
@@ -1053,7 +1084,9 @@ void UGList::SetNumItems(int32 InNumItems)
         if (ItemRenderer.IsBound())
         {
             for (int32 i = 0; i < InNumItems; i++)
+            {
                 ItemRenderer.Execute(i, GetChildAt(i));
+            }
         }
     }
 }
@@ -1092,7 +1125,9 @@ FVector2D UGList::GetSnappingPosition(const FVector2D& InPoint)
         return ret;
     }
     else
+    {
         return UFairyComponent::GetSnappingPosition(InPoint);
+    }
 }
 
 void UGList::CheckVirtualList()
@@ -1107,9 +1142,13 @@ void UGList::CheckVirtualList()
 void UGList::SetVirtualListChangedFlag(bool bLayoutChanged)
 {
     if (bLayoutChanged)
+    {
         VirtualListChanged = 2;
+    }
     else if (VirtualListChanged == 0)
+    {
         VirtualListChanged = 1;
+    }
 
     //DelayCall(RefreshTimerHandle, this, &UGList::DoRefreshVirtualList);
     DoRefreshVirtualList();
@@ -1150,21 +1189,29 @@ void UGList::DoRefreshVirtualList()
         else //Pagination
         {
             if (ColumnCount > 0)
+            {
                 CurLineItemCount = ColumnCount;
+            }
             else
             {
                 CurLineItemCount = FMath::FloorToInt((ScrollPane->GetViewSize().X + ColumnGap) / (ItemSize.X + ColumnGap));
                 if (CurLineItemCount <= 0)
+                {
                     CurLineItemCount = 1;
+                }
             }
 
             if (LineCount > 0)
+            {
                 CurLineItemCount2 = LineCount;
+            }
             else
             {
                 CurLineItemCount2 = FMath::FloorToInt((ScrollPane->GetViewSize().Y + LineGap) / (ItemSize.Y + LineGap));
                 if (CurLineItemCount2 <= 0)
+                {
                     CurLineItemCount2 = 1;
+                }
             }
         }
     }
@@ -2509,7 +2556,7 @@ void UGList::SetupItem(FByteBuffer* Buffer, UFairyObject* Obj)
     if ((str = Buffer->ReadSP()) != nullptr && btn)
         btn->SetSelectedIcon(*str);
     if ((str = Buffer->ReadSP()) != nullptr)
-        Obj->Name = *str;
+        Obj->SetName(*str);
 
     UFairyComponent* gcom = Cast<UFairyComponent>(Obj);
     if (gcom != nullptr)

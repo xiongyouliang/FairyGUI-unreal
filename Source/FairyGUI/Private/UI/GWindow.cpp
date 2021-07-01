@@ -113,7 +113,7 @@ void UGWindow::BringToFront()
 
 bool UGWindow::IsTop() const
 {
-    return Parent.IsValid() && Parent->GetChildIndex(this) == Parent->NumChildren() - 1;
+    return Parent != nullptr && Parent->GetChildIndex(this) == Parent->NumChildren() - 1;
 }
 
 void UGWindow::ShowModalWait(int32 InRequestingCmd)

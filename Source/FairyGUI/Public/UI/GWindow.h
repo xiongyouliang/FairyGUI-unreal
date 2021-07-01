@@ -38,7 +38,7 @@ public:
     void BringToFront();
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    bool IsShowing() const { return Parent.IsValid(); }
+    bool IsShowing() const { return Parent != nullptr; }
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     bool IsTop() const;

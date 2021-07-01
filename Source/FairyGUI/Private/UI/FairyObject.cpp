@@ -33,7 +33,6 @@ UFairyObject::UFairyObject() :
 	{
 		Gears[i] = nullptr;
 	}
-	Relations = new FRelations(this);
 }
 
 UFairyObject::~UFairyObject()
@@ -45,13 +44,6 @@ UFairyObject::~UFairyObject()
 			delete Gears[i];
 			Gears[i] = nullptr;
 		}
-	}
-		
-	//delete Relations;
-	if (Relations)
-	{
-		delete Relations;
-		Relations = nullptr;
 	}
 }
 
@@ -67,10 +59,6 @@ void UFairyObject::ReleaseSlateResources(bool bReleaseChildren)
 
 void UFairyObject::BeginDestroy()
 {
-	if (Parent.IsValid())
-	{
-		Parent.Reset();
-	}
 
 	if (Group.IsValid())
 	{
@@ -81,9 +69,13 @@ void UFairyObject::BeginDestroy()
 
 void UFairyObject::SetPosition(const FVector2D& InPosition)
 {
-	RenderTransform.Translation = InPosition;
+	//RenderTransform.Translation = InPosition;
 	LocalPosition = InPosition;
-	UpdateRenderTransform();
+	//UpdateRenderTransform();
+	if (WidgetSlot.IsValid())
+	{
+		WidgetSlot->Position(InPosition);
+	}
 }
 
 void UFairyObject::SetPositionX(const float InPositionX)
@@ -98,29 +90,90 @@ void UFairyObject::SetPositionY(const float InPositionY)
 	SetPosition(NewPos);
 }
 
-void UFairyObject::UpdatePivot(const FVector2D& InPivot, bool bAsAnchor)
+void UFairyObject::SetSize(const FVector2D& InSize, bool InIsPivotAsAnchor)
+{
+	Size = InSize;
+	bPivotAsAnchor = InIsPivotAsAnchor;
+
+	if (WidgetSlot.IsValid())
+	{
+		WidgetSlot->Size(InSize);
+	}
+}
+
+void UFairyObject::SetWidth(float InSizeWidth)
+{
+	Size.X = InSizeWidth;
+}
+
+void UFairyObject::SetHeight(float InSizeHeight)
+{
+	Size.Y = InSizeHeight;
+}
+
+float UFairyObject::GetWidth()
+{
+	return Size.X;
+}
+
+float UFairyObject::GetHeight()
+{
+	return Size.Y;
+}
+
+void UFairyObject::SetPivot(const FVector2D& InPivot, bool bAsAnchor)
 {
 	if (RenderTransformPivot != InPivot || bPivotAsAnchor != bAsAnchor)
 	{
 		RenderTransformPivot = InPivot;
 		bPivotAsAnchor = bAsAnchor;
-		DisplayObject->SetRenderTransformPivot(FVector2D(RenderTransformPivot.X, RenderTransformPivot.Y));
+		if (DisplayObject.IsValid())
+		{
+			DisplayObject->SetRenderTransformPivot(RenderTransformPivot);
+		}
 	}
 }
 
-void UFairyObject::UpdateScale(const FVector2D& InScale)
+void UFairyObject::SetScale(const FVector2D& InScale)
 {
 	RenderTransform.Scale = InScale;
 	UpdateRenderTransform();
 }
 
-void UFairyObject::UpdateSkew(const FVector2D& InSkew)
+void UFairyObject::SetScaleX(float InScaleX)
+{
+	RenderTransform.Scale.X = InScaleX;
+	UpdateRenderTransform();
+}
+
+void UFairyObject::SetScaleY(float InScaleY)
+{
+	RenderTransform.Scale.Y = InScaleY;
+	UpdateRenderTransform();
+}
+
+float UFairyObject::GetScaleX()
+{
+	return RenderTransform.Scale.X;
+}
+
+float UFairyObject::GetScaleY()
+{
+	return RenderTransform.Scale.Y;
+}
+
+void UFairyObject::SetSkew(const FVector2D& InSkew)
 {
 	RenderTransform.Shear = InSkew;
 	UpdateRenderTransform();
 }
 
-void UFairyObject::UpdateRotation(float InRotation)
+const FVector2D& UFairyObject::GetSkew() const
+{
+	return RenderTransform.Shear;
+}
+
+void UFairyObject::SetRotation(float InRotation)
 {
 	RenderTransform.Angle = FMath::DegreesToRadians(InRotation);
 	UpdateRenderTransform();
@@ -138,6 +191,8 @@ void UFairyObject::UpdateRenderTransform()
 		{
 			DisplayObject->SetRenderTransform(RenderTransform.ToSlateRenderTransform());
 		}
+
+		DisplayObject->SetRenderTransformPivot(RenderTransformPivot);
 	}
 }
 
@@ -167,10 +222,11 @@ void UFairyObject::SetVisible(bool bInVisible)
 	{
 		bVisible = bInVisible;
 		HandleVisibleChanged();
-		if (Parent.IsValid())
+		if (Parent)
 		{
 			Parent->SetBoundsChangedFlag();
 		}
+
 		if (Group.IsValid() && Group->IsExcludeInvisibles())
 		{
 			Group->SetBoundsChangedFlag();
@@ -211,8 +267,10 @@ void UFairyObject::SetSortingOrder(int32 InSortingOrder)
 	{
 		int32 old = SortingOrder;
 		SortingOrder = InSortingOrder;
-		if (Parent.IsValid())
+		if (Parent)
+		{
 			Parent->ChildSortingOrderChanged(this, old, SortingOrder);
+		}
 	}
 }
 
@@ -221,13 +279,23 @@ void UFairyObject::SetGroup(UGGroup* InGroup)
 	if (Group.Get() != InGroup)
 	{
 		if (Group.IsValid())
+		{
 			Group->SetBoundsChangedFlag();
+		}
+
 		Group = InGroup;
+
 		if (Group.IsValid())
+		{
 			Group->SetBoundsChangedFlag();
+		}
+
 		HandleVisibleChanged();
-		if (Parent.IsValid())
+
+		if (Parent)
+		{
 			Parent->ChildStateChanged(this);
+		}
 	}
 }
 
@@ -379,14 +447,24 @@ FBox2D UFairyObject::RootToLocalRect(const FBox2D& InRect)
 	return GlobalToLocalRect(UFairyApplication::Get()->GetUIRoot(this)->LocalToGlobalRect(InRect));
 }
 
+FRelations& UFairyObject::GetRelations()
+{
+	if (!Relations.IsSet())
+	{
+		Relations = FRelations(this);
+	}
+
+	return Relations.GetValue();
+}
+
 void UFairyObject::AddRelation(UFairyObject* Obj, ERelationType RelationType, bool bUsePercent)
 {
-	Relations->Add(Obj, RelationType, bUsePercent);
+	GetRelations().Add(Obj, RelationType, bUsePercent);
 }
 
 void UFairyObject::RemoveRelation(UFairyObject* Obj, ERelationType RelationType)
 {
-	Relations->Remove(Obj, RelationType);
+	GetRelations().Remove(Obj, RelationType);
 }
 
 FGearBase* UFairyObject::GetGear(int32 Index)
@@ -457,17 +535,23 @@ void UFairyObject::CheckGearDisplay()
 	if (connected != bInternalVisible)
 	{
 		bInternalVisible = connected;
-		if (Parent.IsValid())
+		if (Parent)
+		{
 			Parent->ChildStateChanged(this);
+		}
 		if (Group.IsValid() && Group->IsExcludeInvisibles())
+		{
 			Group->SetBoundsChangedFlag();
+		}
 	}
 }
 
 void UFairyObject::RemoveFromParent()
 {
-	if (Parent.IsValid())
+	if (Parent)
+	{
 		Parent->RemoveChild(this);
+	}
 }
 
 UFairyObject* UFairyObject::CastTo(TSubclassOf<UFairyObject> ClassType) const
@@ -542,10 +626,6 @@ FGUIEventMDelegate& UFairyObject::On(const FName& EventType)
 	return GetEventDelegate(EventType).Func;
 }
 
-void UFairyObject::ConstructFromResource()
-{
-}
-
 void UFairyObject::HandleAlphaChanged()
 {
 	DisplayObject->SetRenderOpacity(Alpha);
@@ -586,7 +666,8 @@ void UFairyObject::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 
 	float PosX = Buffer->ReadInt();
 	float PosY = Buffer->ReadInt();
-	RenderTransform.Translation = FVector2D(PosX, PosY);
+	//RenderTransform.Translation = FVector2D(PosX, PosY);
+	SetPosition(FVector2D(PosX, PosY));
 
 	if (Buffer->ReadBool())
 	{
@@ -677,7 +758,6 @@ void UFairyObject::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 	{
 		Group = Cast<UGGroup>(Parent->GetChildAt(groupId));
 	}
-		
 
 	Buffer->Seek(BeginPos, 2);
 
@@ -692,120 +772,6 @@ void UFairyObject::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 
 		Buffer->SetPos(nextPos);
 	}
-}
 
-void UFairyObject::InitDrag()
-{
-	if (bDraggable)
-	{
-		OnTouchBegin.AddUniqueDynamic(this, &UFairyObject::OnTouchBeginHandler);
-		OnTouchMove.AddUniqueDynamic(this, &UFairyObject::OnTouchMoveHandler);
-		OnTouchEnd.AddUniqueDynamic(this, &UFairyObject::OnTouchEndHandler);
-	}
-	else
-	{
-		OnTouchBegin.RemoveDynamic(this, &UFairyObject::OnTouchBeginHandler);
-		OnTouchMove.RemoveDynamic(this, &UFairyObject::OnTouchMoveHandler);
-		OnTouchEnd.RemoveDynamic(this, &UFairyObject::OnTouchEndHandler);
-	}
-}
-
-void UFairyObject::DragBegin(int32 UserIndex, int32 PointerIndex)
-{
-	if (DispatchEvent(FUIEvents::DragStart))
-		return;
-
-	if (DraggingObject.IsValid())
-	{
-		UFairyObject* tmp = DraggingObject.Get();
-		DraggingObject->StopDrag();
-		DraggingObject.Reset();
-		tmp->DispatchEvent(FUIEvents::DragEnd);
-	}
-
-	GlobalDragStart = UFairyApplication::Get()->GetTouchPosition(UserIndex, PointerIndex);
-	GlobalRect = LocalToGlobalRect(FBox2D(FVector2D::ZeroVector, Size));
-	DraggingObject = this;
-	bDragTesting = false;
-
-	UFairyApplication::Get()->AddMouseCaptor(UserIndex, PointerIndex, this);
-
-	OnTouchMove.AddUniqueDynamic(this, &UFairyObject::OnTouchMoveHandler);
-	OnTouchEnd.AddUniqueDynamic(this, &UFairyObject::OnTouchEndHandler);
-}
-
-void UFairyObject::DragEnd()
-{
-	if (DraggingObject.Get() == this)
-	{
-		bDragTesting = false;
-		DraggingObject.Reset();
-	}
-}
-
-void UFairyObject::OnTouchBeginHandler(UEventContext* Context)
-{
-	DragTouchStartPos = Context->GetPointerPosition();
-	bDragTesting = true;
-	Context->CaptureTouch();
-}
-
-void UFairyObject::OnTouchMoveHandler(UEventContext* Context)
-{
-	if (DraggingObject.Get() != this && bDragTesting)
-	{
-		int32 sensitivity;
-		if (FPlatformMisc::DesktopTouchScreen())
-			sensitivity = FUIConfig::Config.ClickDragSensitivity;
-		else
-			sensitivity = FUIConfig::Config.TouchDragSensitivity;
-		if (FMath::Abs(DragTouchStartPos.X - Context->GetPointerPosition().X) < sensitivity
-			&& FMath::Abs(DragTouchStartPos.Y - Context->GetPointerPosition().Y) < sensitivity)
-			return;
-
-		bDragTesting = false;
-		DragBegin(Context->GetUserIndex(), Context->GetPointerIndex());
-	}
-
-	if (DraggingObject.Get() == this)
-	{
-		FVector2D Pos = Context->GetPointerPosition() - GlobalDragStart + GlobalRect.Min;
-		if (DragBounds.IsSet())
-		{
-			FBox2D rect = UFairyApplication::Get()->GetUIRoot(this)->LocalToGlobalRect(DragBounds.GetValue());
-			if (Pos.X < rect.Min.X)
-				Pos.X = rect.Min.X;
-			else if (Pos.X + GlobalRect.GetSize().X > rect.Max.X)
-			{
-				Pos.X = rect.Max.X - GlobalRect.GetSize().X;
-				if (Pos.X < rect.Min.X)
-					Pos.X = rect.Min.X;
-			}
-
-			if (Pos.Y < rect.Min.Y)
-				Pos.Y = rect.Min.Y;
-			else if (Pos.Y + GlobalRect.GetSize().Y > rect.Max.Y)
-			{
-				Pos.Y = rect.Max.Y - GlobalRect.GetSize().Y;
-				if (Pos.Y < rect.Min.Y)
-					Pos.Y = rect.Min.Y;
-			}
-		}
-
-		Pos = Parent->GlobalToLocal(Pos);
-
-		bUpdateInDragging = true;
-		bUpdateInDragging = false;
-
-		DispatchEvent(FUIEvents::DragMove);
-	}
-}
-
-void UFairyObject::OnTouchEndHandler(UEventContext* Context)
-{
-	if (DraggingObject.Get() == this)
-	{
-		DraggingObject.Reset();
-		DispatchEvent(FUIEvents::DragEnd);
-	}
+	UpdateRenderTransform();
 }

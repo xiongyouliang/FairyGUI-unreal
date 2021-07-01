@@ -106,7 +106,7 @@ void UPopupMenu::AddSeperator()
 const FString& UPopupMenu::GetItemName(int32 Index) const
 {
     UGButton* item = List->GetChildAt(Index)->As<UGButton>();
-    return item->Name;
+    return item->GetName();
 }
 
 void UPopupMenu::SetItemText(const FString& Name, const FString& Caption)

@@ -25,7 +25,7 @@ void SRootContainer::OnArrangeChildren(const FGeometry& AllottedGeometry, FArran
     if (GObject.IsValid() && (LocalSize != GObject->GetSize()))
     {
         UE_LOG(LogFairyGUI, Log, TEXT("FairyRoot Widget Size:(%f, %f)"), LocalSize.X, LocalSize.Y);
-        GObject->UpdateSize(LocalSize);
+        GObject->SetSize(LocalSize);
     }
 
     SContainer::OnArrangeChildren(AllottedGeometry, ArrangedChildren);

@@ -554,7 +554,7 @@ void UTransition::SetTarget(const FString& InLabel, UFairyObject* InTarget)
         if (item->Label == InLabel)
         {
 
-            item->TargetID = InTarget->ID;
+            item->TargetID = InTarget->GetID();
             item->Target = nullptr;
         }
     }
@@ -1270,7 +1270,9 @@ void UTransition::ApplyValue(FTransitionItem* item)
         if (bPlaying && item->Time >= StartTime)
         {
             if (!item->SoundData->URL.IsEmpty())
+            {
                 UFairyApplication::Get()->PlaySound(item->SoundData->URL, item->SoundData->Volume);
+            }
             break;
         }
 
@@ -1315,9 +1317,13 @@ void UTransition::Setup(FByteBuffer* Buffer)
         item->Time = Buffer->ReadFloat();
         int32 TargetID = Buffer->ReadShort();
         if (TargetID < 0)
+        {
             item->TargetID = G_EMPTY_STRING;
+        }
         else
-            item->TargetID = Owner->GetChildAt(TargetID)->ID;
+        {
+            item->TargetID = Owner->GetChildAt(TargetID)->GetID();
+        }
         item->Label = Buffer->ReadS();
 
         if (Buffer->ReadBool())

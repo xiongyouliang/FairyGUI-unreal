@@ -210,7 +210,7 @@ void UGComboBox::RenderDropdownList()
         UFairyObject* Obj = ListObject->AddItemFromPool();
         Obj->SetText(Items[i]);
         Obj->SetIcon((Icons.Num() > 0 && i < Icons.Num()) ? Icons[i] : G_EMPTY_STRING);
-        Obj->Name = i < Values.Num() ? Values[i] : G_EMPTY_STRING;
+        Obj->SetName(i < Values.Num() ? Values[i] : G_EMPTY_STRING);
     }
 }
 

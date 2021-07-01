@@ -19,7 +19,7 @@ UDragDropManager::~UDragDropManager()
 void UDragDropManager::Init(UObject* WorldContextObject)
 {
 	Agent = (UGLoader*)FUIObjectFactory::NewObject(WorldContextObject, EObjectType::Loader);
-	Agent->Name = TEXT("DragDropAgent");
+	Agent->SetName(TEXT("DragDropAgent"));
 	Agent->SetTouchable(false);
 	Agent->SetDraggable(true);
 	//Agent->SetSize(FVector2D(100, 100));

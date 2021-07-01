@@ -47,22 +47,21 @@ void FUIObjectFactory::SetExtension(const FString& URL, TSubclassOf<UFairyCompon
 
 UFairyObject* FUIObjectFactory::NewObject(UObject* Outer, const TSharedPtr<FFairyPackageItem>& PackageItem)
 {
-    UFairyObject* obj = nullptr;
+    UFairyObject* FairyObject = nullptr;
     if (PackageItem->ExtensionCreator.IsBound())
     {
-        obj = PackageItem->ExtensionCreator.Execute();
+        FairyObject = PackageItem->ExtensionCreator.Execute();
     }
     else
     {
-        obj = FUIObjectFactory::NewObject(Outer, PackageItem->ObjectType);
+        FairyObject = FUIObjectFactory::NewObject(Outer, PackageItem->ObjectType);
     }
 
-    if (obj != nullptr)
+    if (FairyObject != nullptr)
     {
-        obj->PackageItem = PackageItem;
+        FairyObject->SetPackageItem(PackageItem);
     }
-    UE_LOG(LogFairyGUI, Log, TEXT("FUIObjectFactory::NewObject(...), Name:%s"), *obj->GetResourceName());
-    return obj;
+    return FairyObject;
 }
 
 UFairyObject* FUIObjectFactory::NewObject(UObject* Outer, EObjectType Type)

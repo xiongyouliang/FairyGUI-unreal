@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Widgets/SDisplayObject.h"
+#include "Widgets/SContainer.h"
 #include "Relations.h"
 #include "Package/FairyPackageItem.h"
 #include "UIConfig.h"
@@ -22,6 +23,15 @@ class UGTreeNode;
 class UGController;
 class UFairyRoot;
 
+/**
+* TODO:
+* UFairyObject is base object as FairyGUI Object, I want to refactor it only handle some base attribute and some optional attribute:
+* Base attributes: @Name, @Position, @Size, @MinSize @MaxSize, @bUseOriginSize, @bLockAspectRatio, @Scale, @Rotation, @Skew @Pivot, @bPivotAsAnchor @Opacity, @Visibility
+* Optional attributes: @Touchable, @bGray, @AttributeController, @Relations, @Effect, @Misc(others)
+* 
+* All these attribute are abstraction come from FairyGUI Editor;
+*/
+
 UCLASS(BlueprintType)
 class FAIRYGUI_API UFairyObject : public UFairyVisual
 {
@@ -37,81 +47,48 @@ public:
 	// ~ UObject Interface
 	virtual void BeginDestroy() override;
 
-	virtual void ConstructFromResource();
+	virtual void ConstructFromResource() {}; // Subclass 
 
 	// position attribute
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	const FVector2D& GetPosition() const { return RenderTransform.Translation; }
+	const FVector2D& GetPosition() const { return LocalPosition; }
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	void SetPosition(const FVector2D& InPosition);
 	void SetPositionX(const float InPositionX);
 	void SetPositionY(const float InPositionY);
 
-	float GetWidth() { return Size.X; }
-	float GetHeight() { return Size.Y; }
-	void SetWidth(float) {}
-	void SetHeight(float) {}
-
 	// scale attribute
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	const FVector2D& GetScale() const { return RenderTransform.Scale; }
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	void UpdateScale(const FVector2D& InScale);
-	void SetScale(const FVector2D& InScale){}
-	void SetScaleX(float InScale) {}
-	void SetScaleY(float InScale) {}
-	float GetScaleX() { return 1.0f; }
-	float GetScaleY() { return 1.0f; }
+	void SetScale(const FVector2D& InScale);
+	void SetScaleX(float InScale);
+	void SetScaleY(float InScale);
+	float GetScaleX();
+	float GetScaleY();
 	
 
 	// shear or skew attribute
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	const FVector2D& GetSkew() const { return RenderTransform.Shear; }
+	const FVector2D& GetSkew() const;
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	void UpdateSkew(const FVector2D& InSkew);
-	void SetSkew(const FVector2D& InSkew){}
+	void SetSkew(const FVector2D& InSkew);
 
 	// rotate attribute
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	float GetRotation() const { return RenderTransform.Angle; }
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	void UpdateRotation(float InRotation);
-	void SetRotation(float InRotation) {};
+	void SetRotation(float InRotation);
 	
-	// Size/MinSize/MaxSize attribute
-	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	const FVector2D& GetSize() const { return Size; }
-	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	void UpdateSize(const FVector2D& InSize, bool bIgnorePivot = false) { Size = InSize; }
-	void SetSize(const FVector2D& InSize, bool bIgnorePivot = false) { UpdateSize(InSize, bIgnorePivot); }
-
-	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	FVector2D& GetMinSize() { return MinSize; }
-	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	void SetMinSize(FVector2D InMinSize) { MinSize = InMinSize; }
-	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	FVector2D GetMaxSize() { return MaxSize; }
-	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	void SetMaxSize(FVector2D InMaxSize) { MaxSize = InMaxSize; }
-	// todo
-	void SetXMin(float) {}
-	void SetYMin(float) {}
-	void SetXMax(float) {}
-	void SetYMax(float) {}
-	float GetXMin() { return 0.0f; };
-	float GetYMin() { return 0.0f; };
-	float GetXMax() { return 0.0f; };
-	float GetYMax() { return 0.0f; };
+	
 	
 	// pivot/anchor attribute
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	const FVector2D& GetPivot() const { return RenderTransformPivot; }
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	void UpdatePivot(const FVector2D& InPivot, bool bAsAnchor = false);
+	void SetPivot(const FVector2D& InPivot, bool bAsAnchor = false);
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	bool IsPivotAsAnchor() const { return bPivotAsAnchor; }
-
-	void SetPivot(const FVector2D& InPivot, bool bAsAnchor = false) {};
 
 	// opacity/alpha attribute
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
@@ -207,13 +184,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	FBox2D LocalToRootRect(const FBox2D& InRect);
 
-	FRelations* GetRelations() { return Relations; }
-
-	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	void AddRelation(UFairyObject* Obj, ERelationType RelationType, bool bUsePercent = false);
-
-	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	void RemoveRelation(UFairyObject* Obj, ERelationType RelationType);
 
 	FGearBase* GetGear(int32 Index);
 	bool CheckGearController(int32 Index, UGController* Controller);
@@ -221,7 +191,7 @@ public:
 	void ReleaseDisplayLock(uint32 Token);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	UFairyComponent* GetParent() const { return Parent.Get(); }
+	UFairyComponent* GetParent() const { return Parent; }
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	void RemoveFromParent();
@@ -303,11 +273,7 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "FairyGUI|Event")
 	FGUIEventDynMDelegate OnRemoveFromStage;
-
-	UPROPERTY(Transient, BlueprintReadOnly, Category = "FairyGUI")
-	FString ID;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
-	FString Name;
+	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
 	FNVariant UserData;
@@ -317,34 +283,92 @@ public:
 
 	static UFairyObject* GetDraggingObject() { return DraggingObject.Get(); }
 
-protected:
-	TWeakObjectPtr<UFairyComponent> Parent;
+public:
+	virtual void MakeSlateWidget() {} // subclass use this method to create Slate Widget
 
-	TSharedPtr<SDisplayObject> DisplayObject;
+	void SetPackageItem(const TSharedPtr<FFairyPackageItem>& InPackageItem){ PackageItem = InPackageItem; }
 
-	TSharedPtr<FFairyPackageItem> PackageItem;
+	virtual void SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos);
+	virtual void SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos);
+
+	FRelations& GetRelations();
+	void AddRelation(UFairyObject* Obj, ERelationType RelationType, bool bUsePercent = false);
+	void RemoveRelation(UFairyObject* Obj, ERelationType RelationType);
+
+	// ID and Name
+	const FString& GetID() { return ID; }
+	void SetID(const FString& InID) { ID = InID; }
+	const FString& GetName() { return Name; }
+	void SetName(const FString& InName) { Name = InName; }
+
+	// Size/MinSize/MaxSize
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+		const FVector2D& GetSize() const { return Size; }
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+		void SetSize(const FVector2D& InSize, bool InIsPivotAsAnchor = false);
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+		float GetWidth();
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+		float GetHeight();
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+		void SetWidth(float InSizeWidth);
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+		void SetHeight(float InSizeHeight);
+
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+		FVector2D& GetMinSize() { return MinSize; }
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+		void SetMinSize(FVector2D InMinSize) { MinSize = InMinSize; }
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+		FVector2D GetMaxSize() { return MaxSize; }
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+		void SetMaxSize(FVector2D InMaxSize) { MaxSize = InMaxSize; }
+
+	void SetMinWidth(float InMinWidth) { MinSize.X = InMinWidth; }
+	void SetMinHeight(float InMinHeight) { MinSize.Y = InMinHeight; }
+	void SetMaxWidth(float InMaxWidth) { MaxSize.X = InMaxWidth; }
+	void SetMaxHeight(float InMaxHeight) { MaxSize.Y = InMaxHeight; }
+	float GetMinWidth() { return MinSize.X; };
+	float GetMinHeight() { return MinSize.Y; };
+	float GetMaxWidth() { return MaxSize.X; };
+	float GetMaxHeight() { return MaxSize.Y; };
+
+	// Parent
+	bool HasParent() { return Parent ? true : false; }
+	UFairyComponent* GetParent() { return Parent; }
+	void SetParent(UFairyComponent* InParent) { Parent = InParent; }
+	void SetSlot(TSharedPtr<SContainer::FSlot> InSlot) { WidgetSlot = InSlot; };
+
+	// todo: remove
+	bool InternalVisible() const;
+	bool InternalVisible2() const;
+	bool InternalVisible3() const;
+	void UpdateGearFromRelations(int32 Index, const FVector2D& Delta);
 
 	virtual void HandleGrayedChanged();
 	virtual void HandleControllerChanged(UGController* Controller);
 	virtual void HandleAlphaChanged();
 	virtual void HandleVisibleChanged();
 
-	virtual void SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos);
-	virtual void SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos);
-
 	void UpdateGear(int32 Index);
 	void CheckGearDisplay();
 
+protected:
+	FString ID;
+	FString Name;
+	
 	FVector2D Size;
 	FVector2D MinSize;
 	FVector2D MaxSize;
 
-	FWidgetTransform RenderTransform;
+	FWidgetTransform RenderTransform; // Describes the standard transformation of a widget: Translation, Scale, Shear, Angle
 	FVector2D RenderTransformPivot;
 
 	FVector2D RawSize; // todo
 	FVector2D LocalPosition; // local position
 	FVector2D Pivot; // todo
+
+	TOptional<FRelations> Relations;
 
 	bool bPivotAsAnchor = false;
 	float Alpha = 0.0f;
@@ -352,28 +376,31 @@ protected:
 	bool bVisible = false;
 	bool bGrayed = false;
 
+	class UFairyComponent* Parent; // parent visual object
+	TSharedPtr<SDisplayObject> DisplayObject; // the underlying SWidget
+	TSharedPtr<SContainer::FSlot> WidgetSlot;
+	TSharedPtr<FFairyPackageItem> PackageItem; // A Fairy Editor export data
 private:
-	bool InternalVisible() const;
-	bool InternalVisible2() const;
-	bool InternalVisible3() const;
-	void UpdateGearFromRelations(int32 Index, const FVector2D& Delta);
+
 	void UpdateRenderTransform();
 
+	// !!!DEPRECATED FUNCTION !!!
 	UFUNCTION()
 	void OnRollOverHandler(UEventContext* Context);
 	UFUNCTION()
 	void OnRollOutHandler(UEventContext* Context);
 
-	void InitDrag();
-	void DragBegin(int32 UserIndex, int32 PointerIndex);
-	void DragEnd();
+	// !!!DEPRECATED FUNCTION !!!
+	void InitDrag() {};
+	void DragBegin(int32 UserIndex, int32 PointerIndex) {};
+	void DragEnd() {};
 
 	UFUNCTION()
-	void OnTouchBeginHandler(UEventContext* Context);
+		void OnTouchBeginHandler(UEventContext* Context) {};
 	UFUNCTION()
-	void OnTouchMoveHandler(UEventContext* Context);
+		void OnTouchMoveHandler(UEventContext* Context) {};
 	UFUNCTION()
-	void OnTouchEndHandler(UEventContext* Context);
+		void OnTouchEndHandler(UEventContext* Context) {};
 
 	bool bInternalVisible = false;
 	bool bHandlingController = false;
@@ -382,7 +409,7 @@ private:
 	FString Tooltips;
 	TWeakObjectPtr<UGGroup> Group;
 	float SizePercentInGroup = 0.0f;
-	FRelations* Relations;
+
 	FGearBase* Gears[10];
 	FVector2D DragTouchStartPos;
 	TOptional<FBox2D> DragBounds;
@@ -404,11 +431,6 @@ private:
 	static FVector2D GlobalDragStart;
 	static FBox2D GlobalRect;
 	static bool bUpdateInDragging;
-
-	friend class UFairyComponent;
-	friend class UGGroup;
-	friend class FRelationItem;
-	friend class FUIObjectFactory;
 };
 
 template <typename T>

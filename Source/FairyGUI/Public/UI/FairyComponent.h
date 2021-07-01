@@ -176,7 +176,9 @@ public:
 	virtual void ConstructFromResource() override;
 	void ConstructFromResource(TArray<UFairyObject*>* ObjectPool, int32 PoolIndex);
 
+public:
 	bool bBuildingDisplayList;
+	virtual void MakeSlateWidget() override;
 
 protected:
 	virtual void ConstructExtension(FByteBuffer* Buffer);
@@ -195,7 +197,8 @@ protected:
 	void SetupScroll(FByteBuffer* Buffer);
 
 	UPROPERTY(Transient)
-	TArray<UFairyObject*> Children;
+	TArray<UFairyObject*> Children; // Child FairyObject
+
 	UPROPERTY(Transient)
 	TArray<UGController*> Controllers;
 	UPROPERTY(Transient)
@@ -204,9 +207,7 @@ protected:
 	UScrollPane* ScrollPane;
 
 	// Slate Resource
-	//TSharedPtr<SContainer> RootContainer;
 	TSharedPtr<SContainer> Container;
-	void MakeSlateWidget();
 
 	// Component attribute
 	FMargin Margin;
@@ -221,6 +222,7 @@ private:
 	int32 MoveChild(UFairyObject* Child, int32 OldIndex, int32 NewIndex);
 
 	void BuildNativeDisplayList(bool bImmediatelly = false);
+	void AddWidget(UFairyObject* InChild);
 
 	void OnAddedToStageHandler(UEventContext* Context);
 	void OnRemovedFromStageHandler(UEventContext* Context);

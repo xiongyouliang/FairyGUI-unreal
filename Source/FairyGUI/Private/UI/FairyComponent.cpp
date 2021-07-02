@@ -1117,42 +1117,43 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 		{
 			Buffer->Seek(curPos, 0);
 
-			EObjectType type = (EObjectType)Buffer->ReadByte();
+			EObjectType ObjectType = (EObjectType)Buffer->ReadByte();
 			const FString& src = Buffer->ReadS();
-			const FString& pkgId = Buffer->ReadS();
+			const FString& PackageID = Buffer->ReadS();
 
-			TSharedPtr<FFairyPackageItem> pi;
+			TSharedPtr<FFairyPackageItem> ChildPackageItem;
 			if (!src.IsEmpty())
 			{
-				UFairyPackage* pkg;
-				if (!pkgId.IsEmpty()) 
+				UFairyPackage* Package;
+				if (!PackageID.IsEmpty())
 				{
-					pkg = UFairyPackageMgr::Get()->GetPackageByID(pkgId);
+					Package = UFairyPackageMgr::Get()->GetPackageByID(PackageID);
 				}
 				else 
 				{
-					pkg = ContentItem->Owner;
+					Package = ContentItem->Owner;
 				}
 
-				if (pkg != nullptr)
+				if (Package != nullptr)
 				{
-					pi = pkg->GetItem(src);
+					ChildPackageItem = Package->GetItem(src);
 				}
 			}
 
-			if (pi.IsValid())
+			if (ChildPackageItem.IsValid())
 			{
-				Child = FUIObjectFactory::NewObject(GetOuter(), pi);
+				Child = FUIObjectFactory::NewObject(GetOuter(), ChildPackageItem);
 				Child->ConstructFromResource();
 			}
 			else
 			{
-				Child = FUIObjectFactory::NewObject(GetOuter(), type);
+				Child = FUIObjectFactory::NewObject(GetOuter(), ObjectType);
 			}
 		}
 
 		Child->bUnderConstruct = true;
 		Child->SetupBeforeAdd(Buffer, curPos);
+
 		AddChild(Child);
 
 		Buffer->SetPos(curPos + dataLen);

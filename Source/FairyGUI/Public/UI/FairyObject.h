@@ -303,26 +303,34 @@ public:
 
 	// Size/MinSize/MaxSize
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-		const FVector2D& GetSize() const { return Size; }
-	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-		void SetSize(const FVector2D& InSize, bool InIsPivotAsAnchor = false);
-	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-		float GetWidth();
-	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-		float GetHeight();
-	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-		void SetWidth(float InSizeWidth);
-	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-		void SetHeight(float InSizeHeight);
+	const FVector2D& GetSize() const { return Size; }
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-		FVector2D& GetMinSize() { return MinSize; }
+	void SetSize(const FVector2D& InSize, bool InIsPivotAsAnchor = false);
+
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-		void SetMinSize(FVector2D InMinSize) { MinSize = InMinSize; }
+	float GetWidth();
+
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-		FVector2D GetMaxSize() { return MaxSize; }
+	float GetHeight();
+
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-		void SetMaxSize(FVector2D InMaxSize) { MaxSize = InMaxSize; }
+	void SetWidth(float InSizeWidth);
+
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+	void SetHeight(float InSizeHeight);
+
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+	FVector2D& GetMinSize() { return MinSize; }
+
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+	void SetMinSize(FVector2D InMinSize) { MinSize = InMinSize; }
+
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+	FVector2D GetMaxSize() { return MaxSize; }
+
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+	void SetMaxSize(FVector2D InMaxSize) { MaxSize = InMaxSize; }
 
 	void SetMinWidth(float InMinWidth) { MinSize.X = InMinWidth; }
 	void SetMinHeight(float InMinHeight) { MinSize.Y = InMinHeight; }

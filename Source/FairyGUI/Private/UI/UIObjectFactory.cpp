@@ -33,7 +33,9 @@ void FUIObjectFactory::SetExtension(const FString& URL, FGComponentCreator Creat
     }
     TSharedPtr<FFairyPackageItem> PackageItem = UFairyPackageMgr::Get()->GetPackageItemByURL(URL);
     if (PackageItem.IsValid())
+    {
         PackageItem->ExtensionCreator = Creator;
+    }
 
     PackageItemExtensions.Add(URL, Creator);
 }

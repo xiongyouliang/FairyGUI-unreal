@@ -29,22 +29,30 @@ void UGButton::SetText(const FString& InText)
 {
     Title = InText;
     if (TitleObject != nullptr)
+    {
         TitleObject->SetText(InText);
+    }
     UpdateGear(6);
 }
 
 const FString& UGButton::GetIcon() const
 {
     if (IconObject != nullptr)
+    {
         return IconObject->GetIcon();
+    }
     else
+    {
         return G_EMPTY_STRING;
+    }
 }
 
 void UGButton::SetIcon(const FString & InIcon)
 {
     if (IconObject != nullptr)
+    {
         IconObject->SetIcon(InIcon);
+    }
     UpdateGear(7);
 }
 
@@ -52,23 +60,32 @@ void UGButton::SetSelectedTitle(const FString& InTitle)
 {
     SelectedTitle = InTitle;
     if (TitleObject != nullptr)
+    {
         TitleObject->SetText((bSelected && SelectedTitle.Len() > 0) ? SelectedTitle : Title);
+    }
 }
 
 void UGButton::SetSelectedIcon(const FString& InIcon)
 {
     SelectedIcon = InIcon;
     if (IconObject != nullptr)
+    {
         IconObject->SetIcon((bSelected && SelectedIcon.Len() > 0) ? SelectedIcon : Icon);
+    }
 }
 
 FColor UGButton::GetTitleColor() const
 {
     UGTextField* TextField = GetTextField();
     if (TextField)
+    {
         return TextField->GetTextFormat().Color;
+
+    }
     else
+    {
         return FColor::Black;
+    }
 }
 
 void UGButton::SetTitleColor(const FColor & InColor)
@@ -85,9 +102,13 @@ int32 UGButton::GetTitleFontSize() const
 {
     UGTextField* TextField = GetTextField();
     if (TextField)
+    {
         return TextField->GetTextFormat().Size;
+    }
     else
+    {
         return 0;
+    }
 }
 
 void UGButton::SetTitleFontSize(int32 InFontSize)
@@ -103,30 +124,42 @@ void UGButton::SetTitleFontSize(int32 InFontSize)
 void UGButton::SetSelected(bool bInSelected)
 {
     if (Mode == EButtonMode::Common)
+    {
         return;
+    }
 
     if (bSelected != bInSelected)
     {
         bSelected = bInSelected;
         SetCurrentState();
         if (!SelectedTitle.IsEmpty() && TitleObject != nullptr)
+        {
             TitleObject->SetText(bSelected ? SelectedTitle : Title);
+        }
+
         if (!SelectedIcon.IsEmpty())
         {
             const FString& str = bSelected ? SelectedIcon : Icon;
             if (IconObject != nullptr)
+            {
                 IconObject->SetIcon(str);
+            }
         }
+
         if (RelatedController != nullptr && GetParent() != nullptr && !GetParent()->bBuildingDisplayList)
         {
             if (bSelected)
             {
                 RelatedController->SetSelectedPageID(RelatedPageID);
                 if (RelatedController->bAutoRadioGroupDepth)
+                {
                     GetParent()->AdjustRadioGroupDepth(this, RelatedController);
+                }
             }
             else if (Mode == EButtonMode::Check && RelatedController->GetSelectedPageID() == RelatedPageID)
+            {
                 RelatedController->SetOppositePageID(RelatedPageID);
+            }
         }
     }
 }
@@ -139,7 +172,9 @@ void UGButton::SetRelatedController(UGController* InController)
 void UGButton::SetState(const FString& InState)
 {
     if (ButtonController != nullptr)
+    {
         ButtonController->SetSelectedPage(InState);
+    }
 
     if (DownEffect == 1)
     {
@@ -152,7 +187,9 @@ void UGButton::SetState(const FString& InState)
             {
                 UFairyObject* Obj = this->GetChildAt(i);
                 if (!Obj->IsA<UGTextField>())
+                {
                     Obj->SetProp(EObjectPropID::Color, Color);
+                }
             }
         }
         else
@@ -162,7 +199,9 @@ void UGButton::SetState(const FString& InState)
             {
                 UFairyObject* Obj = this->GetChildAt(i);
                 if (!Obj->IsA<UGTextField>())
+                {
                     Obj->SetProp(EObjectPropID::Color, Color);
+                }
             }
         }
     }
@@ -192,29 +231,45 @@ void UGButton::SetCurrentState()
     if (IsGrayed() && ButtonController != nullptr && ButtonController->HasPage(DISABLED))
     {
         if (bSelected)
+        {
             SetState(SELECTED_DISABLED);
+        }
         else
+        {
             SetState(DISABLED);
+        }
     }
     else
     {
         if (bSelected)
+        {
             SetState(bOver ? SELECTED_OVER : DOWN);
+        }
         else
+        {
             SetState(bOver ? OVER : UP);
+        }
     }
 }
 
 UGTextField * UGButton::GetTextField() const
 {
     if (TitleObject->IsA<UGTextField>())
+    {
         return Cast<UGTextField>(TitleObject);
+    }
     else if (TitleObject->IsA<UGLabel>())
+    {
         return Cast<UGLabel>(TitleObject)->GetTextField();
+    }
     else if (TitleObject->IsA<UGButton>())
+    {
         return Cast<UGButton>(TitleObject)->GetTextField();
+    }
     else
+    {
         return nullptr;
+    }
 }
 
 FNVariant UGButton::GetProp(EObjectPropID PropID) const
@@ -227,9 +282,13 @@ FNVariant UGButton::GetProp(EObjectPropID PropID) const
     {
         UGTextField* TextField = GetTextField();
         if (TextField != nullptr)
+        {
             return FNVariant(TextField->GetTextFormat().OutlineColor);
+        }
         else
+        {
             return FNVariant(FColor::Black);
+        }
     }
     case EObjectPropID::FontSize:
         return FNVariant(GetTitleFontSize());
@@ -279,18 +338,27 @@ void UGButton::ConstructExtension(FByteBuffer* Buffer)
     DownEffect = Buffer->ReadByte();
     DownEffectValue = Buffer->ReadFloat();
     if (DownEffect == 2)
+    {
         SetPivot(FVector2D(0.5f, 0.5f), IsPivotAsAnchor());
+    }
 
     ButtonController = GetController("button");
     TitleObject = GetChild("title");
     IconObject = GetChild("icon");
     if (TitleObject != nullptr)
+    {
         Title = TitleObject->GetText();
+    }
+
     if (IconObject != nullptr)
+    {
         Icon = IconObject->GetIcon();
+    }
 
     if (Mode == EButtonMode::Common)
+    {
         SetState(UP);
+    }
 
     On(FUIEvents::RollOver).AddUObject(this, &UGButton::OnRollOverHandler);
     On(FUIEvents::RollOut).AddUObject(this, &UGButton::OnRollOutHandler);
@@ -305,34 +373,60 @@ void UGButton::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
     UFairyComponent::SetupAfterAdd(Buffer, BeginPos);
 
     if (!Buffer->Seek(BeginPos, 6))
+    {
         return;
+    }
 
     if ((EObjectType)Buffer->ReadByte() != PackageItem->ObjectType)
+    {
         return;
+    }
 
     const FString* str;
 
     if ((str = Buffer->ReadSP()) != nullptr)
+    {
         SetTitle(*str);
+    }
+
     if ((str = Buffer->ReadSP()) != nullptr)
+    {
         SetSelectedTitle(*str);
+    }
+
     if ((str = Buffer->ReadSP()) != nullptr)
+    {
         SetIcon(*str);
+    }
+
     if ((str = Buffer->ReadSP()) != nullptr)
+    {
         SetSelectedIcon(*str);
+    }
+
     if (Buffer->ReadBool())
+    {
         SetTitleColor(Buffer->ReadColor());
+    }
+
     int32 iv = Buffer->ReadInt();
     if (iv != 0)
+    {
         SetTitleFontSize(iv);
+    }
+
     iv = Buffer->ReadShort();
     if (iv >= 0)
+    {
         RelatedController = GetParent()->GetControllerAt(iv);
+    }
     RelatedPageID = Buffer->ReadS();
 
     Buffer->ReadS(Sound);
     if (Buffer->ReadBool())
+    {
         SoundVolumeScale = Buffer->ReadFloat();
+    }
 
     SetSelected(Buffer->ReadBool());
 }
@@ -342,20 +436,28 @@ void UGButton::HandleControllerChanged(UGController* Controller)
     UFairyObject::HandleControllerChanged(Controller);
 
     if (RelatedController == Controller)
+    {
         SetSelected(RelatedPageID == Controller->GetSelectedPageID());
+    }
 }
 
 void UGButton::OnRollOverHandler(UEventContext* Context)
 {
     if (ButtonController == nullptr || !ButtonController->HasPage(OVER))
+    {
         return;
+    }
 
     bOver = true;
     if (bDown)
+    {
         return;
+    }
 
     if (IsGrayed() && ButtonController->HasPage(DISABLED))
+    {
         return;
+    }
 
     SetState(bSelected ? SELECTED_OVER : OVER);
 }
@@ -363,14 +465,20 @@ void UGButton::OnRollOverHandler(UEventContext* Context)
 void UGButton::OnRollOutHandler(UEventContext* Context)
 {
     if (ButtonController == nullptr || !ButtonController->HasPage(OVER))
+    {
         return;
+    }
 
     bOver = false;
     if (bDown)
+    {
         return;
+    }
 
     if (IsGrayed() && ButtonController->HasPage(DISABLED))
+    {
         return;
+    }
 
     SetState(bSelected ? DOWN : UP);
 }
@@ -378,7 +486,9 @@ void UGButton::OnRollOutHandler(UEventContext* Context)
 void UGButton::OnTouchBeginHandler(UEventContext* Context)
 {
     if (Context->GetMouseButton() != EKeys::LeftMouseButton)
+    {
         return;
+    }
 
     bDown = true;
     Context->CaptureTouch();
@@ -386,16 +496,22 @@ void UGButton::OnTouchBeginHandler(UEventContext* Context)
     if (Mode == EButtonMode::Common)
     {
         if (IsGrayed() && ButtonController != nullptr && ButtonController->HasPage(DISABLED))
+        {
             SetState(SELECTED_DISABLED);
+        }
         else
+        {
             SetState(DOWN);
+        }
     }
 }
 
 void UGButton::OnTouchEndHandler(UEventContext* Context)
 {
     if (Context->GetMouseButton() != EKeys::LeftMouseButton)
+    {
         return;
+    }
 
     if (bDown)
     {
@@ -403,11 +519,17 @@ void UGButton::OnTouchEndHandler(UEventContext* Context)
         if (Mode == EButtonMode::Common)
         {
             if (IsGrayed() && ButtonController != nullptr && ButtonController->HasPage(DISABLED))
+            {
                 SetState(DISABLED);
+            }
             else if (bOver)
+            {
                 SetState(OVER);
+            }
             else
+            {
                 SetState(UP);
+            }
         }
         else
         {
@@ -443,12 +565,16 @@ void UGButton::OnClickHandler(UEventContext* Context)
     else
     {
         if (RelatedController != nullptr)
+        {
             RelatedController->SetSelectedPageID(RelatedPageID);
+        }
     }
 }
 
 void UGButton::OnRemovedFromStageHandler(UEventContext* Context)
 {
     if (bOver)
+    {
         OnRollOutHandler(Context);
+    }
 }

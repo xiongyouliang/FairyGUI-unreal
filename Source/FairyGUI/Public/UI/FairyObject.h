@@ -363,14 +363,12 @@ protected:
 
 	FWidgetTransform RenderTransform; // Describes the standard transformation of a widget: Translation, Scale, Shear, Angle
 	FVector2D RenderTransformPivot;
+	bool bPivotAsAnchor;
 
-	FVector2D RawSize; // todo
 	FVector2D LocalPosition; // local position
-	FVector2D Pivot; // todo
 
 	TOptional<FRelations> Relations;
 
-	bool bPivotAsAnchor = false;
 	float Alpha = 0.0f;
 	
 	bool bVisible = false;

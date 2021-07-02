@@ -20,7 +20,8 @@ UFairyObject::UFairyObject() :
 	Size(ForceInit),
 	MinSize(ForceInit),
 	MaxSize(ForceInit),
-	RenderTransformPivot(FVector2D(0.5f, 0.5f)),
+	RenderTransformPivot(ForceInit),
+	bPivotAsAnchor(false),
 	Alpha(1.0f),
 	bVisible(true),
 	bInternalVisible(true),
@@ -164,7 +165,7 @@ float UFairyObject::GetScaleY()
 
 void UFairyObject::SetSkew(const FVector2D& InSkew)
 {
-	RenderTransform.Shear = InSkew;
+	RenderTransform.Shear = -InSkew;
 	UpdateRenderTransform();
 }
 
@@ -175,7 +176,7 @@ const FVector2D& UFairyObject::GetSkew() const
 
 void UFairyObject::SetRotation(float InRotation)
 {
-	RenderTransform.Angle = FMath::DegreesToRadians(InRotation);
+	RenderTransform.Angle = InRotation;
 	UpdateRenderTransform();
 }
 
@@ -694,7 +695,7 @@ void UFairyObject::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 	{
 		float SkewX = Buffer->ReadFloat();
 		float SkewY = Buffer->ReadFloat();
-		RenderTransform.Shear = FVector2D(SkewX, SkewY);
+		RenderTransform.Shear = -FVector2D(SkewX, SkewY);
 	}
 
 	if (Buffer->ReadBool())
@@ -715,7 +716,7 @@ void UFairyObject::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 	float RotationValue = Buffer->ReadFloat();
 	if (RotationValue != 0)
 	{
-		RenderTransform.Angle = FMath::RadiansToDegrees(RotationValue);
+		RenderTransform.Angle = RotationValue;
 	}
 
 	if (!Buffer->ReadBool())

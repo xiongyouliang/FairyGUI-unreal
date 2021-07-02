@@ -685,7 +685,12 @@ void UFairyComponent::AddWidget(UFairyObject* InChild)
 	SContainer::FSlot& Slot = Container->AddChild(InChild->GetDisplayObject());
 	Slot.Position(InChild->GetPosition());
 	Slot.Size(InChild->GetSize());
-	InChild->SetSlot(MakeShareable(&Slot));
+	InChild->SetSlot(&Slot);
+	
+	if (InChild->IsPivotAsAnchor())
+	{
+		Slot.Anchor(InChild->GetPivot());
+	}
 }
 
 void UFairyComponent::ChildStateChanged(UFairyObject* Child)

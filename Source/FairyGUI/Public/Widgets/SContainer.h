@@ -21,15 +21,24 @@ public:
             return *this;
         }
 
-        FSlot& Scale(const TAttribute<FVector2D>& InScale)
+        FSlot& Anchor(const TAttribute<FVector2D>& InAnchor)
         {
-            ScaleAttr = InScale;
+            AnchorAttr = InAnchor;
             return *this;
         }
 
         TAttribute<FVector2D> PositionAttr;
         TAttribute<FVector2D> SizeAttr;
-        TAttribute<FVector2D> ScaleAttr;
+        TAttribute<FVector2D> AnchorAttr;
+
+        FSlot()
+            :TSlotBase<FSlot>()
+            , PositionAttr(FVector2D::ZeroVector)
+            , SizeAttr(FVector2D(1.0f, 1.0f))
+            , AnchorAttr(FVector2D::ZeroVector)
+        {
+
+        }
     };
 
     SLATE_BEGIN_ARGS(SContainer) :

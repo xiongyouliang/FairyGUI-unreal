@@ -127,11 +127,18 @@ void SContainer::OnArrangeChildren(const FGeometry& AllottedGeometry, FArrangedC
             const TSharedRef<SWidget>& CurWidget = CurChild.GetWidget();
             const FVector2D& CurChildPos = CurChild.PositionAttr.Get();
             const FVector2D& CurChildSize = CurChild.SizeAttr.Get();
-            //const FVector2D& CurChildScale = CurChild.ScaleAttr.Get();
+            const FVector2D& CurChildAnchor = CurChild.AnchorAttr.Get();
+
+            FVector2D FinalPos = CurChildPos;
+            if (CurChildAnchor != FVector2D::ZeroVector)
+            {
+                FinalPos = CurChildPos - CurChildSize * CurChildAnchor;
+            }
+
             if (ArrangedChildren.Accepts(CurWidget->GetVisibility()))
             {
                 ArrangedChildren.AddWidget(
-                    AllottedGeometry.MakeChild(CurWidget, CurChildSize, FSlateLayoutTransform(CurChildPos))
+                    AllottedGeometry.MakeChild(CurWidget, CurChildSize, FSlateLayoutTransform(FinalPos))
                 );
             }   
         }

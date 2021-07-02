@@ -337,7 +337,7 @@ public:
 	bool HasParent() { return Parent ? true : false; }
 	UFairyComponent* GetParent() { return Parent; }
 	void SetParent(UFairyComponent* InParent) { Parent = InParent; }
-	void SetSlot(TSharedPtr<SContainer::FSlot> InSlot) { WidgetSlot = InSlot; };
+	void SetSlot(SContainer::FSlot* InSlot) { WidgetSlot = InSlot; };
 
 	// todo: remove
 	bool InternalVisible() const;
@@ -376,7 +376,7 @@ protected:
 
 	class UFairyComponent* Parent; // parent visual object
 	TSharedPtr<SDisplayObject> DisplayObject; // the underlying SWidget
-	TSharedPtr<SContainer::FSlot> WidgetSlot;
+	SContainer::FSlot* WidgetSlot;
 	TSharedPtr<FFairyPackageItem> PackageItem; // A Fairy Editor export data
 private:
 

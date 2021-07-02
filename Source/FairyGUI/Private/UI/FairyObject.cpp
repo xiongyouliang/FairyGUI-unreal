@@ -25,7 +25,8 @@ UFairyObject::UFairyObject() :
 	Alpha(1.0f),
 	bVisible(true),
 	bInternalVisible(true),
-	SortingOrder(0)
+	SortingOrder(0),
+	WidgetSlot(nullptr)
 {
 	static int32 _gInstanceCounter = 1;
 	ID.AppendInt(_gInstanceCounter);
@@ -38,6 +39,8 @@ UFairyObject::UFairyObject() :
 
 UFairyObject::~UFairyObject()
 {
+	WidgetSlot = nullptr;
+
 	for (int32 i = 0; i < 10; i++)
 	{
 		if (Gears[i])
@@ -70,10 +73,8 @@ void UFairyObject::BeginDestroy()
 
 void UFairyObject::SetPosition(const FVector2D& InPosition)
 {
-	//RenderTransform.Translation = InPosition;
 	LocalPosition = InPosition;
-	//UpdateRenderTransform();
-	if (WidgetSlot.IsValid())
+	if (WidgetSlot)
 	{
 		WidgetSlot->Position(InPosition);
 	}
@@ -96,7 +97,7 @@ void UFairyObject::SetSize(const FVector2D& InSize, bool InIsPivotAsAnchor)
 	Size = InSize;
 	bPivotAsAnchor = InIsPivotAsAnchor;
 
-	if (WidgetSlot.IsValid())
+	if (WidgetSlot)
 	{
 		WidgetSlot->Size(InSize);
 	}
@@ -665,9 +666,9 @@ void UFairyObject::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 	this->ID = Buffer->ReadS();
 	this->Name = Buffer->ReadS();
 
+	// position attribute, delay setting as we need know the anchor attribute
 	float PosX = Buffer->ReadInt();
 	float PosY = Buffer->ReadInt();
-	//RenderTransform.Translation = FVector2D(PosX, PosY);
 	SetPosition(FVector2D(PosX, PosY));
 
 	if (Buffer->ReadBool())

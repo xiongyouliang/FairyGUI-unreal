@@ -1,5 +1,14 @@
 #include "Utils/ByteBuffer.h"
 
+inline bool IsLittleEndian()
+{
+	static const union {
+		int dummy;
+		char little;
+	} nativeendian = { 1 };
+	return (bool)nativeendian.little;
+}
+
 FByteBuffer::FByteBuffer(const uint8* InBuffer, int32 InOffset, int32 InLen, bool bInTransferOwnerShip)
 	: bLittleEndian(false),
 	Version(0),
@@ -14,7 +23,9 @@ FByteBuffer::FByteBuffer(const uint8* InBuffer, int32 InOffset, int32 InLen, boo
 FByteBuffer::~FByteBuffer()
 {
 	if (bOwnsBuffer && Buffer != nullptr)
-		FMemory::Free((void *)Buffer);
+	{
+		FMemory::Free((void*)Buffer);
+	}
 }
 
 int32 FByteBuffer::GetBytesAvailable() const
@@ -26,7 +37,9 @@ int8 FByteBuffer::ReadByte()
 {
 	signed char val = Buffer[Offset + Position];
 	if (val > 127)
+	{
 		val = val - 255;
+	}
 	Position += 1;
 	return val;
 }
@@ -49,9 +62,13 @@ int16 FByteBuffer::ReadShort()
 	Position += 2;
 	uint8* pbyte = (uint8*)(Buffer + startIndex);
 	if (bLittleEndian)
+	{
 		return (int16)((*pbyte) | (*(pbyte + 1) << 8));
+	}
 	else
+	{
 		return (int16)((*pbyte << 8) | (*(pbyte + 1)));
+	}
 }
 
 uint16 FByteBuffer::ReadUshort()
@@ -65,9 +82,13 @@ int32 FByteBuffer::ReadInt()
 	Position += 4;
 	uint8* pbyte = (uint8*)(Buffer + startIndex);
 	if (bLittleEndian)
+	{
 		return (*pbyte) | (*(pbyte + 1) << 8) | (*(pbyte + 2) << 16) | (*(pbyte + 3) << 24);
+	}
 	else
+	{
 		return (*pbyte << 24) | (*(pbyte + 1) << 16) | (*(pbyte + 2) << 8) | (*(pbyte + 3));
+	}
 }
 
 uint32 FByteBuffer::ReadUint()
@@ -105,16 +126,22 @@ const FString& FByteBuffer::ReadS()
 {
 	uint16 index = ReadUshort();
 	if (index == 65534 || index == 65533)
+	{
 		return G_EMPTY_STRING;
+	}
 	else
+	{
 		return (*StringTable)[index];
+	}
 }
 
 bool FByteBuffer::ReadS(FString& OutString)
 {
 	uint16 index = ReadUshort();
 	if (index == 65534) //null
+	{
 		return false;
+	}
 	else if (index == 65533)
 	{
 		OutString.Reset();
@@ -131,24 +158,34 @@ const FString* FByteBuffer::ReadSP()
 {
 	uint16 index = ReadUshort();
 	if (index == 65534) //null
+	{
 		return nullptr;
+	}
 	else if (index == 65533)
+	{
 		return &G_EMPTY_STRING;
+	}
 	else
+	{
 		return &(*StringTable)[index];
+	}
 }
 
 void FByteBuffer::ReadSArray(TArray<FString>& OutArray, int32 InCount)
 {
 	for (int32 i = 0; i < InCount; i++)
+	{
 		OutArray.Push(ReadS());
+	}
 }
 
 void FByteBuffer::WriteS(const FString& InString)
 {
 	uint16 index = ReadUshort();
 	if (index != 65534 && index != 65533)
+	{
 		(*StringTable)[index] = InString;
+	}
 }
 
 FColor FByteBuffer::ReadColor()
@@ -174,7 +211,9 @@ TSharedPtr<FByteBuffer> FByteBuffer::ReadBuffer(bool bCloneBuffer)
 		ba = new FByteBuffer(p, 0, count, true);
 	}
 	else
+	{
 		ba = new FByteBuffer(Buffer, Position, count, false);
+	}
 	ba->StringTable = StringTable;
 	ba->Version = Version;
 	Position += count;

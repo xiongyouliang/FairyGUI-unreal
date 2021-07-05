@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/Texture2D.h"
-#include "FieldTypes.h"
+#include "UI/FieldTypes.h"
 #include "FairyCommons.h"
 
 class FByteBuffer;

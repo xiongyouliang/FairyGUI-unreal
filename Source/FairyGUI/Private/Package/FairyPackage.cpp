@@ -153,7 +153,9 @@ void UFairyPackage::Load(FByteBuffer* Buffer)
             Buffer->ReadSArray(Branches, cnt);
             FString CurBranch = UFairyPackageMgr::Get()->GetBranch();
             if (!CurBranch.IsEmpty())
+            {
                 BranchIndex = Branches.IndexOfByKey(CurBranch);
+            }
         }
 
         branchIncluded = cnt > 0;
@@ -198,7 +200,9 @@ void UFairyPackage::Load(FByteBuffer* Buffer)
                 pi->TileGridIndice = Buffer->ReadInt();
             }
             else if (scaleOption == 2)
+            {
                 pi->bScaleByTile = true;
+            }
 
             Buffer->ReadBool(); //smoothing
             break;
@@ -222,9 +226,13 @@ void UFairyPackage::Load(FByteBuffer* Buffer)
         {
             int32 extension = Buffer->ReadByte();
             if (extension > 0)
+            {
                 pi->ObjectType = (EObjectType)extension;
+            }
             else
+            {
                 pi->ObjectType = EObjectType::Component;
+            }
             pi->RawData = Buffer->ReadBuffer(false);
 
             FUIObjectFactory::ResolvePackageItemExtension(pi);
@@ -255,7 +263,9 @@ void UFairyPackage::Load(FByteBuffer* Buffer)
         {
             FString str = Buffer->ReadS(); //branch
             if (!str.IsEmpty())
+            {
                 pi->Name = str + "/" + pi->Name;
+            }
 
             int32 branchCnt = Buffer->ReadUbyte();
             if (branchCnt > 0)
@@ -266,7 +276,9 @@ void UFairyPackage::Load(FByteBuffer* Buffer)
                     Buffer->ReadSArray(pi->Branches.GetValue(), branchCnt);
                 }
                 else
+                {
                     ItemsByID.Add(Buffer->ReadS(), pi);
+                }
             }
 
             int32 highResCnt = Buffer->ReadUbyte();
@@ -280,7 +292,9 @@ void UFairyPackage::Load(FByteBuffer* Buffer)
         Items.Push(pi);
         ItemsByID.Add(pi->ID, pi);
         if (!pi->Name.IsEmpty())
+        {
             ItemsByName.Add(pi->Name, pi);
+        }
 
         Buffer->SetPos(nextPos);
     }

@@ -5,7 +5,8 @@
 #include "UI/Transition.h"
 
 FRelationItem::FRelationItem(UFairyObject* InOwner) :
-    TargetData(ForceInit)
+    TargetData(ForceInit),
+    Target(nullptr)
 {
     Owner = InOwner;
 }
@@ -17,12 +18,14 @@ FRelationItem::~FRelationItem()
 
 void FRelationItem::SetTarget(UFairyObject* InTarget)
 {
-    if (Target.Get() != InTarget)
+    if (Target != InTarget)
     {
         ReleaseRefTarget();
         Target = InTarget;
         if (InTarget)
+        {
             AddRefTarget(InTarget);
+        }
     }
 }
 
@@ -38,7 +41,9 @@ void FRelationItem::Add(ERelationType RelationType, bool bUsePercent)
     for (auto& it : Defs)
     {
         if (it.Type == RelationType)
+        {
             return;
+        }
     }
 
     InternalAdd(RelationType, bUsePercent);
@@ -83,11 +88,13 @@ void FRelationItem::Remove(ERelationType RelationType)
 
 void FRelationItem::CopyFrom(const FRelationItem& Source)
 {
-    SetTarget(Source.Target.Get());
+    SetTarget(Source.Target);
 
     Defs.Reset();
     for (auto& it : Source.Defs)
+    {
         Defs.Add(it);
+    }
 }
 
 bool FRelationItem::IsEmpty() const
@@ -97,8 +104,10 @@ bool FRelationItem::IsEmpty() const
 
 void FRelationItem::ApplyOnSelfSizeChanged(float DeltaWidth, float DeltaHeight, bool bApplyPivot)
 {
-    if (!Target.IsValid() || Defs.Num() == 0)
+    if (Target == nullptr || Defs.Num() == 0)
+    {
         return;
+    }
 
     const FVector2D OldPos = Owner->GetPosition();
 
@@ -671,7 +680,7 @@ void FRelationItem::AddRefTarget(UFairyObject* InTarget)
 
 void FRelationItem::ReleaseRefTarget()
 {
-    if (!Target.IsValid())
+    if (Target == nullptr)
     {
         return;
     }
@@ -697,7 +706,7 @@ void FRelationItem::OnTargetXYChanged()
 
     for (auto& it : Defs)
     {
-        ApplyOnXYChanged(Target.Get(), it, dx, dy);
+        ApplyOnXYChanged(Target, it, dx, dy);
     }
 
     TargetData.X = Target->GetPosition().X;

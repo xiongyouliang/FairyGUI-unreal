@@ -49,10 +49,14 @@ void FRelations::Remove(UFairyObject * InTarget, ERelationType ERelationType)
                 Items.RemoveAt(Index);
             }
             else
+            {
                 Index++;
+            }
         }
         else
+        {
             Index++;
+        }
     }
 }
 
@@ -61,7 +65,9 @@ bool FRelations::Contains(UFairyObject * InTarget)
     for (auto& it : Items)
     {
         if (it.GetTarget() == InTarget)
+        {
             return true;
+        }
     }
 
     return false;
@@ -74,9 +80,13 @@ void FRelations::ClearFor(UFairyObject * InTarget)
     {
         FRelationItem& Item = Items[Index];
         if (Item.GetTarget() == InTarget)
+        {
             Items.RemoveAt(Index);
+        }
         else
+        {
             Index++;
+        }
     }
 }
 
@@ -100,7 +110,9 @@ void FRelations::CopyFrom(const FRelations & Source)
 void FRelations::OnOwnerSizeChanged(const FVector2D& Delta, bool bApplyPivot)
 {
     for (auto& it : Items)
+    {
         it.ApplyOnSelfSizeChanged(Delta.X, Delta.Y, bApplyPivot);
+    }
 }
 
 bool FRelations::IsEmpty() const
@@ -116,11 +128,17 @@ void FRelations::Setup(FByteBuffer * Buffer, bool bParentToChild)
     {
         int16 targetIndex = Buffer->ReadShort();
         if (targetIndex == -1)
+        {
             target = Owner->GetParent();
+        }
         else if (bParentToChild)
+        {
             target = (Cast<UFairyComponent>(Owner))->GetChildAt(targetIndex);
+        }
         else
+        {
             target = Owner->GetParent()->GetChildAt(targetIndex);
+        }
 
         FRelationItem* newItem = new FRelationItem(Owner);
         newItem->SetTarget(target);

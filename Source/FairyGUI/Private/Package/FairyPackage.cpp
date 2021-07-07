@@ -112,8 +112,9 @@ void UFairyPackage::Load(FByteBuffer* Buffer)
         UE_LOG(LogFairyGUI, Error, TEXT("not valid package format in %d '%s'"), Buffer->ReadUint(), *AssetPath);
         return;
     }
+    uint32 CurVersion = Buffer->ReadInt();
+    Buffer->Version = CurVersion; // todo: Version property need move to UFairyPackage class or/and FFairyPackageItem, FByteBuffer just as a help class
 
-    Buffer->Version = Buffer->ReadInt();
     bool ver2 = Buffer->Version >= 2;
     Buffer->ReadBool(); //compressed
     ID = Buffer->ReadString();
@@ -121,9 +122,9 @@ void UFairyPackage::Load(FByteBuffer* Buffer)
     Buffer->Skip(20);
     int32 indexTablePos = Buffer->GetPos();
     int32 cnt;
-
+    
+    // parse package string table first: index = 4
     Buffer->Seek(indexTablePos, 4);
-
     cnt = Buffer->ReadInt();
     TArray<FString>* StringTable = new TArray<FString>();
     StringTable->SetNum(cnt, true);
@@ -133,6 +134,7 @@ void UFairyPackage::Load(FByteBuffer* Buffer)
     }
     Buffer->StringTable = MakeShareable(StringTable);
 
+    // dependency segment: index = 0
     Buffer->Seek(indexTablePos, 0);
     cnt = Buffer->ReadShort();
     for (int32 i = 0; i < cnt; i++)
@@ -161,8 +163,8 @@ void UFairyPackage::Load(FByteBuffer* Buffer)
         branchIncluded = cnt > 0;
     }
 
+    // all item info segument in this package: index = 1;
     Buffer->Seek(indexTablePos, 1);
-
     FString path = FPaths::GetPath(AssetPath);
     FString fileName = FPaths::GetBaseFilename(AssetPath);
 
@@ -299,8 +301,8 @@ void UFairyPackage::Load(FByteBuffer* Buffer)
         Buffer->SetPos(nextPos);
     }
 
+    // Atlas Sprite info segment: index = 2
     Buffer->Seek(indexTablePos, 2);
-
     cnt = Buffer->ReadShort();
     for (int32 i = 0; i < cnt; i++)
     {
@@ -347,7 +349,6 @@ void UFairyPackage::Load(FByteBuffer* Buffer)
     //    {
     //        int32 nextPos = buffer->readInt();
     //        nextPos += buffer->getPos();
-
     //        auto it = ItemsByID.find(buffer->readS());
     //        if (it != ItemsByID.end())
     //        {
@@ -358,10 +359,10 @@ void UFairyPackage::Load(FByteBuffer* Buffer)
     //                pi->pixelHitTestData->load(buffer);
     //            }
     //        }
-
     //        buffer->setPos(nextPos);
     //    }
     //}
+
 }
 
 void* UFairyPackage::GetItemAsset(const TSharedPtr<FFairyPackageItem>& Item)

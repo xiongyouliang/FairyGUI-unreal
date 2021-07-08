@@ -370,7 +370,7 @@ void UGButton::ConstructExtension(FByteBuffer* Buffer)
 
 void UGButton::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
-    UFairyComponent::SetupAfterAdd(Buffer, BeginPos);
+    Super::SetupAfterAdd(Buffer, BeginPos);
 
     if (!Buffer->Seek(BeginPos, 6))
     {

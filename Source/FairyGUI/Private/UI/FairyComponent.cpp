@@ -581,7 +581,7 @@ void UFairyComponent::SetViewWidth(float InViewWidth)
 	}
 	else
 	{
-		//SetWidth(InViewWidth + Margin.Left + Margin.Right);
+		SetWidth(InViewWidth + Margin.Left + Margin.Right);
 	}	
 }
 
@@ -605,7 +605,7 @@ void UFairyComponent::SetViewHeight(float InViewHeight)
 	}
 	else
 	{
-		//SetHeight(InViewHeight + Margin.Top + Margin.Bottom);
+		SetHeight(InViewHeight + Margin.Top + Margin.Bottom);
 	}
 }
 
@@ -683,14 +683,13 @@ void UFairyComponent::SetBounds(float ax, float ay, float aw, float ah)
 void UFairyComponent::AddWidget(UFairyObject* InChild)
 {
 	SContainer::FSlot& Slot = Container->AddChild(InChild->GetDisplayObject());
-	Slot.Position(InChild->GetPosition());
-	Slot.Size(InChild->GetSize());
-	InChild->SetSlot(&Slot);
+	//Slot.Position(InChild->GetPosition());
+	//Slot.Size(InChild->GetSize());
+	Slot.PositionAttr.BindUFunction(InChild, TEXT("GetRelationPos"));
+	Slot.SizeAttr.BindUFunction(InChild, TEXT("GetRelationSize"));
 	
-	if (InChild->IsPivotAsAnchor())
-	{
-		Slot.Anchor(InChild->GetPivot());
-	}
+	Slot.Anchor(InChild->GetAnchor());
+	InChild->SetSlot(&Slot);
 }
 
 void UFairyComponent::ChildStateChanged(UFairyObject* Child)
@@ -1121,7 +1120,7 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 			const FString& src = Buffer->ReadS();
 			const FString& PackageID = Buffer->ReadS();
 
-			TSharedPtr<FFairyPackageItem> ChildPackageItem;
+			TSharedPtr<FFairyPackageItem> ChildPackageItem = nullptr;
 			if (!src.IsEmpty())
 			{
 				UFairyPackage* Package;
@@ -1160,7 +1159,7 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 	}
 
 	Buffer->Seek(0, 3);
-	GetRelations().Setup(Buffer, true);
+	GetRelations().Setup(Buffer, true); // setup the Component relation info
 
 	Buffer->Seek(0, 2);
 	Buffer->Skip(2);
@@ -1171,7 +1170,7 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 		nextPos += Buffer->GetPos();
 
 		Buffer->Seek(Buffer->GetPos(), 3);
-		Children[i]->GetRelations().Setup(Buffer, false);
+		Children[i]->GetRelations().Setup(Buffer, false); // setup the child relation info
 
 		Buffer->SetPos(nextPos);
 	}
@@ -1244,12 +1243,7 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 
 	BuildNativeDisplayList();
 	SetBoundsChangedFlag();
-
-	if (ContentItem->ObjectType != EObjectType::Component)
-	{
-		ConstructExtension(Buffer);
-	}
-
+	ConstructExtension(Buffer);
 	OnConstruct();
 }
 

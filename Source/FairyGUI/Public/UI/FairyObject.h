@@ -89,6 +89,7 @@ public:
 	void SetPivot(const FVector2D& InPivot, bool bAsAnchor = false);
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	bool IsPivotAsAnchor() const { return bPivotAsAnchor; }
+	const FVector2D& GetAnchor() const { return Anchor; }
 
 	// opacity/alpha attribute
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
@@ -219,15 +220,6 @@ public:
 	void InvokeEventDelegate(UEventContext* Context);
 	FGUIEventMDelegate& On(const FName& EventType);
 
-	FSimpleMulticastDelegate& OnPositionChanged()
-	{
-		return OnPositionChangedEvent;
-	}
-
-	FSimpleMulticastDelegate& OnSizeChanged()
-	{
-		return OnSizeChangedEvent;
-	}
 
 	//UPROPERTY(BlueprintAssignable, Category = "FairyGUI|LifyCycle")
 	//FSimpleDynDelegate OnConstructed;
@@ -306,7 +298,7 @@ public:
 	const FVector2D& GetSize() const { return Size; }
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	void SetSize(const FVector2D& InSize, bool InIsPivotAsAnchor = false);
+	void SetSize(const FVector2D& InSize);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	float GetWidth();
@@ -341,6 +333,11 @@ public:
 	float GetMaxWidth() { return MaxSize.X; };
 	float GetMaxHeight() { return MaxSize.Y; };
 
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+		const FVector2D& GetRelationSize() const;
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+		const FVector2D& GetRelationPos() const;
+
 	// Parent
 	bool HasParent() { return Parent ? true : false; }
 	UFairyComponent* GetParent() { return Parent; }
@@ -368,6 +365,7 @@ protected:
 	FVector2D Size;
 	FVector2D MinSize;
 	FVector2D MaxSize;
+	FVector2D Anchor;
 
 	FWidgetTransform RenderTransform; // Describes the standard transformation of a widget: Translation, Scale, Shear, Angle
 	FVector2D RenderTransformPivot;
@@ -429,9 +427,6 @@ private:
 	};
 	TMap<FName, FUnifiedEventDelegate> EventDelegates;
 	FUnifiedEventDelegate& GetEventDelegate(const FName& EventType);
-
-	FSimpleMulticastDelegate OnPositionChangedEvent;
-	FSimpleMulticastDelegate OnSizeChangedEvent;
 
 	static TWeakObjectPtr<UFairyObject> DraggingObject;
 	static FVector2D GlobalDragStart;

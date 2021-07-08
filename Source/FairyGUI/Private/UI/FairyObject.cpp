@@ -20,13 +20,14 @@ UFairyObject::UFairyObject() :
 	Size(ForceInit),
 	MinSize(ForceInit),
 	MaxSize(ForceInit),
+	Anchor(ForceInit),
 	RenderTransformPivot(ForceInit),
 	bPivotAsAnchor(false),
 	Alpha(1.0f),
 	bVisible(true),
 	bInternalVisible(true),
-	SortingOrder(0),
-	WidgetSlot(nullptr)
+	WidgetSlot(nullptr),
+	SortingOrder(0)
 {
 	static int32 _gInstanceCounter = 1;
 	ID.AppendInt(_gInstanceCounter);
@@ -92,10 +93,9 @@ void UFairyObject::SetPositionY(const float InPositionY)
 	SetPosition(NewPos);
 }
 
-void UFairyObject::SetSize(const FVector2D& InSize, bool InIsPivotAsAnchor)
+void UFairyObject::SetSize(const FVector2D& InSize)
 {
 	Size = InSize;
-	bPivotAsAnchor = InIsPivotAsAnchor;
 
 	if (WidgetSlot)
 	{
@@ -105,12 +105,14 @@ void UFairyObject::SetSize(const FVector2D& InSize, bool InIsPivotAsAnchor)
 
 void UFairyObject::SetWidth(float InSizeWidth)
 {
-	Size.X = InSizeWidth;
+	FVector2D NewSize(InSizeWidth, Size.Y);
+	SetSize(NewSize);
 }
 
 void UFairyObject::SetHeight(float InSizeHeight)
 {
-	Size.Y = InSizeHeight;
+	FVector2D NewSize(Size.X, InSizeHeight);
+	SetSize(NewSize);
 }
 
 float UFairyObject::GetWidth()
@@ -129,6 +131,11 @@ void UFairyObject::SetPivot(const FVector2D& InPivot, bool bAsAnchor)
 	{
 		RenderTransformPivot = InPivot;
 		bPivotAsAnchor = bAsAnchor;
+		if (bAsAnchor)
+		{
+			Anchor = InPivot;
+		}
+
 		if (DisplayObject.IsValid())
 		{
 			DisplayObject->SetRenderTransformPivot(RenderTransformPivot);
@@ -196,6 +203,19 @@ void UFairyObject::UpdateRenderTransform()
 
 		DisplayObject->SetRenderTransformPivot(RenderTransformPivot);
 	}
+}
+
+
+const FVector2D& UFairyObject::GetRelationSize() const
+{
+	// todo: calculate final relation size
+	return GetSize();
+}
+
+const FVector2D& UFairyObject::GetRelationPos() const
+{
+	// todo: calculate final relation position
+	return GetPosition();
 }
 
 void UFairyObject::SetAlpha(float InAlpha)
@@ -402,7 +422,9 @@ FVector2D UFairyObject::LocalToGlobal(const FVector2D& InPoint)
 {
 	FVector2D Point = InPoint;
 	if (bPivotAsAnchor)
+	{
 		Point += Size * RenderTransformPivot;
+	}
 
 	return DisplayObject->GetCachedGeometry().LocalToAbsolute(Point);
 }
@@ -428,7 +450,9 @@ FVector2D UFairyObject::GlobalToLocal(const FVector2D& InPoint)
 {
 	FVector2D Point = DisplayObject->GetCachedGeometry().AbsoluteToLocal(InPoint);
 	if (bPivotAsAnchor)
+	{
 		Point -= Size * RenderTransformPivot;
+	}
 	return Point;
 }
 
@@ -658,6 +682,9 @@ void UFairyObject::HandleControllerChanged(UGController* Controller)
 	CheckGearDisplay();
 }
 
+/**
+* setup base property for this FairyObject
+*/
 void UFairyObject::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
 	Buffer->Seek(BeginPos, 0);
@@ -705,6 +732,11 @@ void UFairyObject::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 		float PivotY = Buffer->ReadFloat();
 		this->RenderTransformPivot = FVector2D(PivotX, PivotY);
 		this->bPivotAsAnchor = Buffer->ReadBool();
+
+		if (this->bPivotAsAnchor)
+		{
+			this->Anchor = this->RenderTransformPivot;
+		}
 	}
 
 	float AlphaValue = Buffer->ReadFloat();

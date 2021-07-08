@@ -111,7 +111,7 @@ void FRelations::OnOwnerSizeChanged(const FVector2D& Delta, bool bApplyPivot)
 {
     for (auto& it : Items)
     {
-        it.ApplyOnSelfSizeChanged(Delta.X, Delta.Y, bApplyPivot);
+        it.ApplySelfSizeChanged(Delta.X, Delta.Y, bApplyPivot);
     }
 }
 
@@ -122,34 +122,60 @@ bool FRelations::IsEmpty() const
 
 void FRelations::Setup(FByteBuffer * Buffer, bool bParentToChild)
 {
-    int32 cnt = Buffer->ReadByte();
-    UFairyObject* target;
-    for (int32 i = 0; i < cnt; i++)
+    int32 TargetNum = Buffer->ReadByte();
+    UFairyObject* TargetObject = nullptr; // the owner relations from target
+    for (int32 i = 0; i < TargetNum; i++)
     {
         int16 targetIndex = Buffer->ReadShort();
         if (targetIndex == -1)
         {
-            target = Owner->GetParent();
+            // target is container
+            TargetObject = Owner->GetParent();
         }
         else if (bParentToChild)
         {
-            target = (Cast<UFairyComponent>(Owner))->GetChildAt(targetIndex);
+            // disable parent has relation to child
+            //TargetObject = (Cast<UFairyComponent>(Owner))->GetChildAt(targetIndex);
         }
         else
         {
-            target = Owner->GetParent()->GetChildAt(targetIndex);
+            // target is a brothers
+            TargetObject = Owner->GetParent()->GetChildAt(targetIndex);
         }
 
-        FRelationItem* newItem = new FRelationItem(Owner);
-        newItem->SetTarget(target);
-        Items.Add(newItem);
-
-        int32 cnt2 = Buffer->ReadByte();
-        for (int32 j = 0; j < cnt2; j++)
+        int32 RelationNum = Buffer->ReadByte();
+        if (TargetObject && RelationNum > 0)
         {
-            ERelationType rt = (ERelationType)Buffer->ReadByte();
-            bool usePercent = Buffer->ReadBool();
-            newItem->InternalAdd(rt, usePercent);
+            FRelationItem* newItem = new FRelationItem(Owner);
+            for (int32 j = 0; j < RelationNum; j++)
+            {
+                ERelationType rt = (ERelationType)Buffer->ReadByte();
+                bool usePercent = Buffer->ReadBool();
+                newItem->InternalAdd(rt, usePercent);
+            }
+            newItem->SetTarget(TargetObject);
+            Items.Add(newItem);
         }
     }
+}
+
+FVector2D FRelations::GetRelationSize() const
+{
+    checkf(!IsEmpty(), TEXT("Relations must be Not Empty"));
+    FVector2D FinalSize(ForceInit);
+    FRelationItem TargetItem = Items[0];
+    FinalSize = TargetItem.GetRelationSize(); // todo: guess only has one relation target
+
+    return FinalSize;
+}
+
+FVector2D FRelations::GetRelationPos() const
+{
+    checkf(!IsEmpty(), TEXT("Relations must be Not Empty"));
+    FVector2D FinalPos;
+    FRelationItem TargetItem = Items[0];
+
+    FinalPos = TargetItem.GetRelationPos(); // todo: guess only has one relation target
+
+    return FinalPos;
 }

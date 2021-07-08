@@ -24,6 +24,9 @@ public:
     bool IsEmpty() const;
     void Setup(FByteBuffer* Buffer, bool bParentToChild);
 
+    FVector2D GetRelationSize() const;
+    FVector2D GetRelationPos() const;
+
     UFairyObject* Handling;
 
 private:

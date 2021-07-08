@@ -5,8 +5,9 @@
 #include "UI/Transition.h"
 
 FRelationItem::FRelationItem(UFairyObject* InOwner) :
-    TargetData(ForceInit),
-    Target(nullptr)
+    Owner(nullptr),
+    Target(nullptr),
+    TargetData(ForceInit)
 {
     Owner = InOwner;
 }
@@ -18,14 +19,11 @@ FRelationItem::~FRelationItem()
 
 void FRelationItem::SetTarget(UFairyObject* InTarget)
 {
-    if (Target != InTarget)
+    if (InTarget && Target != InTarget)
     {
         ReleaseRefTarget();
         Target = InTarget;
-        if (InTarget)
-        {
-            AddRefTarget(InTarget);
-        }
+        BindTarget();
     }
 }
 
@@ -61,7 +59,7 @@ void FRelationItem::InternalAdd(ERelationType RelationType, bool bUsePercent)
     FRelationDef info;
     info.bPercent = bUsePercent;
     info.Type = RelationType;
-    info.Axis = (RelationType <= ERelationType::Right_Right || RelationType == ERelationType::Width || (RelationType >= ERelationType::LeftExt_Left && RelationType <= ERelationType::RightExt_Right)) ? 0 : 1;
+    info.Axis = (RelationType <= ERelationType::Right_Right || RelationType == ERelationType::Width || (RelationType >= ERelationType::LeftExt_Left && RelationType <= ERelationType::RightExt_Right)) ? EAxis::Type::X : EAxis::Type::Y;
     Defs.Add(info);
 }
 
@@ -102,7 +100,48 @@ bool FRelationItem::IsEmpty() const
     return Defs.Num() == 0;
 }
 
-void FRelationItem::ApplyOnSelfSizeChanged(float DeltaWidth, float DeltaHeight, bool bApplyPivot)
+
+FVector2D FRelationItem::GetRelationSize()
+{
+    FVector2D OwnerSize = Owner->GetSize();
+    FVector2D TargetSize = Target->GetSize();
+
+    FVector2D RelationSize = OwnerSize;
+
+    // todo: calculate owner relation size
+    for (auto& it : Defs)
+    {
+        switch (it.Type) 
+        {
+        case ERelationType::Width:
+            RelationSize.X = TargetSize.X;
+            break;
+        case ERelationType::Height:
+            RelationSize.Y = TargetSize.Y;
+            break;
+        default:
+            break;
+
+        }
+    }
+    return RelationSize;
+}
+
+FVector2D FRelationItem::GetRelationPos()
+{
+    FVector2D RelationPos;
+
+    FVector2D OwnerSize = Owner->GetSize();
+    FVector2D TargetSize = Target->GetSize();
+    FVector2D OwnerPos = Owner->GetPosition();
+    FVector2D TargetPos = Target->GetPosition();
+
+    // todo: calculate owner relation size
+    RelationPos = Owner->GetPosition();
+    return RelationPos;
+}
+
+void FRelationItem::ApplySelfSizeChanged(float DeltaWidth, float DeltaHeight, bool bApplyPivot)
 {
     if (Target == nullptr || Defs.Num() == 0)
     {
@@ -116,23 +155,23 @@ void FRelationItem::ApplyOnSelfSizeChanged(float DeltaWidth, float DeltaHeight, 
         switch (it.Type)
         {
         case ERelationType::Center_Center:
-            //Owner->SetPositionX(OldPos.X - (0.5 - (bApplyPivot ? Owner->Pivot.X : 0)) * DeltaWidth);
+            Owner->SetPositionX(OldPos.X - (0.5 - (bApplyPivot ? Owner->GetPivot().X : 0)) * DeltaWidth);
             break;
 
         case ERelationType::Right_Center:
         case ERelationType::Right_Left:
         case ERelationType::Right_Right:
-            //Owner->SetPositionX(OldPos.X - (1 - (bApplyPivot ? Owner->Pivot.X : 0)) * DeltaWidth);
+            Owner->SetPositionX(OldPos.X - (1 - (bApplyPivot ? Owner->GetPivot().X : 0)) * DeltaWidth);
             break;
 
         case ERelationType::Middle_Middle:
-            //Owner->SetPositionY(OldPos.Y - (0.5 - (bApplyPivot ? Owner->Pivot.Y : 0)) * DeltaHeight);
+            Owner->SetPositionY(OldPos.Y - (0.5 - (bApplyPivot ? Owner->GetPivot().Y : 0)) * DeltaHeight);
             break;
 
         case ERelationType::Bottom_Middle:
         case ERelationType::Bottom_Top:
         case ERelationType::Bottom_Bottom:
-            //Owner->SetPositionY(OldPos.Y - (1 - (bApplyPivot ? Owner->Pivot.Y : 0)) * DeltaHeight);
+            Owner->SetPositionY(OldPos.Y - (1 - (bApplyPivot ? Owner->GetPivot().Y : 0)) * DeltaHeight);
             break;
 
         default:
@@ -157,10 +196,14 @@ void FRelationItem::ApplyOnSelfSizeChanged(float DeltaWidth, float DeltaHeight, 
     }
 }
 
-void FRelationItem::ApplyOnXYChanged(UFairyObject* InTarget, const FRelationDef& info, float dx, float dy)
+void FRelationItem::ApplyTargetPositionChanged(const FRelationDef& info)
 {
-    float tmp;
-    const FVector2D OldPos = Owner->GetPosition();
+    float tmp = 0.0f;
+    const FVector2D OwnerOldPos = Owner->GetPosition();
+    const FVector2D OwnerOldSize = Owner->GetSize();
+
+    const FVector2D TargetPos = Target->GetPosition();
+    const FVector2D TargetSize = Target->GetSize();
 
     switch (info.Type)
     {
@@ -171,7 +214,7 @@ void FRelationItem::ApplyOnXYChanged(UFairyObject* InTarget, const FRelationDef&
     case ERelationType::Right_Left:
     case ERelationType::Right_Center:
     case ERelationType::Right_Right:
-        Owner->SetPositionX(OldPos.X + dx);
+        Owner->SetPositionX(OwnerOldPos.X + TargetPos.X - TargetData.X);
         break;
 
     case ERelationType::Top_Top:
@@ -181,7 +224,7 @@ void FRelationItem::ApplyOnXYChanged(UFairyObject* InTarget, const FRelationDef&
     case ERelationType::Bottom_Top:
     case ERelationType::Bottom_Middle:
     case ERelationType::Bottom_Bottom:
-        Owner->SetPositionY(OldPos.Y + dy);
+        Owner->SetPositionY(OwnerOldPos.Y + TargetPos.Y - TargetData.Y);
         break;
 
     case ERelationType::Width:
@@ -190,56 +233,58 @@ void FRelationItem::ApplyOnXYChanged(UFairyObject* InTarget, const FRelationDef&
 
     case ERelationType::LeftExt_Left:
     case ERelationType::LeftExt_Right:
-        if (Owner != InTarget->GetParent())
-        {
-            tmp = Owner->GetMinWidth();
-            //Owner->SetWidth(Owner->RawSize.X - dx);
-            Owner->SetMinWidth(tmp + dx);
-        }
-        else
-        {
-            //Owner->SetWidth(Owner->RawSize.X - dx);
-        }
+        //if (Owner != Target->GetParent())
+        //{
+        //    tmp = Owner->GetMinWidth();
+        //    Owner->SetWidth(Owner->GetSize().X + TargetPos.X);
+        //    Owner->SetMinWidth(tmp + dx);
+        //}
+        //else
+        //{
+        //    Owner->SetWidth(Owner->GetSize().X - dx);
+        //}
         break;
 
     case ERelationType::RightExt_Left:
     case ERelationType::RightExt_Right:
-        if (Owner != InTarget->GetParent())
-        {
-            tmp = Owner->GetMinWidth();
-            //Owner->SetWidth(Owner->RawSize.X + dx);
-            Owner->SetMinWidth(tmp);
-        }
-        else
-            //Owner->SetWidth(Owner->RawSize.X + dx);
+        //if (Owner != Target->GetParent())
+        //{
+        //    tmp = Owner->GetMinWidth();
+        //    Owner->SetWidth(Owner->GetSize().X + dx);
+        //    Owner->SetMinWidth(tmp);
+        //}
+        //else
+        //{
+        //    Owner->SetWidth(Owner->GetSize().X + dx);
+        //}
         break;
 
     case ERelationType::TopExt_Top:
     case ERelationType::TopExt_Bottom:
-        if (Owner != InTarget->GetParent())
-        {
-            tmp = Owner->GetMinHeight();
-            //Owner->SetHeight(Owner->RawSize.Y - dy);
-            Owner->SetMinHeight(tmp + dy);
-        }
-        else
-        {
-            //Owner->SetHeight(Owner->RawSize.Y - dy);
-        }
+        //if (Owner != Target->GetParent())
+        //{
+        //    tmp = Owner->GetMinHeight();
+        //    //Owner->SetHeight(Owner->RawSize.Y - dy);
+        //    Owner->SetMinHeight(tmp + dy);
+        //}
+        //else
+        //{
+        //    //Owner->SetHeight(Owner->RawSize.Y - dy);
+        //}
         break;
 
     case ERelationType::BottomExt_Top:
     case ERelationType::BottomExt_Bottom:
-        if (Owner != InTarget->GetParent())
-        {
-            tmp = Owner->GetMinHeight();
-            //Owner->SetHeight(Owner->RawSize.Y + dy);
-            Owner->SetMinHeight(tmp);
-        }
-        else
-        {
-            //Owner->SetHeight(Owner->RawSize.Y + dy);
-        }
+        //if (Owner != InTarget->GetParent())
+        //{
+        //    tmp = Owner->GetMinHeight();
+        //    //Owner->SetHeight(Owner->RawSize.Y + dy);
+        //    Owner->SetMinHeight(tmp);
+        //}
+        //else
+        //{
+        //    //Owner->SetHeight(Owner->RawSize.Y + dy);
+        //}
         break;
 
     default:
@@ -247,37 +292,37 @@ void FRelationItem::ApplyOnXYChanged(UFairyObject* InTarget, const FRelationDef&
     }
 }
 
-void FRelationItem::ApplyOnSizeChanged(UFairyObject* InTarget, const FRelationDef& info)
+void FRelationItem::ApplyTargetSizeChanged(const FRelationDef& info)
 {
     float pos = 0, pivot = 0, delta = 0;
-    if (info.Axis == 0)
+    if (info.Axis == EAxis::Type::X)
     {
-        if (InTarget != Owner->GetParent())
+        if (Target != Owner->GetParent())
         {
-            pos = InTarget->GetPosition().X;
-            //if (InTarget->bPivotAsAnchor)
-            //{
-            //    pivot = InTarget->Pivot.X;
-            //}
+            pos = Target->GetPosition().X;
+            if (Target->IsPivotAsAnchor())
+            {
+                pivot = Target->GetPivot().X;
+            }
         }
 
         if (info.bPercent)
         {
             if (TargetData.Z != 0)
             {
-                delta = InTarget->GetWidth() / TargetData.Z;
+                delta = Target->GetWidth() / TargetData.Z;
             }
         }
         else
         {
-            delta = InTarget->GetWidth() - TargetData.Z;
+            delta = Target->GetWidth() - TargetData.Z;
         }
     }
     else
     {
-        if (InTarget != Owner->GetParent())
+        if (Target != Owner->GetParent())
         {
-            pos = InTarget->GetPosition().Y;
+            pos = Target->GetPosition().Y;
             //if (InTarget->bPivotAsAnchor)
             //{
             //    pivot = InTarget->Pivot.Y;
@@ -288,16 +333,17 @@ void FRelationItem::ApplyOnSizeChanged(UFairyObject* InTarget, const FRelationDe
         {
             if (TargetData.W != 0)
             {
-                delta = InTarget->GetHeight() / TargetData.W;
+                delta = Target->GetHeight() / TargetData.W;
             }
         }
         else
         {
-            delta = InTarget->GetHeight() - TargetData.W;
+            delta = Target->GetHeight() - TargetData.W;
         }
     }
 
-    float v, tmp;
+    float v = 0.0f;
+    float tmp = 0.0f;
 
     switch (info.Type)
     {
@@ -446,9 +492,9 @@ void FRelationItem::ApplyOnSizeChanged(UFairyObject* InTarget, const FRelationDe
         break;
 
     case ERelationType::Width:
-        if (Owner->bUnderConstruct && Owner == InTarget->GetParent())
+        if (Owner->bUnderConstruct && Owner == Target->GetParent())
         {
-            v = Owner->GetSize().X - InTarget->GetSize().X;
+            v = Owner->GetSize().X - Target->GetSize().X;
         }
         else
         {
@@ -458,28 +504,28 @@ void FRelationItem::ApplyOnSizeChanged(UFairyObject* InTarget, const FRelationDe
         {
             v = v * delta;
         }
-        if (InTarget == Owner->GetParent())
+        if (Target == Owner->GetParent())
         {
             //if (Owner->bPivotAsAnchor)
             //{
             //    tmp = Owner->GetMinWidth();
-            //    Owner->SetSize(FVector2D(InTarget->GetWidth() + v, Owner->RawSize.Y), true);
+            //    Owner->SetSize(FVector2D(Target->GetWidth() + v, Owner->RawSize.Y), true);
             //    Owner->SetMinWidth(tmp);
             //}
             //else
             //{
-            //    Owner->SetSize(FVector2D(InTarget->GetWidth() + v, Owner->RawSize.Y), true);
+            //    Owner->SetSize(FVector2D(Target->GetWidth() + v, Owner->RawSize.Y), true);
             //}
         }
         else
         {
-            Owner->SetWidth(InTarget->GetWidth() + v);
+            Owner->SetWidth(Target->GetWidth() + v);
         }
         break;
     case ERelationType::Height:
-        if (Owner->bUnderConstruct && Owner == InTarget->GetParent())
+        if (Owner->bUnderConstruct && Owner == Target->GetParent())
         {
-            v = Owner->GetSize().Y - InTarget->GetSize().Y;
+            v = Owner->GetSize().Y - Target->GetSize().Y;
         }
         else
         {
@@ -489,21 +535,21 @@ void FRelationItem::ApplyOnSizeChanged(UFairyObject* InTarget, const FRelationDe
         {
             v = v * delta;
         }
-        if (InTarget == Owner->GetParent())
+        if (Target == Owner->GetParent())
         {
             //if (Owner->bPivotAsAnchor)
             //{
             //    tmp = Owner->GetMinHeight();
-            //    Owner->SetSize(FVector2D(Owner->RawSize.X, InTarget->GetHeight() + v), true);
+            //    Owner->SetSize(FVector2D(Owner->RawSize.X, Target->GetHeight() + v), true);
             //    Owner->SetMinHeight(tmp);
             //}
             //else
             //{
-            //    Owner->SetSize(FVector2D(Owner->RawSize.X, InTarget->GetHeight() + v), true);
+            //    Owner->SetSize(FVector2D(Owner->RawSize.X, Target->GetHeight() + v), true);
             //}
         }
         else
-            Owner->SetHeight(InTarget->GetHeight() + v);
+            Owner->SetHeight(Target->GetHeight() + v);
         break;
 
     case ERelationType::LeftExt_Left:
@@ -551,12 +597,12 @@ void FRelationItem::ApplyOnSizeChanged(UFairyObject* InTarget, const FRelationDe
         tmp = Owner->GetMinWidth();
         if (info.bPercent)
         {
-            if (Owner == InTarget->GetParent())
+            if (Owner == Target->GetParent())
             {
                 if (Owner->bUnderConstruct)
                 {
-                    Owner->SetWidth(pos + InTarget->GetWidth() - InTarget->GetWidth() * pivot +
-                        (Owner->GetSize().X - pos - InTarget->GetSize().X + InTarget->GetSize().X * pivot) * delta);
+                    Owner->SetWidth(pos + Target->GetWidth() - Target->GetWidth() * pivot +
+                        (Owner->GetSize().X - pos - Target->GetSize().X + Target->GetSize().X * pivot) * delta);
                 }
                 else
                 {
@@ -572,11 +618,11 @@ void FRelationItem::ApplyOnSizeChanged(UFairyObject* InTarget, const FRelationDe
         }
         else
         {
-            if (Owner == InTarget->GetParent())
+            if (Owner == Target->GetParent())
             {
                 if (Owner->bUnderConstruct)
                 {
-                    Owner->SetWidth(Owner->GetSize().X + (InTarget->GetWidth() - InTarget->GetSize().X) * (1 - pivot));
+                    Owner->SetWidth(Owner->GetSize().X + (Target->GetWidth() - Target->GetSize().X) * (1 - pivot));
                 }
                 else
                 {
@@ -622,11 +668,11 @@ void FRelationItem::ApplyOnSizeChanged(UFairyObject* InTarget, const FRelationDe
         tmp = Owner->GetMinHeight();
         if (info.bPercent)
         {
-           /* if (Owner == InTarget->GetParent())
+           /* if (Owner == Target->GetParent())
             {
                 if (Owner->bUnderConstruct)
-                    Owner->SetHeight(pos + InTarget->GetHeight() - InTarget->GetHeight() * pivot +
-                    (Owner->GetSize().Y - pos - InTarget->GetSize().Y + InTarget->GetSize().Y * pivot) * delta);
+                    Owner->SetHeight(pos + Target->GetHeight() - Target->GetHeight() * pivot +
+                    (Owner->GetSize().Y - pos - Target->GetSize().Y + Target->GetSize().Y * pivot) * delta);
                 else
                     Owner->SetHeight(pos + (Owner->RawSize.Y - pos) * delta);
             }
@@ -639,10 +685,10 @@ void FRelationItem::ApplyOnSizeChanged(UFairyObject* InTarget, const FRelationDe
         }
         else
         {
-            //if (Owner == InTarget->GetParent())
+            //if (Owner == Target->GetParent())
             //{
             //    if (Owner->bUnderConstruct)
-            //        Owner->SetHeight(Owner->GetSize().Y + (InTarget->GetHeight() - InTarget->GetSize().Y) * (1 - pivot));
+            //        Owner->SetHeight(Owner->GetSize().Y + (Target->GetHeight() - Target->GetSize().Y) * (1 - pivot));
             //    else
             //        Owner->SetHeight(Owner->RawSize.Y + delta * (1 - pivot));
             //}
@@ -659,37 +705,39 @@ void FRelationItem::ApplyOnSizeChanged(UFairyObject* InTarget, const FRelationDe
     }
 }
 
-void FRelationItem::AddRefTarget(UFairyObject* InTarget)
+void FRelationItem::BindTarget()
 {
-    if (!InTarget)
-    {
-        return;
-    }
+    // if Target is Owner's parent, the position change will auto change in Render visit
+    //if (Target != Owner->GetParent())
+    //{
+    //    PositionDelegateHandle = Target->OnPositionChanged().AddRaw(this, &FRelationItem::OnTargetPositionChanged);
+    //}
+    //SizeDelegateHandle = Target->OnSizeChanged().AddRaw(this, &FRelationItem::OnTargetSizeChanged);
 
-    if (InTarget != Owner->GetParent())
-    {
-        PositionDelegateHandle = InTarget->OnPositionChanged().AddRaw(this, &FRelationItem::OnTargetXYChanged);
-    }
-    SizeDelegateHandle = InTarget->OnSizeChanged().AddRaw(this, &FRelationItem::OnTargetSizeChanged);
-
-    TargetData.X = InTarget->GetPosition().X;
-    TargetData.Y = InTarget->GetPosition().Y;
-    TargetData.Z = InTarget->GetWidth();
-    TargetData.W = InTarget->GetHeight();
+    //TargetData.X = Target->GetPosition().X;
+    //TargetData.Y = Target->GetPosition().Y;
+    //TargetData.Z = Target->GetWidth();
+    //TargetData.W = Target->GetHeight();
 }
 
 void FRelationItem::ReleaseRefTarget()
 {
-    if (Target == nullptr)
-    {
-        return;
-    }
-
-    Target->OnPositionChanged().Remove(PositionDelegateHandle);
-    Target->OnSizeChanged().Remove(SizeDelegateHandle);
+    //if (Target)
+    //{
+    //    if (PositionDelegateHandle.IsValid())
+    //    {
+    //        Target->OnPositionChanged().Remove(PositionDelegateHandle);
+    //        PositionDelegateHandle.Reset();
+    //    }
+    //    if (SizeDelegateHandle.IsValid())
+    //    {
+    //        Target->OnSizeChanged().Remove(SizeDelegateHandle);
+    //        SizeDelegateHandle.Reset();
+    //    }
+    //}
 }
 
-void FRelationItem::OnTargetXYChanged()
+void FRelationItem::OnTargetPositionChanged()
 {
     //if (Owner->Relations->Handling != nullptr || (Owner->Group.IsValid() && Owner->Group->Updating != 0))
     //{
@@ -698,60 +746,14 @@ void FRelationItem::OnTargetXYChanged()
     //    return;
     //}
 
-    //Owner->Relations->Handling = Target.Get();
-
-    FVector2D Pos = Owner->GetPosition();
-    float dx = Target->GetPosition().X - TargetData.X;
-    float dy = Target->GetPosition().Y - TargetData.Y;
-
+    //
+    Owner->GetRelations().Handling = Target;
     for (auto& it : Defs)
     {
-        ApplyOnXYChanged(Target, it, dx, dy);
+        ApplyTargetPositionChanged(it);
     }
-
     TargetData.X = Target->GetPosition().X;
     TargetData.Y = Target->GetPosition().Y;
-
-    if (Pos != Owner->GetPosition())
-    {
-        FVector2D Delta = Owner->GetPosition() - Pos;
-
-        Owner->UpdateGearFromRelations(1, Delta);
-
-        if (Owner->HasParent())
-        {
-            const TArray<UTransition*>& arr = Owner->GetParent()->GetTransitions();
-            for (auto& it : arr)
-            {
-                it->UpdateFromRelations(Owner->GetID(), Delta);
-            }
-        }
-    }
-
-    //Owner->Relations->Handling = nullptr;
-}
-
-void FRelationItem::OnTargetSizeChanged()
-{
-    //if (Owner->Relations->Handling != nullptr
-    //    || (Owner->Group.IsValid() && Owner->Group->Updating != 0) )
-    //{
-    //    TargetData.Z = Target->GetWidth();
-    //    TargetData.W = Target->GetHeight();
-    //    return;
-    //}
-    //Owner->Relations->Handling = Target.Get();
-
-    //FVector2D Pos = Owner->GetPosition();
-    //FVector2D RawSize = Owner->RawSize;
-
-    //for (auto& it : Defs)
-    //{
-    //    ApplyOnSizeChanged(Target.Get(), it);
-    //}
-
-    //TargetData.Z = Target->GetWidth();
-    //TargetData.W = Target->GetHeight();
 
     //if (Pos != Owner->GetPosition())
     //{
@@ -769,12 +771,53 @@ void FRelationItem::OnTargetSizeChanged()
     //    }
     //}
 
-    //if (RawSize != Owner->RawSize)
+    Owner->GetRelations().Handling = nullptr;
+}
+
+void FRelationItem::OnTargetSizeChanged()
+{
+    //if (Owner->Relations->Handling != nullptr
+    //    || (Owner->Group.IsValid() && Owner->Group->Updating != 0) )
     //{
-    //    FVector2D Delta = Owner->RawSize - RawSize;
-
-    //    Owner->UpdateGearFromRelations(2, Delta);
+    //    TargetData.Z = Target->GetWidth();
+    //    TargetData.W = Target->GetHeight();
+    //    return;
     //}
+    Owner->GetRelations().Handling = Target;
 
-    //Owner->Relations->Handling = nullptr;
+    FVector2D Pos = Owner->GetPosition();
+    FVector2D RawSize = Owner->GetSize();
+
+    for (auto& it : Defs)
+    {
+        ApplyTargetSizeChanged(it);
+    }
+
+    TargetData.Z = Target->GetWidth();
+    TargetData.W = Target->GetHeight();
+
+    if (Pos != Owner->GetPosition())
+    {
+        FVector2D Delta = Owner->GetPosition() - Pos;
+
+        Owner->UpdateGearFromRelations(1, Delta);
+
+        if (Owner->HasParent())
+        {
+            const TArray<UTransition*>& arr = Owner->GetParent()->GetTransitions();
+            for (auto& it : arr)
+            {
+                it->UpdateFromRelations(Owner->GetID(), Delta);
+            }
+        }
+    }
+
+    if (RawSize != Owner->GetSize())
+    {
+        FVector2D Delta = Owner->GetSize() - RawSize;
+
+        Owner->UpdateGearFromRelations(2, Delta);
+    }
+
+    Owner->GetRelations().Handling = nullptr;
 }

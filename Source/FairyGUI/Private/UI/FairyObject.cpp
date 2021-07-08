@@ -209,7 +209,18 @@ void UFairyObject::UpdateRenderTransform()
 const FVector2D& UFairyObject::GetRelationSize() const
 {
 	// todo: calculate final relation size
-	return GetSize();
+	static FVector2D finalSize;
+
+	if (Relations.IsSet() && !Relations->IsEmpty())
+	{
+		const FRelations& RelationsObj = Relations.GetValue();
+		finalSize = RelationsObj.GetRelationSize();
+	}
+	else
+	{
+		finalSize = GetSize();
+	}
+	return finalSize;
 }
 
 const FVector2D& UFairyObject::GetRelationPos() const

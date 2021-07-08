@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "FieldTypes.h"
+#include "Math/Axis.h"
 
 class UFairyObject;
 
@@ -9,10 +10,10 @@ struct FAIRYGUI_API FRelationDef
 {
     bool bPercent;
     ERelationType Type;
-    int32 Axis;
+    EAxis::Type Axis;
 
     FRelationDef() :
-        bPercent(false), Type(ERelationType::Left_Left), Axis(0)
+        bPercent(false), Type(ERelationType::Left_Left), Axis(EAxis::Type::X)
     {}
 };
 
@@ -22,7 +23,7 @@ public:
     FRelationItem(UFairyObject* InOwner);
     ~FRelationItem();
 
-    UFairyObject* GetTarget() const { return Target.Get(); }
+    UFairyObject* GetTarget() const { return Target; }
     void SetTarget(UFairyObject* InTarget);
 
     void Add(ERelationType RelationType, bool bUsePercent);
@@ -30,18 +31,21 @@ public:
     void Remove(ERelationType RelationType);
     void CopyFrom(const FRelationItem& Source);
     bool IsEmpty() const;
-    void ApplyOnSelfSizeChanged(float DeltaWidth, float DeltaHeight, bool bApplyPivot);
+    void ApplySelfSizeChanged(float DeltaWidth, float DeltaHeight, bool bApplyPivot);
+
+    FVector2D GetRelationSize();
+    FVector2D GetRelationPos();
 
 private:
-    void ApplyOnXYChanged(UFairyObject* InTarget, const FRelationDef& info, float dx, float dy);
-    void ApplyOnSizeChanged(UFairyObject* InTarget, const FRelationDef& info);
-    void AddRefTarget(UFairyObject* InTarget);
+    void ApplyTargetPositionChanged(const FRelationDef& info);
+    void ApplyTargetSizeChanged(const FRelationDef& info);
+    void BindTarget();
     void ReleaseRefTarget();
-    void OnTargetXYChanged();
+    void OnTargetPositionChanged();
     void OnTargetSizeChanged();
 
     UFairyObject* Owner;
-    TWeakObjectPtr<UFairyObject> Target;
+    UFairyObject* Target;
     TArray<FRelationDef> Defs;
     FVector4 TargetData;
 

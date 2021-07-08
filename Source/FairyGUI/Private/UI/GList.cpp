@@ -1582,7 +1582,10 @@ bool UGList::HandleScroll1(bool forceUpdate)
         if (needRender)
         {
             if (bAutoResizeItem && (Layout == EListLayoutType::SingleColumn || ColumnCount > 0))
-                ii.Obj->SetSize(FVector2D(partSize, ii.Obj->GetHeight()), true);
+            {
+                ii.Obj->SetSize(FVector2D(partSize, ii.Obj->GetHeight()));
+                ii.Obj->SetPivot(ii.Obj->GetPivot(), true);
+            }
 
             ItemRenderer.Execute(curIndex % NumItems, ii.Obj);
             if (curIndex % CurLineItemCount == 0)
@@ -1749,7 +1752,10 @@ bool UGList::HandleScroll2(bool forceUpdate)
         if (needRender)
         {
             if (bAutoResizeItem && (Layout == EListLayoutType::SingleRow || LineCount > 0))
-                ii.Obj->SetSize(FVector2D(ii.Obj->GetWidth(), partSize), true);
+            {
+                ii.Obj->SetSize(FVector2D(ii.Obj->GetWidth(), partSize));
+                ii.Obj->SetPivot(ii.Obj->GetPivot(), true);
+            }
 
             ItemRenderer.Execute(curIndex % NumItems, ii.Obj);
             if (curIndex % CurLineItemCount == 0)
@@ -1920,12 +1926,20 @@ void UGList::HandleScroll3(bool forceUpdate)
         {
             if (bAutoResizeItem)
             {
+                UFairyObject* Object = ii.Obj;
                 if (CurLineItemCount == ColumnCount && CurLineItemCount2 == LineCount)
-                    ii.Obj->SetSize(FVector2D(partWidth, partHeight), true);
+                {
+                    Object->SetSize(FVector2D(partWidth, partHeight));
+                }
                 else if (CurLineItemCount == ColumnCount)
-                    ii.Obj->SetSize(FVector2D(partWidth, ii.Obj->GetHeight()), true);
+                {
+                    Object->SetSize(FVector2D(partWidth, ii.Obj->GetHeight()));
+                }
                 else if (CurLineItemCount2 == LineCount)
-                    ii.Obj->SetSize(FVector2D(ii.Obj->GetWidth(), partHeight), true);
+                {
+                    Object->SetSize(FVector2D(ii.Obj->GetWidth(), partHeight));
+                }
+                Object->SetPivot(Object->GetPivot(), true);
             }
 
             ItemRenderer.Execute(i % NumItems, ii.Obj);
@@ -1963,7 +1977,9 @@ void UGList::HandleScroll3(bool forceUpdate)
             }
         }
         else
+        {
             xx += ii.Size.X + ColumnGap;
+        }
     }
 
     for (int32 i = reuseIndex; i < virtualItemCount; i++)
@@ -1972,7 +1988,9 @@ void UGList::HandleScroll3(bool forceUpdate)
         if (ii.UpdateFlag != ItemInfoVer && ii.Obj != nullptr)
         {
             if (Cast<UGButton>(ii.Obj))
+            {
                 ii.bSelected = ((UGButton*)ii.Obj)->IsSelected();
+            }
             RemoveChildToPool(ii.Obj);
             ii.Obj = nullptr;
         }
@@ -2100,7 +2118,8 @@ void UGList::UpdateBounds()
             child->SetPosition(FVector2D(curPos.X, curY));
             if (bAutoResizeItem)
             {
-                child->SetSize(FVector2D(viewWidth, child->GetHeight()), true);
+                child->SetSize(FVector2D(viewWidth, child->GetHeight()));
+                child->SetPivot(child->GetPivot(), true);
             }
             curY += FMath::CeilToFloat(child->GetHeight());
             if (child->GetWidth() > maxWidth)
@@ -2122,7 +2141,8 @@ void UGList::UpdateBounds()
                     continue;
                 }
 
-                child->SetSize(FVector2D(viewWidth, child->GetHeight()), true);
+                child->SetSize(FVector2D(viewWidth, child->GetHeight()));
+                child->SetPivot(child->GetPivot(), true);
                 if (child->GetWidth() > maxWidth)
                 {
                     maxWidth = child->GetWidth();
@@ -2150,7 +2170,8 @@ void UGList::UpdateBounds()
             child->SetPosition(FVector2D(curX, curPos.Y));
             if (bAutoResizeItem)
             {
-                child->SetSize(FVector2D(child->GetWidth(), viewHeight), true);
+                child->SetSize(FVector2D(child->GetWidth(), viewHeight));
+                child->SetPivot(child->GetPivot(), true);
             }
 
             curX += FMath::CeilToFloat(child->GetWidth());
@@ -2172,7 +2193,8 @@ void UGList::UpdateBounds()
                     continue;
                 }
 
-                child->SetSize(FVector2D(child->GetWidth(), viewHeight), true);
+                child->SetSize(FVector2D(child->GetWidth(), viewHeight));
+                child->SetPivot(child->GetPivot(), true);
 
                 if (child->GetHeight() > maxHeight)
                 {
@@ -2216,12 +2238,14 @@ void UGList::UpdateBounds()
 
                         if (j < i)
                         {
-                            child->SetSize(FVector2D(child->GetSize().X + round(child->GetSize().X * ratio), child->GetHeight()), true);
+                            child->SetSize(FVector2D(child->GetSize().X + round(child->GetSize().X * ratio), child->GetHeight()));
+                            child->SetPivot(child->GetPivot(), true);
                             curX += FMath::CeilToFloat(child->GetWidth()) + ColumnGap;
                         }
                         else
                         {
-                            child->SetSize(FVector2D(viewWidth - curX, child->GetHeight()), true);
+                            child->SetSize(FVector2D(viewWidth - curX, child->GetHeight()));
+                            child->SetPivot(child->GetPivot(), true);
                         }
                         if (child->GetHeight() > maxHeight)
                         {
@@ -2298,12 +2322,14 @@ void UGList::UpdateBounds()
 
                         if (j < i)
                         {
-                            child->SetSize(FVector2D(child->GetWidth(), child->GetSize().Y + FMath::RoundToFloat(child->GetSize().Y * ratio)), true);
+                            child->SetSize(FVector2D(child->GetWidth(), child->GetSize().Y + FMath::RoundToFloat(child->GetSize().Y * ratio)));
+                            child->SetPivot(child->GetPivot(), true);
                             curY += FMath::CeilToFloat(child->GetHeight()) + LineGap;
                         }
                         else
                         {
-                            child->SetSize(FVector2D(child->GetWidth(), viewHeight - curY), true);
+                            child->SetSize(FVector2D(child->GetWidth(), viewHeight - curY));
+                            child->SetPivot(child->GetPivot(), true);
                         }
                         if (child->GetWidth() > maxWidth)
                             maxWidth = child->GetWidth();
@@ -2392,12 +2418,14 @@ void UGList::UpdateBounds()
                         if (j < i)
                         {
                             child->SetSize(FVector2D(child->GetSize().X + FMath::RoundToFloat(child->GetSize().X * ratio),
-                                LineCount > 0 ? eachHeight : child->GetHeight()), true);
+                                LineCount > 0 ? eachHeight : child->GetHeight()));
+                            child->SetPivot(child->GetPivot(), true);
                             curX += FMath::CeilToFloat(child->GetWidth()) + ColumnGap;
                         }
                         else
                         {
-                            child->SetSize(FVector2D(viewWidth - curX, LineCount > 0 ? eachHeight : child->GetHeight()), true);
+                            child->SetSize(FVector2D(viewWidth - curX, LineCount > 0 ? eachHeight : child->GetHeight()));
+                            child->SetPivot(child->GetPivot(), true);
                         }
                         if (child->GetHeight() > maxHeight)
                             maxHeight = child->GetHeight();
@@ -2418,13 +2446,20 @@ void UGList::UpdateBounds()
             {
                 child = GetChildAt(i);
                 if (bFoldInvisibleItems && !child->IsVisible())
+                {
                     continue;
+                }
 
                 if (curX != 0)
+                {
                     curX += ColumnGap;
+                }
 
                 if (bAutoResizeItem && LineCount > 0)
-                    child->SetSize(FVector2D(child->GetWidth(), eachHeight), true);
+                {
+                    child->SetSize(FVector2D(child->GetWidth(), eachHeight));
+                    child->SetPivot(child->GetPivot(), true);
+                }
 
                 if ((ColumnCount != 0 && j >= ColumnCount) || (ColumnCount == 0 && curX + child->GetWidth() > viewWidth && maxHeight != 0))
                 {
@@ -2444,9 +2479,13 @@ void UGList::UpdateBounds()
                 child->SetPosition(FVector2D(page * viewWidth + curX, curY));
                 curX += FMath::CeilToFloat(child->GetWidth());
                 if (curX > maxWidth)
+                {
                     maxWidth = curX;
+                }
                 if (child->GetHeight() > maxHeight)
+                {
                     maxHeight = child->GetHeight();
+                }
                 j++;
             }
         }

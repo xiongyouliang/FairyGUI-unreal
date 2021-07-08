@@ -30,16 +30,22 @@ void FGearSize::AddStatus(const FString& PageID, FByteBuffer* Buffer)
     Value.W = Buffer->ReadFloat();
 
     if (PageID.IsEmpty())
+    {
         Default = Value;
+    }
     else
+    {
         Storage.Add(PageID, MoveTemp(Value));
+    }
 }
 
 void FGearSize::Apply()
 {
     FVector4* Value = Storage.Find(Controller->GetSelectedPageID());
     if (Value == nullptr)
+    {
         Value = &Default;
+    }
 
     if (TweenConfig.IsSet() && TweenConfig->bTween && UFairyPackage::Constructing == 0 && !bDisableAllTweenEffect)
     {
@@ -47,9 +53,13 @@ void FGearSize::Apply()
         if (tweener != nullptr)
         {
             if (tweener->EndValue.GetVec4() != *Value)
+            {
                 tweener->Kill(true);
+            }
             else
+            {
                 return;
+            }
         }
 
         bool a = Value->X != Owner->GetWidth() || Value->Y != Owner->GetHeight();
@@ -57,7 +67,9 @@ void FGearSize::Apply()
         if (a || b)
         {
             if (Owner->CheckGearController(0, Controller))
+            {
                 TweenConfig->DisplayLockToken = Owner->AddDisplayLock();
+            }
 
             TweenConfig->Handle = FGTween::To(FVector4(Owner->GetWidth(), Owner->GetHeight(), Owner->GetScaleX(), Owner->GetScaleY()), *Value, TweenConfig->Duration)
                 ->SetDelay(TweenConfig->Delay)
@@ -72,7 +84,8 @@ void FGearSize::Apply()
     else
     {
         Owner->bGearLocked = true;
-        Owner->SetSize(FVector2D(Value->X, Value->Y), Owner->CheckGearController(1, Controller));
+        Owner->SetSize(FVector2D(Value->X, Value->Y));
+        Owner->SetPivot(Owner->GetPivot(), Owner->CheckGearController(1, Controller));
         Owner->SetScale(FVector2D(Value->Z, Value->W));
         Owner->bGearLocked = false;
     }
@@ -83,9 +96,15 @@ void FGearSize::OnTweenUpdate(FGTweener* Tweener)
     int32 flag = Tweener->GetUserData().AsInt();
     Owner->bGearLocked = true;
     if ((flag & 1) != 0)
-        Owner->SetSize(Tweener->Value.GetVec2(), Owner->CheckGearController(1, Controller));
+    {
+        Owner->SetSize(Tweener->Value.GetVec2());
+        Owner->SetPivot(Owner->GetPivot(), Owner->CheckGearController(1, Controller));
+    }
+        
     if ((flag & 2) != 0)
+    {
         Owner->SetScale(FVector2D(Tweener->Value.Z, Tweener->Value.W));
+    }
     Owner->bGearLocked = false;
 }
 

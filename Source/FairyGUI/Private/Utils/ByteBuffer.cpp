@@ -200,34 +200,41 @@ FColor FByteBuffer::ReadColor()
 	return FColor(r, g, b, a);
 }
 
+/**
+* this function is not good design: 
+* if this FByteBuffer's Buffer is a outside  pointer, when argument bCloneBuffer is false, the new SubBuffer has a outside Buffer too;
+* maybe outside pointer managed with Parent FByteBuffer togethor, but will not with SubBuffer
+*/
 TSharedPtr<FByteBuffer> FByteBuffer::ReadBuffer(bool bCloneBuffer)
 {
 	int32 count = ReadInt();
-	FByteBuffer* ba;
+	FByteBuffer* subBuffer;
 	if (bCloneBuffer)
 	{
 		uint8* p = (uint8*)FMemory::Malloc(count);
 		memcpy(p, Buffer + Position, count);
-		ba = new FByteBuffer(p, 0, count, true);
+		subBuffer = new FByteBuffer(p, 0, count, true);
 	}
 	else
 	{
-		ba = new FByteBuffer(Buffer, Position, count, false);
+		subBuffer = new FByteBuffer(Buffer, Position, count, false);
 	}
-	ba->StringTable = StringTable;
-	ba->Version = Version;
+	subBuffer->StringTable = StringTable;
+	subBuffer->Version = Version;
 	Position += count;
-	return MakeShareable(ba);
+	return MakeShareable(subBuffer);
 }
 
 bool FByteBuffer::Seek(int32 IndexTablePos, int32 BlockIndex)
 {
 	int32 tmp = Position;
 	Position = IndexTablePos;
-	int32 segCount = Buffer[Offset + Position++];
+	//int32 segCount = Buffer[Offset + Position++];
+	int32 segCount = ReadUbyte();
 	if (BlockIndex < segCount)
 	{
-		bool useShort = Buffer[Offset + Position++] == 1;
+		//bool useShort = Buffer[Offset + Position++] == 1;
+		bool useShort = ReadBool();
 		int32 newPos;
 		if (useShort)
 		{

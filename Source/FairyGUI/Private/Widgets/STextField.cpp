@@ -2,7 +2,9 @@
 #include "Internationalization/BreakIterator.h"
 #include "Utils/HTMLParser.h"
 #include "Widgets/LoaderRun.h"
+#include "Widgets/BitmapFontRun.h"
 #include "Package/FairyPackageMgr.h"
+#include "Package/FairyPackageItem.h"
 
 STextField::STextField() :
     bHTML(false),
@@ -66,7 +68,9 @@ void STextField::SetSingleLine(bool bInSingleLine)
 void STextField::SetTextFormat(const FNTextFormat& InFormat)
 {
     if (&InFormat != &TextFormat)
+    {
         TextFormat = InFormat;
+    }
     TextLayout->DirtyLayout();
 }
 
@@ -84,7 +88,9 @@ FVector2D STextField::ComputeDesiredSize(float LayoutScaleMultiplier) const
 void STextField::EnsureSizeCorrect()
 {
     if (TextLayout->IsLayoutDirty() && (AutoSize == EAutoSizeType::Both || AutoSize == EAutoSizeType::Height))
+    {
         UpdateTextLayout();
+    }
 }
 
 FChildren* STextField::GetChildren()
@@ -159,9 +165,13 @@ void STextField::UpdateTextLayout()
     TextLayout->SetJustification((ETextJustify::Type)TextFormat.Align);
     TextLayout->SetWrappingPolicy(ETextWrappingPolicy::AllowPerCharacterWrapping);
     if (AutoSize == EAutoSizeType::Both)
+    {
         TextLayout->SetWrappingWidth(0);
+    }
     else
+    {
         TextLayout->SetWrappingWidth(Size.X);
+    }
     TextLayout->SetMargin(FMargin(2, 2));
     TextLayout->SetLineHeightPercentage(1 + (TextFormat.LineSpacing - 3) / TextFormat.Size);
 
@@ -210,24 +220,27 @@ void STextField::BuildLines()
         TSharedRef<FString>& GetTextRef()
         {
             if (bNewLine)
+            {
                 NewLine();
-
+            }
             return LastLineData->Text;
         }
 
         FString& GetText()
         {
             if (bNewLine)
+            {
                 NewLine();
-
+            }
             return LastLineData->Text.Get();
         }
 
         TArray<TSharedRef<IRun>>& GetRuns()
         {
             if (bNewLine)
+            {
                 NewLine();
-
+            }
             return LastLineData->Runs;
         }
 
@@ -290,7 +303,9 @@ void STextField::BuildLines()
                 }
 
                 if (LineIndex != LineRangesBuffer.Num() - 1)
+                {
                     LineHelper.bNewLine = true;
+                }
             }
         }
         else if (Element.Type == EHTMLElementType::Image)

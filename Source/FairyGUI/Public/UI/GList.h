@@ -46,14 +46,14 @@ public:
     void SetLineGap(int32 InLineGap);
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    EAlignType GetAlign() const { return Align; }
+    EHAlignType GetAlign() const { return Align; }
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    void SetAlign(EAlignType InAlign);
+    void SetAlign(EHAlignType InAlign);
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    EVerticalAlignType GetVerticalAlign() const { return VerticalAlign; }
+    EVAlignType GetVerticalAlign() const { return VerticalAlign; }
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    void SetVerticalAlign(EVerticalAlignType InVerticalAlign);
+    void SetVerticalAlign(EVAlignType InVerticalAlign);
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     bool GetAutoResizeItem() const { return bAutoResizeItem; }
@@ -229,8 +229,8 @@ private:
     int32 ColumnCount;
     int32 LineGap;
     int32 ColumnGap;
-    EAlignType Align;
-    EVerticalAlignType VerticalAlign;
+    EHAlignType Align;
+    EVAlignType VerticalAlign;
     bool bAutoResizeItem;
     EListSelectionMode SelectionMode;
     UGController* SelectionController;

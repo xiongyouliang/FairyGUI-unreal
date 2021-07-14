@@ -119,8 +119,8 @@ void UGTextInput::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
     TextFormat.Face = Buffer->ReadS();
     TextFormat.Size = Buffer->ReadShort();
     TextFormat.Color = Buffer->ReadColor();
-    TextFormat.Align = (EAlignType)Buffer->ReadByte();
-    TextFormat.VerticalAlign = (EVerticalAlignType)Buffer->ReadByte();
+    TextFormat.HAlign = (EHAlignType)Buffer->ReadByte();
+    TextFormat.VAlign = (EVAlignType)Buffer->ReadByte();
     TextFormat.LineSpacing = Buffer->ReadShort();
     TextFormat.LetterSpacing = Buffer->ReadShort();
     Buffer->ReadBool(); //bUBBEnabled
@@ -129,7 +129,11 @@ void UGTextInput::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
     TextFormat.bItalic = Buffer->ReadBool();
     TextFormat.bBold = Buffer->ReadBool();
     if (Buffer->ReadBool())
+    {
         SetSingleLine(true);
+
+    }
+
     if (Buffer->ReadBool())
     {
         TextFormat.OutlineColor = Buffer->ReadColor();
@@ -150,19 +154,29 @@ void UGTextInput::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 
     const FString* str;
     if ((str = Buffer->ReadSP()) != nullptr)
+    {
         SetPrompt(*str);
+    }
 
     if ((str = Buffer->ReadSP()) != nullptr)
+    {
         SetRestrict(*str);
+    }
 
     int32 iv = Buffer->ReadInt();
     if (iv != 0)
+    {
         SetMaxLength(iv);
+    }
     iv = Buffer->ReadInt();
     if (iv != 0)
+    {
         SetKeyboardType(iv);
+    }
     if (Buffer->ReadBool())
+    {
         SetPassword(true);
+    }
 }
 
 void UGTextInput::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
@@ -173,5 +187,7 @@ void UGTextInput::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 
     const FString& str = Buffer->ReadS();
     if (!str.IsEmpty())
+    {
         SetText(str);
+    }
 }

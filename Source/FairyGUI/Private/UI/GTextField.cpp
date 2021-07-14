@@ -5,6 +5,9 @@
 #include "Widgets/STextField.h"
 
 UGTextField::UGTextField()
+	:bUBBEnabled(false)
+	, bFormatApplied(false)
+	, bSupportHTML(false)
 {
 	if (!HasAnyFlags(RF_ClassDefaultObject | RF_ArchetypeObject))
 	{
@@ -247,8 +250,8 @@ void UGTextField::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 	TextFormat.Face = Buffer->ReadS();
 	TextFormat.Size = Buffer->ReadShort();
 	TextFormat.Color = Buffer->ReadColor();
-	TextFormat.Align = (EAlignType)Buffer->ReadByte();
-	TextFormat.VerticalAlign = (EVerticalAlignType)Buffer->ReadByte();
+	TextFormat.HAlign = (EHAlignType)Buffer->ReadByte();
+	TextFormat.VAlign = (EVAlignType)Buffer->ReadByte();
 	TextFormat.LineSpacing = Buffer->ReadShort();
 	TextFormat.LetterSpacing = Buffer->ReadShort();
 	bUBBEnabled = Buffer->ReadBool();

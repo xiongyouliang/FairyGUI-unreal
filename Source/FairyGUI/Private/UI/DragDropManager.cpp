@@ -24,8 +24,8 @@ void UDragDropManager::Init(UObject* WorldContextObject)
 	Agent->SetDraggable(true);
 	//Agent->SetSize(FVector2D(100, 100));
 	//Agent->SetPivot(FVector2D(.5f, .5f), true);
-	Agent->SetAlign(EAlignType::Center);
-	Agent->SetVerticalAlign(EVerticalAlignType::Middle);
+	Agent->SetAlign(EHAlignType::Center);
+	Agent->SetVerticalAlign(EVAlignType::Middle);
 	Agent->SetSortingOrder(INT_MAX);
 	Agent->On(FUIEvents::DragEnd).AddUObject(this, &UDragDropManager::OnDragEnd);
 }

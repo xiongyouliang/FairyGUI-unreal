@@ -518,11 +518,15 @@ FGearBase* UFairyObject::GetGear(int32 Index)
 void UFairyObject::UpdateGear(int32 Index)
 {
 	if (bUnderConstruct || bGearLocked)
+	{
 		return;
+	}
 
 	FGearBase* gear = Gears[Index];
 	if (gear != nullptr && gear->GetController() != nullptr)
+	{
 		gear->UpdateState();
+	}
 }
 
 bool UFairyObject::CheckGearController(int32 Index, UGController* Controller)
@@ -533,7 +537,9 @@ bool UFairyObject::CheckGearController(int32 Index, UGController* Controller)
 void UFairyObject::UpdateGearFromRelations(int32 Index, const FVector2D& Delta)
 {
 	if (Gears[Index] != nullptr)
+	{
 		Gears[Index]->UpdateFromRelations(Delta);
+	}
 }
 
 uint32 UFairyObject::AddDisplayLock()
@@ -547,7 +553,9 @@ uint32 UFairyObject::AddDisplayLock()
 		return ret;
 	}
 	else
+	{
 		return 0;
+	}
 }
 
 void UFairyObject::ReleaseDisplayLock(uint32 Token)
@@ -563,11 +571,15 @@ void UFairyObject::ReleaseDisplayLock(uint32 Token)
 void UFairyObject::CheckGearDisplay()
 {
 	if (bHandlingController)
+	{
 		return;
+	}
 
 	bool connected = Gears[0] == nullptr || ((FGearDisplay*)Gears[0])->IsConnected();
 	if (Gears[8] != nullptr && Gears[8]->GetType() == FGearBase::EType::Display2)
+	{
 		connected = static_cast<FGearDisplay2*>(Gears[8])->Evaluate(connected);
+	}
 
 	if (connected != bInternalVisible)
 	{
@@ -638,7 +650,9 @@ void UFairyObject::InvokeEventDelegate(UEventContext* Context)
 	FUnifiedEventDelegate& Delegate = GetEventDelegate(Context->GetType());
 	Delegate.Func.Broadcast(Context);
 	if (Delegate.DynFunc != nullptr)
+	{
 		Delegate.DynFunc->Broadcast(Context);
+	}
 }
 
 UFairyObject::FUnifiedEventDelegate& UFairyObject::GetEventDelegate(const FName& EventType)
@@ -650,9 +664,13 @@ UFairyObject::FUnifiedEventDelegate& UFairyObject::GetEventDelegate(const FName&
 
 		UProperty* Property = GetClass()->FindPropertyByName(FName(*FString("On").Append(EventType.ToString())));
 		if (Property != nullptr)
+		{
 			Delegate->DynFunc = Property->ContainerPtrToValuePtr<FGUIEventDynMDelegate>(this);
+		}
 		else
+		{
 			Delegate->DynFunc = nullptr;
+		}
 	}
 
 	return *Delegate;
@@ -685,7 +703,9 @@ void UFairyObject::HandleControllerChanged(UGController* Controller)
 	{
 		FGearBase* gear = Gears[i];
 		if (gear != nullptr && gear->GetController() == Controller)
+		{
 			gear->Apply();
+		}
 	}
 	bHandlingController = false;
 

@@ -33,7 +33,7 @@ void UGLoader::SetURL(const FString& InURL)
     UpdateGear(7);
 }
 
-void UGLoader::SetAlign(EAlignType InAlign)
+void UGLoader::SetAlign(EHAlignType InAlign)
 {
     if (Align != InAlign)
     {
@@ -42,7 +42,7 @@ void UGLoader::SetAlign(EAlignType InAlign)
     }
 }
 
-void UGLoader::SetVerticalAlign(EVerticalAlignType InVerticalAlign)
+void UGLoader::SetVerticalAlign(EVAlignType InVerticalAlign)
 {
     if (VerticalAlign != InVerticalAlign)
     {
@@ -335,16 +335,16 @@ void UGLoader::UpdateLayout()
         Content->SetSize(contentSize);
 
     FVector2D ContentPosition;
-    if (Align == EAlignType::Center)
+    if (Align == EHAlignType::Center)
         ContentPosition.X = (Size.X - contentSize.X) / 2;
-    else if (Align == EAlignType::Right)
+    else if (Align == EHAlignType::Right)
         ContentPosition.X = Size.X - contentSize.X;
     else
         ContentPosition.X = 0;
 
-    if (VerticalAlign == EVerticalAlignType::Middle)
+    if (VerticalAlign == EVAlignType::Middle)
         ContentPosition.Y = (Size.Y - contentSize.Y) / 2;
-    else if (VerticalAlign == EVerticalAlignType::Bottom)
+    else if (VerticalAlign == EVAlignType::Bottom)
         ContentPosition.Y = Size.Y - contentSize.Y;
     else
         ContentPosition.Y = 0;
@@ -419,8 +419,8 @@ void UGLoader::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
     Buffer->Seek(BeginPos, 5);
 
     URL = Buffer->ReadS();
-    Align = (EAlignType)Buffer->ReadByte();
-    VerticalAlign = (EVerticalAlignType)Buffer->ReadByte();
+    Align = (EHAlignType)Buffer->ReadByte();
+    VerticalAlign = (EVAlignType)Buffer->ReadByte();
     Fill = (ELoaderFillType)Buffer->ReadByte();
     bShrinkOnly = Buffer->ReadBool();
     bAutoSize = Buffer->ReadBool();

@@ -44,8 +44,8 @@ private:
     TSharedPtr<FFairyPackageItem> ContentItem;
     FString URL;
     ELoaderFillType Fill;
-    EAlignType Align;
-    EVerticalAlignType VerticalAlign;
+    EHAlignType HAlign;
+    EVAlignType VAlign;
     bool bShowErrorSign;
     bool bShrinkOnly;
     bool bAutoSize;

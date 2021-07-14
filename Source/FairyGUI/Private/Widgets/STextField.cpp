@@ -106,19 +106,19 @@ void STextField::OnArrangeChildren(const FGeometry& AllottedGeometry, FArrangedC
 int32 STextField::OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const
 {
     FVector2D AutoScrollValue = FVector2D::ZeroVector; // Scroll to the left
-    if (TextFormat.Align != EAlignType::Left)
+    if (TextFormat.HAlign != EHAlignType::Left)
     {
         const float ActualWidth = TextLayout->GetSize().X;
         const float VisibleWidth = Size.X;
         if (VisibleWidth < ActualWidth)
         {
-            switch (TextFormat.Align)
+            switch (TextFormat.HAlign)
             {
-            case EAlignType::Center:
+            case EHAlignType::Center:
                 AutoScrollValue.X = (ActualWidth - VisibleWidth) * 0.5f; // Scroll to the center
                 break;
 
-            case EAlignType::Right:
+            case EHAlignType::Right:
                 AutoScrollValue.X = (ActualWidth - VisibleWidth); // Scroll to the right
                 break;
 
@@ -128,23 +128,25 @@ int32 STextField::OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeome
         }
     }
 
-    if (TextFormat.VerticalAlign != EVerticalAlignType::Top)
+    if (TextFormat.VAlign != EVAlignType::Top)
     {
         const float ActualHeight = TextLayout->GetSize().Y;
         const float VisibleHeight = Size.Y;
-        switch (TextFormat.VerticalAlign)
+        switch (TextFormat.VAlign)
         {
-        case EVerticalAlignType::Middle:
+        case EVAlignType::Middle:
             AutoScrollValue.Y = FMath::CeilToFloat((ActualHeight - VisibleHeight)*.5f);
             break;
 
-        case EVerticalAlignType::Bottom:
+        case EVAlignType::Bottom:
             AutoScrollValue.Y = FMath::CeilToFloat(ActualHeight - VisibleHeight);
             break;
         }
 
         if (AutoScrollValue.Y > 0)
+        {
             AutoScrollValue.Y = 0;
+        }
     }
 
     TextLayout->SetVisibleRegion(Size, AutoScrollValue * TextLayout->GetScale());
@@ -162,7 +164,7 @@ void STextField::UpdateTextLayout()
     TextLayout->ClearRunRenderers();
 
     TextLayout->SetDefaultTextStyle(TextFormat.GetStyle());
-    TextLayout->SetJustification((ETextJustify::Type)TextFormat.Align);
+    TextLayout->SetJustification((ETextJustify::Type)TextFormat.HAlign);
     TextLayout->SetWrappingPolicy(ETextWrappingPolicy::AllowPerCharacterWrapping);
     if (AutoSize == EAutoSizeType::Both)
     {

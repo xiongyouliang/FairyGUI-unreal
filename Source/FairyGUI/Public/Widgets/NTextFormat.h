@@ -39,10 +39,10 @@ public:
 	int32 LetterSpacing;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
-	EAlignType Align;
+	EHAlignType HAlign;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
-	EVerticalAlignType VerticalAlign;
+	EVAlignType VAlign;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
 	FColor OutlineColor;

@@ -9,8 +9,8 @@ FNTextFormat::FNTextFormat() :
 	bUnderline(false),
 	LineSpacing(3),
 	LetterSpacing(0),
-	Align(EAlignType::Left),
-	VerticalAlign(EVerticalAlignType::Top),
+	HAlign(EHAlignType::Left),
+	VAlign(EVAlignType::Top),
 	OutlineColor(FColor::Black),
 	OutlineSize(0),
 	ShadowColor(FColor::Black),
@@ -21,10 +21,13 @@ FNTextFormat::FNTextFormat() :
 
 bool FNTextFormat::EqualStyle(const FNTextFormat& AnotherFormat) const
 {
-	return Size == AnotherFormat.Size && Color == AnotherFormat.Color
-		&& bBold == AnotherFormat.bBold && bUnderline == AnotherFormat.bUnderline
+	return Size == AnotherFormat.Size
+		&& Color == AnotherFormat.Color
+		&& bBold == AnotherFormat.bBold
+		&& bUnderline == AnotherFormat.bUnderline
 		&& bItalic == AnotherFormat.bItalic
-		&& Align == AnotherFormat.Align;
+		&& HAlign == AnotherFormat.HAlign
+		&& VAlign == AnotherFormat.VAlign;
 }
 
 FTextBlockStyle FNTextFormat::GetStyle() const

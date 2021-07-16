@@ -1083,8 +1083,8 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 	}
 
 	bBuildingDisplayList = true;
-	Buffer->Seek(0, 1);
 
+	Buffer->Seek(0, 1);
 	int32 controllerCount = Buffer->ReadShort();
 	for (int32 i = 0; i < controllerCount; i++)
 	{
@@ -1098,9 +1098,8 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 		Buffer->SetPos(nextPos);
 	}
 
-	Buffer->Seek(0, 2);
-
 	// Parse Children
+	Buffer->Seek(0, 2);
 	UFairyObject* Child = nullptr;
 	int32 childCount = Buffer->ReadShort();
 	for (int32 i = 0; i < childCount; i++)

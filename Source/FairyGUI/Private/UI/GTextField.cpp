@@ -96,7 +96,7 @@ FNTextFormat& UGTextField::GetTextFormat()
 
 void UGTextField::SetTextFormat(const FNTextFormat& InTextFormat)
 {
-	Content->SetTextFormat(InTextFormat);
+	//Content->SetTextFormat(InTextFormat);
 	bFormatApplied = true;
 
 	UpdateGear(4);
@@ -108,7 +108,7 @@ void UGTextField::SetTextFormat(const FNTextFormat& InTextFormat)
 
 void UGTextField::ApplyFormat()
 {
-	SetTextFormat(Content->GetTextFormat());
+	//SetTextFormat(Content->GetTextFormat());
 }
 
 FVector2D UGTextField::GetTextSize()

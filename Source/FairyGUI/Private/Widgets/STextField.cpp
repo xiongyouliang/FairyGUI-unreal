@@ -5,320 +5,324 @@
 #include "Widgets/BitmapFontRun.h"
 #include "Package/FairyPackageMgr.h"
 #include "Package/FairyPackageItem.h"
+#include "UI/FairyObject.h"
 
 STextField::STextField() :
-    bHTML(false),
-    AutoSize(EAutoSizeType::None),
-    bSingleLine(false),
-    TextLayout(FSlateTextLayout::Create(this, FTextBlockStyle::GetDefault()))
+	bHTML(false),
+	AutoSize(EAutoSizeType::None),
+	bSingleLine(false),
+	TextLayout(FSlateTextLayout::Create(this, FTextBlockStyle::GetDefault()))
 {
-    TextLayout->SetLineBreakIterator(FBreakIterator::CreateCharacterBoundaryIterator());
+	TextLayout->SetLineBreakIterator(FBreakIterator::CreateCharacterBoundaryIterator());
 }
 
 void STextField::Construct(const FArguments& InArgs)
 {
-    SDisplayObject::Construct(SDisplayObject::FArguments().GObject(InArgs._GObject));
+	SDisplayObject::Construct(SDisplayObject::FArguments().GObject(InArgs._GObject));
 }
 
 void STextField::SetText(const FString& InText, bool bInHTML)
 {
-    const int32 OldLength = Text.Len();
+	const int32 OldLength = Text.Len();
 
-    // Only compare reasonably sized strings, it's not worth checking this
-    // for large blocks of text.
-    if (bHTML == bInHTML && OldLength <= 20)
-    {
-        if (InText.Compare(Text, ESearchCase::CaseSensitive) == 0)
-        {
-            return;
-        }
-    }
+	// Only compare reasonably sized strings, it's not worth checking this
+	// for large blocks of text.
+	if (bHTML == bInHTML && OldLength <= 20)
+	{
+		if (InText.Compare(Text, ESearchCase::CaseSensitive) == 0)
+		{
+			return;
+		}
+	}
 
-    Text = InText;
-    bHTML = bInHTML;
-    TextLayout->DirtyLayout();
-    Invalidate(EInvalidateWidget::LayoutAndVolatility);
+	Text = InText;
+	bHTML = bInHTML;
+	TextLayout->DirtyLayout();
+	Invalidate(EInvalidateWidget::LayoutAndVolatility);
 }
 
 void STextField::SetAutoSize(EAutoSizeType InAutoSize)
 {
-    if (AutoSize != InAutoSize)
-    {
-        AutoSize = InAutoSize;
-        if (AutoSize == EAutoSizeType::Both)
-        {
-            TextLayout->SetWrappingWidth(0);
-        }
-        else
-        {
-            TextLayout->SetWrappingWidth(Size.X);
-        }
-    }
+	FVector2D InViewSize = FVector2D::ZeroVector;
+	if (GObject.IsValid())
+	{
+		InViewSize = GObject->GetSize();
+	}
+
+	if (AutoSize != InAutoSize)
+	{
+		AutoSize = InAutoSize;
+		if (AutoSize == EAutoSizeType::Both)
+		{
+			TextLayout->SetWrappingWidth(0);
+		}
+		else
+		{
+			TextLayout->SetWrappingWidth(InViewSize.X);
+		}
+	}
 }
 
 void STextField::SetSingleLine(bool bInSingleLine)
 {
-    if (bSingleLine != bInSingleLine)
-    {
-        bSingleLine = bInSingleLine;
-        TextLayout->DirtyLayout();
-    }
+	if (bSingleLine != bInSingleLine)
+	{
+		bSingleLine = bInSingleLine;
+		TextLayout->DirtyLayout();
+	}
 }
 
 void STextField::SetTextFormat(const FNTextFormat& InFormat)
 {
-    if (&InFormat != &TextFormat)
-    {
-        TextFormat = InFormat;
-    }
-    TextLayout->DirtyLayout();
+	if (&InFormat != &TextFormat)
+	{
+		TextFormat = InFormat;
+	}
+	TextLayout->DirtyLayout();
 }
 
 FVector2D STextField::ComputeDesiredSize(float LayoutScaleMultiplier) const
 {
-    if (TextLayout->IsLayoutDirty())
-    {
-        TextLayout->SetScale(LayoutScaleMultiplier);
-        const_cast<STextField*>(this)->UpdateTextLayout();
-    }
-
-    return Size;
+	if (TextLayout->IsLayoutDirty())
+	{
+		TextLayout->SetScale(LayoutScaleMultiplier);
+		const_cast<STextField*>(this)->UpdateTextLayout();
+	}
+	FVector2D InViewSize = FVector2D::ZeroVector;
+	if (GObject.IsValid())
+	{
+		InViewSize = GObject->GetSize();
+	}
+	return InViewSize;
 }
 
 void STextField::EnsureSizeCorrect()
 {
-    if (TextLayout->IsLayoutDirty() && (AutoSize == EAutoSizeType::Both || AutoSize == EAutoSizeType::Height))
-    {
-        UpdateTextLayout();
-    }
+	if (TextLayout->IsLayoutDirty() && (AutoSize == EAutoSizeType::Both || AutoSize == EAutoSizeType::Height))
+	{
+		UpdateTextLayout();
+	}
 }
 
 FChildren* STextField::GetChildren()
 {
-    return TextLayout->GetChildren();
+	return TextLayout->GetChildren();
 }
 
 void STextField::OnArrangeChildren(const FGeometry& AllottedGeometry, FArrangedChildren& ArrangedChildren) const
 {
-    TextLayout->ArrangeChildren(AllottedGeometry, ArrangedChildren);
+	TextLayout->ArrangeChildren(AllottedGeometry, ArrangedChildren);
 }
 
 int32 STextField::OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const
 {
-    FVector2D AutoScrollValue = FVector2D::ZeroVector; // Scroll to the left
-    if (TextFormat.HAlign != EHAlignType::Left)
-    {
-        const float ActualWidth = TextLayout->GetSize().X;
-        const float VisibleWidth = Size.X;
-        if (VisibleWidth < ActualWidth)
-        {
-            switch (TextFormat.HAlign)
-            {
-            case EHAlignType::Center:
-                AutoScrollValue.X = (ActualWidth - VisibleWidth) * 0.5f; // Scroll to the center
-                break;
+	const FVector2D BlockSize = AllottedGeometry.GetLocalSize();
+	const FVector2D ActualSize = TextLayout->GetSize();
+	const FVector2D DrawSize = TextLayout->GetDrawSize();
+	const FVector2D WrappedSize = TextLayout->GetWrappedSize();
+	const FVector2D WrappedDrawSize = TextLayout->GetWrappedDrawSize();
 
-            case EHAlignType::Right:
-                AutoScrollValue.X = (ActualWidth - VisibleWidth); // Scroll to the right
-                break;
+	FVector2D AutoScrollOffset = FVector2D::ZeroVector; // default herizontal alignment is left and vertical alignment is top
+	//if (BlockSize.X < ActualSize.X)
+	//{
+		if (TextFormat.HAlign == EHAlignType::Center)
+		{
+			AutoScrollOffset.X = (ActualSize.X - BlockSize.X) * 0.5f;
+		}
+		else if (TextFormat.HAlign == EHAlignType::Right)
+		{
+			AutoScrollOffset.X = ActualSize.X - BlockSize.X;
+		}
+	//}
+	
+	//if (BlockSize.Y < ActualSize.Y)
+	//{
+		if (TextFormat.VAlign == EVAlignType::Middle)
+		{
+			AutoScrollOffset.Y = ( ActualSize.Y - BlockSize.Y) * 0.5f;
+		}
+		else if (TextFormat.VAlign == EVAlignType::Bottom)
+		{
+			AutoScrollOffset.Y = ActualSize.Y - BlockSize.Y;
+		}
+	//}
 
-            default:
-                break;
-            }
-        }
-    }
+	TextLayout->SetVisibleRegion(BlockSize, AutoScrollOffset);
+	TextLayout->UpdateIfNeeded();
 
-    if (TextFormat.VAlign != EVAlignType::Top)
-    {
-        const float ActualHeight = TextLayout->GetSize().Y;
-        const float VisibleHeight = Size.Y;
-        switch (TextFormat.VAlign)
-        {
-        case EVAlignType::Middle:
-            AutoScrollValue.Y = FMath::CeilToFloat((ActualHeight - VisibleHeight)*.5f);
-            break;
+	LayerId = TextLayout->OnPaint(Args, AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle, ShouldBeEnabled(bParentEnabled));
 
-        case EVAlignType::Bottom:
-            AutoScrollValue.Y = FMath::CeilToFloat(ActualHeight - VisibleHeight);
-            break;
-        }
-
-        if (AutoScrollValue.Y > 0)
-        {
-            AutoScrollValue.Y = 0;
-        }
-    }
-
-    TextLayout->SetVisibleRegion(Size, AutoScrollValue * TextLayout->GetScale());
-    TextLayout->UpdateIfNeeded();
-
-    LayerId = TextLayout->OnPaint(Args, AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle, ShouldBeEnabled(bParentEnabled));
-
-    return LayerId;
+	return LayerId;
 }
 
 void STextField::UpdateTextLayout()
 {
-    TextLayout->ClearLines();
-    TextLayout->ClearLineHighlights();
-    TextLayout->ClearRunRenderers();
+	FVector2D InViewSize = FVector2D::ZeroVector;
+	if (GObject.IsValid())
+	{
+		InViewSize = GObject->GetSize();
+	}
 
-    TextLayout->SetDefaultTextStyle(TextFormat.GetStyle());
-    TextLayout->SetJustification((ETextJustify::Type)TextFormat.HAlign);
-    TextLayout->SetWrappingPolicy(ETextWrappingPolicy::AllowPerCharacterWrapping);
-    if (AutoSize == EAutoSizeType::Both)
-    {
-        TextLayout->SetWrappingWidth(0);
-    }
-    else
-    {
-        TextLayout->SetWrappingWidth(Size.X);
-    }
-    TextLayout->SetMargin(FMargin(2, 2));
-    TextLayout->SetLineHeightPercentage(1 + (TextFormat.LineSpacing - 3) / TextFormat.Size);
+	TextLayout->ClearLines();
+	TextLayout->ClearLineHighlights();
+	TextLayout->ClearRunRenderers();
 
-    HTMLElements.Reset();
-    if (bHTML)
-    {
-        FHTMLParser::DefaultParser.Parse(Text, TextFormat, HTMLElements, FHTMLParser::DefaultParseOptions);
-    }
-    else
-    {
-        FHTMLElement TextElement;
-        TextElement.Type = EHTMLElementType::Text;
-        TextElement.Format = TextFormat;
-        TextElement.Text = Text;
-        HTMLElements.Add(MoveTemp(TextElement));
-    }
+	TextLayout->SetDefaultTextStyle(TextFormat.GetStyle());
+	TextLayout->SetJustification((ETextJustify::Type)TextFormat.HAlign);
+	TextLayout->SetWrappingPolicy(ETextWrappingPolicy::AllowPerCharacterWrapping);
+	if (AutoSize == EAutoSizeType::Both)
+	{
+		TextLayout->SetWrappingWidth(0);
+	}
+	else
+	{
+		TextLayout->SetWrappingWidth(InViewSize.X);
+	}
+	TextLayout->SetMargin(FMargin(2, 2));
+	TextLayout->SetLineHeightPercentage(1 + (TextFormat.LineSpacing - 3) / TextFormat.Size);
 
-    BuildLines();
+	HTMLElements.Reset();
+	if (bHTML)
+	{
+		FHTMLParser::DefaultParser.Parse(Text, TextFormat, HTMLElements, FHTMLParser::DefaultParseOptions);
+	}
+	else
+	{
+		FHTMLElement TextElement;
+		TextElement.Type = EHTMLElementType::Text;
+		TextElement.Format = TextFormat;
+		TextElement.Text = Text;
+		HTMLElements.Add(MoveTemp(TextElement));
+	}
 
-    TextLayout->UpdateIfNeeded();
+	BuildLines();
 
-    if (AutoSize == EAutoSizeType::Both)
-    {
-        SetSize(TextLayout->GetSize());
-    }
-    else if (AutoSize == EAutoSizeType::Height)
-    {
-        SetSize(FVector2D(Size.X, TextLayout->GetSize().Y));
-    }
+	TextLayout->UpdateIfNeeded();
+
+	//if (AutoSize == EAutoSizeType::Both)
+	//{
+	//	SetSize(TextLayout->GetSize());
+	//}
+	//else if (AutoSize == EAutoSizeType::Height)
+	//{
+	//	SetSize(FVector2D(InViewSize.X, TextLayout->GetSize().Y));
+	//}
 }
 
 void STextField::BuildLines()
 {
-    class FLineHelper
-    {
-    public:
-        TArray<FTextLayout::FNewLineData> Lines;
-        FTextLayout::FNewLineData* LastLineData;
-        bool bNewLine;
+	class FLineHelper
+	{
+	public:
+		TArray<FTextLayout::FNewLineData> Lines;
+		FTextLayout::FNewLineData* LastLineData;
+		bool bNewLine;
 
-        FLineHelper()
-        {
-            NewLine();
-        }
+		FLineHelper()
+		{
+			NewLine();
+		}
 
-        TSharedRef<FString>& GetTextRef()
-        {
-            if (bNewLine)
-            {
-                NewLine();
-            }
-            return LastLineData->Text;
-        }
+		TSharedRef<FString>& GetTextRef()
+		{
+			if (bNewLine)
+			{
+				NewLine();
+			}
+			return LastLineData->Text;
+		}
 
-        FString& GetText()
-        {
-            if (bNewLine)
-            {
-                NewLine();
-            }
-            return LastLineData->Text.Get();
-        }
+		FString& GetText()
+		{
+			if (bNewLine)
+			{
+				NewLine();
+			}
+			return LastLineData->Text.Get();
+		}
 
-        TArray<TSharedRef<IRun>>& GetRuns()
-        {
-            if (bNewLine)
-            {
-                NewLine();
-            }
-            return LastLineData->Runs;
-        }
+		TArray<TSharedRef<IRun>>& GetRuns()
+		{
+			if (bNewLine)
+			{
+				NewLine();
+			}
+			return LastLineData->Runs;
+		}
 
-    private:
-        void NewLine()
-        {
-            Lines.Emplace(MakeShareable(new FString()), TArray<TSharedRef<IRun>>());
-            LastLineData = &Lines.Last();
-            bNewLine = false;
-        }
-    } LineHelper;
+	private:
+		void NewLine()
+		{
+			Lines.Emplace(MakeShareable(new FString()), TArray<TSharedRef<IRun>>());
+			LastLineData = &Lines.Last();
+			bNewLine = false;
+		}
+	} LineHelper;
 
-    TSharedPtr<FBitmapFont> BitmapFont;
-    if (TextFormat.Face.StartsWith("ui://"))
-    {
-        TSharedPtr<FFairyPackageItem> FontItem = UFairyPackageMgr::Get()->GetPackageItemByURL(TextFormat.Face);
-        if (FontItem.IsValid())
-        {
-            FontItem->Load();
-            BitmapFont = FontItem->BitmapFont;
-        }
-    }
+	TSharedPtr<FBitmapFont> BitmapFont;
+	if (TextFormat.Face.StartsWith("ui://"))
+	{
+		TSharedPtr<FFairyPackageItem> FontItem = UFairyPackageMgr::Get()->GetPackageItemByURL(TextFormat.Face);
+		if (FontItem.IsValid())
+		{
+			FontItem->Load();
+			BitmapFont = FontItem->BitmapFont;
+		}
+	}
 
-    TArray<FTextRange> LineRangesBuffer;
-    for (int32 ElementIndex = 0; ElementIndex < HTMLElements.Num(); ++ElementIndex)
-    {
-        const FHTMLElement& Element = HTMLElements[ElementIndex];
-        if (Element.Type == EHTMLElementType::Text)
-        {
-            LineRangesBuffer.Reset();
+	TArray<FTextRange> LineRangesBuffer;
+	for (int32 ElementIndex = 0; ElementIndex < HTMLElements.Num(); ++ElementIndex)
+	{
+		const FHTMLElement& Element = HTMLElements[ElementIndex];
+		if (Element.Type == EHTMLElementType::Text)
+		{
+			LineRangesBuffer.Reset();
 
-            FTextBlockStyle TextStyle = Element.Format.GetStyle();
+			FTextBlockStyle TextStyle = Element.Format.GetStyle();
 
-            FTextRange::CalculateLineRangesFromString(Element.Text, LineRangesBuffer);
+			FTextRange::CalculateLineRangesFromString(Element.Text, LineRangesBuffer);
 
-            for (int32 LineIndex = 0; LineIndex < LineRangesBuffer.Num(); ++LineIndex)
-            {
-                const FTextRange& LineRange = LineRangesBuffer[LineIndex];
-                FString TextBlock = Element.Text.Mid(LineRange.BeginIndex, LineRange.Len());
-                if (BitmapFont.IsValid())
-                {
-                    int32 len = TextBlock.Len();
-                    for (int32 CharIndex = 0; CharIndex < len; CharIndex++)
-                    {
-                        FTextRange ModelRange;
-                        ModelRange.BeginIndex = LineHelper.GetText().Len();
-                        LineHelper.GetText().AppendChar(TextBlock[CharIndex]);
-                        ModelRange.EndIndex = LineHelper.GetText().Len();
-                        LineHelper.GetRuns().Add(FBitmapFontRun::Create(LineHelper.GetTextRef(), BitmapFont.ToSharedRef(), 0, ModelRange));
-                    }
-                }
-                else
-                {
-                    FTextRange ModelRange;
-                    ModelRange.BeginIndex = LineHelper.GetText().Len();
-                    LineHelper.GetText().Append(TextBlock);
-                    ModelRange.EndIndex = LineHelper.GetText().Len();
+			for (int32 LineIndex = 0; LineIndex < LineRangesBuffer.Num(); ++LineIndex)
+			{
+				const FTextRange& LineRange = LineRangesBuffer[LineIndex];
+				FString TextBlock = Element.Text.Mid(LineRange.BeginIndex, LineRange.Len());
+				if (BitmapFont.IsValid())
+				{
+					int32 len = TextBlock.Len();
+					for (int32 CharIndex = 0; CharIndex < len; CharIndex++)
+					{
+						FTextRange ModelRange;
+						ModelRange.BeginIndex = LineHelper.GetText().Len();
+						LineHelper.GetText().AppendChar(TextBlock[CharIndex]);
+						ModelRange.EndIndex = LineHelper.GetText().Len();
+						LineHelper.GetRuns().Add(FBitmapFontRun::Create(LineHelper.GetTextRef(), BitmapFont.ToSharedRef(), 0, ModelRange));
+					}
+				}
+				else
+				{
+					FTextRange ModelRange;
+					ModelRange.BeginIndex = LineHelper.GetText().Len();
+					LineHelper.GetText().Append(TextBlock);
+					ModelRange.EndIndex = LineHelper.GetText().Len();
 
-                    LineHelper.GetRuns().Add(FSlateTextRun::Create(FRunInfo(), LineHelper.GetTextRef(), TextStyle, ModelRange));
-                }
+					LineHelper.GetRuns().Add(FSlateTextRun::Create(FRunInfo(), LineHelper.GetTextRef(), TextStyle, ModelRange));
+				}
 
-                if (LineIndex != LineRangesBuffer.Num() - 1)
-                {
-                    LineHelper.bNewLine = true;
-                }
-            }
-        }
-        else if (Element.Type == EHTMLElementType::Image)
-        {
-            FTextRange ModelRange;
-            ModelRange.BeginIndex = LineHelper.GetText().Len();
-            LineHelper.GetText().Append(TEXT("\x200B")); // Zero-Width Breaking Space
-            ModelRange.EndIndex = LineHelper.GetText().Len();
-            LineHelper.GetRuns().Add(FLoaderRun::Create(Element, LineHelper.GetTextRef(), 0, ModelRange));
-        }
-    }
+				if (LineIndex != LineRangesBuffer.Num() - 1)
+				{
+					LineHelper.bNewLine = true;
+				}
+			}
+		}
+		else if (Element.Type == EHTMLElementType::Image)
+		{
+			FTextRange ModelRange;
+			ModelRange.BeginIndex = LineHelper.GetText().Len();
+			LineHelper.GetText().Append(TEXT("\x200B")); // Zero-Width Breaking Space
+			ModelRange.EndIndex = LineHelper.GetText().Len();
+			LineHelper.GetRuns().Add(FLoaderRun::Create(Element, LineHelper.GetTextRef(), 0, ModelRange));
+		}
+	}
 
-    TextLayout->AddLines(LineHelper.Lines);
+	TextLayout->AddLines(LineHelper.Lines);
 }

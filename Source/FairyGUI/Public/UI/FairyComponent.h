@@ -75,10 +75,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	virtual bool IsChildInView(UFairyObject* Child) const;
-	// ~ child operation end
-
+	
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	virtual int32 GetFirstChildInView() const;
+	// ~ child operation end
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	UGController* GetControllerAt(int32 Index) const;
@@ -181,11 +181,14 @@ public:
 	virtual void MakeSlateWidget() override;
 
 protected:
+	UFUNCTION(BlueprintImplementableEvent, Category = "FairyGUI", meta = (DisplayName = "OnConstruct"))
+		void K2_OnConstruct();
+
+protected:
 	virtual void ConstructExtension(FByteBuffer* Buffer);
 	virtual void OnConstruct();
-	UFUNCTION(BlueprintImplementableEvent, Category = "FairyGUI",  meta = ( DisplayName = "OnConstruct"))
-	void K2_OnConstruct();
 	virtual void SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos) override;
+
 	//virtual void HandleSizeChanged() override;
 	virtual void HandleGrayedChanged() override;
 	virtual void HandleControllerChanged(UGController* Controller) override;

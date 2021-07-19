@@ -43,24 +43,24 @@ void STextField::SetText(const FString& InText, bool bInHTML)
 
 void STextField::SetAutoSize(EAutoSizeType InAutoSize)
 {
-	FVector2D InViewSize = FVector2D::ZeroVector;
-	if (GObject.IsValid())
-	{
-		InViewSize = GObject->GetSize();
-	}
+	//FVector2D InViewSize = FVector2D::ZeroVector;
+	//if (GObject.IsValid())
+	//{
+	//	InViewSize = GObject->GetSize();
+	//}
 
-	if (AutoSize != InAutoSize)
-	{
-		AutoSize = InAutoSize;
-		if (AutoSize == EAutoSizeType::Both)
-		{
-			TextLayout->SetWrappingWidth(0);
-		}
-		else
-		{
-			TextLayout->SetWrappingWidth(InViewSize.X);
-		}
-	}
+	//if (AutoSize != InAutoSize)
+	//{
+	//	AutoSize = InAutoSize;
+	//	if (AutoSize == EAutoSizeType::Both)
+	//	{
+	//		TextLayout->SetWrappingWidth(0);
+	//	}
+	//	else
+	//	{
+	//		TextLayout->SetWrappingWidth(InViewSize.X);
+	//	}
+	//}
 }
 
 void STextField::SetSingleLine(bool bInSingleLine)
@@ -129,17 +129,15 @@ int32 STextField::OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeome
 		}
 	}
 	
-	//if (WidgetSize.Y < TextLayoutSize.Y)
-	//{
-		if (TextFormat.VAlign == EVAlignType::Middle)
-		{
-			AutoScrollOffset.Y = (TextLayoutSize.Y - WidgetSize.Y) * 0.5f;
-		}
-		else if (TextFormat.VAlign == EVAlignType::Bottom)
-		{
-			AutoScrollOffset.Y = TextLayoutSize.Y - WidgetSize.Y;
-		}
-	//}
+	// TextLayout has no vertical align attribute, use AutoScrollOffset instead
+	if (TextFormat.VAlign == EVAlignType::Middle)
+	{
+		AutoScrollOffset.Y = (TextLayoutSize.Y - WidgetSize.Y) * 0.5f;
+	}
+	else if (TextFormat.VAlign == EVAlignType::Bottom)
+	{
+		AutoScrollOffset.Y = TextLayoutSize.Y - WidgetSize.Y;
+	}
 
 	TextLayout->SetVisibleRegion(WidgetSize, AutoScrollOffset*TextLayout->GetScale());
 	TextLayout->UpdateIfNeeded();
@@ -164,16 +162,10 @@ void STextField::UpdateTextLayout()
 	TextLayout->SetDefaultTextStyle(TextFormat.GetStyle());
 	TextLayout->SetJustification((ETextJustify::Type)TextFormat.HAlign); // horizontal only
 	TextLayout->SetWrappingPolicy(ETextWrappingPolicy::AllowPerCharacterWrapping);
-	//if (AutoSize == EAutoSizeType::Both)
-	//{
-	//	TextLayout->SetWrappingWidth(0);
-	//}
-	//else
-	//{
-	//	TextLayout->SetWrappingWidth(InViewSize.X);
-	//}
-	//TextLayout->SetMargin(FMargin(2, 2));
-	//TextLayout->SetLineHeightPercentage(1 + (TextFormat.LineSpacing - 3) / TextFormat.Size);
+	TextLayout->SetWrappingWidth(TextFormat.bSingleLine ? 0.0f : InViewSize.X);
+
+	float NewPercentage = FMath::Max(1.0f, 1.0f + (TextFormat.LineSpacing - 3) / TextFormat.Size);
+	TextLayout->SetLineHeightPercentage(NewPercentage); // as line spacing
 
 	HTMLElements.Reset();
 	if (bHTML)
@@ -192,15 +184,6 @@ void STextField::UpdateTextLayout()
 	BuildLines();
 
 	TextLayout->UpdateIfNeeded();
-
-	//if (AutoSize == EAutoSizeType::Both)
-	//{
-	//	SetSize(TextLayout->GetSize());
-	//}
-	//else if (AutoSize == EAutoSizeType::Height)
-	//{
-	//	SetSize(FVector2D(InViewSize.X, TextLayout->GetSize().Y));
-	//}
 }
 
 void STextField::BuildLines()

@@ -15,44 +15,50 @@ public:
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
-	FString Face;
+		bool bBold;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
-	int32 Size;
+		bool bItalic;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
-	FColor Color;
+		bool bUnderline;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
-	bool bBold;
+		bool bSingleLine;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
-	bool bItalic;
+		int32 Size;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
-	bool bUnderline;
+		int32 LineSpacing;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
-	int32 LineSpacing;
+		int32 LetterSpacing;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
-	int32 LetterSpacing;
+		int32 OutlineSize;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
-	EHAlignType HAlign;
+		EHAlignType HAlign;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
-	EVAlignType VAlign;
+		EVAlignType VAlign;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
-	FColor OutlineColor;
+		EAutoSizeType AutoSizeType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
-	int32 OutlineSize;
+		FVector2D ShadowOffset;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
-	FColor ShadowColor;
+		FColor Color;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
-	FVector2D ShadowOffset;
+		FColor OutlineColor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
+		FColor ShadowColor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
+		FString Face;
 };

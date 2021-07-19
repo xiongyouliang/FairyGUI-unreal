@@ -247,35 +247,32 @@ void UGTextField::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 	Buffer->Seek(BeginPos, 5);
 
 	FNTextFormat& TextFormat = Content->GetTextFormat();
-	TextFormat.Face = Buffer->ReadS();
-	TextFormat.Size = Buffer->ReadShort();
-	TextFormat.Color = Buffer->ReadColor();
-	TextFormat.HAlign = (EHAlignType)Buffer->ReadByte();
-	TextFormat.VAlign = (EVAlignType)Buffer->ReadByte();
-	TextFormat.LineSpacing = Buffer->ReadShort();
-	TextFormat.LetterSpacing = Buffer->ReadShort();
-	bUBBEnabled = Buffer->ReadBool();
-	SetAutoSize((EAutoSizeType)Buffer->ReadByte());
-	TextFormat.bUnderline = Buffer->ReadBool();
-	TextFormat.bItalic = Buffer->ReadBool();
-	TextFormat.bBold = Buffer->ReadBool();
-	if (Buffer->ReadBool())
-	{
-		SetSingleLine(true);
-	}
+	TextFormat.Face				= Buffer->ReadS();
+	TextFormat.Size				= Buffer->ReadShort();
+	TextFormat.Color			= Buffer->ReadColor();
+	TextFormat.HAlign			= (EHAlignType)Buffer->ReadByte();
+	TextFormat.VAlign			= (EVAlignType)Buffer->ReadByte();
+	TextFormat.LineSpacing		= Buffer->ReadShort();
+	TextFormat.LetterSpacing	= Buffer->ReadShort();
+	bUBBEnabled					= Buffer->ReadBool();
+	TextFormat.AutoSizeType		= (EAutoSizeType)Buffer->ReadByte();
+	TextFormat.bUnderline		= Buffer->ReadBool();
+	TextFormat.bItalic			= Buffer->ReadBool();
+	TextFormat.bBold			= Buffer->ReadBool();
+	TextFormat.bSingleLine		= Buffer->ReadBool();
 
 	if (Buffer->ReadBool())
 	{
 		TextFormat.OutlineColor = Buffer->ReadColor();
-		TextFormat.OutlineSize = Buffer->ReadFloat();
+		TextFormat.OutlineSize	= Buffer->ReadFloat();
 	}
 
 	if (Buffer->ReadBool())
 	{
-		TextFormat.ShadowColor = Buffer->ReadColor();
+		TextFormat.ShadowColor	= Buffer->ReadColor();
 		float f1 = Buffer->ReadFloat();
 		float f2 = Buffer->ReadFloat();
-		TextFormat.ShadowOffset = FVector2D(f1, f2);
+		TextFormat.ShadowOffset	= FVector2D(f1, f2);
 	}
 
 	if (Buffer->ReadBool())
@@ -287,9 +284,6 @@ void UGTextField::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 void UGTextField::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
 	UFairyObject::SetupAfterAdd(Buffer, BeginPos);
-
-	ApplyFormat();
-
 	Buffer->Seek(BeginPos, 6);
 
 	const FString& str = Buffer->ReadS();
@@ -297,4 +291,5 @@ void UGTextField::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 	{
 		SetText(str);
 	}
+	ApplyFormat();
 }

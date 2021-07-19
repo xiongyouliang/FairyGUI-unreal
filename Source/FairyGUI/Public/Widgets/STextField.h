@@ -23,6 +23,7 @@ public:
 	const FString& GetText() const { return Text; }
 	void SetText(const FString& InText, bool bInHTML = false);
 
+	// deprecated: FairyGUI and Slate AutoSize is not the same thing
 	EAutoSizeType GetAutoSize() const { return AutoSize; };
 	void SetAutoSize(EAutoSizeType InAutoSize);
 

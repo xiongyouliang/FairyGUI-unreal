@@ -1,5 +1,6 @@
 #include "Widgets/NTextFormat.h"
 #include "UI/UIConfig.h"
+#include "Engine/Font.h"
 
 FNTextFormat::FNTextFormat() :
 	Size(12),
@@ -33,19 +34,53 @@ bool FNTextFormat::EqualStyle(const FNTextFormat& AnotherFormat) const
 FTextBlockStyle FNTextFormat::GetStyle() const
 {
 	FTextBlockStyle Style;
-
-	const FString& FontFace = Face.IsEmpty() ? FUIConfig::Config.DefaultFont : Face;
-	if (!FontFace.StartsWith("ui://"))
+	
+	FString TempStr = Face.IsEmpty() ? FUIConfig::Config.DefaultFont.TrimStart() : Face.TrimStart();
+	FString FontName = TempStr.Replace(TEXT(" "), TEXT(""));
+	if (!FontName.StartsWith("ui://"))
 	{
-		FSlateFontInfo Font = FCoreStyle::GetDefaultFontStyle(*FontFace, Size * 0.75f);
-		Font.OutlineSettings.OutlineSize = OutlineSize;
-		Font.OutlineSettings.OutlineColor = OutlineColor;
-		Style.SetFont(Font);
+		int32 TargetSize = FMath::CeilToInt(Size * 0.75);
+
+		// make sure use right UFont* object, FCoreStyle::GetDefaultFontStyle() return a FSlateFontInfo object without UFont* object
+		FSlateFontInfo TargetFontInfo = FCoreStyle::GetDefaultFontStyle(TEXT("Regular"), TargetSize);
+		// todo start: This is a test and verify code, Fonts objects need load and manager with some other Manager(or Object)
+		FString FullFontAssetPath = TEXT("/Game/Fonts/") + FontName;
+		UFont* TargetFontPtr = LoadObject<UFont>(nullptr, *FullFontAssetPath);
+		// todo end
+		if (TargetFontPtr)
+		{
+			TargetFontInfo = FSlateFontInfo(TargetFontPtr, TargetSize);
+		}
+
+		// set FSlateFontInfo's bold and italic attribute
+		if (bBold && bItalic)
+		{
+			TargetFontInfo.TypefaceFontName = TEXT("BoldItalic");
+		}
+		else
+		{
+			if (bBold)
+			{
+				TargetFontInfo.TypefaceFontName = TEXT("Bold");
+			}
+			else if (bItalic)
+			{
+				TargetFontInfo.TypefaceFontName = TEXT("Italic");
+			}
+			else
+			{
+				TargetFontInfo.TypefaceFontName = TEXT("Regular");
+			}
+		}
+		TargetFontInfo.OutlineSettings.OutlineSize = OutlineSize;
+		TargetFontInfo.OutlineSettings.OutlineColor = OutlineColor;
+		Style.SetFont(TargetFontInfo);
 	}
 
 	Style.SetColorAndOpacity(FSlateColor(FLinearColor(Color)));
 	Style.SetShadowOffset(ShadowOffset);
 	Style.SetShadowColorAndOpacity(ShadowColor);
+	// todo: strike and underline not implement
 
 	return MoveTemp(Style);
 }

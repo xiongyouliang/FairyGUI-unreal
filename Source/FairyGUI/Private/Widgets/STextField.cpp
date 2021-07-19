@@ -77,16 +77,19 @@ void STextField::SetTextFormat(const FNTextFormat& InFormat)
 	if (&InFormat != &TextFormat)
 	{
 		TextFormat = InFormat;
+		TextLayout->DirtyLayout();
 	}
-	TextLayout->DirtyLayout();
 }
 
 FVector2D STextField::ComputeDesiredSize(float LayoutScaleMultiplier) const
 {
 
 	TextLayout->SetScale(LayoutScaleMultiplier);
-
-	const_cast<STextField*>(this)->UpdateTextLayout();
+	if (TextLayout->IsLayoutDirty())
+	{
+		const_cast<STextField*>(this)->UpdateTextLayout();
+	}
+	TextLayout->UpdateIfNeeded();
 	return TextLayout->GetSize();
 }
 

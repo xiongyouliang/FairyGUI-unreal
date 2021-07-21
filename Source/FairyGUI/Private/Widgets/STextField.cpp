@@ -6,6 +6,7 @@
 #include "Package/FairyPackageMgr.h"
 #include "Package/FairyPackageItem.h"
 #include "UI/FairyObject.h"
+#include "Framework/Text/PlainTextLayoutMarshaller.h"
 
 STextField::STextField() :
 	bHTML(false),
@@ -14,6 +15,9 @@ STextField::STextField() :
 	TextLayout(FSlateTextLayout::Create(this, FTextBlockStyle::GetDefault()))
 {
 	TextLayout->SetLineBreakIterator(FBreakIterator::CreateCharacterBoundaryIterator());
+	TextLayout->SetTextFlowDirection(ETextFlowDirection::LeftToRight);
+
+	Marshaller = FPlainTextLayoutMarshaller::Create();
 }
 
 void STextField::Construct(const FArguments& InArgs)
@@ -83,8 +87,21 @@ void STextField::SetTextFormat(const FNTextFormat& InFormat)
 
 FVector2D STextField::ComputeDesiredSize(float LayoutScaleMultiplier) const
 {
+	FVector2D InViewSize = FVector2D::ZeroVector;
+	if (GObject.IsValid())
+	{
+		InViewSize = GObject->GetSize();
+	}
 
 	TextLayout->SetScale(LayoutScaleMultiplier);
+	TextLayout->SetWrappingWidth(InViewSize.X);
+	TextLayout->SetWrappingPolicy(ETextWrappingPolicy::AllowPerCharacterWrapping);
+	TextLayout->SetDefaultTextStyle(TextFormat.GetStyle());
+	TextLayout->SetJustification((ETextJustify::Type)TextFormat.HAlign); // horizontal only
+
+	float NewPercentage = FMath::Max(1.0f, 1.0f + (TextFormat.LineSpacing - 3) / TextFormat.Size);
+	TextLayout->SetLineHeightPercentage(NewPercentage); // as line spacing
+
 	if (TextLayout->IsLayoutDirty())
 	{
 		const_cast<STextField*>(this)->UpdateTextLayout();
@@ -142,48 +159,17 @@ int32 STextField::OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeome
 	TextLayout->SetVisibleRegion(WidgetSize, AutoScrollOffset*TextLayout->GetScale());
 	TextLayout->UpdateIfNeeded();
 
-	LayerId = TextLayout->OnPaint(Args, AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle, ShouldBeEnabled(bParentEnabled));
-
-	return LayerId;
+	return TextLayout->OnPaint(Args, AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle, ShouldBeEnabled(bParentEnabled));
 }
 
 void STextField::UpdateTextLayout()
 {
-	FVector2D InViewSize = FVector2D::ZeroVector;
-	if (GObject.IsValid())
-	{
-		InViewSize = GObject->GetSize();
-	}
-
+	Marshaller->ClearDirty();
 	TextLayout->ClearLines();
 	TextLayout->ClearLineHighlights();
 	TextLayout->ClearRunRenderers();
 
-	TextLayout->SetDefaultTextStyle(TextFormat.GetStyle());
-	TextLayout->SetJustification((ETextJustify::Type)TextFormat.HAlign); // horizontal only
-	TextLayout->SetWrappingPolicy(ETextWrappingPolicy::AllowPerCharacterWrapping);
-	TextLayout->SetWrappingWidth(TextFormat.bSingleLine ? 0.0f : InViewSize.X);
-
-	float NewPercentage = FMath::Max(1.0f, 1.0f + (TextFormat.LineSpacing - 3) / TextFormat.Size);
-	TextLayout->SetLineHeightPercentage(NewPercentage); // as line spacing
-
-	HTMLElements.Reset();
-	if (bHTML)
-	{
-		FHTMLParser::DefaultParser.Parse(Text, TextFormat, HTMLElements, FHTMLParser::DefaultParseOptions);
-	}
-	else
-	{
-		FHTMLElement TextElement;
-		TextElement.Type = EHTMLElementType::Text;
-		TextElement.Format = TextFormat;
-		TextElement.Text = Text;
-		HTMLElements.Add(MoveTemp(TextElement));
-	}
-
-	BuildLines();
-
-	TextLayout->UpdateIfNeeded();
+	Marshaller->SetText(Text, *TextLayout);
 }
 
 void STextField::BuildLines()

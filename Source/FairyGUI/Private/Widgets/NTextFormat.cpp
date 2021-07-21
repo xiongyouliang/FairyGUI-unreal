@@ -8,6 +8,7 @@ FNTextFormat::FNTextFormat() :
 	bBold(false),
 	bItalic(false),
 	bUnderline(false),
+	bSingleLine(false),
 	LineSpacing(3),
 	LetterSpacing(0),
 	HAlign(EHAlignType::Left),

@@ -41,7 +41,7 @@ protected:
 	virtual void EnsureSizeCorrect() override;
 	virtual int32 OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const override;
 	virtual bool ComputeVolatility() const override { return true; }
-	void UpdateTextLayout();
+	virtual void UpdateTextLayout();
 
 	void BuildLines();
 
@@ -51,6 +51,8 @@ protected:
 	EAutoSizeType AutoSize;
 	bool bSingleLine;
 	FNTextFormat TextFormat;
+
+	TSharedPtr<ITextLayoutMarshaller> Marshaller;
 
 	TSharedRef<FSlateTextLayout> TextLayout;
 	TArray<FHTMLElement> HTMLElements;

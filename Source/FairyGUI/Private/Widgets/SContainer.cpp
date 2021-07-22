@@ -140,7 +140,7 @@ void SContainer::OnArrangeChildren(const FGeometry& AllottedGeometry, FArrangedC
                 ArrangedChildren.AddWidget(
                     AllottedGeometry.MakeChild(CurWidget, CurChildSize, FSlateLayoutTransform(FinalPos))
                 );
-            }   
+            }
         }
     }
 }

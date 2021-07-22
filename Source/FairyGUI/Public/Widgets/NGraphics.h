@@ -32,7 +32,7 @@ public:
     virtual void AddReferencedObjects(FReferenceCollector& Collector) override;
 
 private:
-    void UpdateMeshNow();
+    void UpdateMeshNow(const FGeometry& AllottedGeometry, const float InAlpha);
 
     FVector2D Size;
     FColor Color;
@@ -45,8 +45,6 @@ private:
 
     TArray<FSlateVertex> Vertices;
     TArray<SlateIndex> Triangles;
-    TArray<FVector2D> PositionsBackup;
-    TArray<float> AlphaBackup;
     float UsingAlpha;
     bool bMeshDirty;
 };

@@ -90,12 +90,19 @@ FVector2D STextField::ComputeDesiredSize(float LayoutScaleMultiplier) const
 	FVector2D InViewSize = FVector2D::ZeroVector;
 	if (GObject.IsValid())
 	{
-		InViewSize = GObject->GetSize();
+		InViewSize = GObject->GetRelationSize();
 	}
 
-	TextLayout->SetScale(LayoutScaleMultiplier);
-	TextLayout->SetWrappingWidth(InViewSize.X);
+	if (TextFormat.bSingleLine)
+	{
+		TextLayout->SetWrappingWidth(0.0f);
+	}
+	else
+	{
+		TextLayout->SetWrappingWidth(InViewSize.X);
+	}
 	TextLayout->SetWrappingPolicy(ETextWrappingPolicy::AllowPerCharacterWrapping);
+	TextLayout->SetScale(LayoutScaleMultiplier);
 	TextLayout->SetDefaultTextStyle(TextFormat.GetStyle());
 	TextLayout->SetJustification((ETextJustify::Type)TextFormat.HAlign); // horizontal only
 

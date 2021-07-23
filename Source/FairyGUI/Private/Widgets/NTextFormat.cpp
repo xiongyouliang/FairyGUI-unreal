@@ -3,20 +3,21 @@
 #include "Engine/Font.h"
 
 FNTextFormat::FNTextFormat() :
-	Size(12),
-	Color(FColor::White),
 	bBold(false),
 	bItalic(false),
 	bUnderline(false),
 	bSingleLine(false),
+	Size(12),
 	LineSpacing(3),
 	LetterSpacing(0),
+	OutlineSize(0),
 	HAlign(EHAlignType::Left),
 	VAlign(EVAlignType::Top),
+	AutoSizeType(EAutoSizeType::None),
+	ShadowOffset(ForceInit),
+	Color(FColor::White),
 	OutlineColor(FColor::Black),
-	OutlineSize(0),
-	ShadowColor(FColor::Black),
-	ShadowOffset(0, 0)
+	ShadowColor(FColor::Black)
 {
 
 }

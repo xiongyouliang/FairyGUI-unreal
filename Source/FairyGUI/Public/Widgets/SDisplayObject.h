@@ -29,14 +29,6 @@ public:
     SDisplayObject();
     void Construct(const FArguments& InArgs);
 
-    const FVector2D& GetPosition() const;
-    void SetPosition(const FVector2D& InPosition);
-    void SetX(float InX);
-    void SetY(float InY);
-
-    void SetSize(const FVector2D& InSize);
-    FVector2D GetSize();
-
     void SetVisible(bool bInVisible);
     bool IsVisible() const { return bVisible; }
 
@@ -59,6 +51,8 @@ public:
 
     bool OnStage() const;
 
+    FVector2D GetInViewSize();
+    FVector2D GetInViewSize() const;
     TWeakObjectPtr<UFairyObject> GetFairyObject() const { return FairyObject; };
     TWeakObjectPtr<UFairyObject> GetFairyObject() { return FairyObject; };
 
@@ -81,8 +75,6 @@ protected:
     bool bInteractable : 1;
     bool bTouchable : 1;
     bool bOpaque : 1;
-    FVector2D Size;
-    FVector2D LocalPosition;
 
 private:
     static FNoChildren NoChildrenInstance;

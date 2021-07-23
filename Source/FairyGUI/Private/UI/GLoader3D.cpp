@@ -112,8 +112,8 @@ void UGLoader3D::UpdateLayout()
 
 		if (Size == contentSize)
 		{
-			Content->SetPosition(FVector2D(0, 0));
-			Content->SetSize(contentSize);
+			//Content->SetPosition(FVector2D(0, 0));
+			//Content->SetSize(contentSize);
 			return;
 		}
 	}
@@ -173,7 +173,7 @@ void UGLoader3D::UpdateLayout()
 		}
 	}
 	
-	Content->SetSize(contentSize);
+	//Content->SetSize(contentSize);
 
 	FVector2D ContentPosition;
 	if (HAlign == EHAlignType::Center)
@@ -202,7 +202,7 @@ void UGLoader3D::UpdateLayout()
 		ContentPosition.Y = 0;
 	}
 
-	Content->SetPosition(ContentPosition);
+	//Content->SetPosition(ContentPosition);
 }
 
 void UGLoader3D::SetErrorState()

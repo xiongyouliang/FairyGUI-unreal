@@ -958,8 +958,6 @@ void UFairyComponent::SetupOverflow(EOverflowType InOverflow)
 		GetDisplayObject()->SetClipping(EWidgetClipping::ClipToBoundsAlways);
 		GetDisplayObject()->SetCullingBoundsExtension(Margin);
 	}
-
-	Container->SetPosition(Margin.GetTopLeft());
 }
 
 void UFairyComponent::SetupScroll(FByteBuffer* Buffer)

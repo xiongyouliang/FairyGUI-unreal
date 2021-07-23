@@ -283,8 +283,8 @@ void UGLoader::UpdateLayout()
             }
             else
             {
-                Content->SetPosition(FVector2D(0, 0));
-                Content->SetSize(contentSize);
+                //Content->SetPosition(FVector2D(0, 0));
+                //Content->SetSize(contentSize);
             }
 
             return;
@@ -330,9 +330,13 @@ void UGLoader::UpdateLayout()
     }
 
     if (Content2 != nullptr)
+    {
         Content2->SetScale(ContentScale);
+    }
     else
-        Content->SetSize(contentSize);
+    {
+        //Content->SetSize(contentSize);
+    }
 
     FVector2D ContentPosition;
     if (Align == EHAlignType::Center)
@@ -350,9 +354,13 @@ void UGLoader::UpdateLayout()
         ContentPosition.Y = 0;
 
     if (Content2 != nullptr)
+    {
         Content2->SetPosition(ContentPosition);
+    }
     else
-        Content->SetPosition(ContentPosition);
+    {
+        //Content->SetPosition(ContentPosition);
+    }
 }
 
 void UGLoader::SetErrorState()

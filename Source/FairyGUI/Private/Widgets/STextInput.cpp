@@ -45,10 +45,11 @@ FChildren* STextInput::GetChildren()
 
 void STextInput::OnArrangeChildren(const FGeometry& AllottedGeometry, FArrangedChildren& ArrangedChildren) const
 {
+
     if (ArrangedChildren.Accepts(Widget->GetVisibility()))
-        ArrangedChildren.AddWidget(AllottedGeometry.MakeChild(
-            Widget, FVector2D::ZeroVector, Size
-        ));
+    {
+        ArrangedChildren.AddWidget(AllottedGeometry.MakeChild(Widget, FVector2D::ZeroVector, GetInViewSize()));
+    }   
 }
 
 int32 STextInput::OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const

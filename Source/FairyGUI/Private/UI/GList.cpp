@@ -1788,14 +1788,15 @@ bool UGList::HandleScroll1(bool forceUpdate)
 		ScrollPane->ChangeContentSizeOnScrolling(0, deltaSize, 0, firstItemDeltaSize);
 	}
 
-	if (curIndex > 0 && NumChildren() > 0 && Container->GetPosition().Y <= 0 && GetChildAt(0)->GetPosition().Y > -Container->GetPosition().Y)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+	//if (curIndex > 0 && NumChildren() > 0 && Container->GetPosition().Y <= 0 && GetChildAt(0)->GetPosition().Y > -Container->GetPosition().Y)
+	//{
+	//	return true;
+	//}
+	//else
+	//{
+	//	return false;
+	//}
+	return true;
 }
 
 bool UGList::HandleScroll2(bool forceUpdate)
@@ -1986,10 +1987,11 @@ bool UGList::HandleScroll2(bool forceUpdate)
 	if (deltaSize != 0 || firstItemDeltaSize != 0)
 		ScrollPane->ChangeContentSizeOnScrolling(deltaSize, 0, firstItemDeltaSize, 0);
 
-	if (curIndex > 0 && NumChildren() > 0 && Container->GetPosition().X <= 0 && GetChildAt(0)->GetPosition().X > -Container->GetPosition().X)
-		return true;
-	else
-		return false;
+	//if (curIndex > 0 && NumChildren() > 0 && Container->GetPosition().X <= 0 && GetChildAt(0)->GetPosition().X > -Container->GetPosition().X)
+	//	return true;
+	//else
+	//	return false;
+	return true;
 }
 
 void UGList::HandleScroll3(bool forceUpdate)
@@ -2251,9 +2253,13 @@ void UGList::HandleAlign(float contentWidth, float contentHeight)
 	{
 		AlignOffset = newOffset;
 		if (ScrollPane != nullptr)
+		{
 			ScrollPane->AdjustMaskContainer();
+		}
 		else
-			Container->SetPosition(FVector2D(Margin.Left + AlignOffset.X, Margin.Top + AlignOffset.Y));
+		{
+			//Container->SetPosition(FVector2D(Margin.Left + AlignOffset.X, Margin.Top + AlignOffset.Y));
+		}
 	}
 }
 

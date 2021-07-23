@@ -32,9 +32,8 @@ void SFImage::SetTexture(UNTexture* InTexture)
 {
 	Graphics->SetTexture(InTexture);
 
-	if (InTexture != nullptr && Size.IsZero())
+	if (InTexture != nullptr)
 	{
-		SetSize(InTexture->GetSize());
 		Invalidate(EInvalidateWidget::LayoutAndVolatility);
 	}
 }

@@ -10,8 +10,7 @@ SDisplayObject::SDisplayObject() :
     bVisible(true),
     bInteractable(true),
     bTouchable(true),
-    bOpaque(true),
-    Size(ForceInit)
+    bOpaque(true)
 {
     SetCanTick(false);
     bCanSupportFocus = false;
@@ -23,33 +22,30 @@ void SDisplayObject::Construct(const SDisplayObject::FArguments& InArgs)
     SetTag(InArgs._Tag);
 }
 
-const FVector2D& SDisplayObject::GetPosition() const
+FVector2D SDisplayObject::GetInViewSize()
 {
-    return LocalPosition;
+    FVector2D InViewSize(ForceInit);
+    if (FairyObject.IsValid())
+    {
+        InViewSize = FairyObject->GetRelationSize();
+    }
+    return InViewSize;
 }
 
-void SDisplayObject::SetPosition(const FVector2D& InPosition)
+FVector2D SDisplayObject::GetInViewSize() const
 {
-    LocalPosition = InPosition;
-    UpdateRenderTransform();
-}
-
-void SDisplayObject::SetX(float InX)
-{
-    LocalPosition.X = InX;
-    UpdateRenderTransform();
-}
-
-void SDisplayObject::SetY(float InY)
-{
-    LocalPosition.Y = InY;
-    UpdateRenderTransform();
+    FVector2D InViewSize(ForceInit);
+    if (FairyObject.IsValid())
+    {
+        InViewSize = FairyObject->GetRelationSize();
+    }
+    return InViewSize;
 }
 
 void SDisplayObject::UpdateRenderTransform()
 {
-    float DPIScale = UFairyApplication::Get()->GetDPIScale();
-    FVector2D FinalPosition = LocalPosition / DPIScale;
+    //float DPIScale = UFairyApplication::Get()->GetDPIScale();
+    //FVector2D FinalPosition = LocalPosition / DPIScale;
     //if (!GetRenderTransform().IsSet())
     //{
     //    SetRenderTransform(FSlateRenderTransform(FinalPosition));
@@ -58,21 +54,6 @@ void SDisplayObject::UpdateRenderTransform()
     //{
     //    SetRenderTransform(FSlateRenderTransform(GetRenderTransform()->GetMatrix(), FinalPosition));
     //}
-}
-
-void SDisplayObject::SetSize(const FVector2D& InSize)
-{
-    if (Size != InSize)
-    {
-        Size = InSize;
-        Invalidate(EInvalidateWidget::LayoutAndVolatility);
-    }
-}
-
-FVector2D SDisplayObject::GetSize()
-{
-    EnsureSizeCorrect();
-    return Size;
 }
 
 void SDisplayObject::EnsureSizeCorrect()

@@ -88,9 +88,10 @@ void STextField::SetTextFormat(const FNTextFormat& InFormat)
 FVector2D STextField::ComputeDesiredSize(float LayoutScaleMultiplier) const
 {
 	FVector2D InViewSize = FVector2D::ZeroVector;
-	if (GObject.IsValid())
+	TWeakObjectPtr<UFairyObject> ObjectPtr = GetFairyObject();
+	if (ObjectPtr.IsValid())
 	{
-		InViewSize = GObject->GetRelationSize();
+		InViewSize = ObjectPtr->GetRelationSize();
 	}
 
 	if (TextFormat.bSingleLine)

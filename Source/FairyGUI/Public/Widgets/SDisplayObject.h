@@ -3,9 +3,14 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "Slate.h"
+#include "UI/FairyObject.h"
 
 class UFairyObject;
 
+/*
+* This is FairyGUI basic Slate widget;
+* Maybe need to rename this class to SFairyWidget
+*/
 class FAIRYGUI_API SDisplayObject : public SWidget
 {
 public:
@@ -54,6 +59,10 @@ public:
 
     bool OnStage() const;
 
+    TWeakObjectPtr<UFairyObject> GetFairyObject() const { return GObject; };
+    TWeakObjectPtr<UFairyObject> GetFairyObject() { return GObject; };
+
+private:
     TWeakObjectPtr<class UFairyObject> GObject;
 
 protected:

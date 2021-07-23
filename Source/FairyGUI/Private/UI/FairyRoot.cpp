@@ -22,10 +22,11 @@ void SRootContainer::OnArrangeChildren(const FGeometry& AllottedGeometry, FArran
 {
     const FVector2D& LocalSize = AllottedGeometry.GetLocalSize();
     //const FVector2D& AbsoluteSize = AllottedGeometry.GetAbsoluteSize();
-    if (GObject.IsValid() && (LocalSize != GObject->GetSize()))
+    TWeakObjectPtr<UFairyObject> ObjectPtr = GetFairyObject();
+    if (ObjectPtr.IsValid() && (LocalSize != ObjectPtr->GetSize()))
     {
         UE_LOG(LogFairyGUI, Log, TEXT("FairyRoot Widget Size:(%f, %f)"), LocalSize.X, LocalSize.Y);
-        GObject->SetSize(LocalSize);
+        ObjectPtr->SetSize(LocalSize);
     }
 
     SContainer::OnArrangeChildren(AllottedGeometry, ArrangedChildren);
@@ -373,7 +374,7 @@ void UFairyRoot::CheckPopups(SWidget* ClickTarget)
         {
             if (Ptr->GetTag() == SDisplayObject::SDisplayObjectTag)
             {
-                UFairyObject* Obj = static_cast<SDisplayObject*>(Ptr)->GObject.Get();
+                UFairyObject* Obj = static_cast<SDisplayObject*>(Ptr)->GetFairyObject().Get();
 
                 int32 k;
                 if (PopupStack.Find(Obj, k))

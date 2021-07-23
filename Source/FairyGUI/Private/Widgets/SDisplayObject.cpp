@@ -131,7 +131,12 @@ void SDisplayObject::UpdateVisibilityFlags()
 
 FVector2D SDisplayObject::ComputeDesiredSize(float) const
 {
-    return Size;
+    FVector2D InViewSize = FVector2D::ZeroVector;
+    if (GObject.IsValid())
+    {
+        InViewSize = GObject->GetRelationSize();
+    }
+    return InViewSize;
 }
 
 FChildren* SDisplayObject::GetChildren()

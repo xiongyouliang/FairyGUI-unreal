@@ -373,7 +373,7 @@ UFairyObject* UFairyApplication::GetWidgetGObject(const TSharedPtr<SWidget>& InW
 	{
 		if (Ptr->GetTag() == SDisplayObject::SDisplayObjectTag)
 		{
-			const TWeakObjectPtr<UFairyObject>& ObjPtr = StaticCastSharedPtr<SDisplayObject>(Ptr)->GObject;
+			const TWeakObjectPtr<UFairyObject> ObjPtr = StaticCastSharedPtr<SDisplayObject>(Ptr)->GetFairyObject();
 			if (ObjPtr.IsValid())
 			{
 				return ObjPtr.Get();
@@ -393,7 +393,7 @@ void UFairyApplication::GetPathToRoot(const TSharedRef<SWidget>& InWidget, TArra
 	{
 		if (Ptr->GetTag() == SDisplayObject::SDisplayObjectTag)
 		{
-			const TWeakObjectPtr<UFairyObject>& ObjPtr = StaticCastSharedPtr<SDisplayObject>(Ptr)->GObject;
+			const TWeakObjectPtr<UFairyObject> ObjPtr = StaticCastSharedPtr<SDisplayObject>(Ptr)->GetFairyObject();
 			if (ObjPtr.IsValid())
 			{
 				OutArray.Add(ObjPtr.Get());
@@ -406,12 +406,13 @@ void UFairyApplication::GetPathToRoot(const TSharedRef<SWidget>& InWidget, TArra
 
 void UFairyApplication::GetDescendants(const TSharedRef<SWidget>& InWidget, TArray<UFairyObject*>& OutArray)
 {
+	TSharedPtr<SWidget> Ptr = InWidget;
 	if (InWidget->GetTag() == SDisplayObject::SDisplayObjectTag)
 	{
-		const TSharedRef<SDisplayObject>& DisplayObject = StaticCastSharedRef<SDisplayObject>(InWidget);
-		if (DisplayObject->GObject.IsValid())
+		const TWeakObjectPtr<UFairyObject> ObjPtr = StaticCastSharedPtr<SDisplayObject>(Ptr)->GetFairyObject();
+		if (ObjPtr.IsValid())
 		{
-			OutArray.Add(DisplayObject->GObject.Get());
+			OutArray.Add(ObjPtr.Get());
 		}
 	}
 
@@ -591,7 +592,7 @@ FReply UFairyApplication::OnWidgetMouseButtonDown(const TSharedRef<SWidget>& Wid
 
 		if (InitialGObject == nullptr && Ptr->GetTag() == SDisplayObject::SDisplayObjectTag)
 		{
-			InitialGObject = StaticCastSharedPtr<SDisplayObject>(Ptr)->GObject.Get();
+			InitialGObject = StaticCastSharedPtr<SDisplayObject>(Ptr)->GetFairyObject().Get();
 		}
 
 		Ptr = Ptr->GetParentWidget();

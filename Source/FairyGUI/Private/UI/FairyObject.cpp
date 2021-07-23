@@ -25,8 +25,8 @@ UFairyObject::UFairyObject() :
 	bPivotAsAnchor(false),
 	Alpha(1.0f),
 	bVisible(true),
-	bInternalVisible(true),
 	WidgetSlot(nullptr),
+	bInternalVisible(true),
 	SortingOrder(0)
 {
 	static int32 _gInstanceCounter = 1;

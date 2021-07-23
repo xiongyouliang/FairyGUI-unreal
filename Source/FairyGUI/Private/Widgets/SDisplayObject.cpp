@@ -19,7 +19,7 @@ SDisplayObject::SDisplayObject() :
 
 void SDisplayObject::Construct(const SDisplayObject::FArguments& InArgs)
 {
-    GObject = InArgs._GObject;
+    FairyObject = InArgs._GObject;
     SetTag(InArgs._Tag);
 }
 
@@ -132,9 +132,9 @@ void SDisplayObject::UpdateVisibilityFlags()
 FVector2D SDisplayObject::ComputeDesiredSize(float) const
 {
     FVector2D InViewSize = FVector2D::ZeroVector;
-    if (GObject.IsValid())
+    if (FairyObject.IsValid())
     {
-        InViewSize = GObject->GetRelationSize();
+        InViewSize = FairyObject->GetRelationSize();
     }
     return InViewSize;
 }

@@ -59,11 +59,11 @@ public:
 
     bool OnStage() const;
 
-    TWeakObjectPtr<UFairyObject> GetFairyObject() const { return GObject; };
-    TWeakObjectPtr<UFairyObject> GetFairyObject() { return GObject; };
+    TWeakObjectPtr<UFairyObject> GetFairyObject() const { return FairyObject; };
+    TWeakObjectPtr<UFairyObject> GetFairyObject() { return FairyObject; };
 
 private:
-    TWeakObjectPtr<class UFairyObject> GObject;
+    TWeakObjectPtr<class UFairyObject> FairyObject;
 
 protected:
     virtual FVector2D ComputeDesiredSize(float LayoutScaleMultiplier) const override;

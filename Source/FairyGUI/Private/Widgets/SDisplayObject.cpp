@@ -87,13 +87,21 @@ void SDisplayObject::UpdateVisibilityFlags()
 {
     bool HitTestFlag = bInteractable && bTouchable;
     if (!bVisible)
+    {
         SetVisibility(EVisibility::Collapsed);
+    }
     else if (!HitTestFlag)
+    {
         SetVisibility(EVisibility::HitTestInvisible);
+    }
     else if (!bOpaque)
+    {
         SetVisibility(EVisibility::SelfHitTestInvisible);
+    }
     else
+    {
         SetVisibility(EVisibility::All);
+    }
 }
 
 FVector2D SDisplayObject::ComputeDesiredSize(float) const

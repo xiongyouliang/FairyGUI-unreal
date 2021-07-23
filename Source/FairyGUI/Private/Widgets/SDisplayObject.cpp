@@ -42,20 +42,6 @@ FVector2D SDisplayObject::GetInViewSize() const
     return InViewSize;
 }
 
-void SDisplayObject::UpdateRenderTransform()
-{
-    //float DPIScale = UFairyApplication::Get()->GetDPIScale();
-    //FVector2D FinalPosition = LocalPosition / DPIScale;
-    //if (!GetRenderTransform().IsSet())
-    //{
-    //    SetRenderTransform(FSlateRenderTransform(FinalPosition));
-    //}
-    //else
-    //{
-    //    SetRenderTransform(FSlateRenderTransform(GetRenderTransform()->GetMatrix(), FinalPosition));
-    //}
-}
-
 void SDisplayObject::EnsureSizeCorrect()
 {
 

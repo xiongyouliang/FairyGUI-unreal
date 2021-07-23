@@ -68,8 +68,6 @@ protected:
 
     void UpdateVisibilityFlags();
 
-    void UpdateRenderTransform();
-
 protected:
     bool bVisible : 1;
     bool bInteractable : 1;

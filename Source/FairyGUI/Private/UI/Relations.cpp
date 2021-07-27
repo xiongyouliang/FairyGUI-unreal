@@ -149,9 +149,9 @@ void FRelations::Setup(FByteBuffer * Buffer, bool bParentToChild)
             FRelationItem* newItem = new FRelationItem(Owner);
             for (int32 j = 0; j < RelationNum; j++)
             {
-                ERelationType rt = (ERelationType)Buffer->ReadByte();
-                bool usePercent = Buffer->ReadBool();
-                newItem->InternalAdd(rt, usePercent);
+                ERelationType RelationType = (ERelationType)Buffer->ReadByte();
+                bool bUsePercent = Buffer->ReadBool();
+                newItem->InternalAdd(RelationType, bUsePercent);
             }
             newItem->SetTarget(TargetObject);
             Items.Add(newItem);

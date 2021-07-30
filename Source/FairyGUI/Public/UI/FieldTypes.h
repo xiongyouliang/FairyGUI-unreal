@@ -263,9 +263,28 @@ enum class EVAlignType : uint8
 	Bottom
 };
 
+namespace ERelation
+{
+	enum PosDirection
+	{
+		NoPosDirection,
+		Horizontal,
+		Vertical
+	};
+
+	enum ExtDirection
+	{
+		NoExtDirection,
+		Width,
+		Height
+	};
+};
+
 UENUM()
 enum class ERelationType : uint8
 {
+	// Position Relation
+	// horizontal position relations, for a specific target object only has one ERelationType
 	Left_Left,
 	Left_Center,
 	Left_Right,
@@ -274,6 +293,7 @@ enum class ERelationType : uint8
 	Right_Center,
 	Right_Right,
 
+	// vertical position relations
 	Top_Top,
 	Top_Middle,
 	Top_Bottom,
@@ -282,6 +302,8 @@ enum class ERelationType : uint8
 	Bottom_Middle,
 	Bottom_Bottom,
 
+
+	// Extension Relation
 	Width,
 	Height,
 

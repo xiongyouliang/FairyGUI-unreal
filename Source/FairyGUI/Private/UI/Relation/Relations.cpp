@@ -1,4 +1,4 @@
-#include "UI/Relations.h"
+#include "UI/Relation/Relations.h"
 #include "UI/FairyComponent.h"
 #include "Utils/ByteBuffer.h"
 
@@ -21,32 +21,32 @@ void FRelations::Add(UFairyObject * InTarget, ERelationType ERelationType, bool 
 {
     verifyf(InTarget, TEXT("target is null"));
 
-    for (auto& it : Items)
+    for (auto& it : ItemList)
     {
-        if (it.GetTarget() == InTarget)
+        if (it->GetTarget() == InTarget)
         {
-            it.Add(ERelationType, bUsePercent);
+            it->Add(ERelationType, bUsePercent);
             return;
         }
     }
     FRelationItem* newItem = new FRelationItem(Owner);
     newItem->SetTarget(InTarget);
     newItem->Add(ERelationType, bUsePercent);
-    Items.Add(newItem);
+    ItemList.Add(newItem);
 }
 
 void FRelations::Remove(UFairyObject * InTarget, ERelationType ERelationType)
 {
     int32 Index = 0;
-    while (Index < Items.Num())
+    while (Index < ItemList.Num())
     {
-        FRelationItem& Item = Items[Index];
-        if (Item.GetTarget() == InTarget)
+        FRelationItem* Item = ItemList[Index];
+        if (Item->GetTarget() == InTarget)
         {
-            Item.Remove(ERelationType);
-            if (Item.IsEmpty())
+            Item->Remove(ERelationType);
+            if (Item->IsEmpty())
             {
-                Items.RemoveAt(Index);
+                ItemList.RemoveAt(Index);
             }
             else
             {
@@ -62,9 +62,9 @@ void FRelations::Remove(UFairyObject * InTarget, ERelationType ERelationType)
 
 bool FRelations::Contains(UFairyObject * InTarget)
 {
-    for (auto& it : Items)
+    for (auto& it : ItemList)
     {
-        if (it.GetTarget() == InTarget)
+        if (it->GetTarget() == InTarget)
         {
             return true;
         }
@@ -76,12 +76,12 @@ bool FRelations::Contains(UFairyObject * InTarget)
 void FRelations::ClearFor(UFairyObject * InTarget)
 {
     int32 Index = 0;
-    while (Index < Items.Num())
+    while (Index < ItemList.Num())
     {
-        FRelationItem& Item = Items[Index];
-        if (Item.GetTarget() == InTarget)
+        FRelationItem* Item = ItemList[Index];
+        if (Item->GetTarget() == InTarget)
         {
-            Items.RemoveAt(Index);
+            ItemList.RemoveAt(Index);
         }
         else
         {
@@ -92,32 +92,24 @@ void FRelations::ClearFor(UFairyObject * InTarget)
 
 void FRelations::ClearAll()
 {
-    Items.Reset();
+    ItemList.Reset();
 }
 
 void FRelations::CopyFrom(const FRelations & Source)
 {
     ClearAll();
 
-    for (auto& it : Source.Items)
+    for (auto& it : Source.ItemList)
     {
         FRelationItem* item = new FRelationItem(Owner);
-        item->CopyFrom(it);
-        Items.Add(item);
-    }
-}
-
-void FRelations::OnOwnerSizeChanged(const FVector2D& Delta, bool bApplyPivot)
-{
-    for (auto& it : Items)
-    {
-        it.ApplySelfSizeChanged(Delta.X, Delta.Y, bApplyPivot);
+        item->CopyFrom(*it);
+        ItemList.Add(item);
     }
 }
 
 bool FRelations::IsEmpty() const
 {
-    return Items.Num() == 0;
+    return ItemList.Num() == 0;
 }
 
 void FRelations::Setup(FByteBuffer * Buffer, bool bParentToChild)
@@ -140,7 +132,7 @@ void FRelations::Setup(FByteBuffer * Buffer, bool bParentToChild)
         else
         {
             // target is a brothers
-            TargetObject = Owner->GetParent()->GetChildAt(targetIndex);
+            //TargetObject = Owner->GetParent()->GetChildAt(targetIndex);
         }
 
         int32 RelationNum = Buffer->ReadByte();
@@ -151,31 +143,22 @@ void FRelations::Setup(FByteBuffer * Buffer, bool bParentToChild)
             {
                 ERelationType RelationType = (ERelationType)Buffer->ReadByte();
                 bool bUsePercent = Buffer->ReadBool();
-                newItem->InternalAdd(RelationType, bUsePercent);
+                newItem->Add(RelationType, bUsePercent);
             }
             newItem->SetTarget(TargetObject);
-            Items.Add(newItem);
+            ItemList.Add(newItem);
         }
+    }
+    if (!IsEmpty())
+    {
+        ApplyRelation();
     }
 }
 
-FVector2D FRelations::GetRelationSize() const
+void FRelations::ApplyRelation() const
 {
     checkf(!IsEmpty(), TEXT("Relations must be Not Empty"));
     FVector2D FinalSize(ForceInit);
-    FRelationItem TargetItem = Items[0];
-    FinalSize = TargetItem.GetRelationSize(); // todo: guess only has one relation target
-
-    return FinalSize;
-}
-
-FVector2D FRelations::GetRelationPos() const
-{
-    checkf(!IsEmpty(), TEXT("Relations must be Not Empty"));
-    FVector2D FinalPos;
-    FRelationItem TargetItem = Items[0];
-
-    FinalPos = TargetItem.GetRelationPos(); // todo: guess only has one relation target
-
-    return FinalPos;
+    FRelationItem* TargetItem = ItemList[0];
+    TargetItem->ApplyRelation();
 }

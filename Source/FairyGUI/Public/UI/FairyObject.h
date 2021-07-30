@@ -2,7 +2,7 @@
 
 #include "Widgets/SDisplayObject.h"
 #include "Widgets/SContainer.h"
-#include "Relations.h"
+#include "UI/Relation/Relations.h"
 #include "Package/FairyPackageItem.h"
 #include "UIConfig.h"
 #include "FairyCommons.h"
@@ -334,9 +334,9 @@ public:
 	float GetMaxHeight() { return MaxSize.Y; };
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-		const FVector2D& GetRelationSize() const;
+	const FVector2D& GetRelationSize() const;
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-		const FVector2D& GetRelationPos() const;
+	const FVector2D& GetRelationPos() const;
 
 	// Parent
 	bool HasParent() { return Parent ? true : false; }
@@ -380,7 +380,7 @@ protected:
 	bool bVisible = false;
 	bool bGrayed = false;
 
-	class UFairyComponent* Parent; // parent visual object
+	class UFairyComponent* Parent; // parent component object
 	TSharedPtr<SDisplayObject> DisplayObject; // the underlying SWidget
 	SContainer::FSlot* WidgetSlot;
 	TSharedPtr<FFairyPackageItem> PackageItem; // A Fairy Editor export data

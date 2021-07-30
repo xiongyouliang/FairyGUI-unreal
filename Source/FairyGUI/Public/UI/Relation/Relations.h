@@ -2,11 +2,17 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "RelationItem.h"
+#include "UI/Relation/RelationItem.h"
 
 class UFairyObject;
 class FByteBuffer;
 
+/**
+* A UFairyObject Handle a FRelations Object;
+* A FRelations Handle a list FRelationItem Objects;
+* A FRelationItem Handle a Target UFairyObject;
+* What happend when the Target UFairyObject is destoried?
+*/
 class FAIRYGUI_API FRelations
 {
 public:
@@ -20,16 +26,14 @@ public:
     void ClearFor(UFairyObject* InTarget);
     void ClearAll();
     void CopyFrom(const FRelations& Source);
-    void OnOwnerSizeChanged(const FVector2D& Delta, bool bApplyPivot);
     bool IsEmpty() const;
     void Setup(FByteBuffer* Buffer, bool bParentToChild);
 
-    FVector2D GetRelationSize() const;
-    FVector2D GetRelationPos() const;
+    void ApplyRelation() const;
 
     UFairyObject* Handling;
 
 private:
     UFairyObject* Owner;
-    TIndirectArray<FRelationItem> Items;
+    TArray<FRelationItem*> ItemList;
 };

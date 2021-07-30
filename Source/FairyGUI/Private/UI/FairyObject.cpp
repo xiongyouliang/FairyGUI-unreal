@@ -205,27 +205,26 @@ void UFairyObject::UpdateRenderTransform()
 	}
 }
 
-
 const FVector2D& UFairyObject::GetRelationSize() const
 {
-	// todo: calculate final relation size
-	static FVector2D finalSize;
-
 	if (Relations.IsSet() && !Relations->IsEmpty())
 	{
 		const FRelations& RelationsObj = Relations.GetValue();
-		finalSize = RelationsObj.GetRelationSize();
+		RelationsObj.ApplyRelation();
 	}
-	else
-	{
-		finalSize = GetSize();
-	}
-	return finalSize;
+
+	return GetSize();
 }
 
 const FVector2D& UFairyObject::GetRelationPos() const
 {
 	// todo: calculate final relation position
+	if (Relations.IsSet() && !Relations->IsEmpty())
+	{
+		const FRelations& RelationsObj = Relations.GetValue();
+		RelationsObj.ApplyRelation();
+	}
+
 	return GetPosition();
 }
 
@@ -662,7 +661,7 @@ UFairyObject::FUnifiedEventDelegate& UFairyObject::GetEventDelegate(const FName&
 	{
 		Delegate = &EventDelegates.Add(EventType);
 
-		UProperty* Property = GetClass()->FindPropertyByName(FName(*FString("On").Append(EventType.ToString())));
+		FProperty* Property = GetClass()->FindPropertyByName(FName(*FString("On").Append(EventType.ToString())));
 		if (Property != nullptr)
 		{
 			Delegate->DynFunc = Property->ContainerPtrToValuePtr<FGUIEventDynMDelegate>(this);

@@ -1,7 +1,7 @@
 #include "UI/FairyComponent.h"
 #include "UI/GButton.h"
 #include "UI/GGroup.h"
-#include "UI/Relations.h"
+#include "UI/Relation/Relations.h"
 #include "UI/TranslationHelper.h"
 #include "UI/UIObjectFactory.h"
 #include "Package/FairyPackage.h"

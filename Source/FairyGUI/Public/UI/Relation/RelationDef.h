@@ -5,7 +5,7 @@
 
 class FRelationItem;
 
-class FAIRYGUI_API FRelationDef
+class FRelationDef
 {
 public:
 	FRelationItem* Owner;
@@ -18,105 +18,152 @@ public:
 	virtual void ApplyRelation();
 
 	void ApplyRelationPos(const float OwnerOldEdgePos, const float TargetOldEdgePos, const float TargetNewEdgePos);
+	void ApplyRelationExt(const float InOwnerExtEdgePos, const float InOwnerConstantEdgePos, const float InTargetOldEdgePos, const float InTargetNewEdgePos);
 };
 
 FRelationDef* CreateRelationDef(FRelationItem* InOwner, ERelationType InRelationType, bool bUserPercent);
 ERelation::PosDirection GetPosRelationDirection(ERelationType RelationType);
 ERelation::ExtDirection GetExtensionDirection(ERelationType RelationType);
 
-class FAIRYGUI_API FRelationDef_Left_Left : public FRelationDef
+class FRelationDef_Left_Left : public FRelationDef
 {
 public:
 	virtual void ApplyRelation() override;
 };
 
-class FAIRYGUI_API FRelationDef_Left_Center : public FRelationDef
+class FRelationDef_Left_Center : public FRelationDef
 {
 public:
 	virtual void ApplyRelation() override;
 };
 
-class FAIRYGUI_API FRelationDef_Left_Right : public FRelationDef
+class FRelationDef_Left_Right : public FRelationDef
 {
 public:
 	virtual void ApplyRelation() override;
 };
 
-class FAIRYGUI_API FRelationDef_Center_Center : public FRelationDef
+class FRelationDef_Center_Center : public FRelationDef
 {
 public:
 	virtual void ApplyRelation() override;
 };
 
-class FAIRYGUI_API FRelationDef_Right_Left : public FRelationDef
+class FRelationDef_Right_Left : public FRelationDef
 {
 public:
 	virtual void ApplyRelation() override;
 };
 
-class FAIRYGUI_API FRelationDef_Right_Center : public FRelationDef
+class FRelationDef_Right_Center : public FRelationDef
 {
 public:
 	virtual void ApplyRelation() override;
 };
 
-class FAIRYGUI_API FRelationDef_Right_Right : public FRelationDef
+class FRelationDef_Right_Right : public FRelationDef
 {
 public:
 	virtual void ApplyRelation() override;
 };
 
-class FAIRYGUI_API FRelationDef_Top_Top: public FRelationDef
+class FRelationDef_Top_Top: public FRelationDef
 {
 public:
 	virtual void ApplyRelation() override;
 };
 
-class FAIRYGUI_API FRelationDef_Top_Middle : public FRelationDef
+class FRelationDef_Top_Middle : public FRelationDef
 {
 public:
 	virtual void ApplyRelation() override;
 };
 
-class FAIRYGUI_API FRelationDef_Top_Bottom : public FRelationDef
+class FRelationDef_Top_Bottom : public FRelationDef
 {
 public:
 	virtual void ApplyRelation() override;
 };
 
-class FAIRYGUI_API FRelationDef_Middle_Middle : public FRelationDef
+class FRelationDef_Middle_Middle : public FRelationDef
 {
 public:
 	virtual void ApplyRelation() override;
 };
 
-class FAIRYGUI_API FRelationDef_Bottom_Top : public FRelationDef
+class FRelationDef_Bottom_Top : public FRelationDef
 {
 public:
 	virtual void ApplyRelation() override;
 };
 
-class FAIRYGUI_API FRelationDef_Bottom_Middle : public FRelationDef
+class FRelationDef_Bottom_Middle : public FRelationDef
 {
 public:
 	virtual void ApplyRelation() override;
 };
 
-class FAIRYGUI_API FRelationDef_Bottom_Bottom : public FRelationDef
+class FRelationDef_Bottom_Bottom : public FRelationDef
 {
 public:
 	virtual void ApplyRelation() override;
 };
 
-class FAIRYGUI_API FRelationDef_Width : public FRelationDef
+class FRelationDef_Width : public FRelationDef
 {
 public:
 	virtual void ApplyRelation() override;
 };
 
-class FAIRYGUI_API FRelationDef_Height : public FRelationDef
+class FRelationDef_Height : public FRelationDef
 {
 public:
 	virtual void ApplyRelation() override;
 };
 
+class FRelationDef_Ext_Left_Left : public FRelationDef
+{
+public:
+	virtual void ApplyRelation() override;
+};
+
+class FRelationDef_Ext_Left_Right : public FRelationDef
+{
+	virtual void ApplyRelation() override;
+};
+
+class FRelationDef_Ext_Right_Left : public FRelationDef
+{
+public:
+	virtual void ApplyRelation() override;
+};
+
+class FRelationDef_Ext_Right_Right : public FRelationDef
+{
+public:
+	virtual void ApplyRelation() override;
+};
+
+class FRelationDef_Ext_Top_Top : public FRelationDef
+{
+public:
+	virtual void ApplyRelation() override;
+};
+
+class FRelationDef_Ext_Top_Bottom : public FRelationDef
+{
+public:
+	virtual void ApplyRelation() override;
+};
+
+class FRelationDef_Ext_Bottom_Top : public FRelationDef
+{
+public:
+	virtual void ApplyRelation() override;
+};
+
+class FRelationDef_Ext_Bottom_Bottom : public FRelationDef
+{
+public:
+	virtual void ApplyRelation() override;
+};

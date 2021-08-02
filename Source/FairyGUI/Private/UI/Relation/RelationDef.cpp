@@ -274,3 +274,93 @@ void FRelationDef_Height::ApplyRelation()
 
 	Owner->GetOwner()->SetSize(FinalSize);
 }
+
+void FRelationDef::ApplyRelationExt(const float InOwnerExtEdgePos, const float InOwnerConstantEdgePos, const float InTargetOldEdgePos, const float InTargetNewEdgePos)
+{
+	ERelation::ExtDirection direction = GetExtensionDirection(RelationType);
+	check(direction != ERelation::ExtDirection::NoExtDirection);
+
+	const FVector2D OwnerSize = Owner->GetOwnerSize();
+	const FVector2D OwnerPos = Owner->GetOwnerSize();
+	const FVector2D OwnerAnchor = Owner->GetOwnerAnchor();
+
+	const FVector2D TargetOldSize = Owner->GetTargetCachedSize();
+	const FVector2D TargetNewSize = Owner->GetTargetSize();
+
+	FVector2D NewSize = OwnerSize;
+	FVector2D NewPos = OwnerPos;
+
+	float TargetEdgeDeltaValue = 0;
+	if (bUsePercent)
+	{
+		float OldDenominator = (direction == ERelation::ExtDirection::Width) ? TargetOldSize.X : TargetOldSize.Y;
+		float NewDenominator = (direction == ERelation::ExtDirection::Width) ? TargetNewSize.X : TargetNewSize.Y;
+		if (OldDenominator != 0)
+		{
+			float Ratio = (InTargetOldEdgePos - InOwnerExtEdgePos) / OldDenominator;
+			float OwnerNewEdgePos = InTargetNewEdgePos - NewDenominator * Ratio;
+			TargetEdgeDeltaValue = OwnerNewEdgePos - InOwnerExtEdgePos;
+		}
+	}
+	else
+	{
+		TargetEdgeDeltaValue = InTargetNewEdgePos - InTargetOldEdgePos;
+	}
+
+	float OwnerNewEdgePos = InOwnerExtEdgePos + TargetEdgeDeltaValue;
+	float MinorPos = OwnerNewEdgePos < InOwnerConstantEdgePos ? OwnerNewEdgePos : InOwnerConstantEdgePos; // get owner object left or top edge position
+	if (direction == ERelation::ExtDirection::Width)
+	{
+		NewSize.X += TargetEdgeDeltaValue;
+		NewPos.X = MinorPos + NewSize.X * OwnerAnchor.X;
+	}
+	else
+	{
+		NewSize.Y += TargetEdgeDeltaValue;
+		NewPos.Y = MinorPos + NewSize.Y * OwnerAnchor.Y;
+	}
+
+	Owner->GetOwner()->SetPosition(NewPos);
+	Owner->GetOwner()->SetSize(NewSize);
+}
+
+void FRelationDef_Ext_Left_Left::ApplyRelation()
+{
+	ApplyRelationExt(Owner->GetOwnerLeftPos(), Owner->GetOwnerRightPos(), Owner->GetTargetCachedLeftPos(), Owner->GetTargetLeftPos());
+}
+
+void FRelationDef_Ext_Left_Right::ApplyRelation()
+{
+	ApplyRelationExt(Owner->GetOwnerLeftPos(), Owner->GetOwnerRightPos(), Owner->GetTargetCachedRightPos(), Owner->GetTargetRightPos());
+}
+
+void FRelationDef_Ext_Right_Left::ApplyRelation()
+{
+	ApplyRelationExt(Owner->GetOwnerRightPos(), Owner->GetOwnerLeftPos(), Owner->GetTargetCachedLeftPos(), Owner->GetTargetLeftPos());
+}
+
+void FRelationDef_Ext_Right_Right::ApplyRelation()
+{
+	ApplyRelationExt(Owner->GetOwnerRightPos(), Owner->GetOwnerLeftPos(), Owner->GetTargetCachedRightPos(), Owner->GetTargetRightPos());
+}
+
+void FRelationDef_Ext_Top_Top::ApplyRelation()
+{
+	ApplyRelationExt(Owner->GetOwnerTopPos(), Owner->GetOwnerBottomPos(), Owner->GetTargetCachedTopPos(), Owner->GetTargetTopPos());
+}
+
+void FRelationDef_Ext_Top_Bottom::ApplyRelation()
+{
+	ApplyRelationExt(Owner->GetOwnerTopPos(), Owner->GetOwnerBottomPos(), Owner->GetTargetCachedBottomPos(), Owner->GetTargetBottomPos());
+}
+
+void FRelationDef_Ext_Bottom_Top::ApplyRelation()
+{
+	ApplyRelationExt(Owner->GetOwnerBottomPos(), Owner->GetOwnerTopPos(), Owner->GetTargetCachedTopPos(), Owner->GetTargetTopPos());
+}
+
+void FRelationDef_Ext_Bottom_Bottom::ApplyRelation()
+{
+	ApplyRelationExt(Owner->GetOwnerBottomPos(), Owner->GetOwnerTopPos(), Owner->GetTargetCachedBottomPos(), Owner->GetTargetBottomPos());
+}
+

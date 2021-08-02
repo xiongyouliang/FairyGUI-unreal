@@ -16,24 +16,24 @@ class FByteBuffer;
 class FAIRYGUI_API FRelations
 {
 public:
-    FRelations(UFairyObject* InOwner);
-    ~FRelations();
+	FRelations(UFairyObject* InOwner);
+	~FRelations();
 
-    void Add(UFairyObject* InTarget, ERelationType RelationType);
-    void Add(UFairyObject* InTarget, ERelationType RelationType, bool bUsePercent);
-    void Remove(UFairyObject* InTarget, ERelationType RelationType);
-    bool Contains(UFairyObject* InTarget);
-    void ClearFor(UFairyObject* InTarget);
-    void ClearAll();
-    void CopyFrom(const FRelations& Source);
-    bool IsEmpty() const;
-    void Setup(FByteBuffer* Buffer, bool bParentToChild);
+	void Add(UFairyObject* InTarget, ERelationType RelationType);
+	void Add(UFairyObject* InTarget, ERelationType RelationType, bool bUsePercent);
+	void Remove(UFairyObject* InTarget, ERelationType RelationType);
+	bool Contains(UFairyObject* InTarget);
+	void ClearFor(UFairyObject* InTarget);
+	void ClearAll();
+	void CopyFrom(const FRelations& Source);
+	bool IsEmpty() const;
+	void Setup(FByteBuffer* Buffer, bool bParentToChild);
 
-    void ApplyRelation() const;
+	void ApplyRelation() const;
 
-    UFairyObject* Handling;
+	UFairyObject* Handling;
 
 private:
-    UFairyObject* Owner;
-    TArray<FRelationItem*> ItemList;
+	UFairyObject* Owner;
+	TArray<FRelationItem*> ItemList;
 };

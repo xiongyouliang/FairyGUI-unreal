@@ -45,9 +45,17 @@ FTextBlockStyle FNTextFormat::GetStyle() const
 
 		// make sure use right UFont* object, FCoreStyle::GetDefaultFontStyle() return a FSlateFontInfo object without UFont* object
 		FSlateFontInfo TargetFontInfo = FCoreStyle::GetDefaultFontStyle(TEXT("Regular"), TargetSize);
+		
 		// todo start: This is a test and verify code, Fonts objects need load and manager with some other Manager(or Object)
-		FString FullFontAssetPath = TEXT("/Game/Fonts/") + FontName;
-		UFont* TargetFontPtr = LoadObject<UFont>(nullptr, *FullFontAssetPath);
+		UFont* TargetFontPtr = nullptr;
+		if (!FontName.IsEmpty())
+		{
+			FString FullFontAssetPath = TEXT("/Game/Fonts/") + FontName;
+			if (FPaths::FileExists(FullFontAssetPath))
+			{
+				TargetFontPtr = LoadObject<UFont>(nullptr, *FullFontAssetPath);
+			}
+		}
 		// todo end
 		if (TargetFontPtr)
 		{

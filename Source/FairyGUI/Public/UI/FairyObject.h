@@ -400,11 +400,11 @@ private:
 	void DragEnd() {};
 
 	UFUNCTION()
-		void OnTouchBeginHandler(UEventContext* Context) {};
+	void OnTouchBeginHandler(UEventContext* Context) {};
 	UFUNCTION()
-		void OnTouchMoveHandler(UEventContext* Context) {};
+	void OnTouchMoveHandler(UEventContext* Context) {};
 	UFUNCTION()
-		void OnTouchEndHandler(UEventContext* Context) {};
+	void OnTouchEndHandler(UEventContext* Context) {};
 
 	bool bInternalVisible = false;
 	bool bHandlingController = false;

@@ -60,6 +60,20 @@ bool UFairyApplication::FInputProcessor::HandleMouseMoveEvent(FSlateApplication&
 	return false;
 }
 
+UFairyApplication::UFairyApplication() :
+	bSoundEnabled(true),
+	SoundVolumeScale(1)
+{
+	//UE_LOG(LogTemp, Warning, TEXT("UIFairyApplicaiton::UFairyApplication(...)"));
+	LastTouch = new FTouchInfo();
+	Touches.Add(LastTouch);
+}
+
+UFairyApplication::~UFairyApplication()
+{
+	//UE_LOG(LogTemp, Warning, TEXT("UIFairyApplicaiton::~UFairyApplication(...)"));
+}
+
 UFairyApplication* UFairyApplication::Get()
 {
 	if (Instance != nullptr)
@@ -84,23 +98,9 @@ void UFairyApplication::Destroy()
 	Instance = nullptr;
 }
 
-UFairyApplication::UFairyApplication() :
-	bSoundEnabled(true),
-	SoundVolumeScale(1)
-{
-	UE_LOG(LogTemp, Warning, TEXT("UIFairyApplicaiton::UFairyApplication(...)"));
-	LastTouch = new FTouchInfo();
-	Touches.Add(LastTouch);
-}
-
-UFairyApplication::~UFairyApplication()
-{
-	UE_LOG(LogTemp, Warning, TEXT("UIFairyApplicaiton::~UFairyApplication(...)"));
-}
-
 void UFairyApplication::AddUIRoot(UObject* WorldContextObject)
 {
-	UE_LOG(LogTemp, Warning, TEXT("UFairyApplication::AddUIRoot(...)"));
+	//UE_LOG(LogTemp, Warning, TEXT("UFairyApplication::AddUIRoot(...)"));
 	UWorld* World = WorldContextObject->GetWorld();
 	if (World && World->IsGameWorld())
 	{
@@ -425,13 +425,10 @@ void UFairyApplication::GetDescendants(const TSharedRef<SWidget>& InWidget, TArr
 
 UEventContext* UFairyApplication::BorrowEventContext()
 {
-	UEventContext* Context;
+	UEventContext* Context = nullptr;
 	if (EventContextPool.Num() > 0)
 	{
 		Context = EventContextPool.Pop();
-		Context->bDefaultPrevented = false;
-		Context->bStopped = false;
-		Context->bIsMouseCaptor = false;
 	}
 	else
 	{
@@ -440,12 +437,13 @@ UEventContext* UFairyApplication::BorrowEventContext()
 	Context->PointerEvent = &LastTouch->Event;
 	//Context->KeyEvent = &LastKeyEvent;
 
+	verify(Context != nullptr);
 	return Context;
 }
 
 void UFairyApplication::ReturnEventContext(UEventContext* Context)
 {
-	Context->Data.Reset();
+	Context->Reset();
 	EventContextPool.Add(Context);
 }
 

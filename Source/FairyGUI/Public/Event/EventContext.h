@@ -62,9 +62,13 @@ public:
     FKey GetMouseButton() const
     {
         if (PointerEvent->IsTouchEvent())
+        {
             return EKeys::LeftMouseButton;
+        }
         else
+        {
             return PointerEvent->GetEffectingButton();
+        }
     }
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
@@ -115,15 +119,19 @@ public:
         bIsMouseCaptor = true;
     }
 
+    void Reset();
+
 private:
     UFairyObject* Sender;
     UFairyObject* Initiator;
+    
+    FPointerEvent* PointerEvent;
+    FKeyEvent* KeyEvent;
+
     FName Type;
     bool bStopped;
     bool bDefaultPrevented;
     bool bIsMouseCaptor;
-    FPointerEvent* PointerEvent;
-    FKeyEvent* KeyEvent;
     FNVariant Data;
 
     friend class UFairyApplication;

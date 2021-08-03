@@ -1,5 +1,7 @@
 #include "Event/EventTypes.h"
 
+const FName FUIEvents::Null("");
+
 const FName FUIEvents::Click("Click");
 const FName FUIEvents::TouchBegin("TouchBegin");
 const FName FUIEvents::TouchMove("TouchMove");

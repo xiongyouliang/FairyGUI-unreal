@@ -5,6 +5,7 @@
 
 struct FAIRYGUI_API FUIEvents
 {
+    static const FName Null;
     static const FName Click;
     static const FName TouchBegin;
     static const FName TouchMove;

@@ -122,7 +122,10 @@ public:
     void Reset();
 
 private:
+    UPROPERTY()
     UFairyObject* Sender;
+
+    UPROPERTY()
     UFairyObject* Initiator;
     
     FPointerEvent* PointerEvent;

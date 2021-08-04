@@ -128,7 +128,7 @@ private:
 	void PreviewMoveEvent(const FPointerEvent& MouseEvent);
 
 	void GetDescendants(const TSharedRef<SWidget>& InWidget, TArray<UFairyObject*>& OutArray);
-	void GetPathToRoot(const TSharedRef<SWidget>& InWidget, TArray<UFairyObject*>& OutArray);
+	void GetFairyObjectPath(const TSharedRef<SWidget>& InWidget, TArray<UFairyObject*>& OutArray);
 
 	UEventContext* BorrowEventContext();
 	void ReturnEventContext(UEventContext* Context);

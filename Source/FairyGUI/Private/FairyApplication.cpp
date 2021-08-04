@@ -302,7 +302,8 @@ bool UFairyApplication::DispatchEvent(const FName& EventType, const TSharedRef<S
 void UFairyApplication::BubbleEvent(const FName& EventType, const TSharedRef<SWidget>& Initiator, const FNVariant& Data)
 {
 	TArray<UFairyObject*> CallChain;
-	GetPathToRoot(Initiator, CallChain);
+	GetFairyObjectPath(Initiator, CallChain);
+
 	if (CallChain.Num() == 0)
 	{
 		return;
@@ -386,7 +387,7 @@ UFairyObject* UFairyApplication::GetWidgetGObject(const TSharedPtr<SWidget>& InW
 	return nullptr;
 }
 
-void UFairyApplication::GetPathToRoot(const TSharedRef<SWidget>& InWidget, TArray<UFairyObject*>& OutArray)
+void UFairyApplication::GetFairyObjectPath(const TSharedRef<SWidget>& InWidget, TArray<UFairyObject*>& OutArray)
 {
 	TSharedPtr<SWidget> Ptr = InWidget;
 	while (Ptr.IsValid())
@@ -620,7 +621,7 @@ FReply UFairyApplication::OnWidgetMouseButtonUp(const TSharedRef<SWidget>& Widge
 	}
 
 	TArray<UFairyObject*> CallChain;
-	GetPathToRoot(Widget, CallChain);
+	GetFairyObjectPath(Widget, CallChain);
 	if (CallChain.Num() > 0)
 	{
 		for (auto& it : TouchInfo->MouseCaptors)

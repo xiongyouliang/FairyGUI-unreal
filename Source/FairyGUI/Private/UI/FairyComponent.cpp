@@ -128,7 +128,9 @@ void UFairyComponent::RemoveChild(UFairyObject* Child)
 
 	int32 ChildIndex = Children.Find(Child);
 	if (ChildIndex != INDEX_NONE)
+	{
 		RemoveChildAt(ChildIndex);
+	}
 }
 
 void UFairyComponent::RemoveChildAt(int32 Index)
@@ -140,14 +142,18 @@ void UFairyComponent::RemoveChildAt(int32 Index)
 	Child->SetParent(nullptr);
 
 	if (Child->GetSortingOrder() != 0)
+	{
 		SortingChildCount--;
+	}
 
 	Child->SetGroup(nullptr);
 	if (Child->GetDisplayObject()->GetParentWidget().IsValid())
 	{
 		Container->RemoveChild(Child->GetDisplayObject());
 		if (ChildrenRenderOrder == EChildrenRenderOrder::Arch)
+		{
 			BuildNativeDisplayList();
+		}
 	}
 
 	Children.RemoveAt(Index);
@@ -157,10 +163,14 @@ void UFairyComponent::RemoveChildAt(int32 Index)
 void UFairyComponent::RemoveChildren(int32 BeginIndex, int32 EndIndex)
 {
 	if (EndIndex < 0 || EndIndex >= Children.Num())
+	{
 		EndIndex = Children.Num() - 1;
+	}
 
 	for (int32 i = BeginIndex; i <= EndIndex; ++i)
+	{
 		RemoveChildAt(BeginIndex);
+	}
 }
 
 UFairyObject* UFairyComponent::GetChildAt(int32 Index, TSubclassOf<UFairyObject> ClassType) const
@@ -175,7 +185,9 @@ UFairyObject* UFairyComponent::GetChild(const FString& ChildName, TSubclassOf<UF
 	for (const auto& Child : Children)
 	{
 		if (Child->GetName().Compare(ChildName) == 0)
+		{
 			return Child;
+		}
 	}
 
 	return nullptr;
@@ -191,7 +203,9 @@ UFairyObject* UFairyComponent::GetChildByPath(const FString& Path, TSubclassOf<U
 		|| Index1 == 0)
 	{
 		if (Index2 == -1)
+		{
 			Index2 = Path.Len();
+		}
 
 		if (Com == nullptr)
 		{
@@ -205,7 +219,9 @@ UFairyObject* UFairyComponent::GetChildByPath(const FString& Path, TSubclassOf<U
 
 		Obj = Com->GetChild(Path.Mid(Index1, Index2 - Index1));
 		if (!Obj)
+		{
 			break;
+		}
 
 		Com = nullptr;
 		Index1 = Index2 + 1;
@@ -221,7 +237,9 @@ UFairyObject* UFairyComponent::GetChildInGroup(const UGGroup* InGroup, const FSt
 	for (const auto& Obj : Children)
 	{
 		if (Obj->GetGroup() == InGroup && Obj->GetName().Compare(ChildName) == 0)
+		{
 			return Obj;
+		}
 	}
 
 	return nullptr;
@@ -232,7 +250,9 @@ UFairyObject* UFairyComponent::GetChildByID(const FString& ChildID) const
 	for (const auto& Obj : Children)
 	{
 		if (Obj->GetID().Compare(ChildID) == 0)
+		{
 			return Obj;
+		}
 	}
 
 	return nullptr;
@@ -253,13 +273,17 @@ void UFairyComponent::SetChildIndex(UFairyObject* Child, int32 Index)
 	verifyf(OldIndex != -1, TEXT("Not a child of this container"));
 
 	if (Child->GetSortingOrder() != 0) //no effect
+	{
 		return;
+	}
 
 	int32 cnt = Children.Num();
 	if (SortingChildCount > 0)
 	{
 		if (Index > (cnt - SortingChildCount - 1))
+		{
 			Index = cnt - SortingChildCount - 1;
+		}
 	}
 
 	MoveChild(Child, OldIndex, Index);
@@ -273,35 +297,51 @@ int UFairyComponent::SetChildIndexBefore(UFairyObject* Child, int32 Index)
 	verifyf(OldIndex != -1, TEXT("Not a child of this container"));
 
 	if (Child->GetSortingOrder() != 0) //no effect
+	{
 		return OldIndex;
+	}
 
 	int32 cnt = Children.Num();
 	if (SortingChildCount > 0)
 	{
 		if (Index > (cnt - SortingChildCount - 1))
+		{
 			Index = cnt - SortingChildCount - 1;
+		}
 	}
 
 	if (OldIndex < Index)
+	{
 		return MoveChild(Child, OldIndex, Index - 1);
+	}
 	else
+	{
 		return MoveChild(Child, OldIndex, Index);
+	}
 }
 
 int32 UFairyComponent::MoveChild(UFairyObject* Child, int32 OldIndex, int32 Index)
 {
 	int32 cnt = Children.Num();
 	if (Index > cnt)
+	{
 		Index = cnt;
+	}
 
 	if (OldIndex == Index)
+	{
 		return OldIndex;
+	}
 
 	Children.RemoveAt(OldIndex);
 	if (Index >= cnt)
+	{
 		Children.Add(Child);
+	}
 	else
+	{
 		Children.Insert(Child, Index);
+	}
 
 	if (Child->GetDisplayObject()->IsParentValid())
 	{
@@ -312,7 +352,9 @@ int32 UFairyComponent::MoveChild(UFairyObject* Child, int32 OldIndex, int32 Inde
 			{
 				UFairyObject* Obj = Children[i];
 				if (Obj->GetDisplayObject()->IsParentValid())
+				{
 					DisplayIndex++;
+				}
 			}
 			Container->SetChildIndex(Child->GetDisplayObject(), DisplayIndex);
 		}
@@ -322,7 +364,9 @@ int32 UFairyComponent::MoveChild(UFairyObject* Child, int32 OldIndex, int32 Inde
 			{
 				UFairyObject* Obj = Children[i];
 				if (Obj->GetDisplayObject()->IsParentValid())
+				{
 					DisplayIndex++;
+				}
 			}
 			Container->SetChildIndex(Child->GetDisplayObject(), DisplayIndex);
 		}
@@ -417,7 +461,9 @@ int32 UFairyComponent::GetFirstChildInView() const
 	{
 
 		if (IsChildInView(Obj))
+		{
 			return i;
+		}
 		i++;
 	}
 	return -1;
@@ -428,7 +474,9 @@ UGController* UFairyComponent::GetController(const FString& ControllerName) cons
 	for (const auto& Controller : Controllers)
 	{
 		if (Controller->GetName().Compare(ControllerName) == 0)
+		{
 			return Controller;
+		}
 	}
 
 	return nullptr;
@@ -476,7 +524,9 @@ void UFairyComponent::ApplyController(UGController* Controller)
 void UFairyComponent::ApplyAllControllers()
 {
 	for (const auto& Controller : Controllers)
+	{
 		ApplyController(Controller);
+	}
 }
 
 UTransition* UFairyComponent::GetTransition(const FString& TransitionName) const
@@ -484,7 +534,9 @@ UTransition* UFairyComponent::GetTransition(const FString& TransitionName) const
 	for (const auto& Transition : Transitions)
 	{
 		if (Transition->GetName().Compare(TransitionName) == 0)
+		{
 			return Transition;
+		}
 	}
 
 	return nullptr;
@@ -513,7 +565,9 @@ void UFairyComponent::AdjustRadioGroupDepth(UFairyObject* Obj, UGController* Con
 		else if (Child->IsA<UGButton>() && ((UGButton*)Child)->GetRelatedController() == Controller)
 		{
 			if (i > maxIndex)
+			{
 				maxIndex = i;
+			}
 		}
 	}
 	if (myIndex < maxIndex)
@@ -557,7 +611,9 @@ void UFairyComponent::SetApexIndex(int32 InApexIndex)
 		ApexIndex = InApexIndex;
 
 		if (ChildrenRenderOrder == EChildrenRenderOrder::Arch)
+		{
 			BuildNativeDisplayList();
+		}
 	}
 }
 

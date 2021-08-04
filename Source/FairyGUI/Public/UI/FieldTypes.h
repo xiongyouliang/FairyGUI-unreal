@@ -53,6 +53,14 @@ enum class EButtonMode : uint8
 };
 
 UENUM()
+enum class EButtonPressedEffect : uint8
+{
+	None = 0,
+	Dark = 1,
+	Scale = 2
+};
+
+UENUM()
 enum class EChildrenRenderOrder : uint8
 {
 	Ascent,

@@ -398,9 +398,14 @@ void UFairyApplication::GetPathToRoot(const TSharedRef<SWidget>& InWidget, TArra
 			{
 				OutArray.Add(ObjPtr.Get());
 			}
-		}
 
-		Ptr = Ptr->GetParentWidget();
+			Ptr = Ptr->GetParentWidget();
+		}
+		else
+		{
+			// In FairyGUI, UGRoot(new name is UFairyRoot) is the root UObject, handle a SContaier Slate widget, this widget ParentWidget is not a SDisplayObject
+			break;
+		}
 	}
 }
 

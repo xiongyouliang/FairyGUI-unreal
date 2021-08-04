@@ -48,11 +48,11 @@ void UScrollPane::Setup(FByteBuffer* Buffer)
 	Owner->Container->AddChild(MaskContainer.ToSharedRef());
 	MaskContainer->AddChild(Container.ToSharedRef());
 
-	Owner->On(FUIEvents::MouseWheel).AddUObject(this, &UScrollPane::OnMouseWheel);
-	Owner->On(FUIEvents::TouchBegin).AddUObject(this, &UScrollPane::OnTouchBegin);
-	Owner->On(FUIEvents::TouchMove).AddUObject(this, &UScrollPane::OnTouchMove);
-	Owner->On(FUIEvents::TouchEnd).AddUObject(this, &UScrollPane::OnTouchEnd);
-	Owner->On(FUIEvents::RemovedFromStage).AddLambda([this](UEventContext*) {
+	Owner->On(FFairyEventNames::MouseWheel).AddUObject(this, &UScrollPane::OnMouseWheel);
+	Owner->On(FFairyEventNames::TouchBegin).AddUObject(this, &UScrollPane::OnTouchBegin);
+	Owner->On(FFairyEventNames::TouchMove).AddUObject(this, &UScrollPane::OnTouchMove);
+	Owner->On(FFairyEventNames::TouchEnd).AddUObject(this, &UScrollPane::OnTouchEnd);
+	Owner->On(FFairyEventNames::RemovedFromStage).AddLambda([this](UEventContext*) {
 		if (DraggingPane.Get() == this)
 		{
 			DraggingPane.Reset();
@@ -162,8 +162,8 @@ void UScrollPane::Setup(FByteBuffer* Buffer)
 				HzScrollBar->SetVisible(false);
 			}
 
-			Owner->On(FUIEvents::RollOver).AddUObject(this, &UScrollPane::OnRollOver);
-			Owner->On(FUIEvents::RollOut).AddUObject(this, &UScrollPane::OnRollOut);
+			Owner->On(FFairyEventNames::RollOver).AddUObject(this, &UScrollPane::OnRollOver);
+			Owner->On(FFairyEventNames::RollOut).AddUObject(this, &UScrollPane::OnRollOut);
 		}
 	}
 	else
@@ -952,7 +952,7 @@ void UScrollPane::Refresh()
 
 	Refresh2();
 
-	Owner->DispatchEvent(FUIEvents::Scroll);
+	Owner->DispatchEvent(FFairyEventNames::Scroll);
 	if (bNeedRefresh) //pos may change in onScroll
 	{
 		bNeedRefresh = false;
@@ -1435,12 +1435,12 @@ void UScrollPane::KillTween()
 	{
 		FVector2D t = TweenStart + TweenChange;
 		//Container->SetPosition(t);
-		Owner->DispatchEvent(FUIEvents::Scroll);
+		Owner->DispatchEvent(FFairyEventNames::Scroll);
 	}
 
 	Tweening = 0;
 	GWorld->GetTimerManager().ClearTimer(TickTimerHandle);
-	Owner->DispatchEvent(FUIEvents::ScrollEnd);
+	Owner->DispatchEvent(FFairyEventNames::ScrollEnd);
 }
 
 void UScrollPane::CheckRefreshBar()
@@ -1542,13 +1542,13 @@ void UScrollPane::TweenUpdate()
 		UpdateScrollBarPos();
 		UpdateScrollBarVisible();
 
-		Owner->DispatchEvent(FUIEvents::Scroll);
-		Owner->DispatchEvent(FUIEvents::ScrollEnd);
+		Owner->DispatchEvent(FFairyEventNames::Scroll);
+		Owner->DispatchEvent(FFairyEventNames::ScrollEnd);
 	}
 	else
 	{
 		UpdateScrollBarPos();
-		Owner->DispatchEvent(FUIEvents::Scroll);
+		Owner->DispatchEvent(FFairyEventNames::Scroll);
 	}
 }
 
@@ -1893,7 +1893,7 @@ void UScrollPane::OnTouchMove(UEventContext* Context)
 		UpdatePageController();
 	}
 
-	Owner->DispatchEvent(FUIEvents::Scroll);
+	Owner->DispatchEvent(FFairyEventNames::Scroll);
 }
 
 void UScrollPane::OnTouchEnd(UEventContext* Context)
@@ -1942,11 +1942,11 @@ void UScrollPane::OnTouchEnd(UEventContext* Context)
 		TweenChange = endPos - TweenStart;
 		if (TweenChange.X < -FUIConfig::Config.TouchDragSensitivity || TweenChange.Y < -FUIConfig::Config.TouchDragSensitivity)
 		{
-			Owner->DispatchEvent(FUIEvents::PullDownRelease);
+			Owner->DispatchEvent(FFairyEventNames::PullDownRelease);
 		}
 		else if (TweenChange.X > FUIConfig::Config.TouchDragSensitivity || TweenChange.Y > FUIConfig::Config.TouchDragSensitivity)
 		{
-			Owner->DispatchEvent(FUIEvents::PullUpRelease);
+			Owner->DispatchEvent(FFairyEventNames::PullUpRelease);
 		}
 
 		if (HeaderLockedSize > 0 && endPos.Component(RefreshBarAxis) == 0)

@@ -169,6 +169,7 @@ FReply SDisplayObject::OnMouseButtonDoubleClick(const FGeometry& MyGeometry, con
 
 void SDisplayObject::OnMouseEnter(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
+	UE_LOG(LogTemp, Warning, TEXT("SDisplayObject::OnMouseEnter()"));
 	return UFairyApplication::Get()->OnWidgetMouseEnter(AsShared(), MyGeometry, MouseEvent);
 }
 

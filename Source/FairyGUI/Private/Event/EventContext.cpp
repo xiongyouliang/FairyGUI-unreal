@@ -8,7 +8,7 @@ void UEventContext::Reset()
 	PointerEvent = nullptr;
 	KeyEvent = nullptr;
 
-	Type = FUIEvents::Null;
+	Type = FFairyEventNames::Null;
 	bStopped = false;
 	bDefaultPrevented = false;
 	bIsMouseCaptor = false;

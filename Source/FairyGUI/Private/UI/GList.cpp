@@ -694,7 +694,7 @@ void UGList::OnClickItemHandler(UEventContext* Context)
 
 void UGList::DispatchItemEvent(UFairyObject* Obj, UEventContext* Context)
 {
-	DispatchEvent(FUIEvents::ClickItem, FNVariant(Obj));
+	DispatchEvent(FFairyEventNames::ClickItem, FNVariant(Obj));
 }
 
 void UGList::SetSelectionOnEvent(UFairyObject* Obj, UEventContext* Context)
@@ -1098,7 +1098,7 @@ void UGList::SetVirtual(bool bInLoop)
 			}
 		}
 
-		On(FUIEvents::Scroll).AddUObject(this, &UGList::OnScrollHandler);
+		On(FFairyEventNames::Scroll).AddUObject(this, &UGList::OnScrollHandler);
 		SetVirtualListChangedFlag(true);
 	}
 }

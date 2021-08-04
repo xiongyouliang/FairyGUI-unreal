@@ -35,7 +35,7 @@ void UPopupMenu::Create(const FString& ResourceURL)
     }
 
     ContentPane = UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), url)->As<UFairyComponent>();
-    ContentPane->On(FUIEvents::AddedToStage).AddUObject(this, &UPopupMenu::OnAddedToStage);
+    ContentPane->On(FFairyEventNames::AddedToStage).AddUObject(this, &UPopupMenu::OnAddedToStage);
 
     List = ContentPane->GetChild("list")->As<UGList>();
     List->RemoveChildrenToPool();
@@ -44,7 +44,7 @@ void UPopupMenu::Create(const FString& ResourceURL)
     List->RemoveRelation(ContentPane, ERelationType::Height);
     ContentPane->AddRelation(List, ERelationType::Height);
 
-    List->On(FUIEvents::ClickItem).AddUObject(this, &UPopupMenu::OnClickItem);
+    List->On(FFairyEventNames::ClickItem).AddUObject(this, &UPopupMenu::OnClickItem);
 }
 
 UGButton* UPopupMenu::AddItem(const FString& Caption, FGUIEventDelegate Callback)

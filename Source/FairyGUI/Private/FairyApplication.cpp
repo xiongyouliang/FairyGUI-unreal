@@ -554,7 +554,7 @@ void UFairyApplication::PreviewUpEvent(const FPointerEvent& MouseEvent)
 			auto& Captor = TouchInfo->MouseCaptors[i];
 			if (Captor.IsValid() && Captor->OnStage())
 			{
-				DispatchEvent(FUIEvents::TouchEnd, Captor->GetDisplayObject());
+				DispatchEvent(FFairyEventNames::TouchEnd, Captor->GetDisplayObject());
 			}
 		}
 	}
@@ -578,7 +578,7 @@ void UFairyApplication::PreviewMoveEvent(const FPointerEvent& MouseEvent)
 			auto& Captor = TouchInfo->MouseCaptors[i];
 			if (Captor.IsValid() && Captor->OnStage())
 			{
-				DispatchEvent(FUIEvents::TouchMove, Captor->GetDisplayObject());
+				DispatchEvent(FFairyEventNames::TouchMove, Captor->GetDisplayObject());
 			}
 		}
 	}
@@ -604,11 +604,7 @@ FReply UFairyApplication::OnWidgetMouseButtonDown(const TSharedRef<SWidget>& Wid
 
 	bNeedCheckPopups = false;
 
-	BubbleEvent(FUIEvents::TouchBegin, Widget);
-
-#if WITH_EDITOR
-	UE_LOG(LogFairyGUI, Log, TEXT("---> UFairyApplication::OnWidgetMouseButtonDown(...)"));
-#endif
+	BubbleEvent(FFairyEventNames::TouchBegin, Widget);
 	return FReply::Handled();
 }
 
@@ -617,7 +613,7 @@ FReply UFairyApplication::OnWidgetMouseButtonUp(const TSharedRef<SWidget>& Widge
 	FTouchInfo* TouchInfo = GetTouchInfo(MouseEvent);
 	if (TouchInfo == nullptr)
 	{
-		return FReply::Handled().ReleaseMouseCapture();
+		return FReply::Handled();
 	}
 
 	TArray<UFairyObject*> CallChain;
@@ -634,7 +630,7 @@ FReply UFairyApplication::OnWidgetMouseButtonUp(const TSharedRef<SWidget>& Widge
 
 		if (CallChain.Num() > 0)
 		{
-			InternalBubbleEvent(FUIEvents::TouchEnd, CallChain, FNVariant::Null);
+			InternalBubbleEvent(FFairyEventNames::TouchEnd, CallChain, FNVariant::Null);
 		}
 	}
 	TouchInfo->MouseCaptors.Reset();
@@ -646,7 +642,7 @@ FReply UFairyApplication::OnWidgetMouseButtonUp(const TSharedRef<SWidget>& Widge
 		{
 			if (TouchInfo->DownPath.Contains(Ptr))
 			{
-				BubbleEvent(FUIEvents::Click, Ptr.ToSharedRef());
+				BubbleEvent(FFairyEventNames::Click, Ptr.ToSharedRef());
 				break;
 			}
 
@@ -676,13 +672,13 @@ FReply UFairyApplication::OnWidgetMouseButtonDoubleClick(const TSharedRef<SWidge
 void UFairyApplication::OnWidgetMouseEnter(const TSharedRef<SWidget>& Widget, const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
 	FTouchInfo* TouchInfo = GetTouchInfo(MouseEvent);
-	DispatchEvent(FUIEvents::RollOver, Widget);
+	DispatchEvent(FFairyEventNames::RollOver, Widget);
 }
 
 void UFairyApplication::OnWidgetMouseLeave(const TSharedRef<SWidget>& Widget, const FPointerEvent& MouseEvent)
 {
 	FTouchInfo* TouchInfo = GetTouchInfo(MouseEvent);
-	DispatchEvent(FUIEvents::RollOut, Widget);
+	DispatchEvent(FFairyEventNames::RollOut, Widget);
 }
 
 FReply UFairyApplication::OnWidgetMouseWheel(const TSharedRef<SWidget>& Widget, const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
@@ -690,7 +686,7 @@ FReply UFairyApplication::OnWidgetMouseWheel(const TSharedRef<SWidget>& Widget, 
 	FTouchInfo* TouchInfo = GetTouchInfo(MouseEvent);
 	TouchInfo->Event = MouseEvent;
 
-	BubbleEvent(FUIEvents::MouseWheel, Widget);
+	BubbleEvent(FFairyEventNames::MouseWheel, Widget);
 
 	return FReply::Handled();
 }

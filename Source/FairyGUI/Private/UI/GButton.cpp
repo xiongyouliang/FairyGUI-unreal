@@ -360,12 +360,12 @@ void UGButton::ConstructExtension(FByteBuffer* Buffer)
         SetState(UP);
     }
 
-    On(FUIEvents::RollOver).AddUObject(this, &UGButton::OnRollOverHandler);
-    On(FUIEvents::RollOut).AddUObject(this, &UGButton::OnRollOutHandler);
-    On(FUIEvents::TouchBegin).AddUObject(this, &UGButton::OnTouchBeginHandler);
-    On(FUIEvents::TouchEnd).AddUObject(this, &UGButton::OnTouchEndHandler);
-    On(FUIEvents::Click).AddUObject(this, &UGButton::OnClickHandler);
-    On(FUIEvents::RemovedFromStage).AddUObject(this, &UGButton::OnRemovedFromStageHandler);
+    On(FFairyEventNames::RollOver).AddUObject(this, &UGButton::OnRollOverHandler);
+    On(FFairyEventNames::RollOut).AddUObject(this, &UGButton::OnRollOutHandler);
+    On(FFairyEventNames::TouchBegin).AddUObject(this, &UGButton::OnTouchBeginHandler);
+    On(FFairyEventNames::TouchEnd).AddUObject(this, &UGButton::OnTouchEndHandler);
+    On(FFairyEventNames::Click).AddUObject(this, &UGButton::OnClickHandler);
+    On(FFairyEventNames::RemovedFromStage).AddUObject(this, &UGButton::OnRemovedFromStageHandler);
 }
 
 void UGButton::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
@@ -554,7 +554,7 @@ void UGButton::OnClickHandler(UEventContext* Context)
         if (bChangeStateOnClick)
         {
             SetSelected(!bSelected);
-            DispatchEvent(FUIEvents::Changed);
+            DispatchEvent(FFairyEventNames::Changed);
         }
     }
     else if (Mode == EButtonMode::Radio)
@@ -562,7 +562,7 @@ void UGButton::OnClickHandler(UEventContext* Context)
         if (bChangeStateOnClick && !bSelected)
         {
             SetSelected(true);
-            DispatchEvent(FUIEvents::Changed);
+            DispatchEvent(FFairyEventNames::Changed);
         }
     }
     else

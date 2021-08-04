@@ -9,9 +9,9 @@ UGWindow::UGWindow()
 {
     bBringToFontOnClick = FUIConfig::Config.BringWindowToFrontOnClick;
 
-    On(FUIEvents::AddedToStage).AddUObject(this, &UGWindow::OnAddedToStageHandler);
-    On(FUIEvents::RemovedFromStage).AddUObject(this, &UGWindow::OnRemovedFromStageHandler);
-    On(FUIEvents::TouchBegin).AddUObject(this, &UGWindow::OnTouchBeginHandler);
+    On(FFairyEventNames::AddedToStage).AddUObject(this, &UGWindow::OnAddedToStageHandler);
+    On(FFairyEventNames::RemovedFromStage).AddUObject(this, &UGWindow::OnRemovedFromStageHandler);
+    On(FFairyEventNames::TouchBegin).AddUObject(this, &UGWindow::OnTouchBeginHandler);
 }
 
 UGWindow::~UGWindow()

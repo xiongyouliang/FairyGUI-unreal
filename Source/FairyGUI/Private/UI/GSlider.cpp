@@ -85,7 +85,7 @@ void UGSlider::UpdateWithPercent(float Percent, bool bManual)
         if (newValue != Value)
         {
             Value = newValue;
-            if (DispatchEvent(FUIEvents::Changed))
+            if (DispatchEvent(FFairyEventNames::Changed))
             {
                 return;
             }
@@ -197,11 +197,11 @@ void UGSlider::ConstructExtension(FByteBuffer* Buffer)
 
     if (GripObject != nullptr)
     {
-        GripObject->On(FUIEvents::TouchBegin).AddUObject(this, &UGSlider::OnGripTouchBegin);
-        GripObject->On(FUIEvents::TouchMove).AddUObject(this, &UGSlider::OnGripTouchMove);
+        GripObject->On(FFairyEventNames::TouchBegin).AddUObject(this, &UGSlider::OnGripTouchBegin);
+        GripObject->On(FFairyEventNames::TouchMove).AddUObject(this, &UGSlider::OnGripTouchMove);
     }
 
-    On(FUIEvents::TouchBegin).AddUObject(this, &UGSlider::OnTouchBeginHandler);
+    On(FFairyEventNames::TouchBegin).AddUObject(this, &UGSlider::OnTouchBeginHandler);
 }
 
 void UGSlider::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)

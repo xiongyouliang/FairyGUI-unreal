@@ -1285,8 +1285,8 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 
 	if (Transitions.Num() > 0) 
 	{
-		On(FUIEvents::AddedToStage).AddUObject(this, &UFairyComponent::OnAddedToStageHandler);
-		On(FUIEvents::RemovedFromStage).AddUObject(this, &UFairyComponent::OnRemovedFromStageHandler);
+		On(FFairyEventNames::AddedToStage).AddUObject(this, &UFairyComponent::OnAddedToStageHandler);
+		On(FFairyEventNames::RemovedFromStage).AddUObject(this, &UFairyComponent::OnRemovedFromStageHandler);
 	}
 
 	ApplyAllControllers();

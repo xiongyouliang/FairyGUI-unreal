@@ -27,7 +27,7 @@ void UDragDropManager::Init(UObject* WorldContextObject)
 	Agent->SetAlign(EHAlignType::Center);
 	Agent->SetVerticalAlign(EVAlignType::Middle);
 	Agent->SetSortingOrder(INT_MAX);
-	Agent->On(FUIEvents::DragEnd).AddUObject(this, &UDragDropManager::OnDragEnd);
+	Agent->On(FFairyEventNames::DragEnd).AddUObject(this, &UDragDropManager::OnDragEnd);
 }
 
 void UDragDropManager::StartDrag(const FString& InIcon, const FNVariant& InUserData, int32 InUserIndex, int32 InPointerIndex)
@@ -72,9 +72,9 @@ void UDragDropManager::OnDragEnd(UEventContext* Context)
 	{
 		if (obj->IsA<UFairyComponent>())
 		{
-			if (obj->HasEventListener(FUIEvents::Drop))
+			if (obj->HasEventListener(FFairyEventNames::Drop))
 			{
-				obj->DispatchEvent(FUIEvents::Drop, UserData);
+				obj->DispatchEvent(FFairyEventNames::Drop, UserData);
 				return;
 			}
 		}

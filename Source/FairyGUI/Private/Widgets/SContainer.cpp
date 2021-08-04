@@ -37,7 +37,7 @@ SContainer::FSlot& SContainer::AddChildAt(const TSharedRef<SDisplayObject>& Slot
 
     if (OnStage())
     {
-        UFairyApplication::Get()->BroadcastEvent(FUIEvents::AddedToStage, SlotWidget);
+        UFairyApplication::Get()->BroadcastEvent(FFairyEventNames::AddedToStage, SlotWidget);
     }
 
     return NewSlot;
@@ -68,7 +68,7 @@ void SContainer::RemoveChildAt(int32 Index)
 
     if (OnStage())
     {
-        UFairyApplication::Get()->BroadcastEvent(FUIEvents::RemovedFromStage, SlotWidget);
+        UFairyApplication::Get()->BroadcastEvent(FFairyEventNames::RemovedFromStage, SlotWidget);
     }
 
     Children.RemoveAt(Index);
@@ -101,7 +101,7 @@ void SContainer::RemoveChildren(int32 BeginIndex, int32 EndIndex)
             if (Dispatcher != nullptr)
             {
                 TSharedRef<SWidget> SlotWidget = Children[BeginIndex].GetWidget();
-                Dispatcher->BroadcastEvent(FUIEvents::RemovedFromStage, SlotWidget);
+                Dispatcher->BroadcastEvent(FFairyEventNames::RemovedFromStage, SlotWidget);
             }
             Children.RemoveAt(BeginIndex);
         }

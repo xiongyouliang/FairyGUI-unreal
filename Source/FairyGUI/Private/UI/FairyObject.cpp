@@ -354,8 +354,8 @@ void UFairyObject::SetTooltips(const FString& InTooltips)
 	Tooltips = InTooltips;
 	if (!Tooltips.IsEmpty())
 	{
-		On(FUIEvents::RollOver).AddUObject(this, &UFairyObject::OnRollOverHandler);
-		On(FUIEvents::RollOut).AddUObject(this, &UFairyObject::OnRollOutHandler);
+		On(FFairyEventNames::RollOver).AddUObject(this, &UFairyObject::OnRollOverHandler);
+		On(FFairyEventNames::RollOut).AddUObject(this, &UFairyObject::OnRollOutHandler);
 	}
 }
 
@@ -656,6 +656,7 @@ void UFairyObject::InvokeEventDelegate(UEventContext* Context)
 
 UFairyObject::FUnifiedEventDelegate& UFairyObject::GetEventDelegate(const FName& EventType)
 {
+	UE_LOG(LogTemp, Warning, TEXT("GetEventDelegate:%s"), *EventType.GetPlainNameString());
 	FUnifiedEventDelegate* Delegate = EventDelegates.Find(EventType);
 	if (Delegate == nullptr)
 	{

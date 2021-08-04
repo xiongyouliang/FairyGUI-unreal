@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 
-struct FAIRYGUI_API FUIEvents
+struct FAIRYGUI_API FFairyEventNames
 {
     static const FName Null;
     static const FName Click;

@@ -101,7 +101,7 @@ void FGearColor::OnTweenComplete()
         TweenConfig->DisplayLockToken = 0;
     }
     TweenConfig->Handle.Invalidate();
-    Owner->DispatchEvent(FUIEvents::GearStop);
+    Owner->DispatchEvent(FFairyEventNames::GearStop);
 }
 
 void FGearColor::UpdateState()

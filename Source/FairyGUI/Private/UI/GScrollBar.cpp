@@ -83,20 +83,20 @@ void UGScrollBar::ConstructExtension(FByteBuffer* buffer)
     ArrowButton1 = GetChild("arrow1");
     ArrowButton2 = GetChild("arrow2");
 
-    GripObject->On(FUIEvents::TouchBegin).AddUObject(this, &UGScrollBar::OnGripTouchBegin);
-    GripObject->On(FUIEvents::TouchMove).AddUObject(this, &UGScrollBar::OnGripTouchMove);
-    GripObject->On(FUIEvents::TouchEnd).AddUObject(this, &UGScrollBar::OnGripTouchEnd);
+    GripObject->On(FFairyEventNames::TouchBegin).AddUObject(this, &UGScrollBar::OnGripTouchBegin);
+    GripObject->On(FFairyEventNames::TouchMove).AddUObject(this, &UGScrollBar::OnGripTouchMove);
+    GripObject->On(FFairyEventNames::TouchEnd).AddUObject(this, &UGScrollBar::OnGripTouchEnd);
 
-    On(FUIEvents::TouchBegin).AddUObject(this, &UGScrollBar::OnTouchBeginHandler);
+    On(FFairyEventNames::TouchBegin).AddUObject(this, &UGScrollBar::OnTouchBeginHandler);
 
     if (ArrowButton1 != nullptr)
     {
-        ArrowButton1->On(FUIEvents::TouchBegin).AddUObject(this, &UGScrollBar::OnArrowButton1Click);
+        ArrowButton1->On(FFairyEventNames::TouchBegin).AddUObject(this, &UGScrollBar::OnArrowButton1Click);
     }
 
     if (ArrowButton2 != nullptr)
     {
-        ArrowButton2->On(FUIEvents::TouchBegin).AddUObject(this, &UGScrollBar::OnArrowButton2Click);
+        ArrowButton2->On(FFairyEventNames::TouchBegin).AddUObject(this, &UGScrollBar::OnArrowButton2Click);
     }
 }
 

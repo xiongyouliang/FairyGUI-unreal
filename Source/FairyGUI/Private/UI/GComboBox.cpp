@@ -311,7 +311,7 @@ void UGComboBox::ConstructExtension(FByteBuffer* Buffer)
         ListObject = Cast<UGList>(DropdownObject->GetChild("list"));
         verifyf(ListObject != nullptr, TEXT("should container a list component named list."));
 
-        ListObject->On(FUIEvents::ClickItem).AddUObject(this, &UGComboBox::OnClickItem);
+        ListObject->On(FFairyEventNames::ClickItem).AddUObject(this, &UGComboBox::OnClickItem);
 
         ListObject->AddRelation(DropdownObject, ERelationType::Width);
         ListObject->RemoveRelation(DropdownObject, ERelationType::Height);
@@ -319,13 +319,13 @@ void UGComboBox::ConstructExtension(FByteBuffer* Buffer)
         DropdownObject->AddRelation(ListObject, ERelationType::Height);
         DropdownObject->RemoveRelation(ListObject, ERelationType::Width);
 
-        DropdownObject->On(FUIEvents::RemovedFromStage).AddUObject(this, &UGComboBox::OnPopupWinClosed);
+        DropdownObject->On(FFairyEventNames::RemovedFromStage).AddUObject(this, &UGComboBox::OnPopupWinClosed);
     }
 
-    On(FUIEvents::RollOver).AddUObject(this, &UGComboBox::OnRollOverHandler);
-    On(FUIEvents::RollOut).AddUObject(this, &UGComboBox::OnRollOutHandler);
-    On(FUIEvents::TouchBegin).AddUObject(this, &UGComboBox::OnTouchBeginHandler);
-    On(FUIEvents::TouchEnd).AddUObject(this, &UGComboBox::OnTouchEndHandler);
+    On(FFairyEventNames::RollOver).AddUObject(this, &UGComboBox::OnRollOverHandler);
+    On(FFairyEventNames::RollOut).AddUObject(this, &UGComboBox::OnRollOutHandler);
+    On(FFairyEventNames::TouchBegin).AddUObject(this, &UGComboBox::OnTouchBeginHandler);
+    On(FFairyEventNames::TouchEnd).AddUObject(this, &UGComboBox::OnTouchEndHandler);
 }
 
 void UGComboBox::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
@@ -396,7 +396,7 @@ void UGComboBox::OnClickItem(UEventContext* Context)
     SelectedIndex = INT_MIN;
     SetSelectedIndex(ListObject->GetChildIndex(Cast<UFairyObject>(Context->GetData().AsUObject())));
 
-    DispatchEvent(FUIEvents::Changed);
+    DispatchEvent(FFairyEventNames::Changed);
 }
 
 void UGComboBox::OnRollOverHandler(UEventContext* Context)

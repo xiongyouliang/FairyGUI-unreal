@@ -176,10 +176,10 @@ void UGButton::SetState(const FString& InState)
         ButtonController->SetSelectedPage(InState);
     }
 
-    if (DownEffect == 1)
+    if (DownEffect == EButtonPressedEffect::Dark)
     {
         int32 cnt = this->NumChildren();
-        if (InState == DOWN || InState == SELECTED_OVER || InState == SELECTED_DISABLED)
+        if (InState == UGButton::DOWN || InState == UGButton::SELECTED_OVER || InState == UGButton::SELECTED_DISABLED)
         {
             int32 c = DownEffectValue * 255;
             FNVariant Color(FColor(c, c, c, 255));
@@ -205,7 +205,7 @@ void UGButton::SetState(const FString& InState)
             }
         }
     }
-    else if (DownEffect == 2)
+    else if (DownEffect == EButtonPressedEffect::Scale)
     {
         if (InState == DOWN || InState == SELECTED_OVER || InState == SELECTED_DISABLED)
         {
@@ -232,22 +232,22 @@ void UGButton::SetCurrentState()
     {
         if (bSelected)
         {
-            SetState(SELECTED_DISABLED);
+            SetState(UGButton::SELECTED_DISABLED);
         }
         else
         {
-            SetState(DISABLED);
+            SetState(UGButton::DISABLED);
         }
     }
     else
     {
         if (bSelected)
         {
-            SetState(bOver ? SELECTED_OVER : DOWN);
+            SetState(bOver ? UGButton::SELECTED_OVER : UGButton::DOWN);
         }
         else
         {
-            SetState(bOver ? OVER : UP);
+            SetState(bOver ? UGButton::OVER : UGButton::UP);
         }
     }
 }
@@ -335,9 +335,9 @@ void UGButton::ConstructExtension(FByteBuffer* Buffer)
     Mode = (EButtonMode)Buffer->ReadByte();
     Buffer->ReadS(Sound);
     SoundVolumeScale = Buffer->ReadFloat();
-    DownEffect = Buffer->ReadByte();
+    DownEffect = (EButtonPressedEffect)Buffer->ReadByte();
     DownEffectValue = Buffer->ReadFloat();
-    if (DownEffect == 2)
+    if (DownEffect == EButtonPressedEffect::Scale)
     {
         SetPivot(FVector2D(0.5f, 0.5f), IsPivotAsAnchor());
     }

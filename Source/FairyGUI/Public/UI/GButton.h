@@ -92,10 +92,12 @@ private:
     void OnRemovedFromStageHandler(UEventContext* Context);
 
     EButtonMode Mode;
+
     UFairyObject* TitleObject;
     UFairyObject* IconObject;
     UGController* ButtonController;
     UGController* RelatedController;
+
     FString RelatedPageID;
     FString Title;
     FString SelectedTitle;
@@ -106,7 +108,7 @@ private:
     bool bSelected;
     bool bOver;
     bool bDown;
-    int32 DownEffect;
+    EButtonPressedEffect DownEffect;
     bool bDownScaled;
     float DownEffectValue;
 };

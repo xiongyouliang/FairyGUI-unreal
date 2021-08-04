@@ -207,7 +207,7 @@ void UGButton::SetState(const FString& InState)
     }
     else if (DownEffect == EButtonPressedEffect::Scale)
     {
-        if (InState == DOWN || InState == SELECTED_OVER || InState == SELECTED_DISABLED)
+        if (InState == UGButton::DOWN || InState == UGButton::SELECTED_OVER || InState == UGButton::SELECTED_DISABLED)
         {
             if (!bDownScaled)
             {
@@ -497,11 +497,11 @@ void UGButton::OnTouchBeginHandler(UEventContext* Context)
     {
         if (IsGrayed() && ButtonController != nullptr && ButtonController->HasPage(DISABLED))
         {
-            SetState(SELECTED_DISABLED);
+            SetState(UGButton::SELECTED_DISABLED);
         }
         else
         {
-            SetState(DOWN);
+            SetState(UGButton::DOWN);
         }
     }
 }
@@ -518,22 +518,23 @@ void UGButton::OnTouchEndHandler(UEventContext* Context)
         bDown = false;
         if (Mode == EButtonMode::Common)
         {
-            if (IsGrayed() && ButtonController != nullptr && ButtonController->HasPage(DISABLED))
+            if (IsGrayed() && ButtonController != nullptr && ButtonController->HasPage(UGButton::DISABLED))
             {
-                SetState(DISABLED);
+                SetState(UGButton::DISABLED);
             }
             else if (bOver)
             {
-                SetState(OVER);
+                SetState(UGButton::OVER);
             }
             else
             {
-                SetState(UP);
+                SetState(UGButton::UP);
             }
         }
         else
         {
-            if (!bOver && ButtonController != nullptr && (ButtonController->GetSelectedPage() == OVER || ButtonController->GetSelectedPage() == SELECTED_OVER))
+            if (!bOver && ButtonController != nullptr
+                && (ButtonController->GetSelectedPage() == UGButton::OVER || ButtonController->GetSelectedPage() == UGButton::SELECTED_OVER))
             {
                 SetCurrentState();
             }
@@ -544,7 +545,9 @@ void UGButton::OnTouchEndHandler(UEventContext* Context)
 void UGButton::OnClickHandler(UEventContext* Context)
 {
     if (!Sound.IsEmpty())
-        UFairyApplication::Get()->PlaySound(Sound, SoundVolumeScale);
+    {
+		UFairyApplication::Get()->PlaySound(Sound, SoundVolumeScale);
+    }
 
     if (Mode == EButtonMode::Check)
     {

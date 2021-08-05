@@ -11,6 +11,6 @@ void UEventContext::Reset()
 	Type = FFairyEventNames::Null;
 	bStopped = false;
 	bDefaultPrevented = false;
-	bIsMouseCaptor = false;
+	bMouseCaptured = false;
 	Data.Reset();
 }

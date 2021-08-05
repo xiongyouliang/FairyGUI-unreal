@@ -324,9 +324,9 @@ void UFairyApplication::InternalBubbleEvent(const FName& EventType, const TArray
 		Context->Sender = it;
 		it->InvokeEventDelegate(Context);
 
-		if (Context->bIsMouseCaptor)
+		if (Context->bMouseCaptured)
 		{
-			Context->bIsMouseCaptor = false;
+			Context->bMouseCaptured = false;
 			AddMouseCaptor(Context->GetUserIndex(), (int32)Context->GetPointerIndex(), it);
 		}
 

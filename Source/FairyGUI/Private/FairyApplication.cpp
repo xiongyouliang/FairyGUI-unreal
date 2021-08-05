@@ -587,23 +587,13 @@ void UFairyApplication::PreviewMoveEvent(const FPointerEvent& MouseEvent)
 FReply UFairyApplication::OnWidgetMouseButtonDown(const TSharedRef<SWidget>& Widget, const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
 	FTouchInfo* TouchInfo = GetTouchInfo(MouseEvent);
-
-	UFairyObject* InitialGObject = nullptr;
 	TSharedPtr<SWidget> Ptr = Widget;
 	while (Ptr.IsValid())
 	{
 		TouchInfo->DownPath.Add(Ptr);
-
-		if (InitialGObject == nullptr && Ptr->GetTag() == SDisplayObject::SDisplayObjectTag)
-		{
-			InitialGObject = StaticCastSharedPtr<SDisplayObject>(Ptr)->GetFairyObject().Get();
-		}
-
 		Ptr = Ptr->GetParentWidget();
 	}
-
 	bNeedCheckPopups = false;
-
 	BubbleEvent(FFairyEventNames::TouchBegin, Widget);
 	return FReply::Handled();
 }
@@ -649,14 +639,9 @@ FReply UFairyApplication::OnWidgetMouseButtonUp(const TSharedRef<SWidget>& Widge
 			Ptr = Ptr->GetParentWidget();
 		}
 	}
-
 	TouchInfo->DownPath.Reset();
 
-#if WITH_EDITOR
-	UE_LOG(LogFairyGUI, Log, TEXT("---> UFairyApplication::OnWidgetMouseButtonUp(...)"));
-#endif
-
-	return FReply::Handled().ReleaseMouseCapture();
+	return FReply::Handled();
 }
 
 FReply UFairyApplication::OnWidgetMouseMove(const TSharedRef<SWidget>& Widget, const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)

@@ -24,15 +24,17 @@ class FAIRYGUI_API UFairyApplication : public UObject
 private:
 	struct FTouchInfo
 	{
-		int32 UserIndex;
-		int32 PointerIndex;
-		bool bDown;
+		int32 UserIndex;		// slate user index
+		int32 PointerIndex;		// slate pointer index
+		bool bDown;				// sign this Info is a touch/mouse down event
 		bool bToClearCaptors;
 		FVector2D DownPosition;
 		bool bClickCancelled;
 		int32 ClickCount;
+
 		TArray<TWeakPtr<SWidget>> DownPath;
 		TArray<TWeakObjectPtr<UFairyObject>> MouseCaptors;
+		
 		FPointerEvent Event;
 
 		FTouchInfo();

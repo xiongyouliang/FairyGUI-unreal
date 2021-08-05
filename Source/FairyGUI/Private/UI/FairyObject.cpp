@@ -656,7 +656,6 @@ void UFairyObject::InvokeEventDelegate(UEventContext* Context)
 
 UFairyObject::FUnifiedEventDelegate& UFairyObject::GetEventDelegate(const FName& EventType)
 {
-	UE_LOG(LogTemp, Warning, TEXT("GetEventDelegate:%s"), *EventType.GetPlainNameString());
 	FUnifiedEventDelegate* Delegate = EventDelegates.Find(EventType);
 	if (Delegate == nullptr)
 	{

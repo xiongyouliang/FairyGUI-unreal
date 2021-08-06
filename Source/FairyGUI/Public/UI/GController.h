@@ -8,6 +8,14 @@
 class UFairyComponent;
 class FByteBuffer;
 
+enum class EHomePageType : int32
+{
+	FirstPage = 0, // default home page type
+	Specific,
+	MatchBranch,
+	MatchVariable
+};
+
 UCLASS(BlueprintType)
 class FAIRYGUI_API UGController : public UObject
 {
@@ -43,6 +51,7 @@ public:
 	void SetOppositePageID(const FString& PageID);
 	void RunActions();
 
+	// Initialize from binary data
 	void Setup(FByteBuffer* Buffer);
 
 	FString Name;

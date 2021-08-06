@@ -181,6 +181,7 @@ void UGController::Setup(FByteBuffer* Buffer)
 
 	Buffer->Seek(BeginPos, 1);
 
+	// Parse pages define in this Controller
 	int32 cnt = Buffer->ReadShort();
 	PageIDs.SetNum(cnt);
 	PageNames.SetNum(cnt);
@@ -190,17 +191,18 @@ void UGController::Setup(FByteBuffer* Buffer)
 		PageNames[i] = Buffer->ReadS();
 	}
 
+	// Parse HomePage property for this Controller
 	int32 HomePageIndex = 0;
 	if (Buffer->Version >= 2)
 	{
-		int32 HomePageType = Buffer->ReadByte();
+		EHomePageType HomePageType = (EHomePageType)( Buffer->ReadByte() );
 		switch (HomePageType)
 		{
-		case 1:
+		case EHomePageType::Specific:
 			HomePageIndex = Buffer->ReadShort();
 			break;
 
-		case 2:
+		case EHomePageType::MatchBranch:
 			HomePageIndex = PageNames.Find(UFairyPackageMgr::Get()->GetBranch());
 			if (HomePageIndex == INDEX_NONE)
 			{
@@ -208,7 +210,7 @@ void UGController::Setup(FByteBuffer* Buffer)
 			}
 			break;
 
-		case 3:
+		case EHomePageType::MatchVariable:
 			HomePageIndex = PageNames.Find(UFairyPackageMgr::Get()->GetVar(Buffer->ReadS()));
 			if (HomePageIndex == INDEX_NONE)
 			{
@@ -218,8 +220,8 @@ void UGController::Setup(FByteBuffer* Buffer)
 		}
 	}
 
+	// Parse action define in this controller
 	Buffer->Seek(BeginPos, 2);
-
 	cnt = Buffer->ReadShort();
 	if (cnt > 0)
 	{
@@ -238,7 +240,6 @@ void UGController::Setup(FByteBuffer* Buffer)
 
 	if (PageIDs.Num() > 0)
 	{
-		//SelectedIndex = HomePageIndex;
 		SetSelectedIndex(HomePageIndex);
 	}
 	else

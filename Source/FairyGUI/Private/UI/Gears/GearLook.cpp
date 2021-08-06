@@ -40,16 +40,22 @@ void FGearLook::AddStatus(const FString& PageID, FByteBuffer* Buffer)
     Value.bTouchable = Buffer->ReadBool();
 
     if (PageID.IsEmpty())
-        Default = Value;
+    {
+		Default = Value;
+    }
     else
-        Storage.Add(PageID, MoveTemp(Value));
+    {
+		Storage.Add(PageID, MoveTemp(Value));
+    }
 }
 
 void FGearLook::Apply()
 {
     FValue* Value = Storage.Find(Controller->GetSelectedPageID());
     if (Value == nullptr)
-        Value = &Default;
+    {
+		Value = &Default;
+    }
 
     if (TweenConfig.IsSet() && TweenConfig->bTween && UFairyPackage::Constructing == 0 && !bDisableAllTweenEffect)
     {
@@ -62,9 +68,13 @@ void FGearLook::Apply()
         if (tweener != nullptr)
         {
             if (tweener->EndValue.X != Value->Alpha || tweener->EndValue.Y != Value->Rotation)
-                tweener->Kill(true);
+            {
+				tweener->Kill(true);
+            }
             else
-                return;
+            {
+				return;
+            }
         }
 
         bool a = Value->Alpha != Owner->GetAlpha();
@@ -72,7 +82,9 @@ void FGearLook::Apply()
         if (a || b)
         {
             if (Owner->CheckGearController(0, Controller))
-                TweenConfig->DisplayLockToken = Owner->AddDisplayLock();
+            {
+				TweenConfig->DisplayLockToken = Owner->AddDisplayLock();
+            }
 
             TweenConfig->Handle = FGTween::To(FVector2D(Owner->GetAlpha(), Owner->GetRotation()), FVector2D(Value->Alpha, Value->Rotation), TweenConfig->Duration)
                 ->SetDelay(TweenConfig->Delay)
@@ -101,9 +113,14 @@ void FGearLook::OnTweenUpdate(FGTweener* Tweener)
     Owner->bGearLocked = true;
 
     if ((flag & 1) != 0)
-        Owner->SetAlpha(Tweener->Value.X);
+    {
+		Owner->SetAlpha(Tweener->Value.X);
+    }
+
     if ((flag & 2) != 0)
-        Owner->SetRotation(Tweener->Value.Y);
+    {
+		Owner->SetRotation(Tweener->Value.Y);
+    }
     Owner->bGearLocked = false;
 }
 

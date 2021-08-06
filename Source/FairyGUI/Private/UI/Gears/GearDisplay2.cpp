@@ -17,13 +17,19 @@ FGearDisplay2::~FGearDisplay2()
 void FGearDisplay2::Apply()
 {
     if (Controller == nullptr || Pages.Num() == 0)
-        Visible = 1;
+    {
+		Visible = 1;
+    }
     else
     {
         if (Pages.Contains(Controller->GetSelectedPageID()))
-            Visible = 1;
+        {
+			Visible = 1;
+        }
         else
-            Visible = 0;
+        {
+			Visible = 0;
+        }
     }
 }
 
@@ -31,9 +37,13 @@ bool FGearDisplay2::Evaluate(bool bConnected)
 {
     bool v = Controller == nullptr || Visible > 0;
     if (Condition == 0)
-        v = v && bConnected;
+    {
+		v = v && bConnected;
+    }
     else
-        v = v || bConnected;
+    {
+		v = v || bConnected;
+    }
     return v;
 }
 

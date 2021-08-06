@@ -131,8 +131,7 @@ void FGearSize::UpdateFromRelations(const FVector2D& Delta)
     {
         for (auto It = Storage.CreateIterator(); It; ++It)
         {
-            It->Value = FVector4(It->Value.X + Delta.X, It->Value.Y + Delta.Y,
-                It->Value.Z, It->Value.W);
+            It->Value = FVector4(It->Value.X + Delta.X, It->Value.Y + Delta.Y, It->Value.Z, It->Value.W);
         }
         Default.X += Delta.X;
         Default.Y += Delta.Y;

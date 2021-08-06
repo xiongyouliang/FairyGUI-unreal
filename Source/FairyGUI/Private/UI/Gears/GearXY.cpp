@@ -32,9 +32,13 @@ void FGearXY::AddStatus(const FString& PageID, FByteBuffer* Buffer)
     Value.Y = Buffer->ReadInt();
 
     if (PageID.IsEmpty())
-        Default = Value;
+    {
+		Default = Value;
+    }
     else
-        Storage.Add(PageID, MoveTemp(Value));
+    {
+		Storage.Add(PageID, MoveTemp(Value));
+    }
 }
 
 void FGearXY::AddExtStatus(const FString& PageID, FByteBuffer* Buffer)
@@ -48,7 +52,9 @@ void FGearXY::Apply()
 {
     FVector4* Value = Storage.Find(Controller->GetSelectedPageID());
     if (Value == nullptr)
-        Value = &Default;
+    {
+		Value = &Default;
+    }
 
     FVector2D EndPt;
 

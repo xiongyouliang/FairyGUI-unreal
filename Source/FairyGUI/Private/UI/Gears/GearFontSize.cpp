@@ -21,16 +21,22 @@ void FGearFontSize::Init()
 void FGearFontSize::AddStatus(const FString& PageID, FByteBuffer* Buffer)
 {
     if (PageID.IsEmpty())
-        Default = Buffer->ReadInt();
+    {
+		Default = Buffer->ReadInt();
+    }
     else
-        Storage.Add(PageID, Buffer->ReadInt());
+    {
+		Storage.Add(PageID, Buffer->ReadInt());
+    }
 }
 
 void FGearFontSize::Apply()
 {
     int32* Value = Storage.Find(Controller->GetSelectedPageID());
     if (Value == nullptr)
-        Value = &Default;
+    {
+		Value = &Default;
+    }
 
     Owner->bGearLocked = true;
     Owner->SetProp(EObjectPropID::FontSize, FNVariant(*Value));

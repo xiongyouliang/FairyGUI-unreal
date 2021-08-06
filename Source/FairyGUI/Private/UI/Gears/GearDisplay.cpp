@@ -3,11 +3,11 @@
 #include "Utils/ByteBuffer.h"
 
 FGearDisplay::FGearDisplay(UFairyObject* InOwner) :
-    FGearBase(InOwner),
-    Visible(0),
-    DisplayLockToken(1)
+	FGearBase(InOwner),
+	Visible(0),
+	DisplayLockToken(1)
 {
-    Type = EType::Display;
+	Type = EType::Display;
 }
 
 FGearDisplay::~FGearDisplay()
@@ -16,19 +16,27 @@ FGearDisplay::~FGearDisplay()
 
 void FGearDisplay::Apply()
 {
-    DisplayLockToken++;
-    if (DisplayLockToken == 0)
-        DisplayLockToken = 1;
+	DisplayLockToken++;
+	if (DisplayLockToken == 0)
+	{
+		DisplayLockToken = 1;
+	}
 
-    if (Pages.Num() == 0)
-        Visible = 1;
-    else
-    {
-        if (Pages.Contains(Controller->GetSelectedPageID()))
-            Visible = 1;
-        else
-            Visible = 0;
-    }
+	if (Pages.Num() == 0)
+	{
+		Visible = 1;
+	}
+	else
+	{
+		if (Pages.Contains(Controller->GetSelectedPageID()))
+		{
+			Visible = 1;
+		}
+		else
+		{
+			Visible = 0;
+		}
+	}
 }
 
 void FGearDisplay::UpdateState()
@@ -41,22 +49,24 @@ void FGearDisplay::AddStatus(const FString& PageID, FByteBuffer* Buffer)
 
 void FGearDisplay::Init()
 {
-    Pages.Reset();
+	Pages.Reset();
 }
 
 uint32 FGearDisplay::AddLock()
 {
-    Visible++;
-    return DisplayLockToken;
+	Visible++;
+	return DisplayLockToken;
 }
 
 void FGearDisplay::ReleaseLock(uint32 token)
 {
-    if (token == DisplayLockToken)
-        Visible--;
+	if (token == DisplayLockToken)
+	{
+		Visible--;
+	}
 }
 
 bool FGearDisplay::IsConnected()
 {
-    return Controller == nullptr || Visible > 0;
+	return Controller == nullptr || Visible > 0;
 }

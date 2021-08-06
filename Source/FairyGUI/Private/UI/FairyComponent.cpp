@@ -49,6 +49,32 @@ void UFairyComponent::ReleaseSlateResources(bool bReleaseChildren)
 	Super::ReleaseSlateResources(bReleaseChildren);
 }
 
+void UFairyComponent::MakeSlateWidget()
+{
+
+	if (!DisplayObject.IsValid())
+	{
+		DisplayObject = Container = SNew(SContainer).GObject(this);
+		DisplayObject->SetOpaque(false);
+	}
+}
+
+void UFairyComponent::AddWidget(UFairyObject* InChild, int32 index)
+{
+	int num = Container->GetChildren()->Num();
+	if (index > num)
+	{
+		index = num;
+	}
+
+	SContainer::FSlot& Slot = Container->AddChildAt(InChild->GetDisplayObject(), index);
+	Slot.PositionAttr.BindUFunction(InChild, TEXT("GetRelationPos"));
+	Slot.SizeAttr.BindUFunction(InChild, TEXT("GetRelationSize"));
+
+	Slot.Anchor(InChild->GetAnchor());
+	InChild->SetSlot(&Slot);
+}
+
 UFairyObject* UFairyComponent::AddChild(UFairyObject* Child)
 {
 	if ( UFairyComponent* Component = Cast<UFairyComponent>(Child) ) 
@@ -473,7 +499,7 @@ UGController* UFairyComponent::GetController(const FString& ControllerName) cons
 {
 	for (const auto& Controller : Controllers)
 	{
-		if (Controller->GetName().Compare(ControllerName) == 0)
+		if (Controller->Name.Compare(ControllerName) == 0)
 		{
 			return Controller;
 		}
@@ -511,10 +537,10 @@ void UFairyComponent::ApplyController(UGController* Controller)
 {
 	ApplyingController = Controller;
 
-	//for (int32 i = 0; i < Children.Num(); i++)
-	//{
-	//	Children[i]->HandleControllerChanged(Controller);
-	//}
+	for (int32 i = 0; i < Children.Num(); i++)
+	{
+		Children[i]->HandleControllerChanged(Controller);
+	}
 		
 	ApplyingController = nullptr;
 
@@ -736,18 +762,6 @@ void UFairyComponent::SetBounds(float ax, float ay, float aw, float ah)
 	bBoundsChanged = false;
 }
 
-void UFairyComponent::AddWidget(UFairyObject* InChild)
-{
-	SContainer::FSlot& Slot = Container->AddChild(InChild->GetDisplayObject());
-	//Slot.Position(InChild->GetPosition());
-	//Slot.Size(InChild->GetSize());
-	Slot.PositionAttr.BindUFunction(InChild, TEXT("GetRelationPos"));
-	Slot.SizeAttr.BindUFunction(InChild, TEXT("GetRelationSize"));
-	
-	Slot.Anchor(InChild->GetAnchor());
-	InChild->SetSlot(&Slot);
-}
-
 void UFairyComponent::ChildStateChanged(UFairyObject* Child)
 {
 	if (bBuildingDisplayList)
@@ -777,7 +791,7 @@ void UFairyComponent::ChildStateChanged(UFairyObject* Child)
 						index++;
 					}
 				}
-				AddWidget(Child);
+				AddWidget(Child, index);
 			}
 			else if (ChildrenRenderOrder == EChildrenRenderOrder::Descent)
 			{
@@ -795,7 +809,7 @@ void UFairyComponent::ChildStateChanged(UFairyObject* Child)
 						index++;
 					}
 				}
-				AddWidget(Child);
+				AddWidget(Child, index);
 			}
 			else
 			{
@@ -867,7 +881,7 @@ void UFairyComponent::BuildNativeDisplayList(bool bImmediatelly)
 				UFairyObject* Child = Children[i];
 				if (Child->InternalVisible())
 				{
-					AddWidget(Child);
+					AddWidget(Child, i);
 				}
 			}
 		}
@@ -879,7 +893,7 @@ void UFairyComponent::BuildNativeDisplayList(bool bImmediatelly)
 				UFairyObject* Child = Children[i];
 				if (Child->InternalVisible())
 				{
-					AddWidget(Child);
+					AddWidget(Child, i);
 				}
 			}
 		}
@@ -892,7 +906,7 @@ void UFairyComponent::BuildNativeDisplayList(bool bImmediatelly)
 				UFairyObject* Child = Children[i];
 				if (Child->InternalVisible())
 				{
-					AddWidget(Child);
+					AddWidget(Child, i);
 				}
 			}
 			for (int32 i = cnt - 1; i >= ai; i--)
@@ -900,7 +914,7 @@ void UFairyComponent::BuildNativeDisplayList(bool bImmediatelly)
 				UFairyObject* Child = Children[i];
 				if (Child->InternalVisible())
 				{
-					AddWidget(Child);
+					AddWidget(Child, i);
 				}
 			}
 		}
@@ -1307,16 +1321,6 @@ void UFairyComponent::ConstructExtension(FByteBuffer* Buffer)
 void UFairyComponent::OnConstruct()
 {
 	K2_OnConstruct();
-}
-
-void UFairyComponent::MakeSlateWidget()
-{
-	
-	if (!DisplayObject.IsValid())
-	{
-		DisplayObject = Container = SNew(SContainer).GObject(this);
-		DisplayObject->SetOpaque(false);
-	}
 }
 
 void UFairyComponent::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)

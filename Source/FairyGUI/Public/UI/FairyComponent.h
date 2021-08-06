@@ -225,7 +225,7 @@ private:
 	int32 MoveChild(UFairyObject* Child, int32 OldIndex, int32 NewIndex);
 
 	void BuildNativeDisplayList(bool bImmediatelly = false);
-	void AddWidget(UFairyObject* InChild);
+	void AddWidget(UFairyObject* InChild, int32 index);
 
 	void OnAddedToStageHandler(UEventContext* Context);
 	void OnRemovedFromStageHandler(UEventContext* Context);

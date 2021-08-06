@@ -6,12 +6,12 @@
 
 #include "FairyApplication.h"
 
-const FString UGButton::UP = "up";
-const FString UGButton::DOWN = "down";
-const FString UGButton::OVER = "over";
-const FString UGButton::SELECTED_OVER = "selectedOver";
-const FString UGButton::DISABLED = "disabled";
-const FString UGButton::SELECTED_DISABLED = "selectedDisabled";
+const FString UGButton::UP = TEXT("up");
+const FString UGButton::DOWN = TEXT("down");
+const FString UGButton::OVER = TEXT("over");
+const FString UGButton::SELECTED_OVER = TEXT("selectedOver");
+const FString UGButton::DISABLED = TEXT("disabled");
+const FString UGButton::SELECTED_DISABLED = TEXT("selectedDisabled");
 
 UGButton::UGButton() :
     bChangeStateOnClick(true),
@@ -342,9 +342,9 @@ void UGButton::ConstructExtension(FByteBuffer* Buffer)
         SetPivot(FVector2D(0.5f, 0.5f), IsPivotAsAnchor());
     }
 
-    ButtonController = GetController("button");
-    TitleObject = GetChild("title");
-    IconObject = GetChild("icon");
+    ButtonController = GetController(TEXT("button"));
+    TitleObject = GetChild(TEXT("title"));
+    IconObject = GetChild(TEXT("icon"));
     if (TitleObject != nullptr)
     {
         Title = TitleObject->GetText();
@@ -357,7 +357,7 @@ void UGButton::ConstructExtension(FByteBuffer* Buffer)
 
     if (Mode == EButtonMode::Common)
     {
-        SetState(UP);
+        SetState(UGButton::UP);
     }
 
     On(FFairyEventNames::RollOver).AddUObject(this, &UGButton::OnRollOverHandler);

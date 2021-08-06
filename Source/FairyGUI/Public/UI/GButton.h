@@ -93,9 +93,13 @@ private:
 
     EButtonMode Mode;
 
+    UPROPERTY()
     UFairyObject* TitleObject;
+    UPROPERTY()
     UFairyObject* IconObject;
+    UPROPERTY()
     UGController* ButtonController;
+    UPROPERTY()
     UGController* RelatedController;
 
     FString RelatedPageID;

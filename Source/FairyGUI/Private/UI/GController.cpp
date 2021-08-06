@@ -32,7 +32,9 @@ void UGController::SetSelectedIndex(int32 Index, bool bTriggerEvent)
         Cast<UFairyComponent>(GetOuter())->ApplyController(this);
 
         if (bTriggerEvent)
-            OnChangedEvent.Broadcast(this);
+        {
+			OnChangedEvent.Broadcast(this);
+        }
 
         bChanging = false;
     }
@@ -41,9 +43,13 @@ void UGController::SetSelectedIndex(int32 Index, bool bTriggerEvent)
 const FString& UGController::GetSelectedPage() const
 {
     if (SelectedIndex == -1)
-        return G_EMPTY_STRING;
+    {
+		return G_EMPTY_STRING;
+    }
     else
-        return PageNames[SelectedIndex];
+    {
+		return PageNames[SelectedIndex];
+    }
 }
 
 void UGController::SetSelectedPage(const FString& PageName)
@@ -55,39 +61,55 @@ void UGController::SetSelectedPage(const FString& PageName, bool bTriggerEvent)
 {
     int32 i = PageNames.Find(PageName);
     if (i == INDEX_NONE)
-        i = 0;
+    {
+		i = 0;
+    }
     SetSelectedIndex(i, bTriggerEvent);
 }
 
 const FString& UGController::GetSelectedPageID() const
 {
     if (SelectedIndex == -1)
-        return G_EMPTY_STRING;
+    {
+		return G_EMPTY_STRING;
+    }
     else
-        return PageIDs[SelectedIndex];
+    {
+		return PageIDs[SelectedIndex];
+    }
 }
 
 void UGController::SetSelectedPageID(const FString& PageID, bool bTriggerEvent)
 {
     int32 i = PageIDs.Find(PageID);
     if (i != INDEX_NONE)
-        SetSelectedIndex(i, bTriggerEvent);
+    {
+		SetSelectedIndex(i, bTriggerEvent);
+    }
 }
 
 const FString& UGController::GetPreviousPage() const
 {
     if (PreviousIndex == -1)
-        return G_EMPTY_STRING;
+    {
+		return G_EMPTY_STRING;
+    }
     else
-        return PageNames[PreviousIndex];
+    {
+		return PageNames[PreviousIndex];
+    }
 }
 
 const FString& UGController::GetPreviousPageID() const
 {
     if (PreviousIndex == -1)
-        return G_EMPTY_STRING;
+    {
+		return G_EMPTY_STRING;
+    }
     else
-        return PageIDs[PreviousIndex];
+    {
+		return PageIDs[PreviousIndex];
+    }
 }
 
 int32 UGController::GetPageCount() const
@@ -109,9 +131,13 @@ const FString& UGController::GetPageNameByID(const FString& PageID) const
 {
     int32 i = PageIDs.Find(PageID);
     if (i != INDEX_NONE)
-        return PageNames[i];
+    {
+		return PageNames[i];
+    }
     else
-        return G_EMPTY_STRING;
+    {
+		return G_EMPTY_STRING;
+    }
 }
 
 const FString& UGController::GetPageID(int32 Index) const
@@ -123,18 +149,26 @@ void UGController::SetOppositePageID(const FString& PageID)
 {
     int32 i = PageIDs.Find(PageID);
     if (i > 0)
-        SetSelectedIndex(0);
+    {
+		SetSelectedIndex(0);
+    }
     else if (PageIDs.Num() > 1)
-        SetSelectedIndex(1);
+    {
+		SetSelectedIndex(1);
+    }
 }
 
 void UGController::RunActions()
 {
     if (Actions.Num() == 0)
-        return;
+    {
+		return;
+    }
 
     for (auto& it : Actions)
-        it.Run(this, GetPreviousPageID(), GetSelectedPageID());
+    {
+		it.Run(this, GetPreviousPageID(), GetSelectedPageID());
+    }
 }
 
 void UGController::Setup(FByteBuffer* Buffer)
@@ -169,13 +203,17 @@ void UGController::Setup(FByteBuffer* Buffer)
         case 2:
             HomePageIndex = PageNames.Find(UFairyPackageMgr::Get()->GetBranch());
             if (HomePageIndex == INDEX_NONE)
-                HomePageIndex = 0;
+            {
+				HomePageIndex = 0;
+            }
             break;
 
         case 3:
             HomePageIndex = PageNames.Find(UFairyPackageMgr::Get()->GetVar(Buffer->ReadS()));
             if (HomePageIndex == INDEX_NONE)
-                HomePageIndex = 0;
+            {
+				HomePageIndex = 0;
+            }
             break;
         }
     }
@@ -199,7 +237,12 @@ void UGController::Setup(FByteBuffer* Buffer)
     }
 
     if (PageIDs.Num() > 0)
-        SelectedIndex = HomePageIndex;
+    {
+		//SelectedIndex = HomePageIndex;
+        SetSelectedIndex(HomePageIndex);
+    }
     else
-        SelectedIndex = -1;
+    {
+		SelectedIndex = -1;
+    }
 }

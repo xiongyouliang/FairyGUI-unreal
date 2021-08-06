@@ -48,6 +48,7 @@ public:
 	virtual void BeginDestroy() override;
 
 	virtual void ConstructFromResource() {}; // Subclass 
+	virtual void MakeSlateWidget() {} // subclass use this method to create Slate Widget
 
 	// position attribute
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
@@ -276,7 +277,6 @@ public:
 	static UFairyObject* GetDraggingObject() { return DraggingObject.Get(); }
 
 public:
-	virtual void MakeSlateWidget() {} // subclass use this method to create Slate Widget
 
 	void SetPackageItem(const TSharedPtr<FFairyPackageItem>& InPackageItem){ PackageItem = InPackageItem; }
 

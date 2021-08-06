@@ -5,16 +5,10 @@
 
 UGImage::UGImage()
 {
-	if (!HasAnyFlags(RF_ClassDefaultObject | RF_ArchetypeObject))
-	{
-		DisplayObject = Content = SNew(SFImage).GObject(this);
-		DisplayObject->SetInteractable(false);
-	}
 }
 
 UGImage::~UGImage()
 {
-
 }
 
 void UGImage::ReleaseSlateResources(bool bReleaseChildren)
@@ -115,8 +109,19 @@ void UGImage::SetProp(EObjectPropID PropID, const FNVariant& InValue)
 	}
 }
 
+void UGImage::MakeSlateWidget()
+{
+	if (!Content.IsValid())
+	{
+		DisplayObject = Content = SNew(SFImage).GObject(this);
+		DisplayObject->SetInteractable(false);
+	}
+}
+
 void UGImage::ConstructFromResource()
 {
+	MakeSlateWidget();
+
 	TSharedPtr<FFairyPackageItem> ContentItem = PackageItem->GetBranch();
 
 	ContentItem = ContentItem->GetHighResolution();

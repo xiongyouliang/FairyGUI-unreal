@@ -48,6 +48,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	void SetFillAmount(float Amount);
 
+	virtual void MakeSlateWidget() override;
 	virtual void ConstructFromResource() override;
 
 	virtual FNVariant GetProp(EObjectPropID PropID) const override;

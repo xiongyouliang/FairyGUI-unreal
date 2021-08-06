@@ -192,7 +192,7 @@ void UGController::Setup(FByteBuffer* Buffer)
 	}
 
 	// Parse HomePage property for this Controller
-	int32 HomePageIndex = 0;
+	int32 HomePageIndex = 0; // The default home page type is: EHomePageType::FirstPage = 0;
 	if (Buffer->Version >= 2)
 	{
 		EHomePageType HomePageType = (EHomePageType)( Buffer->ReadByte() );

@@ -1152,6 +1152,7 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 
 	bBuildingDisplayList = true;
 
+	// Parse Controllers for this UFairyComponent
 	Buffer->Seek(0, 1);
 	int32 controllerCount = Buffer->ReadShort();
 	for (int32 i = 0; i < controllerCount; i++)

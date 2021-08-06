@@ -31,16 +31,22 @@ void FGearColor::AddStatus(const FString& PageID, FByteBuffer* Buffer)
     Value.Color = Buffer->ReadColor();
     Value.OutlineColor = Buffer->ReadColor();
     if (PageID.IsEmpty())
-        Default = Value;
+    {
+		Default = Value;
+    }
     else
-        Storage.Add(PageID, MoveTemp(Value));
+    {
+		Storage.Add(PageID, MoveTemp(Value));
+    }
 }
 
 void FGearColor::Apply()
 {
     FValue* Value = Storage.Find(Controller->GetSelectedPageID());
     if (Value == nullptr)
-        Value = &Default;
+    {
+		Value = &Default;
+    }
 
     if (TweenConfig.IsSet() && TweenConfig->bTween && UFairyPackage::Constructing == 0 && !bDisableAllTweenEffect)
     {
@@ -58,15 +64,21 @@ void FGearColor::Apply()
         if (tweener != nullptr)
         {
             if (tweener->EndValue.GetColor() != Value->Color)
-                tweener->Kill(true);
+            {
+				tweener->Kill(true);
+            }
             else
-                return;
+            {
+				return;
+            }
         }
 
         if (Value->Color != curColor)
         {
             if (Owner->CheckGearController(0, Controller))
-                TweenConfig->DisplayLockToken = Owner->AddDisplayLock();
+            {
+				TweenConfig->DisplayLockToken = Owner->AddDisplayLock();
+            }
 
             TweenConfig->Handle = FGTween::To(curColor, Value->Color, TweenConfig->Duration)
                 ->SetDelay(TweenConfig->Delay)

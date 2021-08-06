@@ -30,9 +30,13 @@ void FGearAnimation::AddStatus(const FString& PageID, FByteBuffer* Buffer)
     Value.bPlaying = Buffer->ReadBool();
     Value.Frame = Buffer->ReadInt();
     if (PageID.IsEmpty())
-        Default = Value;
+    {
+		Default = Value;
+    }
     else
-        Storage.Add(PageID, MoveTemp(Value));
+    {
+		Storage.Add(PageID, MoveTemp(Value));
+    }
 }
 
 void FGearAnimation::Apply()
@@ -41,7 +45,9 @@ void FGearAnimation::Apply()
 
     FValue* Value = Storage.Find(Controller->GetSelectedPageID());
     if (Value == nullptr)
-        Value = &Default;
+    {
+		Value = &Default;
+    }
 
     Owner->SetProp(EObjectPropID::Playing, FNVariant(Value->bPlaying));
     Owner->SetProp(EObjectPropID::Frame, FNVariant(Value->Frame));

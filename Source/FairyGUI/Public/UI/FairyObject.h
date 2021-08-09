@@ -188,7 +188,7 @@ public:
 	FBox2D LocalToRootRect(const FBox2D& InRect);
 
 
-	FGearBase* GetGear(FGearBase::EGearType GearType);
+	FGearBase* GetOrCreateGear(FGearBase::EGearType GearType);
 	bool CheckGearController(int32 Index, UGController* Controller);
 	uint32 AddDisplayLock();
 	void ReleaseDisplayLock(uint32 Token);

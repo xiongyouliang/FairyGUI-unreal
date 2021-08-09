@@ -504,7 +504,7 @@ void UFairyObject::RemoveRelation(UFairyObject* Obj, ERelationType RelationType)
 }
 
 // ********************* Controller start *******************
-FGearBase* UFairyObject::GetGear(FGearBase::EGearType GearType)
+FGearBase* UFairyObject::GetOrCreateGear(FGearBase::EGearType GearType)
 {
 	FGearBase* gear = Gears[GearType];
 	if (gear == nullptr)
@@ -836,7 +836,7 @@ void UFairyObject::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 		int16 nextPos = Buffer->ReadShort();
 		nextPos += Buffer->GetPos();
 
-		FGearBase* gear = GetGear( (FGearBase::EGearType)Buffer->ReadByte() );
+		FGearBase* gear = GetOrCreateGear( (FGearBase::EGearType)Buffer->ReadByte() );
 		gear->Setup(Buffer);
 
 		Buffer->SetPos(nextPos);

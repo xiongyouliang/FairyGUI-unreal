@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "ControllerAction/ControllerAction.h"
+#include "UI/Controller/Actions/ControllerAction.h"
 #include "GController.generated.h"
 
 class UFairyComponent;

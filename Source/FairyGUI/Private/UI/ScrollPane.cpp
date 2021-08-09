@@ -4,7 +4,7 @@
 #include "TimerManager.h"
 #include "Package/FairyPackageMgr.h"
 #include "UI/GList.h"
-#include "UI/GController.h"
+#include "UI/Controller/GController.h"
 #include "UI/GScrollBar.h"
 #include "Utils/ByteBuffer.h"
 #include "Tween/GTween.h"

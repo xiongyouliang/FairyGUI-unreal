@@ -5,7 +5,7 @@
 #include "UI/GTextInput.h"
 #include "UI/GLabel.h"
 #include "UI/GButton.h"
-#include "UI/GController.h"
+#include "UI/Controller/GController.h"
 #include "UI/GList.h"
 #include "UI/FairyRoot.h"
 #include "Utils/ByteBuffer.h"

@@ -1,7 +1,7 @@
-#include "UI/Gears/GearXY.h"
+#include "UI/Controller/Gears/GearXY.h"
 #include "UI/FairyComponent.h"
 #include "Package/FairyPackage.h"
-#include "UI/GController.h"
+#include "UI/Controller/GController.h"
 #include "Tween/GTween.h"
 #include "Utils/ByteBuffer.h"
 

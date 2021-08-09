@@ -1,7 +1,7 @@
 #include "UI/GButton.h"
 #include "UI/GTextField.h"
 #include "UI/GLabel.h"
-#include "UI/GController.h"
+#include "UI/Controller/GController.h"
 #include "Utils/ByteBuffer.h"
 
 #include "FairyApplication.h"

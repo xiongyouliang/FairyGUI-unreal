@@ -1,4 +1,4 @@
-#include "UI/GController.h"
+#include "UI/Controller/GController.h"
 #include "UI/FairyComponent.h"
 #include "Package/FairyPackage.h"
 #include "Utils/ByteBuffer.h"

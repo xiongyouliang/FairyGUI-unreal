@@ -1,7 +1,7 @@
 #include "UI/PopupMenu.h"
 #include "UI/FairyRoot.h"
 #include "Package/FairyPackage.h"
-#include "UI/GController.h"
+#include "UI/Controller/GController.h"
 #include "FairyApplication.h"
 
 const FName UPopupMenu::ClickMenu("ClickMenu");

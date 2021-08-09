@@ -1,5 +1,5 @@
-#include "UI/Gears/GearDisplay.h"
-#include "UI/GController.h"
+#include "UI/Controller/Gears/GearDisplay.h"
+#include "UI/Controller/GController.h"
 #include "Utils/ByteBuffer.h"
 
 FGearDisplay::FGearDisplay(UFairyObject* InOwner) :

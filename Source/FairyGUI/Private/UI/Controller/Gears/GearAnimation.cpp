@@ -1,6 +1,6 @@
-#include "UI/Gears/GearAnimation.h"
+#include "UI/Controller/Gears/GearAnimation.h"
 #include "UI/FairyObject.h"
-#include "UI/GController.h"
+#include "UI/Controller/GController.h"
 #include "Utils/ByteBuffer.h"
 
 FGearAnimation::FValue::FValue() :

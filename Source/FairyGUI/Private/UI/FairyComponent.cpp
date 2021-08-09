@@ -6,7 +6,7 @@
 #include "UI/UIObjectFactory.h"
 #include "Package/FairyPackage.h"
 #include "Package/FairyPackageMgr.h"
-#include "UI/GController.h"
+#include "UI/Controller/GController.h"
 #include "UI/Transition.h"
 #include "UI/FairyRoot.h"
 #include "Utils/ByteBuffer.h"

@@ -1,7 +1,7 @@
 ﻿#include "UI/GList.h"
 #include "UI/GButton.h"
 #include "UI/GObjectPool.h"
-#include "UI/GController.h"
+#include "UI/Controller/GController.h"
 #include "UI/GScrollBar.h"
 #include "Package/FairyPackage.h"
 #include "Package/FairyPackageMgr.h"

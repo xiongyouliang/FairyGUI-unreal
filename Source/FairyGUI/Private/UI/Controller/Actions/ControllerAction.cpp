@@ -1,6 +1,6 @@
-#include "UI/ControllerAction/ControllerAction.h"
-#include "UI/ControllerAction/ChangePageAction.h"
-#include "UI/ControllerAction/PlayTransitionAction.h"
+#include "UI/Controller/Actions/ControllerAction.h"
+#include "UI/Controller/Actions/ChangePageAction.h"
+#include "UI/Controller/Actions/PlayTransitionAction.h"
 #include "Utils/ByteBuffer.h"
 
 FControllerAction * FControllerAction::CreateAction(int32 ActionType)

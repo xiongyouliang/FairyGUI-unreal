@@ -1,5 +1,5 @@
-#include "UI/ControllerAction/ChangePageAction.h"
-#include "UI/GController.h"
+#include "UI/Controller/Actions/ChangePageAction.h"
+#include "UI/Controller/GController.h"
 #include "Utils/ByteBuffer.h"
 
 void FChangePageAction::Setup(FByteBuffer* Buffer)

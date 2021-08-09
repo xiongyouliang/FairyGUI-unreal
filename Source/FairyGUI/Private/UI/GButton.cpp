@@ -14,11 +14,11 @@ const FString UGButton::DISABLED = TEXT("disabled");
 const FString UGButton::SELECTED_DISABLED = TEXT("selectedDisabled");
 
 UGButton::UGButton() :
-    bChangeStateOnClick(true),
-    DownEffectValue(0.8f)
+	bChangeStateOnClick(true),
+	DownEffectValue(0.8f)
 {
-    Sound = FUIConfig::Config.ButtonSound;
-    SoundVolumeScale = FUIConfig::Config.ButtonSoundVolumeScale;
+	Sound = FUIConfig::Config.ButtonSound;
+	SoundVolumeScale = FUIConfig::Config.ButtonSoundVolumeScale;
 }
 
 UGButton::~UGButton()
@@ -27,557 +27,557 @@ UGButton::~UGButton()
 
 void UGButton::SetText(const FString& InText)
 {
-    Title = InText;
-    if (TitleObject != nullptr)
-    {
-        TitleObject->SetText(InText);
-    }
-    UpdateGear(6);
+	Title = InText;
+	if (TitleObject != nullptr)
+	{
+		TitleObject->SetText(InText);
+	}
+	UpdateGear(6);
 }
 
 const FString& UGButton::GetIcon() const
 {
-    if (IconObject != nullptr)
-    {
-        return IconObject->GetIcon();
-    }
-    else
-    {
-        return G_EMPTY_STRING;
-    }
+	if (IconObject != nullptr)
+	{
+		return IconObject->GetIcon();
+	}
+	else
+	{
+		return G_EMPTY_STRING;
+	}
 }
 
 void UGButton::SetIcon(const FString & InIcon)
 {
-    if (IconObject != nullptr)
-    {
-        IconObject->SetIcon(InIcon);
-    }
-    UpdateGear(7);
+	if (IconObject != nullptr)
+	{
+		IconObject->SetIcon(InIcon);
+	}
+	UpdateGear(7);
 }
 
 void UGButton::SetSelectedTitle(const FString& InTitle)
 {
-    SelectedTitle = InTitle;
-    if (TitleObject != nullptr)
-    {
-        TitleObject->SetText((bSelected && SelectedTitle.Len() > 0) ? SelectedTitle : Title);
-    }
+	SelectedTitle = InTitle;
+	if (TitleObject != nullptr)
+	{
+		TitleObject->SetText((bSelected && SelectedTitle.Len() > 0) ? SelectedTitle : Title);
+	}
 }
 
 void UGButton::SetSelectedIcon(const FString& InIcon)
 {
-    SelectedIcon = InIcon;
-    if (IconObject != nullptr)
-    {
-        IconObject->SetIcon((bSelected && SelectedIcon.Len() > 0) ? SelectedIcon : Icon);
-    }
+	SelectedIcon = InIcon;
+	if (IconObject != nullptr)
+	{
+		IconObject->SetIcon((bSelected && SelectedIcon.Len() > 0) ? SelectedIcon : Icon);
+	}
 }
 
 FColor UGButton::GetTitleColor() const
 {
-    UGTextField* TextField = GetTextField();
-    if (TextField)
-    {
-        return TextField->GetTextFormat().Color;
+	UGTextField* TextField = GetTextField();
+	if (TextField)
+	{
+		return TextField->GetTextFormat().Color;
 
-    }
-    else
-    {
-        return FColor::Black;
-    }
+	}
+	else
+	{
+		return FColor::Black;
+	}
 }
 
 void UGButton::SetTitleColor(const FColor & InColor)
 {
-    UGTextField* TextField = GetTextField();
-    if (TextField)
-    {
-        TextField->GetTextFormat().Color = InColor;
-        TextField->ApplyFormat();
-    }
+	UGTextField* TextField = GetTextField();
+	if (TextField)
+	{
+		TextField->GetTextFormat().Color = InColor;
+		TextField->ApplyFormat();
+	}
 }
 
 int32 UGButton::GetTitleFontSize() const
 {
-    UGTextField* TextField = GetTextField();
-    if (TextField)
-    {
-        return TextField->GetTextFormat().Size;
-    }
-    else
-    {
-        return 0;
-    }
+	UGTextField* TextField = GetTextField();
+	if (TextField)
+	{
+		return TextField->GetTextFormat().Size;
+	}
+	else
+	{
+		return 0;
+	}
 }
 
 void UGButton::SetTitleFontSize(int32 InFontSize)
 {
-    UGTextField* TextField = GetTextField();
-    if (TextField)
-    {
-        TextField->GetTextFormat().Size = InFontSize;
-        TextField->ApplyFormat();
-    }
+	UGTextField* TextField = GetTextField();
+	if (TextField)
+	{
+		TextField->GetTextFormat().Size = InFontSize;
+		TextField->ApplyFormat();
+	}
 }
 
 void UGButton::SetSelected(bool bInSelected)
 {
-    if (Mode == EButtonMode::Common)
-    {
-        return;
-    }
+	if (Mode == EButtonMode::Common)
+	{
+		return;
+	}
 
-    if (bSelected != bInSelected)
-    {
-        bSelected = bInSelected;
-        SetCurrentState();
-        if (!SelectedTitle.IsEmpty() && TitleObject != nullptr)
-        {
-            TitleObject->SetText(bSelected ? SelectedTitle : Title);
-        }
+	if (bSelected != bInSelected)
+	{
+		bSelected = bInSelected;
+		SetCurrentState();
+		if (!SelectedTitle.IsEmpty() && TitleObject != nullptr)
+		{
+			TitleObject->SetText(bSelected ? SelectedTitle : Title);
+		}
 
-        if (!SelectedIcon.IsEmpty())
-        {
-            const FString& str = bSelected ? SelectedIcon : Icon;
-            if (IconObject != nullptr)
-            {
-                IconObject->SetIcon(str);
-            }
-        }
+		if (!SelectedIcon.IsEmpty())
+		{
+			const FString& str = bSelected ? SelectedIcon : Icon;
+			if (IconObject != nullptr)
+			{
+				IconObject->SetIcon(str);
+			}
+		}
 
-        if (RelatedController != nullptr && GetParent() != nullptr && !GetParent()->bBuildingDisplayList)
-        {
-            if (bSelected)
-            {
-                RelatedController->SetSelectedPageID(RelatedPageID);
-                if (RelatedController->bAutoRadioGroupDepth)
-                {
-                    GetParent()->AdjustRadioGroupDepth(this, RelatedController);
-                }
-            }
-            else if (Mode == EButtonMode::Check && RelatedController->GetSelectedPageID() == RelatedPageID)
-            {
-                RelatedController->SetOppositePageID(RelatedPageID);
-            }
-        }
-    }
+		if (RelatedController != nullptr && GetParent() != nullptr && !GetParent()->bBuildingDisplayList)
+		{
+			if (bSelected)
+			{
+				RelatedController->SetSelectedPageID(RelatedPageID);
+				if (RelatedController->bAutoRadioGroupDepth)
+				{
+					GetParent()->AdjustRadioGroupDepth(this, RelatedController);
+				}
+			}
+			else if (Mode == EButtonMode::Check && RelatedController->GetSelectedPageID() == RelatedPageID)
+			{
+				RelatedController->SetOppositePageID(RelatedPageID);
+			}
+		}
+	}
 }
 
 void UGButton::SetRelatedController(UGController* InController)
 {
-    RelatedController = InController;
+	RelatedController = InController;
 }
 
 void UGButton::SetState(const FString& InState)
 {
-    if (ButtonController != nullptr)
-    {
-        ButtonController->SetSelectedPage(InState);
-    }
+	if (ButtonController != nullptr)
+	{
+		ButtonController->SetSelectedPage(InState);
+	}
 
-    if (DownEffect == EButtonPressedEffect::Dark)
-    {
-        int32 cnt = this->NumChildren();
-        if (InState == UGButton::DOWN || InState == UGButton::SELECTED_OVER || InState == UGButton::SELECTED_DISABLED)
-        {
-            int32 c = DownEffectValue * 255;
-            FNVariant Color(FColor(c, c, c, 255));
-            for (int32 i = 0; i < cnt; i++)
-            {
-                UFairyObject* Obj = this->GetChildAt(i);
-                if (!Obj->IsA<UGTextField>())
-                {
-                    Obj->SetProp(EObjectPropID::Color, Color);
-                }
-            }
-        }
-        else
-        {
-            FNVariant Color(FColor::White);
-            for (int32 i = 0; i < cnt; i++)
-            {
-                UFairyObject* Obj = this->GetChildAt(i);
-                if (!Obj->IsA<UGTextField>())
-                {
-                    Obj->SetProp(EObjectPropID::Color, Color);
-                }
-            }
-        }
-    }
-    else if (DownEffect == EButtonPressedEffect::Scale)
-    {
-        if (InState == UGButton::DOWN || InState == UGButton::SELECTED_OVER || InState == UGButton::SELECTED_DISABLED)
-        {
-            if (!bDownScaled)
-            {
-                bDownScaled = true;
-                SetScale(GetScale() * DownEffectValue);
-            }
-        }
-        else
-        {
-            if (bDownScaled)
-            {
-                bDownScaled = false;
-                SetScale(GetScale() / DownEffectValue);
-            }
-        }
-    }
+	if (DownEffect == EButtonPressedEffect::Dark)
+	{
+		int32 cnt = this->NumChildren();
+		if (InState == UGButton::DOWN || InState == UGButton::SELECTED_OVER || InState == UGButton::SELECTED_DISABLED)
+		{
+			int32 c = DownEffectValue * 255;
+			FNVariant Color(FColor(c, c, c, 255));
+			for (int32 i = 0; i < cnt; i++)
+			{
+				UFairyObject* Obj = this->GetChildAt(i);
+				if (!Obj->IsA<UGTextField>())
+				{
+					Obj->SetProp(EObjectPropID::Color, Color);
+				}
+			}
+		}
+		else
+		{
+			FNVariant Color(FColor::White);
+			for (int32 i = 0; i < cnt; i++)
+			{
+				UFairyObject* Obj = this->GetChildAt(i);
+				if (!Obj->IsA<UGTextField>())
+				{
+					Obj->SetProp(EObjectPropID::Color, Color);
+				}
+			}
+		}
+	}
+	else if (DownEffect == EButtonPressedEffect::Scale)
+	{
+		if (InState == UGButton::DOWN || InState == UGButton::SELECTED_OVER || InState == UGButton::SELECTED_DISABLED)
+		{
+			if (!bDownScaled)
+			{
+				bDownScaled = true;
+				SetScale(GetScale() * DownEffectValue);
+			}
+		}
+		else
+		{
+			if (bDownScaled)
+			{
+				bDownScaled = false;
+				SetScale(GetScale() / DownEffectValue);
+			}
+		}
+	}
 }
 
 void UGButton::SetCurrentState()
 {
-    if (IsGrayed() && ButtonController != nullptr && ButtonController->HasPage(DISABLED))
-    {
-        if (bSelected)
-        {
-            SetState(UGButton::SELECTED_DISABLED);
-        }
-        else
-        {
-            SetState(UGButton::DISABLED);
-        }
-    }
-    else
-    {
-        if (bSelected)
-        {
-            SetState(bOver ? UGButton::SELECTED_OVER : UGButton::DOWN);
-        }
-        else
-        {
-            SetState(bOver ? UGButton::OVER : UGButton::UP);
-        }
-    }
+	if (IsGrayed() && ButtonController != nullptr && ButtonController->HasPage(DISABLED))
+	{
+		if (bSelected)
+		{
+			SetState(UGButton::SELECTED_DISABLED);
+		}
+		else
+		{
+			SetState(UGButton::DISABLED);
+		}
+	}
+	else
+	{
+		if (bSelected)
+		{
+			SetState(bOver ? UGButton::SELECTED_OVER : UGButton::DOWN);
+		}
+		else
+		{
+			SetState(bOver ? UGButton::OVER : UGButton::UP);
+		}
+	}
 }
 
 UGTextField * UGButton::GetTextField() const
 {
-    if (TitleObject->IsA<UGTextField>())
-    {
-        return Cast<UGTextField>(TitleObject);
-    }
-    else if (TitleObject->IsA<UGLabel>())
-    {
-        return Cast<UGLabel>(TitleObject)->GetTextField();
-    }
-    else if (TitleObject->IsA<UGButton>())
-    {
-        return Cast<UGButton>(TitleObject)->GetTextField();
-    }
-    else
-    {
-        return nullptr;
-    }
+	if (TitleObject->IsA<UGTextField>())
+	{
+		return Cast<UGTextField>(TitleObject);
+	}
+	else if (TitleObject->IsA<UGLabel>())
+	{
+		return Cast<UGLabel>(TitleObject)->GetTextField();
+	}
+	else if (TitleObject->IsA<UGButton>())
+	{
+		return Cast<UGButton>(TitleObject)->GetTextField();
+	}
+	else
+	{
+		return nullptr;
+	}
 }
 
 FNVariant UGButton::GetProp(EObjectPropID PropID) const
 {
-    switch (PropID)
-    {
-    case EObjectPropID::Color:
-        return FNVariant(GetTitleColor());
-    case EObjectPropID::OutlineColor:
-    {
-        UGTextField* TextField = GetTextField();
-        if (TextField != nullptr)
-        {
-            return FNVariant(TextField->GetTextFormat().OutlineColor);
-        }
-        else
-        {
-            return FNVariant(FColor::Black);
-        }
-    }
-    case EObjectPropID::FontSize:
-        return FNVariant(GetTitleFontSize());
-    case EObjectPropID::Selected:
-        return FNVariant(IsSelected());
-    default:
-        return UFairyComponent::GetProp(PropID);
-    }
+	switch (PropID)
+	{
+	case EObjectPropID::Color:
+		return FNVariant(GetTitleColor());
+	case EObjectPropID::OutlineColor:
+	{
+		UGTextField* TextField = GetTextField();
+		if (TextField != nullptr)
+		{
+			return FNVariant(TextField->GetTextFormat().OutlineColor);
+		}
+		else
+		{
+			return FNVariant(FColor::Black);
+		}
+	}
+	case EObjectPropID::FontSize:
+		return FNVariant(GetTitleFontSize());
+	case EObjectPropID::Selected:
+		return FNVariant(IsSelected());
+	default:
+		return UFairyComponent::GetProp(PropID);
+	}
 }
 
 void UGButton::SetProp(EObjectPropID PropID, const FNVariant& InValue)
 {
-    switch (PropID)
-    {
-    case EObjectPropID::Color:
-        SetTitleColor(InValue.AsColor());
-        break;
-    case EObjectPropID::OutlineColor:
-    {
-        UGTextField* TextField = GetTextField();
-        if (TextField != nullptr)
-        {
-            TextField->GetTextFormat().OutlineColor = InValue.AsColor();
-            TextField->ApplyFormat();
-        }
-        break;
-    }
-    case EObjectPropID::FontSize:
-        SetTitleFontSize(InValue.AsInt());
-        break;
-    case EObjectPropID::Selected:
-        SetSelected(InValue.AsBool());
-        break;
-    default:
-        UFairyComponent::SetProp(PropID, InValue);
-        break;
-    }
+	switch (PropID)
+	{
+	case EObjectPropID::Color:
+		SetTitleColor(InValue.AsColor());
+		break;
+	case EObjectPropID::OutlineColor:
+	{
+		UGTextField* TextField = GetTextField();
+		if (TextField != nullptr)
+		{
+			TextField->GetTextFormat().OutlineColor = InValue.AsColor();
+			TextField->ApplyFormat();
+		}
+		break;
+	}
+	case EObjectPropID::FontSize:
+		SetTitleFontSize(InValue.AsInt());
+		break;
+	case EObjectPropID::Selected:
+		SetSelected(InValue.AsBool());
+		break;
+	default:
+		UFairyComponent::SetProp(PropID, InValue);
+		break;
+	}
 }
 
 void UGButton::ConstructExtension(FByteBuffer* Buffer)
 {
-    Buffer->Seek(0, 6);
+	Buffer->Seek(0, 6);
 
-    Mode = (EButtonMode)Buffer->ReadByte();
-    Buffer->ReadS(Sound);
-    SoundVolumeScale = Buffer->ReadFloat();
-    DownEffect = (EButtonPressedEffect)Buffer->ReadByte();
-    DownEffectValue = Buffer->ReadFloat();
-    if (DownEffect == EButtonPressedEffect::Scale)
-    {
-        SetPivot(FVector2D(0.5f, 0.5f), IsPivotAsAnchor());
-    }
+	Mode = (EButtonMode)Buffer->ReadByte();
+	Buffer->ReadS(Sound);
+	SoundVolumeScale = Buffer->ReadFloat();
+	DownEffect = (EButtonPressedEffect)Buffer->ReadByte();
+	DownEffectValue = Buffer->ReadFloat();
+	if (DownEffect == EButtonPressedEffect::Scale)
+	{
+		SetPivot(FVector2D(0.5f, 0.5f), IsPivotAsAnchor());
+	}
 
-    ButtonController = GetController(TEXT("button"));
-    TitleObject = GetChild(TEXT("title"));
-    IconObject = GetChild(TEXT("icon"));
-    if (TitleObject != nullptr)
-    {
-        Title = TitleObject->GetText();
-    }
+	ButtonController = GetController(TEXT("button"));
+	TitleObject = GetChild(TEXT("title"));
+	IconObject = GetChild(TEXT("icon"));
+	if (TitleObject != nullptr)
+	{
+		Title = TitleObject->GetText();
+	}
 
-    if (IconObject != nullptr)
-    {
-        Icon = IconObject->GetIcon();
-    }
+	if (IconObject != nullptr)
+	{
+		Icon = IconObject->GetIcon();
+	}
 
-    if (Mode == EButtonMode::Common)
-    {
-        SetState(UGButton::UP);
-    }
+	if (Mode == EButtonMode::Common)
+	{
+		SetState(UGButton::UP);
+	}
 
-    On(FFairyEventNames::RollOver).AddUObject(this, &UGButton::OnRollOverHandler);
-    On(FFairyEventNames::RollOut).AddUObject(this, &UGButton::OnRollOutHandler);
-    On(FFairyEventNames::TouchBegin).AddUObject(this, &UGButton::OnTouchBeginHandler);
-    On(FFairyEventNames::TouchEnd).AddUObject(this, &UGButton::OnTouchEndHandler);
-    On(FFairyEventNames::Click).AddUObject(this, &UGButton::OnClickHandler);
-    On(FFairyEventNames::RemovedFromStage).AddUObject(this, &UGButton::OnRemovedFromStageHandler);
+	On(FFairyEventNames::RollOver).AddUObject(this, &UGButton::OnRollOverHandler);
+	On(FFairyEventNames::RollOut).AddUObject(this, &UGButton::OnRollOutHandler);
+	On(FFairyEventNames::TouchBegin).AddUObject(this, &UGButton::OnTouchBeginHandler);
+	On(FFairyEventNames::TouchEnd).AddUObject(this, &UGButton::OnTouchEndHandler);
+	On(FFairyEventNames::Click).AddUObject(this, &UGButton::OnClickHandler);
+	On(FFairyEventNames::RemovedFromStage).AddUObject(this, &UGButton::OnRemovedFromStageHandler);
 }
 
 void UGButton::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
-    Super::SetupAfterAdd(Buffer, BeginPos);
+	Super::SetupAfterAdd(Buffer, BeginPos);
 
-    if (!Buffer->Seek(BeginPos, 6))
-    {
-        return;
-    }
+	if (!Buffer->Seek(BeginPos, 6))
+	{
+		return;
+	}
 
-    if ((EObjectType)Buffer->ReadByte() != PackageItem->ObjectType)
-    {
-        return;
-    }
+	if ((EObjectType)Buffer->ReadByte() != PackageItem->ObjectType)
+	{
+		return;
+	}
 
-    const FString* str;
+	const FString* str;
 
-    if ((str = Buffer->ReadSP()) != nullptr)
-    {
-        SetTitle(*str);
-    }
+	if ((str = Buffer->ReadSP()) != nullptr)
+	{
+		SetTitle(*str);
+	}
 
-    if ((str = Buffer->ReadSP()) != nullptr)
-    {
-        SetSelectedTitle(*str);
-    }
+	if ((str = Buffer->ReadSP()) != nullptr)
+	{
+		SetSelectedTitle(*str);
+	}
 
-    if ((str = Buffer->ReadSP()) != nullptr)
-    {
-        SetIcon(*str);
-    }
+	if ((str = Buffer->ReadSP()) != nullptr)
+	{
+		SetIcon(*str);
+	}
 
-    if ((str = Buffer->ReadSP()) != nullptr)
-    {
-        SetSelectedIcon(*str);
-    }
+	if ((str = Buffer->ReadSP()) != nullptr)
+	{
+		SetSelectedIcon(*str);
+	}
 
-    if (Buffer->ReadBool())
-    {
-        SetTitleColor(Buffer->ReadColor());
-    }
+	if (Buffer->ReadBool())
+	{
+		SetTitleColor(Buffer->ReadColor());
+	}
 
-    int32 iv = Buffer->ReadInt();
-    if (iv != 0)
-    {
-        SetTitleFontSize(iv);
-    }
+	int32 iv = Buffer->ReadInt();
+	if (iv != 0)
+	{
+		SetTitleFontSize(iv);
+	}
 
-    iv = Buffer->ReadShort();
-    if (iv >= 0)
-    {
-        RelatedController = GetParent()->GetControllerAt(iv);
-    }
-    RelatedPageID = Buffer->ReadS();
+	iv = Buffer->ReadShort();
+	if (iv >= 0)
+	{
+		RelatedController = GetParent()->GetControllerAt(iv);
+	}
+	RelatedPageID = Buffer->ReadS();
 
-    Buffer->ReadS(Sound);
-    if (Buffer->ReadBool())
-    {
-        SoundVolumeScale = Buffer->ReadFloat();
-    }
+	Buffer->ReadS(Sound);
+	if (Buffer->ReadBool())
+	{
+		SoundVolumeScale = Buffer->ReadFloat();
+	}
 
-    SetSelected(Buffer->ReadBool());
+	SetSelected(Buffer->ReadBool());
 }
 
 void UGButton::HandleControllerChanged(UGController* Controller)
 {
-    UFairyObject::HandleControllerChanged(Controller);
+	UFairyObject::HandleControllerChanged(Controller);
 
-    if (RelatedController == Controller)
-    {
-        SetSelected(RelatedPageID == Controller->GetSelectedPageID());
-    }
+	if (RelatedController == Controller)
+	{
+		SetSelected(RelatedPageID == Controller->GetSelectedPageID());
+	}
 }
 
 void UGButton::OnRollOverHandler(UEventContext* Context)
 {
-    if (ButtonController == nullptr || !ButtonController->HasPage(OVER))
-    {
-        return;
-    }
+	if (ButtonController == nullptr || !ButtonController->HasPage(OVER))
+	{
+		return;
+	}
 
-    bOver = true;
-    if (bDown)
-    {
-        return;
-    }
+	bOver = true;
+	if (bDown)
+	{
+		return;
+	}
 
-    if (IsGrayed() && ButtonController->HasPage(DISABLED))
-    {
-        return;
-    }
+	if (IsGrayed() && ButtonController->HasPage(DISABLED))
+	{
+		return;
+	}
 
-    SetState(bSelected ? SELECTED_OVER : OVER);
+	SetState(bSelected ? SELECTED_OVER : OVER);
 }
 
 void UGButton::OnRollOutHandler(UEventContext* Context)
 {
-    if (ButtonController == nullptr || !ButtonController->HasPage(OVER))
-    {
-        return;
-    }
+	if (ButtonController == nullptr || !ButtonController->HasPage(OVER))
+	{
+		return;
+	}
 
-    bOver = false;
-    if (bDown)
-    {
-        return;
-    }
+	bOver = false;
+	if (bDown)
+	{
+		return;
+	}
 
-    if (IsGrayed() && ButtonController->HasPage(DISABLED))
-    {
-        return;
-    }
+	if (IsGrayed() && ButtonController->HasPage(DISABLED))
+	{
+		return;
+	}
 
-    SetState(bSelected ? DOWN : UP);
+	SetState(bSelected ? DOWN : UP);
 }
 
 void UGButton::OnTouchBeginHandler(UEventContext* Context)
 {
-    if (Context->GetMouseButton() != EKeys::LeftMouseButton)
-    {
-        return;
-    }
+	if (Context->GetMouseButton() != EKeys::LeftMouseButton)
+	{
+		return;
+	}
 
-    bDown = true;
-    Context->CaptureTouch();
+	bDown = true;
+	Context->CaptureTouch();
 
-    if (Mode == EButtonMode::Common)
-    {
-        if (IsGrayed() && ButtonController != nullptr && ButtonController->HasPage(DISABLED))
-        {
-            SetState(UGButton::SELECTED_DISABLED);
-        }
-        else
-        {
-            SetState(UGButton::DOWN);
-        }
-    }
+	if (Mode == EButtonMode::Common)
+	{
+		if (IsGrayed() && ButtonController != nullptr && ButtonController->HasPage(DISABLED))
+		{
+			SetState(UGButton::SELECTED_DISABLED);
+		}
+		else
+		{
+			SetState(UGButton::DOWN);
+		}
+	}
 }
 
 void UGButton::OnTouchEndHandler(UEventContext* Context)
 {
-    if (Context->GetMouseButton() != EKeys::LeftMouseButton)
-    {
-        return;
-    }
+	if (Context->GetMouseButton() != EKeys::LeftMouseButton)
+	{
+		return;
+	}
 
-    if (bDown)
-    {
-        bDown = false;
-        if (Mode == EButtonMode::Common)
-        {
-            if (IsGrayed() && ButtonController != nullptr && ButtonController->HasPage(UGButton::DISABLED))
-            {
-                SetState(UGButton::DISABLED);
-            }
-            else if (bOver)
-            {
-                SetState(UGButton::OVER);
-            }
-            else
-            {
-                SetState(UGButton::UP);
-            }
-        }
-        else
-        {
-            if (!bOver && ButtonController != nullptr
-                && (ButtonController->GetSelectedPage() == UGButton::OVER || ButtonController->GetSelectedPage() == UGButton::SELECTED_OVER))
-            {
-                SetCurrentState();
-            }
-        }
-    }
+	if (bDown)
+	{
+		bDown = false;
+		if (Mode == EButtonMode::Common)
+		{
+			if (IsGrayed() && ButtonController != nullptr && ButtonController->HasPage(UGButton::DISABLED))
+			{
+				SetState(UGButton::DISABLED);
+			}
+			else if (bOver)
+			{
+				SetState(UGButton::OVER);
+			}
+			else
+			{
+				SetState(UGButton::UP);
+			}
+		}
+		else
+		{
+			if (!bOver && ButtonController != nullptr
+				&& (ButtonController->GetSelectedPage() == UGButton::OVER || ButtonController->GetSelectedPage() == UGButton::SELECTED_OVER))
+			{
+				SetCurrentState();
+			}
+		}
+	}
 }
 
 void UGButton::OnClickHandler(UEventContext* Context)
 {
-    if (!Sound.IsEmpty())
-    {
+	if (!Sound.IsEmpty())
+	{
 		UFairyApplication::Get()->PlaySound(Sound, SoundVolumeScale);
-    }
+	}
 
-    if (Mode == EButtonMode::Check)
-    {
-        if (bChangeStateOnClick)
-        {
-            SetSelected(!bSelected);
-            DispatchEvent(FFairyEventNames::Changed);
-        }
-    }
-    else if (Mode == EButtonMode::Radio)
-    {
-        if (bChangeStateOnClick && !bSelected)
-        {
-            SetSelected(true);
-            DispatchEvent(FFairyEventNames::Changed);
-        }
-    }
-    else
-    {
-        if (RelatedController != nullptr)
-        {
-            RelatedController->SetSelectedPageID(RelatedPageID);
-        }
-    }
+	if (Mode == EButtonMode::Check)
+	{
+		if (bChangeStateOnClick)
+		{
+			SetSelected(!bSelected);
+			DispatchEvent(FFairyEventNames::Changed);
+		}
+	}
+	else if (Mode == EButtonMode::Radio)
+	{
+		if (bChangeStateOnClick && !bSelected)
+		{
+			SetSelected(true);
+			DispatchEvent(FFairyEventNames::Changed);
+		}
+	}
+	else
+	{
+		if (RelatedController != nullptr)
+		{
+			RelatedController->SetSelectedPageID(RelatedPageID);
+		}
+	}
 }
 
 void UGButton::OnRemovedFromStageHandler(UEventContext* Context)
 {
-    if (bOver)
-    {
-        OnRollOutHandler(Context);
-    }
+	if (bOver)
+	{
+		OnRollOutHandler(Context);
+	}
 }

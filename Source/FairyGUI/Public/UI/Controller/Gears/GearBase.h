@@ -39,11 +39,12 @@ public:
     };
 
     FGearBase(UFairyObject* InOwner);
+    FGearBase(UFairyObject* InOwner, EType InType);
     virtual ~FGearBase();
 
     EType GetType() const { return Type; }
 
-    UGController* GetController() const { return Controller; }
+    UGController* GetController() const { return Controller.Get(); }
     void SetController(UGController* InController);
 
     FGearTweenConfig& GetTweenConfig();
@@ -52,7 +53,7 @@ public:
     virtual void Apply();
     virtual void UpdateState();
 
-    void Setup(FByteBuffer* Buffer);
+    virtual void Setup(FByteBuffer* Buffer);
 
     static FGearBase* Create(UFairyObject* InOwner, EType InType);
     static bool bDisableAllTweenEffect;
@@ -62,7 +63,7 @@ protected:
     virtual void Init();
 
     EType Type;
-    UFairyObject* Owner;
-    UGController* Controller;
+    TWeakObjectPtr<UFairyObject> Owner;
+    TWeakObjectPtr<UGController> Controller;
     TOptional<FGearTweenConfig> TweenConfig;
 };

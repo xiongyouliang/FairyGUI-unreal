@@ -503,6 +503,9 @@ void UFairyObject::RemoveRelation(UFairyObject* Obj, ERelationType RelationType)
 	GetRelations().Remove(Obj, RelationType);
 }
 
+/**
+ * Controller start
+ */
 FGearBase* UFairyObject::GetGear(FGearBase::EType GearType)
 {
 	uint32 index = static_cast<uint32>(GearType);
@@ -594,6 +597,27 @@ void UFairyObject::CheckGearDisplay()
 		}
 	}
 }
+
+void UFairyObject::HandleControllerChanged(UGController* Controller)
+{
+	bHandlingController = true;
+	for (int32 i = 0; i < 10; i++)
+	{
+		FGearBase* gear = Gears[i];
+		if (gear != nullptr && gear->GetController() == Controller)
+		{
+			gear->Apply();
+		}
+	}
+	bHandlingController = false;
+
+
+	CheckGearDisplay();
+}
+
+/**
+ * Controller end
+ */
 
 void UFairyObject::RemoveFromParent()
 {
@@ -694,23 +718,6 @@ void UFairyObject::HandleGrayedChanged()
 void UFairyObject::HandleVisibleChanged()
 {
 	DisplayObject->SetVisible(InternalVisible2());
-}
-
-void UFairyObject::HandleControllerChanged(UGController* Controller)
-{
-	bHandlingController = true;
-	for (int32 i = 0; i < 10; i++)
-	{
-		FGearBase* gear = Gears[i];
-		if (gear != nullptr && gear->GetController() == Controller)
-		{
-			gear->Apply();
-		}
-	}
-	bHandlingController = false;
-
-
-	CheckGearDisplay();
 }
 
 /**
@@ -833,7 +840,7 @@ void UFairyObject::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 		int16 nextPos = Buffer->ReadShort();
 		nextPos += Buffer->GetPos();
 
-		FGearBase* gear = GetGear((FGearBase::EType)Buffer->ReadByte());
+		FGearBase* gear = GetGear( (FGearBase::EType)Buffer->ReadByte() );
 		gear->Setup(Buffer);
 
 		Buffer->SetPos(nextPos);

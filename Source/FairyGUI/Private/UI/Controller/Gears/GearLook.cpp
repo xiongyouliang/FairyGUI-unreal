@@ -81,7 +81,7 @@ void FGearLook::Apply()
         bool b = Value->Rotation != Owner->GetRotation();
         if (a || b)
         {
-            if (Owner->CheckGearController(0, Controller))
+            if (Owner->CheckGearController(0, Controller.Get()))
             {
 				TweenConfig->DisplayLockToken = Owner->AddDisplayLock();
             }
@@ -89,7 +89,7 @@ void FGearLook::Apply()
             TweenConfig->Handle = FGTween::To(FVector2D(Owner->GetAlpha(), Owner->GetRotation()), FVector2D(Value->Alpha, Value->Rotation), TweenConfig->Duration)
                 ->SetDelay(TweenConfig->Delay)
                 ->SetEase(TweenConfig->EaseType)
-                ->SetTarget(Owner)
+                ->SetTarget(Owner.Get())
                 ->SetUserData(FNVariant((a ? 1 : 0) + (b ? 2 : 0)))
                 ->OnUpdate(FTweenDelegate::CreateRaw(this, &FGearLook::OnTweenUpdate))
                 ->OnComplete(FSimpleDelegate::CreateRaw(this, &FGearLook::OnTweenComplete))

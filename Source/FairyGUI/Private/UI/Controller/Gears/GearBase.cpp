@@ -67,13 +67,20 @@ FGearBase::FGearBase(UFairyObject* InOwner) : Owner(InOwner)
 {
 }
 
+FGearBase::FGearBase(UFairyObject* InOwner, EType InType)
+	: Owner(InOwner)
+	, Type(InType)
+{
+
+}
+
 FGearBase::~FGearBase()
 {
 }
 
 void FGearBase::SetController(UGController* InController)
 {
-	if (Controller != InController)
+	if (!Controller.IsValid() || Controller.Get() != InController)
 	{
 		Controller = InController;
 		if (Controller != nullptr)

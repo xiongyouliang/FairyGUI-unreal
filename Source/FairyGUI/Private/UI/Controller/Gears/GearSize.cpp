@@ -16,8 +16,7 @@ FGearSize::~FGearSize()
 
 void FGearSize::Init()
 {
-    Default = FVector4(Owner->GetWidth(), Owner->GetHeight(),
-        Owner->GetScaleX(), Owner->GetScaleY());
+    Default = FVector4(Owner->GetWidth(), Owner->GetHeight(), Owner->GetScaleX(), Owner->GetScaleY());
     Storage.Reset();
 }
 
@@ -66,7 +65,7 @@ void FGearSize::Apply()
         bool b = Value->Z != Owner->GetScaleX() || Value->W != Owner->GetScaleY();
         if (a || b)
         {
-            if (Owner->CheckGearController(0, Controller))
+            if (Owner->CheckGearController(0, Controller.Get()))
             {
                 TweenConfig->DisplayLockToken = Owner->AddDisplayLock();
             }
@@ -74,7 +73,7 @@ void FGearSize::Apply()
             TweenConfig->Handle = FGTween::To(FVector4(Owner->GetWidth(), Owner->GetHeight(), Owner->GetScaleX(), Owner->GetScaleY()), *Value, TweenConfig->Duration)
                 ->SetDelay(TweenConfig->Delay)
                 ->SetEase(TweenConfig->EaseType)
-                ->SetTarget(Owner)
+                ->SetTarget(Owner.Get())
                 ->SetUserData(FNVariant((a ? 1 : 0) + (b ? 2 : 0)))
                 ->OnUpdate(FTweenDelegate::CreateRaw(this, &FGearSize::OnTweenUpdate))
                 ->OnComplete(FSimpleDelegate::CreateRaw(this, &FGearSize::OnTweenComplete))
@@ -85,7 +84,7 @@ void FGearSize::Apply()
     {
         Owner->bGearLocked = true;
         Owner->SetSize(FVector2D(Value->X, Value->Y));
-        Owner->SetPivot(Owner->GetPivot(), Owner->CheckGearController(1, Controller));
+        Owner->SetPivot(Owner->GetPivot(), Owner->CheckGearController(1, Controller.Get()));
         Owner->SetScale(FVector2D(Value->Z, Value->W));
         Owner->bGearLocked = false;
     }
@@ -98,7 +97,7 @@ void FGearSize::OnTweenUpdate(FGTweener* Tweener)
     if ((flag & 1) != 0)
     {
         Owner->SetSize(Tweener->Value.GetVec2());
-        Owner->SetPivot(Owner->GetPivot(), Owner->CheckGearController(1, Controller));
+        Owner->SetPivot(Owner->GetPivot(), Owner->CheckGearController(1, Controller.Get()));
     }
         
     if ((flag & 2) != 0)

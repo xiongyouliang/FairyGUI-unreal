@@ -90,7 +90,7 @@ void FGearXY::Apply()
 
         if (OriginPt != EndPt)
         {
-            if (Owner->CheckGearController(0, Controller))
+            if (Owner->CheckGearController(0, Controller.Get()))
             {
                 TweenConfig->DisplayLockToken = Owner->AddDisplayLock();
             }
@@ -98,7 +98,7 @@ void FGearXY::Apply()
             TweenConfig->Handle = FGTween::To(OriginPt, EndPt, TweenConfig->Duration)
                 ->SetDelay(TweenConfig->Delay)
                 ->SetEase(TweenConfig->EaseType)
-                ->SetTarget(Owner)
+                ->SetTarget(Owner.Get())
                 ->OnUpdate(FTweenDelegate::CreateRaw(this, &FGearXY::OnTweenUpdate))
                 ->OnComplete(FSimpleDelegate::CreateRaw(this, &FGearXY::OnTweenComplete))
                 ->GetHandle();
@@ -141,7 +141,7 @@ void FGearXY::UpdateState()
 
 void FGearXY::UpdateFromRelations(const FVector2D& Delta)
 {
-    if (Controller != nullptr && Storage.Num() > 0 && !bPositionsInPercent)
+    if (Controller.Get() != nullptr && Storage.Num() > 0 && !bPositionsInPercent)
     {
         for (auto It = Storage.CreateIterator(); It; ++It)
         {

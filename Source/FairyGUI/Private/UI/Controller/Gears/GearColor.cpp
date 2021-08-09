@@ -75,7 +75,7 @@ void FGearColor::Apply()
 
         if (Value->Color != curColor)
         {
-            if (Owner->CheckGearController(0, Controller))
+            if ( Owner->CheckGearController(0, Controller.Get()) )
             {
 				TweenConfig->DisplayLockToken = Owner->AddDisplayLock();
             }
@@ -83,7 +83,7 @@ void FGearColor::Apply()
             TweenConfig->Handle = FGTween::To(curColor, Value->Color, TweenConfig->Duration)
                 ->SetDelay(TweenConfig->Delay)
                 ->SetEase(TweenConfig->EaseType)
-                ->SetTarget(Owner)
+                ->SetTarget(Owner.Get())
                 ->OnUpdate(FTweenDelegate::CreateRaw(this, &FGearColor::OnTweenUpdate))
                 ->OnComplete(FSimpleDelegate::CreateRaw(this, &FGearColor::OnTweenComplete))
                 ->GetHandle();

@@ -14,39 +14,39 @@
 
 bool FGearBase::bDisableAllTweenEffect = false;
 
-FGearBase* FGearBase::Create(UFairyObject* InOwner, EType InType)
+FGearBase* FGearBase::Create(UFairyObject* InOwner, EGearType InType)
 {
 	FGearBase* Gear = nullptr;
 	switch (InType)
 	{
-	case EType::Display:
+	case EGearType::Display:
 		Gear = new FGearDisplay(InOwner);
 		break;
-	case EType::XY:
+	case EGearType::XY:
 		Gear = new FGearXY(InOwner);
 		break;
-	case EType::Size:
+	case EGearType::Size:
 		Gear = new FGearSize(InOwner);
 		break;
-	case EType::Look:
+	case EGearType::Look:
 		Gear = new FGearLook(InOwner);
 		break;
-	case EType::Color:
+	case EGearType::Color:
 		Gear = new FGearColor(InOwner);
 		break;
-	case EType::Animation:
+	case EGearType::Animation:
 		Gear = new FGearAnimation(InOwner);
 		break;
-	case EType::Text:
+	case EGearType::Text:
 		Gear = new FGearText(InOwner);
 		break;
-	case EType::Icon:
+	case EGearType::Icon:
 		Gear = new FGearIcon(InOwner);
 		break;
-	case EType::Display2:
+	case EGearType::Display2:
 		Gear = new FGearDisplay2(InOwner);
 		break;
-	case EType::FontSize:
+	case EGearType::FontSize:
 		Gear = new FGearFontSize(InOwner);
 		break;
 	}
@@ -67,7 +67,7 @@ FGearBase::FGearBase(UFairyObject* InOwner) : Owner(InOwner)
 {
 }
 
-FGearBase::FGearBase(UFairyObject* InOwner, EType InType)
+FGearBase::FGearBase(UFairyObject* InOwner, EGearType InType)
 	: Owner(InOwner)
 	, Type(InType)
 {
@@ -122,12 +122,13 @@ void FGearBase::UpdateFromRelations(const FVector2D& Delta)
 
 void FGearBase::Setup(FByteBuffer* Buffer)
 {
-	Controller = Owner->GetParent()->GetControllerAt(Buffer->ReadShort());
+	int32 index = Buffer->ReadShort();
+	Controller = Owner->GetParent()->GetControllerAt(index);
 	Init();
 
 	int32 Count = Buffer->ReadShort();
-	FGearDisplay* g0 = Type == EType::Display ? static_cast<FGearDisplay*>(this) : nullptr;
-	FGearDisplay2* g1 = Type == EType::Display2 ? static_cast<FGearDisplay2*>(this) : nullptr;
+	FGearDisplay* g0 = Type == EGearType::Display ? static_cast<FGearDisplay*>(this) : nullptr;
+	FGearDisplay2* g1 = Type == EGearType::Display2 ? static_cast<FGearDisplay2*>(this) : nullptr;
 	FGearXY* g2 = nullptr;
 	if (g0)
 	{
@@ -166,7 +167,7 @@ void FGearBase::Setup(FByteBuffer* Buffer)
 
 	if (Buffer->Version >= 2)
 	{
-		g2 = Type == EType::XY ? static_cast<FGearXY*>(this) : nullptr;
+		g2 = Type == EGearType::XY ? static_cast<FGearXY*>(this) : nullptr;
 		if (g2)
 		{
 			if (Buffer->ReadBool())

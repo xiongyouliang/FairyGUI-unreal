@@ -5,7 +5,7 @@
 
 FGearText::FGearText(UFairyObject* InOwner) : FGearBase(InOwner)
 {
-    Type = EType::Text;
+    Type = EGearType::Text;
 }
 
 FGearText::~FGearText()

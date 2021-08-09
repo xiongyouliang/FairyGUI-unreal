@@ -10,7 +10,7 @@ FGearAnimation::FValue::FValue() :
 
 FGearAnimation::FGearAnimation(UFairyObject* InOwner) : FGearBase(InOwner)
 {
-    Type = EType::Animation;
+    Type = EGearType::Animation;
 }
 
 FGearAnimation::~FGearAnimation()

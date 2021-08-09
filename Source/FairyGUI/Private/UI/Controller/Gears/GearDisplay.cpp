@@ -3,7 +3,7 @@
 #include "Utils/ByteBuffer.h"
 
 FGearDisplay::FGearDisplay(UFairyObject* InOwner) :
-	FGearBase(InOwner, EType::Display),
+	FGearBase(InOwner, EGearType::Display),
 	Visible(0),
 	DisplayLockToken(1)
 {

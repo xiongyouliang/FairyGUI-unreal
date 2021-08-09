@@ -24,9 +24,9 @@ public:
 class FGearBase
 {
 public:
-    enum class EType : uint32
+    enum EGearType
     {
-        Display,
+        Display = 0,
         XY,
         Size,
         Look,
@@ -39,10 +39,10 @@ public:
     };
 
     FGearBase(UFairyObject* InOwner);
-    FGearBase(UFairyObject* InOwner, EType InType);
+    FGearBase(UFairyObject* InOwner, EGearType InType);
     virtual ~FGearBase();
 
-    EType GetType() const { return Type; }
+    EGearType GetType() const { return Type; }
 
     UGController* GetController() const { return Controller.Get(); }
     void SetController(UGController* InController);
@@ -55,14 +55,14 @@ public:
 
     virtual void Setup(FByteBuffer* Buffer);
 
-    static FGearBase* Create(UFairyObject* InOwner, EType InType);
+    static FGearBase* Create(UFairyObject* InOwner, EGearType InType);
     static bool bDisableAllTweenEffect;
 
 protected:
     virtual void AddStatus(const FString& PageID, FByteBuffer* Buffer);
     virtual void Init();
 
-    EType Type;
+    EGearType Type;
     TWeakObjectPtr<UFairyObject> Owner;
     TWeakObjectPtr<UGController> Controller;
     TOptional<FGearTweenConfig> TweenConfig;

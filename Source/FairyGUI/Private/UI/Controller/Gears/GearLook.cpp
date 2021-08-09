@@ -15,7 +15,7 @@ FGearLook::FValue::FValue() :
 
 FGearLook::FGearLook(UFairyObject* InOwner) : FGearBase(InOwner)
 {
-    Type = EType::Look;
+    Type = EGearType::Look;
 }
 
 FGearLook::~FGearLook()

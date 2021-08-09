@@ -188,7 +188,7 @@ public:
 	FBox2D LocalToRootRect(const FBox2D& InRect);
 
 
-	FGearBase* GetGear(FGearBase::EType GearType);
+	FGearBase* GetGear(FGearBase::EGearType GearType);
 	bool CheckGearController(int32 Index, UGController* Controller);
 	uint32 AddDisplayLock();
 	void ReleaseDisplayLock(uint32 Token);
@@ -385,6 +385,12 @@ protected:
 	TSharedPtr<SDisplayObject> DisplayObject; // the underlying SWidget
 	SContainer::FSlot* WidgetSlot;
 	TSharedPtr<FFairyPackageItem> PackageItem; // A Fairy Editor export data
+
+	// *************** Controller property start ******************
+private:
+	bool bHandlingController = false;
+	FGearBase* Gears[10];
+	// *************** Controller property end ******************
 private:
 
 	void UpdateRenderTransform();
@@ -408,14 +414,12 @@ private:
 	void OnTouchEndHandler(UEventContext* Context) {};
 
 	bool bInternalVisible = false;
-	bool bHandlingController = false;
 	bool bDraggable = false;
 	int32 SortingOrder = 0;
 	FString Tooltips;
 	TWeakObjectPtr<UGGroup> Group;
 	float SizePercentInGroup = 0.0f;
 
-	FGearBase* Gears[10];
 	FVector2D DragTouchStartPos;
 	TOptional<FBox2D> DragBounds;
 	bool bDragTesting = false;

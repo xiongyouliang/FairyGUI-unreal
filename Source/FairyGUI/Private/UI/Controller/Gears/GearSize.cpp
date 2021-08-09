@@ -7,7 +7,7 @@
 
 FGearSize::FGearSize(UFairyObject* InOwner) : FGearBase(InOwner)
 {
-    Type = EType::Size;
+    Type = EGearType::Size;
 }
 
 FGearSize::~FGearSize()

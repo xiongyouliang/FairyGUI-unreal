@@ -503,17 +503,14 @@ void UFairyObject::RemoveRelation(UFairyObject* Obj, ERelationType RelationType)
 	GetRelations().Remove(Obj, RelationType);
 }
 
-/**
- * Controller start
- */
-FGearBase* UFairyObject::GetGear(FGearBase::EType GearType)
+// ********************* Controller start *******************
+FGearBase* UFairyObject::GetGear(FGearBase::EGearType GearType)
 {
-	uint32 index = static_cast<uint32>(GearType);
-	FGearBase* gear = Gears[index];
+	FGearBase* gear = Gears[GearType];
 	if (gear == nullptr)
 	{
 		gear = FGearBase::Create(this, GearType);
-		Gears[index] = gear;
+		Gears[GearType] = gear;
 	}
 	return gear;
 }
@@ -547,7 +544,7 @@ void UFairyObject::UpdateGearFromRelations(int32 Index, const FVector2D& Delta)
 
 uint32 UFairyObject::AddDisplayLock()
 {
-	FGearDisplay* gearDisplay = (FGearDisplay*)Gears[0];
+	FGearDisplay* gearDisplay = (FGearDisplay*)Gears[FGearBase::EGearType::Display];
 	if (gearDisplay != nullptr && gearDisplay->GetController() != nullptr)
 	{
 		uint32 ret = gearDisplay->AddLock();
@@ -563,7 +560,7 @@ uint32 UFairyObject::AddDisplayLock()
 
 void UFairyObject::ReleaseDisplayLock(uint32 Token)
 {
-	FGearDisplay* gearDisplay = (FGearDisplay*)Gears[0];
+	FGearDisplay* gearDisplay = (FGearDisplay*)Gears[FGearBase::EGearType::Display];
 	if (gearDisplay != nullptr && gearDisplay->GetController() != nullptr)
 	{
 		gearDisplay->ReleaseLock(Token);
@@ -578,10 +575,12 @@ void UFairyObject::CheckGearDisplay()
 		return;
 	}
 
-	bool connected = Gears[0] == nullptr || ((FGearDisplay*)Gears[0])->IsConnected();
-	if (Gears[8] != nullptr && Gears[8]->GetType() == FGearBase::EType::Display2)
+	FGearDisplay* DisplayGear = (FGearDisplay*)Gears[FGearBase::EGearType::Display];
+	FGearDisplay2* Display2Gear = (FGearDisplay2*)Gears[FGearBase::EGearType::Display2];
+	bool connected = DisplayGear == nullptr || DisplayGear->IsConnected();
+	if (Display2Gear != nullptr)
 	{
-		connected = static_cast<FGearDisplay2*>(Gears[8])->Evaluate(connected);
+		connected = Display2Gear->Evaluate(connected);
 	}
 
 	if (connected != bInternalVisible)
@@ -614,10 +613,7 @@ void UFairyObject::HandleControllerChanged(UGController* Controller)
 
 	CheckGearDisplay();
 }
-
-/**
- * Controller end
- */
+// ********************* Controller end *******************
 
 void UFairyObject::RemoveFromParent()
 {
@@ -840,7 +836,7 @@ void UFairyObject::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 		int16 nextPos = Buffer->ReadShort();
 		nextPos += Buffer->GetPos();
 
-		FGearBase* gear = GetGear( (FGearBase::EType)Buffer->ReadByte() );
+		FGearBase* gear = GetGear( (FGearBase::EGearType)Buffer->ReadByte() );
 		gear->Setup(Buffer);
 
 		Buffer->SetPos(nextPos);

@@ -5,7 +5,7 @@
 
 FGearFontSize::FGearFontSize(UFairyObject* InOwner) : FGearBase(InOwner)
 {
-    Type = EType::FontSize;
+    Type = EGearType::FontSize;
 }
 
 FGearFontSize::~FGearFontSize()

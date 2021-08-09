@@ -610,7 +610,6 @@ void UFairyObject::HandleControllerChanged(UGController* Controller)
 	}
 	bHandlingController = false;
 
-
 	CheckGearDisplay();
 }
 // ********************* Controller end *******************

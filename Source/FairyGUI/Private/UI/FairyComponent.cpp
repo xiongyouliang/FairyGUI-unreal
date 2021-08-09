@@ -508,6 +508,7 @@ UGController* UFairyComponent::GetController(const FString& ControllerName) cons
 	return nullptr;
 }
 
+// *********************** Component Controller start **********************
 void UFairyComponent::AddController(UGController* Controller)
 {
 	verifyf(Controller != nullptr, TEXT("Argument must be non-nil"));
@@ -554,6 +555,7 @@ void UFairyComponent::ApplyAllControllers()
 		ApplyController(Controller);
 	}
 }
+// *********************** Component Controller end **********************
 
 UTransition* UFairyComponent::GetTransition(const FString& TransitionName) const
 {

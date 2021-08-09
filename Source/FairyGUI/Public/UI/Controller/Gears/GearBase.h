@@ -24,7 +24,7 @@ public:
 class FGearBase
 {
 public:
-    enum class EType
+    enum class EType : uint32
     {
         Display,
         XY,

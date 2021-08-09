@@ -3,6 +3,7 @@
 #include "Widgets/SDisplayObject.h"
 #include "Widgets/SContainer.h"
 #include "UI/Relation/Relations.h"
+#include "UI/Controller/Gears/GearBase.h"
 #include "Package/FairyPackageItem.h"
 #include "UIConfig.h"
 #include "FairyCommons.h"
@@ -187,7 +188,7 @@ public:
 	FBox2D LocalToRootRect(const FBox2D& InRect);
 
 
-	FGearBase* GetGear(int32 Index);
+	FGearBase* GetGear(FGearBase::EType GearType);
 	bool CheckGearController(int32 Index, UGController* Controller);
 	uint32 AddDisplayLock();
 	void ReleaseDisplayLock(uint32 Token);

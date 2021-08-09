@@ -503,13 +503,14 @@ void UFairyObject::RemoveRelation(UFairyObject* Obj, ERelationType RelationType)
 	GetRelations().Remove(Obj, RelationType);
 }
 
-FGearBase* UFairyObject::GetGear(int32 Index)
+FGearBase* UFairyObject::GetGear(FGearBase::EType GearType)
 {
-	FGearBase* gear = Gears[Index];
+	uint32 index = static_cast<uint32>(GearType);
+	FGearBase* gear = Gears[index];
 	if (gear == nullptr)
 	{
-		gear = FGearBase::Create(this, static_cast<FGearBase::EType>(Index));
-		Gears[Index] = gear;
+		gear = FGearBase::Create(this, GearType);
+		Gears[index] = gear;
 	}
 	return gear;
 }
@@ -832,7 +833,7 @@ void UFairyObject::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 		int16 nextPos = Buffer->ReadShort();
 		nextPos += Buffer->GetPos();
 
-		FGearBase* gear = GetGear(Buffer->ReadByte());
+		FGearBase* gear = GetGear((FGearBase::EType)Buffer->ReadByte());
 		gear->Setup(Buffer);
 
 		Buffer->SetPos(nextPos);

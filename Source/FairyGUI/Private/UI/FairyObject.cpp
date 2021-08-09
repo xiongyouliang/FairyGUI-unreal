@@ -825,6 +825,7 @@ void UFairyObject::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 
 	Buffer->Seek(BeginPos, 2);
 
+	// Parse the controller property
 	int16 cnt = Buffer->ReadShort();
 	for (int32 i = 0; i < cnt; i++)
 	{

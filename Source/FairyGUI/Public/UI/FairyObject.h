@@ -390,6 +390,13 @@ protected:
 private:
 	bool bHandlingController = false;
 	FGearBase* Gears[10];
+public:
+	/**
+	 * Return FGearDisplay and FGearDisplay2 combine result:
+	 * 
+	 * @return boolean result, means GearDisplay effect; if no GearDisplay, return true;
+	 */
+	bool IsGearVisible();
 	// *************** Controller property end ******************
 private:
 

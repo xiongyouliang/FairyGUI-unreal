@@ -534,6 +534,29 @@ bool UFairyObject::CheckGearController(int32 Index, UGController* Controller)
 	return Gears[Index] != nullptr && Gears[Index]->GetController() == Controller;
 }
 
+bool UFairyObject::IsGearVisible()
+{
+	bool bGearVisible = false;
+
+	FGearDisplay* DisplayGear = (FGearDisplay*)Gears[FGearBase::EGearType::Display];
+	FGearDisplay2* Display2Gear = (FGearDisplay2*)Gears[FGearBase::EGearType::Display2];
+
+	// no display control option
+	if (DisplayGear == nullptr)
+	{
+		bGearVisible = true;
+	}
+	else
+	{
+		bGearVisible = DisplayGear->IsConnected(); // get DisplayGear1 option value
+		if (Display2Gear != nullptr)
+		{
+			bGearVisible = Display2Gear->Evaluate(bGearVisible); // evaluate with DisplayGear2 option value
+		}
+	}
+	return bGearVisible;
+}
+
 void UFairyObject::UpdateGearFromRelations(int32 Index, const FVector2D& Delta)
 {
 	if (Gears[Index] != nullptr)
@@ -575,21 +598,15 @@ void UFairyObject::CheckGearDisplay()
 		return;
 	}
 
-	FGearDisplay* DisplayGear = (FGearDisplay*)Gears[FGearBase::EGearType::Display];
-	FGearDisplay2* Display2Gear = (FGearDisplay2*)Gears[FGearBase::EGearType::Display2];
-	bool connected = DisplayGear == nullptr || DisplayGear->IsConnected();
-	if (Display2Gear != nullptr)
+	bool bGearVisible = IsGearVisible();
+	if (bInternalVisible != bGearVisible)
 	{
-		connected = Display2Gear->Evaluate(connected);
-	}
-
-	if (connected != bInternalVisible)
-	{
-		bInternalVisible = connected;
+		bInternalVisible = bGearVisible;
 		if (Parent)
 		{
 			Parent->ChildStateChanged(this);
 		}
+
 		if (Group.IsValid() && Group->IsExcludeInvisibles())
 		{
 			Group->SetBoundsChangedFlag();

@@ -214,9 +214,9 @@ void UGComboBox::RenderDropdownList()
     }
 }
 
-void UGComboBox::HandleControllerChanged(UGController* Controller)
+void UGComboBox::ApplyController(UGController* Controller)
 {
-    UFairyComponent::HandleControllerChanged(Controller);
+    UFairyComponent::ApplyController(Controller);
 
     if (SelectionController == Controller)
         SetSelectedIndex(Controller->GetSelectedIndex());

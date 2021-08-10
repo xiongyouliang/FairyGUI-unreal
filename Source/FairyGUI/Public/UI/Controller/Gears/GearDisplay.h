@@ -13,7 +13,9 @@ public:
 
 	uint32 AddLock();
 	void ReleaseLock(uint32 Token);
+
 	bool IsConnected();
+	bool IsOwnerVisible();
 
 	TArray<FString> Pages;
 

@@ -2,6 +2,8 @@
 #include "UI/Controller/GController.h"
 #include "Utils/ByteBuffer.h"
 
+#define MAX_DISPLAY_LOCK_SESSION 10086
+
 FGearDisplay::FGearDisplay(UFairyObject* InOwner) :
 	FGearBase(InOwner, EGearType::Display),
 	Visible(0),
@@ -16,7 +18,7 @@ FGearDisplay::~FGearDisplay()
 void FGearDisplay::Apply()
 {
 	DisplayLockToken++;
-	if (DisplayLockToken == 0)
+	if (DisplayLockToken > MAX_DISPLAY_LOCK_SESSION)
 	{
 		DisplayLockToken = 1;
 	}
@@ -27,7 +29,7 @@ void FGearDisplay::Apply()
 	}
 	else
 	{
-		if (Pages.Contains(Controller->GetSelectedPageID()))
+		if (Controller.IsValid() && Pages.Contains(Controller->GetSelectedPageID()))
 		{
 			Visible = 1;
 		}
@@ -35,6 +37,11 @@ void FGearDisplay::Apply()
 		{
 			Visible = 0;
 		}
+	}
+
+	if (Owner.IsValid())
+	{
+		Owner->CheckGearDisplay();
 	}
 }
 
@@ -67,5 +74,35 @@ void FGearDisplay::ReleaseLock(uint32 token)
 
 bool FGearDisplay::IsConnected()
 {
-	return Controller == nullptr || Visible > 0;
+	if (Controller.IsValid() && Visible > 0)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+	//return Controller == nullptr || Visible > 0;
+}
+
+bool FGearDisplay::IsOwnerVisible()
+{
+	bool result = false;
+	if (Pages.Num() == 0)
+	{
+		result = true;
+	}
+	else
+	{
+		if (Controller.IsValid() && Pages.Contains(Controller->GetSelectedPageID()))
+		{
+			result = true;
+		}
+		else
+		{
+			result = false;
+		}
+	}
+
+	return result;
 }

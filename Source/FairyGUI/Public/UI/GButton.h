@@ -78,7 +78,7 @@ protected:
     virtual void ConstructExtension(FByteBuffer* Buffer) override;
     virtual void SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos) override;
 
-    virtual void HandleControllerChanged(UGController* Controller) override;
+    virtual void ApplyController(UGController* Controller) override;
 
     void SetState(const FString& InState);
     void SetCurrentState();

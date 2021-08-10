@@ -614,7 +614,7 @@ void UFairyObject::CheckGearDisplay()
 	}
 }
 
-void UFairyObject::HandleControllerChanged(UGController* Controller)
+void UFairyObject::ApplyController(UGController* Controller)
 {
 	bHandlingController = true;
 	for (int32 i = 0; i < 10; i++)
@@ -846,7 +846,7 @@ void UFairyObject::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 	Buffer->Seek(BeginPos, 2);
 
 	// Parse the controller property
-	int16 cnt = Buffer->ReadShort();
+	int16 cnt = Buffer->ReadShort(); // gear number
 	for (int32 i = 0; i < cnt; i++)
 	{
 		int16 nextPos = Buffer->ReadShort();

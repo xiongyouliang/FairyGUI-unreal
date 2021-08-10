@@ -176,6 +176,7 @@ void UFairyComponent::RemoveChildAt(int32 Index)
 	if (Child->GetDisplayObject()->GetParentWidget().IsValid())
 	{
 		Container->RemoveChild(Child->GetDisplayObject());
+		Child->SetSlot(nullptr);
 		if (ChildrenRenderOrder == EChildrenRenderOrder::Arch)
 		{
 			BuildNativeDisplayList();
@@ -540,12 +541,16 @@ void UFairyComponent::ApplyController(UGController* Controller)
 
 	for (int32 i = 0; i < Children.Num(); i++)
 	{
-		Children[i]->HandleControllerChanged(Controller);
+		Children[i]->ApplyController(Controller);
 	}
-		
-	ApplyingController = nullptr;
-
 	Controller->RunActions();
+
+	if (ScrollPane != nullptr)
+	{
+		ScrollPane->ApplyController(Controller);
+	}
+
+	ApplyingController = nullptr;
 }
 
 void UFairyComponent::ApplyAllControllers()
@@ -602,7 +607,7 @@ void UFairyComponent::AdjustRadioGroupDepth(UFairyObject* Obj, UGController* Con
 	{
 		if (ApplyingController != nullptr)
 		{
-			//Children[maxIndex]->HandleControllerChanged(ApplyingController);
+			Children[maxIndex]->ApplyController(ApplyingController);
 		}
 		SwapChildrenAt(myIndex, maxIndex);
 	}
@@ -824,6 +829,7 @@ void UFairyComponent::ChildStateChanged(UFairyObject* Child)
 		if (Child->GetDisplayObject()->IsParentValid())
 		{
 			Container->RemoveChild(Child->GetDisplayObject());
+			Child->SetSlot(nullptr);
 			if (ChildrenRenderOrder == EChildrenRenderOrder::Arch)
 			{
 				BuildNativeDisplayList();
@@ -1056,16 +1062,6 @@ void UFairyComponent::HandleGrayedChanged()
 	}
 }
 
-void UFairyComponent::HandleControllerChanged(UGController* Controller)
-{
-	UFairyObject::HandleControllerChanged(Controller);
-
-	if (ScrollPane != nullptr)
-	{
-		ScrollPane->HandleControllerChanged(Controller);
-	}
-}
-
 void UFairyComponent::OnAddedToStageHandler(UEventContext* Context)
 {
 	for (auto& Transition : Transitions)
@@ -1234,13 +1230,14 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 	Buffer->Seek(0, 2);
 	Buffer->Skip(2);
 
+	// setup the children relation info
 	for (int32 i = 0; i < childCount; i++)
 	{
 		int32 nextPos = Buffer->ReadShort();
 		nextPos += Buffer->GetPos();
 
 		Buffer->Seek(Buffer->GetPos(), 3);
-		Children[i]->GetRelations().Setup(Buffer, false); // setup the child relation info
+		Children[i]->GetRelations().Setup(Buffer, false);
 
 		Buffer->SetPos(nextPos);
 	}

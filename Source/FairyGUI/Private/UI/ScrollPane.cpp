@@ -593,7 +593,7 @@ void UScrollPane::CancelDragging()
 	bDragged = false;
 }
 
-void UScrollPane::HandleControllerChanged(UGController* Controller)
+void UScrollPane::ApplyController(UGController* Controller)
 {
 	if (PageController == Controller)
 	{

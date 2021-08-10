@@ -29,7 +29,8 @@ void UGController::SetSelectedIndex(int32 Index, bool bTriggerEvent)
 
 		PreviousIndex = SelectedIndex;
 		SelectedIndex = Index;
-		Cast<UFairyComponent>(GetOuter())->ApplyController(this);
+		//Cast<UFairyComponent>(GetOuter())->ApplyController(this);
+		RunActions();
 
 		if (bTriggerEvent)
 		{

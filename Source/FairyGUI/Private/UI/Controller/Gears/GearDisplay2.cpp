@@ -4,7 +4,7 @@
 
 FGearDisplay2::FGearDisplay2(UFairyObject* InOwner) :
     FGearBase(InOwner),
-    Condition(0),
+    Condition(EConditionType::And),
     Visible(0)
 {
     Type = EGearType::Display2;
@@ -31,12 +31,17 @@ void FGearDisplay2::Apply()
 			Visible = 0;
         }
     }
+
+	if (Owner.IsValid())
+	{
+		Owner->CheckGearDisplay();
+	}
 }
 
 bool FGearDisplay2::Evaluate(bool bConnected)
 {
     bool v = Controller == nullptr || Visible > 0;
-    if (Condition == 0)
+    if (Condition == EConditionType::And)
     {
 		v = v && bConnected;
     }

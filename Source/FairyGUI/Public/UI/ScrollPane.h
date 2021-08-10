@@ -158,7 +158,7 @@ private:
     void SetSize(const FVector2D& InSize);
     void HandleSizeChanged();
 
-    void HandleControllerChanged(UGController* Controller);
+    void ApplyController(UGController* Controller);
     void UpdatePageController();
 
     void PosChanged(bool bAnimation);

@@ -2,11 +2,16 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "Delegates/Delegate.h"
+#include "Delegates/DelegateCombinations.h"
+
 #include "UI/Controller/Actions/ControllerAction.h"
+
 #include "GController.generated.h"
 
 class UFairyComponent;
 class FByteBuffer;
+class UGController;
 
 enum class EHomePageType : int32
 {
@@ -58,8 +63,8 @@ public:
 	bool bChanging;
 	bool bAutoRadioGroupDepth;
 
-	DECLARE_EVENT_OneParam(UGController, FOnChanged, UGController*);
-	FOnChanged& OnChanged() { return OnChangedEvent; }
+	DECLARE_EVENT_OneParam(UGController, FOnFairyControllerChanged, UGController*);
+	FOnFairyControllerChanged& OnChanged() { return OnChangedEvent; }
 
 private:
 	int32 SelectedIndex;
@@ -68,5 +73,5 @@ private:
 	TArray<FString> PageNames;
 	TIndirectArray<FControllerAction> Actions;
 
-	FOnChanged OnChangedEvent;
+	FOnFairyControllerChanged OnChangedEvent;
 };

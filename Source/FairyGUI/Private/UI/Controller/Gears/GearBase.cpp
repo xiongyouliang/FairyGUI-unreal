@@ -68,14 +68,23 @@ FGearBase::FGearBase(UFairyObject* InOwner) : Owner(InOwner)
 }
 
 FGearBase::FGearBase(UFairyObject* InOwner, EGearType InType)
-	: Owner(InOwner)
-	, Type(InType)
+	: Type(InType)
+	, Owner(InOwner)
 {
 
 }
 
 FGearBase::~FGearBase()
 {
+	if (ControllerHandle.IsValid() && Controller.IsValid())
+	{
+		Controller->OnChanged().Remove(ControllerHandle);
+	}
+}
+
+UGController* FGearBase::GetController() const
+{
+	return Controller.Get();
 }
 
 void FGearBase::SetController(UGController* InController)
@@ -88,6 +97,11 @@ void FGearBase::SetController(UGController* InController)
 			Init();
 		}
 	}
+}
+
+void FGearBase::HandleControllerChanged(UGController* InController)
+{
+	this->Apply();
 }
 
 FGearTweenConfig& FGearBase::GetTweenConfig()
@@ -124,6 +138,8 @@ void FGearBase::Setup(FByteBuffer* Buffer)
 {
 	int32 index = Buffer->ReadShort();
 	Controller = Owner->GetParent()->GetControllerAt(index);
+	Controller->OnChanged().AddRaw(this, &FGearBase::HandleControllerChanged);
+	
 	Init();
 
 	int32 Count = Buffer->ReadShort();
@@ -172,30 +188,27 @@ void FGearBase::Setup(FByteBuffer* Buffer)
 		{
 			if (Buffer->ReadBool())
 			{
-				if (g2)
+				g2->bPositionsInPercent = true;
+				for (int32 i = 0; i < Count; i++)
 				{
-					g2->bPositionsInPercent = true;
-					for (int32 i = 0; i < Count; i++)
+					const FString& page = Buffer->ReadS();
+					if (page.IsEmpty())
 					{
-						const FString& page = Buffer->ReadS();
-						if (page.IsEmpty())
-						{
-							continue;
-						}
-
-						g2->AddExtStatus(page, Buffer);
+						continue;
 					}
 
-					if (Buffer->ReadBool())
-					{
-						g2->AddExtStatus(G_EMPTY_STRING, Buffer);
-					}
+					g2->AddExtStatus(page, Buffer);
+				}
+
+				if (Buffer->ReadBool())
+				{
+					g2->AddExtStatus(G_EMPTY_STRING, Buffer);
 				}
 			}
 		}
 		else if (g1 != nullptr)
 		{
-			g1->Condition = Buffer->ReadByte();
+			g1->Condition = (FGearDisplay2::EConditionType)Buffer->ReadByte();
 		}
 	}
 }

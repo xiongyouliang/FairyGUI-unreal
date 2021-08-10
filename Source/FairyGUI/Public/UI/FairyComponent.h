@@ -80,17 +80,17 @@ public:
 	virtual int32 GetFirstChildInView() const;
 	// ~ child operation end
 
+	// *********** Controller start ***********
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	UGController* GetControllerAt(int32 Index) const;
-
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	UGController* GetController(const FString& ControllerName) const;
-
 	const TArray<UGController*>& GetControllers() const { return Controllers; }
 	void AddController(UGController* Controller);
 	void RemoveController(UGController* Controller);
-	void ApplyController(UGController* Controller);
+	virtual void ApplyController(UGController* Controller) override;
 	void ApplyAllControllers();
+	// *********** Controller end ***********
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	UTransition* GetTransition(const FString& TransitionName) const;
@@ -191,7 +191,7 @@ protected:
 
 	//virtual void HandleSizeChanged() override;
 	virtual void HandleGrayedChanged() override;
-	virtual void HandleControllerChanged(UGController* Controller) override;
+	
 
 	virtual void UpdateBounds();
 	void SetBounds(float ax, float ay, float aw, float ah);

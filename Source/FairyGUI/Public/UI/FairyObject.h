@@ -352,7 +352,6 @@ public:
 	void UpdateGearFromRelations(int32 Index, const FVector2D& Delta);
 
 	virtual void HandleGrayedChanged();
-	virtual void HandleControllerChanged(UGController* Controller);
 	virtual void HandleAlphaChanged();
 	virtual void HandleVisibleChanged();
 
@@ -397,6 +396,7 @@ public:
 	 * @return boolean result, means GearDisplay effect; if no GearDisplay, return true;
 	 */
 	bool IsGearVisible();
+	virtual void ApplyController(UGController* Controller);
 	// *************** Controller property end ******************
 private:
 

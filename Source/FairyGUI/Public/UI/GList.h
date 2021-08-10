@@ -184,7 +184,7 @@ public:
     bool bFoldInvisibleItems;
 
 protected:
-    virtual void HandleControllerChanged(UGController* Controller) override;
+    virtual void ApplyController(UGController* Controller) override;
     //virtual void HandleSizeChanged() override;
     virtual void UpdateBounds() override;
     virtual void SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos) override;

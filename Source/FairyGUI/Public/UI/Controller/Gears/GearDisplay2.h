@@ -13,7 +13,13 @@ public:
     bool Evaluate(bool bConnected);
 
     TArray<FString> Pages;
-    int32 Condition;
+
+    enum EConditionType
+    {
+        And = 0,
+        Or = 1
+    };
+    EConditionType Condition;
 
 protected:
     virtual void AddStatus(const FString& pageID, FByteBuffer* Buffer) override;

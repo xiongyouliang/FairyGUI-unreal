@@ -44,8 +44,9 @@ public:
 
     EGearType GetType() const { return Type; }
 
-    UGController* GetController() const { return Controller.Get(); }
+    UGController* GetController() const;
     void SetController(UGController* InController);
+    void HandleControllerChanged(UGController* InController);
 
     FGearTweenConfig& GetTweenConfig();
 
@@ -66,4 +67,6 @@ protected:
     TWeakObjectPtr<UFairyObject> Owner;
     TWeakObjectPtr<UGController> Controller;
     TOptional<FGearTweenConfig> TweenConfig;
+
+    FDelegateHandle ControllerHandle;
 };

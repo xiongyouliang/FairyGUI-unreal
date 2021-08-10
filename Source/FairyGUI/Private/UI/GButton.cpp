@@ -431,9 +431,9 @@ void UGButton::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 	SetSelected(Buffer->ReadBool());
 }
 
-void UGButton::HandleControllerChanged(UGController* Controller)
+void UGButton::ApplyController(UGController* Controller)
 {
-	UFairyObject::HandleControllerChanged(Controller);
+	UFairyComponent::ApplyController(Controller);
 
 	if (RelatedController == Controller)
 	{

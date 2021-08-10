@@ -881,9 +881,9 @@ int32 UGList::GetFirstChildInView() const
 //    }
 //}
 
-void UGList::HandleControllerChanged(UGController* Controller)
+void UGList::ApplyController(UGController* Controller)
 {
-	UFairyComponent::HandleControllerChanged(Controller);
+	UFairyComponent::ApplyController(Controller);
 
 	if (SelectionController == Controller)
 	{

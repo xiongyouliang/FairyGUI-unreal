@@ -341,6 +341,7 @@ public:
 	bool HasParent() { return Parent ? true : false; }
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	UFairyComponent* GetParent() { return Parent; }
+	const UFairyComponent* GetParent() const { return Parent; }
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	void SetParent(UFairyComponent* InParent) { Parent = InParent; }
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")

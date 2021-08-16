@@ -443,7 +443,7 @@ bool UFairyComponent::IsAncestorOf(const UFairyObject* Obj) const
 		return false;
 	}
 
-	UFairyComponent* Com = Obj->GetParent();
+	const UFairyComponent* Com = Obj->GetParent();
 	while (Com != nullptr)
 	{
 		if (Com == this)
@@ -496,6 +496,7 @@ int32 UFairyComponent::GetFirstChildInView() const
 	return -1;
 }
 
+// *********************** Component Controller start **********************
 UGController* UFairyComponent::GetController(const FString& ControllerName) const
 {
 	for (const auto& Controller : Controllers)
@@ -509,7 +510,6 @@ UGController* UFairyComponent::GetController(const FString& ControllerName) cons
 	return nullptr;
 }
 
-// *********************** Component Controller start **********************
 void UFairyComponent::AddController(UGController* Controller)
 {
 	verifyf(Controller != nullptr, TEXT("Argument must be non-nil"));

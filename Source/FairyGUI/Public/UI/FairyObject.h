@@ -64,9 +64,13 @@ public:
 	const FVector2D& GetScale() const { return RenderTransform.Scale; }
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	void SetScale(const FVector2D& InScale);
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	void SetScaleX(float InScale);
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	void SetScaleY(float InScale);
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	float GetScaleX();
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	float GetScaleY();
 	
 
@@ -194,12 +198,6 @@ public:
 	void ReleaseDisplayLock(uint32 Token);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	UFairyComponent* GetParent() const { return Parent; }
-
-	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	void RemoveFromParent();
-
-	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	bool OnStage() const { return DisplayObject->OnStage(); }
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI", meta = (DeterminesOutputType = "ClassType"))
@@ -280,7 +278,6 @@ public:
 public:
 
 	void SetPackageItem(const TSharedPtr<FFairyPackageItem>& InPackageItem){ PackageItem = InPackageItem; }
-
 	virtual void SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos);
 	virtual void SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos);
 
@@ -340,9 +337,15 @@ public:
 	const FVector2D& GetRelationPos() const;
 
 	// Parent
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	bool HasParent() { return Parent ? true : false; }
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	UFairyComponent* GetParent() { return Parent; }
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	void SetParent(UFairyComponent* InParent) { Parent = InParent; }
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+	void RemoveFromParent();
+
 	void SetSlot(SContainer::FSlot* InSlot) { WidgetSlot = InSlot; };
 
 	// todo: remove

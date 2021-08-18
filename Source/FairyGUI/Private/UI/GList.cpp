@@ -1,6 +1,6 @@
 ﻿#include "UI/GList.h"
 #include "UI/GButton.h"
-#include "UI/GObjectPool.h"
+#include "UI/FairyObjectPool.h"
 #include "UI/Controller/GController.h"
 #include "UI/GScrollBar.h"
 #include "Package/FairyPackage.h"
@@ -23,9 +23,10 @@ UGList::UGList() :
 {
 	if (!HasAnyFlags(RF_ClassDefaultObject | RF_ArchetypeObject))
 	{
+		MakeSlateWidget();
 		bTrackBounds = true;
 		SetOpaque(true);
-		Pool = new FGObjectPool();
+		Pool = new FFairyObjectPool();
 	}
 }
 
@@ -44,7 +45,9 @@ void UGList::SetLayout(EListLayoutType InLayout)
 		Layout = InLayout;
 		SetBoundsChangedFlag();
 		if (bVirtual)
+		{
 			SetVirtualListChangedFlag(true);
+		}
 	}
 }
 
@@ -57,7 +60,9 @@ void UGList::SetLineCount(int32 InLineCount)
 		{
 			SetBoundsChangedFlag();
 			if (bVirtual)
+			{
 				SetVirtualListChangedFlag(true);
+			}
 		}
 	}
 }
@@ -71,7 +76,9 @@ void UGList::SetColumnCount(int32 InColumnCount)
 		{
 			SetBoundsChangedFlag();
 			if (bVirtual)
+			{
 				SetVirtualListChangedFlag(true);
+			}
 		}
 	}
 }
@@ -83,7 +90,9 @@ void UGList::SetLineGap(int32 InLineGap)
 		LineGap = InLineGap;
 		SetBoundsChangedFlag();
 		if (bVirtual)
+		{
 			SetVirtualListChangedFlag(true);
+		}
 	}
 }
 
@@ -94,7 +103,9 @@ void UGList::SetColumnGap(int32 InColumnGap)
 		ColumnGap = InColumnGap;
 		SetBoundsChangedFlag();
 		if (bVirtual)
+		{
 			SetVirtualListChangedFlag(true);
+		}
 	}
 }
 
@@ -105,7 +116,9 @@ void UGList::SetAlign(EHAlignType InAlign)
 		Align = InAlign;
 		SetBoundsChangedFlag();
 		if (bVirtual)
+		{
 			SetVirtualListChangedFlag(true);
+		}
 	}
 }
 
@@ -116,7 +129,9 @@ void UGList::SetVerticalAlign(EVAlignType InVerticalAlign)
 		VerticalAlign = InVerticalAlign;
 		SetBoundsChangedFlag();
 		if (bVirtual)
+		{
 			SetVirtualListChangedFlag(true);
+		}
 	}
 }
 
@@ -127,7 +142,9 @@ void UGList::SetAutoResizeItem(bool bFlag)
 		bAutoResizeItem = bFlag;
 		SetBoundsChangedFlag();
 		if (bVirtual)
+		{
 			SetVirtualListChangedFlag(true);
+		}
 	}
 }
 
@@ -138,13 +155,20 @@ UFairyObject* UGList::GetFromPool()
 
 UFairyObject* UGList::GetFromPool(const FString& URL)
 {
-	UFairyObject* ret;
+	UFairyObject* ret = nullptr;
 	if (URL.Len() == 0)
-		ret = Pool->GetObject(DefaultItem);
+	{
+		ret = Pool->GetOrCreateObject(this, DefaultItem);
+	}
 	else
-		ret = Pool->GetObject(URL);
+	{
+		ret = Pool->GetOrCreateObject(this, URL);
+	}
+
 	if (ret != nullptr)
+	{
 		ret->SetVisible(true);
+	}
 	return ret;
 }
 
@@ -198,10 +222,14 @@ void UGList::RemoveChildToPool(UFairyObject* Child)
 void UGList::RemoveChildrenToPool(int32 BeginIndex, int32 EndIndex)
 {
 	if (EndIndex < 0 || EndIndex >= Children.Num())
+	{
 		EndIndex = Children.Num() - 1;
+	}
 
 	for (int32 i = BeginIndex; i <= EndIndex; ++i)
+	{
 		RemoveChildToPoolAt(BeginIndex);
+	}
 }
 
 int32 UGList::GetSelectedIndex() const
@@ -464,7 +492,9 @@ void UGList::SelectAll()
 	}
 
 	if (last != -1)
+	{
 		UpdateSelectionController(last);
+	}
 }
 
 void UGList::SelectReverse()
@@ -507,7 +537,9 @@ void UGList::SelectReverse()
 	}
 
 	if (last != -1)
+	{
 		UpdateSelectionController(last);
+	}
 }
 
 void UGList::HandleArrowKey(int32 Direction)
@@ -1699,7 +1731,7 @@ bool UGList::HandleScroll1(bool forceUpdate)
 			}
 			else
 			{
-				ii.Obj = Pool->GetObject(url);
+				ii.Obj = Pool->GetOrCreateObject(this, url);
 				if (forward)
 				{
 					AddChildAt(ii.Obj, curIndex - newFirstIndex);
@@ -1904,7 +1936,7 @@ bool UGList::HandleScroll2(bool forceUpdate)
 			}
 			else
 			{
-				ii.Obj = Pool->GetObject(url);
+				ii.Obj = Pool->GetOrCreateObject(this, url);
 				if (forward)
 				{
 					AddChildAt(ii.Obj, curIndex - newFirstIndex);
@@ -2081,7 +2113,7 @@ void UGList::HandleScroll3(bool forceUpdate)
 					url = UFairyPackageMgr::Get()->NormalizeURL(url);
 				}
 
-				ii.Obj = Pool->GetObject(url);
+				ii.Obj = Pool->GetOrCreateObject(this, url);
 				AddChildAt(ii.Obj, insertIndex);
 			}
 			else

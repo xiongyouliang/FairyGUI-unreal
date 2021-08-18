@@ -1,30 +1,36 @@
-#include "UI/GObjectPool.h"
+#include "UI/FairyObjectPool.h"
 #include "UI/FairyObject.h"
 #include "Package/FairyPackage.h"
 #include "Package/FairyPackageMgr.h"
 
-UFairyObject* FGObjectPool::GetObject(const FString & URL)
+UFairyObject* FFairyObjectPool::GetOrCreateObject(UObject* Outer, const FString & URL)
 {
     FString URL2 = UFairyPackageMgr::Get()->NormalizeURL(URL);
     if (URL2.Len() == 0)
+    {
         return nullptr;
+    }
 
     UFairyObject* ret = nullptr;
     TArray<UFairyObject*>& arr = Pool.FindOrAdd(URL2);
     if (arr.Num() > 0)
+    {
         ret = arr.Pop();
-    //else
-        //ret = UFairyPackageMgr::CreateObjectFromURL(GetOuter(), URL2);
+    }
+    else
+    {
+        ret = UFairyPackageMgr::Get()->CreateObjectFromURL(Outer, URL2);
+    }
     return ret;
 }
 
-void FGObjectPool::ReturnObject(UFairyObject* Obj)
+void FFairyObjectPool::ReturnObject(UFairyObject* Obj)
 {
     TArray<UFairyObject*>& arr = Pool.FindOrAdd(Obj->GetResourceURL());
     arr.Add(Obj);
 }
 
-void FGObjectPool::AddReferencedObjects(FReferenceCollector& Collector)
+void FFairyObjectPool::AddReferencedObjects(FReferenceCollector& Collector)
 {
     for (auto& Elem : Pool)
     {

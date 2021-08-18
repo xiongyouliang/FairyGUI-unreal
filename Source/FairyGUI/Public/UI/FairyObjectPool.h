@@ -5,10 +5,10 @@
 
 class UFairyObject;
 
-class FGObjectPool : public FGCObject
+class FFairyObjectPool : public FGCObject
 {
 public:
-    UFairyObject* GetObject(const FString& URL);
+    UFairyObject* GetOrCreateObject(UObject* Outer, const FString& URL);
     void ReturnObject(UFairyObject* Obj);
 
     virtual void AddReferencedObjects(FReferenceCollector& Collector) override;

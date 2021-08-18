@@ -3,7 +3,7 @@
 #include "UI/FairyComponent.h"
 #include "GList.generated.h"
 
-class FGObjectPool;
+class FFairyObjectPool;
 
 DECLARE_DELEGATE_TwoParams(FListItemRenderer, int32, UFairyObject*);
 DECLARE_DELEGATE_RetVal_OneParam(FString, FListItemProvider, int32);
@@ -65,7 +65,7 @@ public:
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     void SetSelectionMode(EListSelectionMode InMode) { SelectionMode = InMode; }
 
-    FGObjectPool* GetItemPool() const { return Pool; }
+    FFairyObjectPool* GetItemPool() const { return Pool; }
     UFairyObject* GetFromPool();
     UFairyObject* GetFromPool(const FString& URL);
     void ReturnToPool(UFairyObject* Obj);
@@ -237,7 +237,7 @@ private:
     FListItemRenderer ItemRenderer;
     FListItemProvider ItemProvider;
 
-    FGObjectPool* Pool;
+    FFairyObjectPool* Pool;
     int32 LastSelectedIndex;
 
     //Virtual List support

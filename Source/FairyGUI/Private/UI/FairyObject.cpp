@@ -381,17 +381,25 @@ void UFairyObject::SetDraggable(bool bInDraggable)
 FBox2D UFairyObject::GetDragBounds() const
 {
 	if (DragBounds.IsSet())
+	{
 		return DragBounds.GetValue();
+	}
 	else
+	{
 		return FBox2D(FVector2D::ZeroVector, FVector2D::ZeroVector);
+	}
 }
 
 void UFairyObject::SetDragBounds(const FBox2D& InBounds)
 {
 	if (InBounds.Min == InBounds.Max && InBounds.Min == FVector2D::ZeroVector)
+	{
 		DragBounds.Reset();
+	}
 	else
+	{
 		DragBounds = InBounds;
+	}
 }
 
 void UFairyObject::StartDrag(int32 UserIndex, int32 PointerIndex)
@@ -407,25 +415,37 @@ void UFairyObject::StopDrag()
 FString UFairyObject::GetResourceURL() const
 {
 	if (PackageItem.IsValid())
+	{
 		return "ui://" + PackageItem->Owner->GetID() + PackageItem->ID;
+	}
 	else
+	{
 		return G_EMPTY_STRING;
+	}
 }
 
 FString UFairyObject::GetResourceName() const
 {
 	if (PackageItem.IsValid())
+	{
 		return PackageItem->Name;
+	}
 	else
+	{
 		return G_EMPTY_STRING;
+	}
 }
 
 FString UFairyObject::GetPackageName() const
 {
 	if (PackageItem.IsValid())
+	{
 		return PackageItem->Owner->GetName();
+	}
 	else
+	{
 		return G_EMPTY_STRING;
+	}
 }
 
 FVector2D UFairyObject::LocalToGlobal(const FVector2D& InPoint)

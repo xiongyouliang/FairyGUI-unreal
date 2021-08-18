@@ -140,8 +140,8 @@ void UFairyPackage::Load(FByteBuffer* Buffer)
     for (int32 i = 0; i < cnt; i++)
     {
         TMap<FString, FString> info;
-        info["id"] = Buffer->ReadS();
-        info["name"] = Buffer->ReadS();
+        info.Add("id", Buffer->ReadS());
+        info.Add("name", Buffer->ReadS());
 
         Dependencies.Push(info);
     }

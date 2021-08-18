@@ -115,7 +115,9 @@ void UFairyRoot::HideWindow(UGWindow* Window)
 void UFairyRoot::HideWindowImmediately(UGWindow* Window)
 {
     if (Window->GetParent() == this)
+    {
         RemoveChild(Window);
+    }
 
     AdjustModalLayer();
 }
@@ -199,7 +201,9 @@ UGWindow* UFairyRoot::GetTopWindow() const
 UGGraph* UFairyRoot::GetModalLayer()
 {
     if (ModalLayer == nullptr)
+    {
         CreateModalLayer();
+    }
 
     return ModalLayer;
 }
@@ -215,12 +219,16 @@ void UFairyRoot::CreateModalLayer()
 void UFairyRoot::AdjustModalLayer()
 {
     if (ModalLayer == nullptr)
+    {
         CreateModalLayer();
+    }
 
     int32 cnt = NumChildren();
 
     if (ModalWaitPane != nullptr && ModalWaitPane->GetParent() != nullptr)
+    {
         SetChildIndex(ModalWaitPane, cnt - 1);
+    }
 
     for (int32 i = cnt - 1; i >= 0; i--)
     {
@@ -228,15 +236,21 @@ void UFairyRoot::AdjustModalLayer()
         if (child->IsA<UGWindow>() && ((UGWindow*)child)->IsModal())
         {
             if (ModalLayer->GetParent() == nullptr)
+            {
                 AddChildAt(ModalLayer, i);
+            }
             else
+            {
                 SetChildIndexBefore(ModalLayer, i);
+            }
             return;
         }
     }
 
     if (ModalLayer->GetParent() != nullptr)
+    {
         RemoveChild(ModalLayer);
+    }
 }
 
 bool UFairyRoot::HasModalWindow() const
@@ -248,13 +262,17 @@ void UFairyRoot::ShowModalWait()
 {
     GetModalWaitingPane();
     if (ModalWaitPane)
+    {
         AddChild(ModalWaitPane);
+    }
 }
 
 void UFairyRoot::CloseModalWait()
 {
     if (ModalWaitPane != nullptr && ModalWaitPane->GetParent() != nullptr)
+    {
         RemoveChild(ModalWaitPane);
+    }
 }
 
 UFairyObject* UFairyRoot::GetModalWaitingPane()
@@ -273,7 +291,9 @@ UFairyObject* UFairyRoot::GetModalWaitingPane()
         return ModalWaitPane;
     }
     else
+    {
         return nullptr;
+    }
 }
 
 bool UFairyRoot::IsModalWaiting() const
@@ -284,7 +304,9 @@ bool UFairyRoot::IsModalWaiting() const
 void UFairyRoot::ShowPopup(UFairyObject* Popup, UFairyObject* AtObject, EPopupDirection Direction)
 {
     if (PopupStack.Num() > 0)
+    {
         HidePopup(Popup);
+    }
 
     PopupStack.Add(Popup);
 
@@ -309,7 +331,9 @@ void UFairyRoot::ShowPopup(UFairyObject* Popup, UFairyObject* AtObject, EPopupDi
     AdjustModalLayer();
 
     if (Popup->IsA<UGWindow>() && AtObject == nullptr && Direction == EPopupDirection::Auto)
+    {
         return;
+    }
 
     FVector2D pos = GetPoupPosition(Popup, AtObject, Direction);
     Popup->SetPosition(pos);
@@ -319,7 +343,9 @@ void UFairyRoot::TogglePopup(UFairyObject* Popup, UFairyObject* AtObject, EPopup
 {
     int32 Index;
     if (JustClosedPopups.Find(Popup, Index))
+    {
         return;
+    }
 
     ShowPopup(Popup, AtObject, Direction);
 }
@@ -341,7 +367,9 @@ void UFairyRoot::HidePopup(UFairyObject* Popup)
     else
     {
         for (const auto& it : PopupStack)
+        {
             ClosePopup(it);
+        }
         PopupStack.Reset();
     }
 }
@@ -351,9 +379,13 @@ void UFairyRoot::ClosePopup(UFairyObject* Popup)
     if (Popup != nullptr && Popup->GetParent() != nullptr)
     {
         if (Popup->IsA<UGWindow>())
+        {
             ((UGWindow*)Popup)->Hide();
+        }
         else
+        {
             RemoveChild(Popup);
+        }
     }
 }
 
@@ -474,17 +506,15 @@ void UFairyRoot::ShowTooltipsWin(UFairyObject* InTooltipWin)
 
     TooltipWin = InTooltipWin;
     UWorld* World = GetWorld();
-    World->GetTimerManager().SetTimer(
-        ShowTooltipsTimerHandle,
-        FTimerDelegate::CreateUObject(this, &UFairyRoot::DoShowTooltipsWin),
-        0.1f,
-        false);
+    World->GetTimerManager().SetTimer(ShowTooltipsTimerHandle, FTimerDelegate::CreateUObject(this, &UFairyRoot::DoShowTooltipsWin), 0.1f, false);
 }
 
 void UFairyRoot::DoShowTooltipsWin()
 {
     if (TooltipWin == nullptr)
+    {
         return;
+    }
 
     FVector2D pt = UFairyApplication::Get()->GetTouchPosition();
     FVector2D Pos = pt + FVector2D(10, 20);
@@ -492,12 +522,17 @@ void UFairyRoot::DoShowTooltipsWin()
     Pos = GlobalToLocal(Pos);
 
     if (Pos.X + TooltipWin->GetWidth() > GetWidth())
+    {
         Pos.X -= TooltipWin->GetWidth();
+    }
+
     if (Pos.Y + TooltipWin->GetHeight() > GetHeight())
     {
         Pos.Y -= TooltipWin->GetHeight() - 1;
         if (Pos.Y < 0)
+        {
             Pos.Y = 0;
+        }
     }
 
     TooltipWin->SetPosition(Pos.RoundToVector());
@@ -509,7 +544,9 @@ void UFairyRoot::HideTooltips()
     if (TooltipWin != nullptr)
     {
         if (TooltipWin->GetParent() != nullptr)
+        {
             RemoveChild(TooltipWin);
+        }
         TooltipWin = nullptr;
     }
 }

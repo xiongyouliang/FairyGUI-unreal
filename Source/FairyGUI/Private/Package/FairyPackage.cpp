@@ -43,7 +43,8 @@ UFairyPackage::~UFairyPackage()
     if (HasAnyFlags(RF_ClassDefaultObject) == false)
     {
         UE_LOG(LogTemp, Warning, TEXT("UFairyPackage::~UFairyPackage()"));
-        for (auto& it : Sprites) {
+        for (auto& it : Sprites)
+        {
             delete it.Value;
         }
     }
@@ -371,27 +372,37 @@ void* UFairyPackage::GetItemAsset(const TSharedPtr<FFairyPackageItem>& Item)
     {
     case EPackageItemType::Image:
         if (Item->Texture == nullptr)
+        {
             LoadImage(Item);
+        }
         return Item->Texture;
 
     case EPackageItemType::Atlas:
         if (Item->Texture == nullptr)
+        {
             LoadAtlas(Item);
+        }
         return Item->Texture;
 
     case EPackageItemType::Font:
         if (Item->BitmapFont == nullptr)
+        {
             LoadFont(Item);
+        }
         return Item->BitmapFont.Get();
 
     case EPackageItemType::MovieClip:
         if (!Item->MovieClipData.IsValid())
+        {
             LoadMovieClip(Item);
+        }
         return Item->MovieClipData.Get();
 
     case EPackageItemType::Sound:
         if (!Item->Sound.IsValid())
+        {
             LoadSound(Item);
+        }
         return Item->Sound.Get();
 
     default:
@@ -413,7 +424,9 @@ void UFairyPackage::LoadImage(const TSharedPtr<FFairyPackageItem>& Item)
     {
         UNTexture* atlas = (UNTexture*)GetItemAsset(sprite->Atlas);
         if (atlas->GetSize() == sprite->Rect.GetSize())
+        {
             Item->Texture = atlas;
+        }
         else
         {
             Item->Texture = NewObject<UNTexture>(this);
@@ -492,7 +505,9 @@ void UFairyPackage::LoadFont(const TSharedPtr<FFairyPackageItem>& Item)
 
     const FAtlasSprite* MainSprite = nullptr;
     if (bTTF && (MainSprite = Sprites.FindRef(Item->ID)) != nullptr)
+    {
         BitmapFont->Texture = (UNTexture*)GetItemAsset(MainSprite->Atlas);
+    }
 
     Buffer->Seek(0, 1);
 
@@ -540,23 +555,33 @@ void UFairyPackage::LoadFont(const TSharedPtr<FFairyPackageItem>& Item)
                 Glyph.Size = CharImg->Size * TexScale;
 
                 if (BitmapFont->Texture == nullptr)
+                {
                     BitmapFont->Texture = CharImg->Texture->Root;
+                }
             }
 
             if (BitmapFont->FontSize == 0)
+            {
                 BitmapFont->FontSize = (int32)GlyphSize.Y;
+            }
 
             if (Glyph.XAdvance == 0)
             {
                 if (XAdvance == 0)
+                {
                     Glyph.XAdvance = GlyphOffset.X + GlyphSize.X;
+                }
                 else
+                {
                     Glyph.XAdvance = XAdvance;
+                }
             }
 
             Glyph.LineHeight = GlyphOffset.Y < 0 ? GlyphSize.Y : (GlyphOffset.Y + GlyphSize.Y);
             if (Glyph.LineHeight < BitmapFont->FontSize)
+            {
                 Glyph.LineHeight = BitmapFont->FontSize;
+            }
         }
 
         BitmapFont->Glyphs.Add(ch, Glyph);

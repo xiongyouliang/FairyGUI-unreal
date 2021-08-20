@@ -38,9 +38,13 @@ void UFairyPackageMgr::SetBranch(const FString& InBranch)
 	{
 		UFairyPackage*& Pkg = it.Value;
 		if (empty)
+		{
 			Pkg->BranchIndex = -1;
+		}
 		else if (Pkg->Branches.Num() > 0)
+		{
 			Pkg->BranchIndex = Pkg->Branches.IndexOfByKey(Branch);
+		}
 	}
 }
 
@@ -48,9 +52,13 @@ FString UFairyPackageMgr::GetVar(const FString& VarKey)
 {
 	FString* Value = Vars.Find(VarKey);
 	if (Value != nullptr)
+	{
 		return *Value;
+	}
 	else
+	{
 		return G_EMPTY_STRING;
+	}
 }
 
 void UFairyPackageMgr::SetVar(const FString& VarKey, const FString& VarValue)
@@ -98,9 +106,13 @@ UFairyPackage* UFairyPackageMgr::GetPackageByID(const FString& PackageID)
 {
 	auto it = PackageInstByID.Find(PackageID);
 	if (it != nullptr)
+	{
 		return *it;
+	}
 	else
+	{
 		return nullptr;
+	}
 }
 
 FString UFairyPackageMgr::ConvertToItemURL(const FString& PackageName, const FString& ResourceName)
@@ -110,7 +122,9 @@ FString UFairyPackageMgr::ConvertToItemURL(const FString& PackageName, const FSt
 	{
 		TSharedPtr<FFairyPackageItem> pi = pkg->GetItemByName(ResourceName);
 		if (pi.IsValid())
+		{
 			return "ui://" + pkg->GetID() + pi->ID;
+		}
 	}
 	return "";
 }
@@ -148,7 +162,8 @@ TSharedPtr<FFairyPackageItem> UFairyPackageMgr::GetPackageItemByURL(const FStrin
 	}
 		
 	int32 pos1;
-	if (!URL.FindChar('/', pos1)) {
+	if (!URL.FindChar('/', pos1)) 
+	{
 		return nullptr;
 	}
 

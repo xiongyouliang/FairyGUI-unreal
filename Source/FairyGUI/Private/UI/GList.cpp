@@ -2817,7 +2817,7 @@ void UGList::SetItemProvider(const FDynListItemProvider& InItemProvider)
 
 void UGList::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
-	UFairyComponent::SetupBeforeAdd(Buffer, BeginPos);
+	Super::SetupBeforeAdd(Buffer, BeginPos);
 
 	Buffer->Seek(BeginPos, 5);
 
@@ -2829,6 +2829,7 @@ void UGList::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 	ColSpacing = Buffer->ReadShort();
 	RowNum = Buffer->ReadShort();
 	ColNum = Buffer->ReadShort();
+
 	bAutoResizeItem = Buffer->ReadBool();
 	ChildrenRenderOrder = (EChildrenRenderOrder)Buffer->ReadByte();
 	ApexIndex = Buffer->ReadShort();
@@ -2961,7 +2962,7 @@ void UGList::SetupItem(FByteBuffer* Buffer, UFairyObject* Obj)
 
 void UGList::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
-	UFairyComponent::SetupAfterAdd(Buffer, BeginPos);
+	Super::SetupAfterAdd(Buffer, BeginPos);
 
 	Buffer->Seek(BeginPos, 6);
 

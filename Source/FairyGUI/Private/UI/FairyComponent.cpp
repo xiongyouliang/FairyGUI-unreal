@@ -25,7 +25,7 @@ UFairyComponent::UFairyComponent() :
 {
 	if (HasAnyFlags(RF_ClassDefaultObject) == false)
 	{
-		UE_LOG(LogFairyGUI, Warning, TEXT("UFairyComponent::UFairyComponent(...), Count:%d"), FairyComponentCount.GetValue());
+		//UE_LOG(LogFairyGUI, Warning, TEXT("UFairyComponent::UFairyComponent(...), Count:%d"), FairyComponentCount.GetValue());
 		FairyComponentCount.Increment();
 	}
 }
@@ -35,7 +35,7 @@ UFairyComponent::~UFairyComponent()
 	if (HasAnyFlags(RF_ClassDefaultObject) == false)
 	{
 		FairyComponentCount.Decrement();
-		UE_LOG(LogFairyGUI, Warning, TEXT("UFairyComponent::~UFairyComponent(...), Count:%d"), FairyComponentCount.GetValue());
+		//UE_LOG(LogFairyGUI, Warning, TEXT("UFairyComponent::~UFairyComponent(...), Count:%d"), FairyComponentCount.GetValue());
 	}
 }
 
@@ -51,12 +51,26 @@ void UFairyComponent::ReleaseSlateResources(bool bReleaseChildren)
 
 void UFairyComponent::MakeSlateWidget()
 {
-
 	if (!DisplayObject.IsValid())
 	{
 		DisplayObject = Container = SNew(SContainer).GObject(this);
 		DisplayObject->SetOpaque(false);
 	}
+}
+
+TSharedPtr<SContainer> UFairyComponent::GetRootContainerWidget()
+{
+	return Container;
+}
+
+TSharedPtr<SContainer> UFairyComponent::GetContentContainerWidget()
+{
+	return Container;
+}
+
+TSharedPtr<SContainer> UFairyComponent::GetMaskContainerWidget()
+{
+	return nullptr;
 }
 
 void UFairyComponent::AddWidget(UFairyObject* InChild, int32 index)
@@ -77,10 +91,6 @@ void UFairyComponent::AddWidget(UFairyObject* InChild, int32 index)
 
 UFairyObject* UFairyComponent::AddChild(UFairyObject* Child)
 {
-	if ( UFairyComponent* Component = Cast<UFairyComponent>(Child) ) 
-	{
-		Component->MakeSlateWidget();
-	}
 	AddChildAt(Child, Children.Num());
 	return Child;
 }
@@ -486,7 +496,6 @@ int32 UFairyComponent::GetFirstChildInView() const
 	int32 i = 0;
 	for (auto& Obj : Children)
 	{
-
 		if (IsChildInView(Obj))
 		{
 			return i;
@@ -496,6 +505,7 @@ int32 UFairyComponent::GetFirstChildInView() const
 	return -1;
 }
 
+// *************************************************************************
 // *********************** Component Controller start **********************
 UGController* UFairyComponent::GetController(const FString& ControllerName) const
 {
@@ -561,6 +571,7 @@ void UFairyComponent::ApplyAllControllers()
 	}
 }
 // *********************** Component Controller end **********************
+// *************************************************************************
 
 UTransition* UFairyComponent::GetTransition(const FString& TransitionName) const
 {
@@ -767,6 +778,10 @@ void UFairyComponent::UpdateBounds()
 void UFairyComponent::SetBounds(float ax, float ay, float aw, float ah)
 {
 	bBoundsChanged = false;
+	if (ScrollPane)
+	{
+		ScrollPane->SetContentSize(FVector2D(FMath::CeilToFloat(ax + aw), FMath::CeilToFloat(ay + ah)));
+	}
 }
 
 void UFairyComponent::ChildStateChanged(UFairyObject* Child)
@@ -868,12 +883,6 @@ void UFairyComponent::ChildSortingOrderChanged(UFairyObject* Child, int32 OldVal
 
 void UFairyComponent::BuildNativeDisplayList(bool bImmediatelly)
 {
-	//if (!bImmediatelly)
-	//{
-	//    DelayCall(BuildDisplayListTimerHandle, this, &UFairyComponent::BuildNativeDisplayList, true);
-	//    return;
-	//}
-
 	int32 cnt = Children.Num();
 	if (cnt == 0)
 	{
@@ -1078,6 +1087,7 @@ void UFairyComponent::OnRemovedFromStageHandler(UEventContext* Context)
 	}
 }
 
+// ***************************** Parse Component start ******************************************
 void UFairyComponent::ConstructFromResource()
 {
 	MakeSlateWidget();
@@ -1208,11 +1218,13 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 			if (ChildPackageItem.IsValid())
 			{
 				Child = FUIObjectFactory::NewObject(GetOuter(), ChildPackageItem);
+				Child->MakeSlateWidget();
 				Child->ConstructFromResource();
 			}
 			else
 			{
 				Child = FUIObjectFactory::NewObject(GetOuter(), ObjectType);
+				Child->MakeSlateWidget();
 			}
 		}
 
@@ -1362,4 +1374,4 @@ void UFairyComponent::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 		}
 	}
 }
-
+// ***************************** Parse Component end ******************************************

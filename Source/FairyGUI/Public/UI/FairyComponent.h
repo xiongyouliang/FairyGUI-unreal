@@ -179,6 +179,12 @@ public:
 public:
 	bool bBuildingDisplayList;
 	virtual void MakeSlateWidget() override;
+	virtual TSharedPtr<SContainer> GetRootContainerWidget();
+	virtual TSharedPtr<SContainer> GetContentContainerWidget();
+	virtual TSharedPtr<SContainer> GetMaskContainerWidget();
+
+	virtual void SetupOverflow(EOverflowType InOverflow);
+	virtual void SetupScroll(FByteBuffer* Buffer);
 
 protected:
 	UFUNCTION(BlueprintImplementableEvent, Category = "FairyGUI", meta = (DisplayName = "OnConstruct"))
@@ -195,9 +201,6 @@ protected:
 
 	virtual void UpdateBounds();
 	void SetBounds(float ax, float ay, float aw, float ah);
-
-	void SetupOverflow(EOverflowType InOverflow);
-	void SetupScroll(FByteBuffer* Buffer);
 
 	UPROPERTY(Transient)
 	TArray<UFairyObject*> Children; // Child FairyObject

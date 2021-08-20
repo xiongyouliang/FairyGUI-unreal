@@ -120,8 +120,6 @@ void UGImage::MakeSlateWidget()
 
 void UGImage::ConstructFromResource()
 {
-	MakeSlateWidget();
-
 	TSharedPtr<FFairyPackageItem> ContentItem = PackageItem->GetBranch();
 
 	ContentItem = ContentItem->GetHighResolution();

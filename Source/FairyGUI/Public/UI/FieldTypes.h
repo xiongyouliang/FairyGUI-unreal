@@ -116,10 +116,10 @@ enum class EProgressTitleType : uint8
 UENUM()
 enum class EListLayoutType : uint8
 {
-	SingleColumn,
+	SingleCol,
 	SingleRow,
-	FlowHorizontal,
-	FlowVertical,
+	HorizontalFlow,
+	VerticalFlow,
 	Pagination
 };
 

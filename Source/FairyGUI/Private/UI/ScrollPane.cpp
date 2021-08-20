@@ -35,7 +35,9 @@ UScrollPane::~UScrollPane()
 void UScrollPane::Setup(FByteBuffer* Buffer)
 {
 	Owner = Cast<UFairyComponent>(GetOuter());
-	Container = SNew(SContainer);
+	RootContainer = Owner->GetRootContainerWidget();
+	ContentContainer = Owner->GetContentContainerWidget();
+
 	ScrollStep = FUIConfig::Config.DefaultScrollStep;
 	DecelerationRate = FUIConfig::Config.DefaultScrollDecelerationRate;
 	bTouchEffect = FUIConfig::Config.DefaultScrollTouchEffect;
@@ -43,10 +45,8 @@ void UScrollPane::Setup(FByteBuffer* Buffer)
 	bMouseWheelEnabled = true;
 	PageSize.Set(0, 0);
 
-	MaskContainer = SNew(SContainer);
+	MaskContainer = Owner->GetMaskContainerWidget();
 	MaskContainer->SetOpaque(false);
-	Owner->Container->AddChild(MaskContainer.ToSharedRef());
-	MaskContainer->AddChild(Container.ToSharedRef());
 
 	Owner->On(FFairyEventNames::MouseWheel).AddUObject(this, &UScrollPane::OnMouseWheel);
 	Owner->On(FFairyEventNames::TouchBegin).AddUObject(this, &UScrollPane::OnTouchBegin);
@@ -128,7 +128,7 @@ void UScrollPane::Setup(FByteBuffer* Buffer)
 				else
 				{
 					VtScrollBar->SetScrollPane(this, true);
-					Container->AddChild(VtScrollBar->GetDisplayObject());
+					RootContainer->AddChild(VtScrollBar->GetDisplayObject());
 				}
 			}
 		}
@@ -145,7 +145,7 @@ void UScrollPane::Setup(FByteBuffer* Buffer)
 				else
 				{
 					HzScrollBar->SetScrollPane(this, false);
-					Container->AddChild(HzScrollBar->GetDisplayObject());
+					RootContainer->AddChild(HzScrollBar->GetDisplayObject());
 				}
 			}
 		}
@@ -181,7 +181,7 @@ void UScrollPane::Setup(FByteBuffer* Buffer)
 		else
 		{
 			Header->SetVisible(false);
-			Container->AddChild(Header->GetDisplayObject());
+			RootContainer->AddChild(Header->GetDisplayObject());
 		}
 	}
 
@@ -195,12 +195,14 @@ void UScrollPane::Setup(FByteBuffer* Buffer)
 		else
 		{
 			Footer->SetVisible(false);
-			Container->AddChild(Footer->GetDisplayObject());
+			RootContainer->AddChild(Footer->GetDisplayObject());
 		}
 	}
 
 	if (Header != nullptr || Footer != nullptr)
+	{
 		RefreshBarAxis = (ScrollType == EScrollType::Both || ScrollType == EScrollType::Vertical) ? 1 : 0;
+	}
 
 	SetSize(Owner->GetSize());
 }
@@ -1630,6 +1632,7 @@ float UScrollPane::RunTween(int32 Axis, float DeltaTime)
 
 void UScrollPane::OnTouchBegin(UEventContext* Context)
 {
+	UE_LOG(LogTemp, Warning, TEXT("UScrollPanel::OnTouchBegin(...)"));
 	if (!bTouchEffect)
 	{
 		return;

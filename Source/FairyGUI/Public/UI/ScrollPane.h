@@ -197,8 +197,9 @@ private:
 
 private:
     UFairyComponent* Owner;
+    TSharedPtr<SContainer> RootContainer;
     TSharedPtr<SContainer> MaskContainer;
-    TSharedPtr<SContainer> Container;
+    TSharedPtr<SContainer> ContentContainer;
     UPROPERTY(Transient)
     UGScrollBar* HzScrollBar;
     UPROPERTY(Transient)

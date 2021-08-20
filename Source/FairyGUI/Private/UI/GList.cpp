@@ -8,7 +8,7 @@
 #include "Utils/ByteBuffer.h"
 #include "Widgets/SContainer.h"
 
-UGList::FItemInfo::FItemInfo() :
+FFairyListItemInfo::FFairyListItemInfo() :
 	Obj(nullptr),
 	UpdateFlag(0),
 	bSelected(false)
@@ -23,9 +23,7 @@ UGList::UGList() :
 {
 	if (!HasAnyFlags(RF_ClassDefaultObject | RF_ArchetypeObject))
 	{
-		MakeSlateWidget();
 		bTrackBounds = true;
-		SetOpaque(true);
 		Pool = new FFairyObjectPool();
 	}
 }
@@ -38,11 +36,49 @@ UGList::~UGList()
 	bScrollItemToViewOnClick = false;
 }
 
+void UGList::MakeSlateWidget()
+{
+	if (!DisplayObject.IsValid())
+	{
+		const TSharedPtr<SContainer> RootContainer = SNew(SContainer).GObject(this);
+		const TSharedRef<SContainer> MaskContainer = SNew(SContainer).GObject(this);
+		const TSharedRef<SContainer> ContentContainer = SNew(SContainer).GObject(this);
+
+		SContainer::FSlot& ContentSlot = RootContainer->AddChild(MaskContainer);
+		ContentSlot.PositionAttr.BindUFunction(this, TEXT("GetRelationPos"));
+		ContentSlot.SizeAttr.BindUFunction(this, TEXT("GetRelationSize"));
+		ContentSlot.Anchor(this->GetAnchor());
+
+		MaskContainer->AddChild(ContentContainer);
+
+		DisplayObject = RootContainer;
+		Container = ContentContainer;
+
+		ScrollWidget = ContentContainer;
+		MaskWidget = MaskContainer;
+	}
+}
+
+TSharedPtr<SContainer> UGList::GetRootContainerWidget()
+{
+	return StaticCastSharedPtr<SContainer>(DisplayObject);
+}
+
+TSharedPtr<SContainer> UGList::GetMaskContainerWidget()
+{
+	return MaskWidget;
+}
+
+void UGList::SetupScroll(FByteBuffer* Buffer)
+{
+	Super::SetupScroll(Buffer);
+}
+
 void UGList::SetLayout(EListLayoutType InLayout)
 {
-	if (Layout != InLayout)
+	if (LayoutType != InLayout)
 	{
-		Layout = InLayout;
+		LayoutType = InLayout;
 		SetBoundsChangedFlag();
 		if (bVirtual)
 		{
@@ -53,10 +89,10 @@ void UGList::SetLayout(EListLayoutType InLayout)
 
 void UGList::SetLineCount(int32 InLineCount)
 {
-	if (LineCount != InLineCount)
+	if (RowNum != InLineCount)
 	{
-		LineCount = InLineCount;
-		if (Layout == EListLayoutType::FlowVertical || Layout == EListLayoutType::Pagination)
+		RowNum = InLineCount;
+		if (LayoutType == EListLayoutType::VerticalFlow || LayoutType == EListLayoutType::Pagination)
 		{
 			SetBoundsChangedFlag();
 			if (bVirtual)
@@ -69,10 +105,10 @@ void UGList::SetLineCount(int32 InLineCount)
 
 void UGList::SetColumnCount(int32 InColumnCount)
 {
-	if (ColumnCount != InColumnCount)
+	if (ColNum != InColumnCount)
 	{
-		ColumnCount = InColumnCount;
-		if (Layout == EListLayoutType::FlowHorizontal || Layout == EListLayoutType::Pagination)
+		ColNum = InColumnCount;
+		if (LayoutType == EListLayoutType::HorizontalFlow || LayoutType == EListLayoutType::Pagination)
 		{
 			SetBoundsChangedFlag();
 			if (bVirtual)
@@ -85,9 +121,9 @@ void UGList::SetColumnCount(int32 InColumnCount)
 
 void UGList::SetLineGap(int32 InLineGap)
 {
-	if (LineGap != InLineGap)
+	if (RowSpacing != InLineGap)
 	{
-		LineGap = InLineGap;
+		RowSpacing = InLineGap;
 		SetBoundsChangedFlag();
 		if (bVirtual)
 		{
@@ -98,9 +134,9 @@ void UGList::SetLineGap(int32 InLineGap)
 
 void UGList::SetColumnGap(int32 InColumnGap)
 {
-	if (ColumnGap != InColumnGap)
+	if (ColSpacing != InColumnGap)
 	{
-		ColumnGap = InColumnGap;
+		ColSpacing = InColumnGap;
 		SetBoundsChangedFlag();
 		if (bVirtual)
 		{
@@ -111,9 +147,9 @@ void UGList::SetColumnGap(int32 InColumnGap)
 
 void UGList::SetAlign(EHAlignType InAlign)
 {
-	if (Align != InAlign)
+	if (HorizontalAlign != InAlign)
 	{
-		Align = InAlign;
+		HorizontalAlign = InAlign;
 		SetBoundsChangedFlag();
 		if (bVirtual)
 		{
@@ -186,7 +222,8 @@ UFairyObject* UGList::AddItemFromPool(const FString& URL)
 
 UFairyObject* UGList::AddChildAt(UFairyObject* Child, int32 Index)
 {
-	UFairyComponent::AddChildAt(Child, Index);
+	Super::AddChildAt(Child, Index); // Replace UFairyComponent with Super; maybe we need change inherit to de: UFairyComponent -> UFairyScrollPanel -> UFairyList
+
 	if (Child->IsA<UGButton>())
 	{
 		UGButton* Button = (UGButton*)Child;
@@ -204,7 +241,7 @@ void UGList::RemoveChildAt(int32 Index)
 	UFairyObject* Child = Children[Index];
 	Child->OnClick.RemoveDynamic(this, &UGList::OnClickItemHandler);
 
-	UFairyComponent::RemoveChildAt(Index);
+	Super::RemoveChildAt(Index);
 }
 
 void UGList::RemoveChildToPoolAt(int32 Index)
@@ -239,7 +276,7 @@ int32 UGList::GetSelectedIndex() const
 		int32 cnt = RealNumItems;
 		for (int32 i = 0; i < cnt; i++)
 		{
-			const FItemInfo& ii = VirtualItems[i];
+			const FFairyListItemInfo& ii = VirtualItems[i];
 			if ((Cast<UGButton>(ii.Obj) && ((UGButton*)ii.Obj)->IsSelected()) || (ii.Obj == nullptr && ii.bSelected))
 			{
 				if (bLoop)
@@ -297,7 +334,7 @@ void UGList::GetSelection(TArray<int32>& OutIndice) const
 		int32 cnt = RealNumItems;
 		for (int32 i = 0; i < cnt; i++)
 		{
-			const FItemInfo& ii = VirtualItems[i];
+			const FFairyListItemInfo& ii = VirtualItems[i];
 			if ((Cast<UGButton>(ii.Obj) && ((UGButton*)ii.Obj)->IsSelected()) || (ii.Obj == nullptr && ii.bSelected))
 			{
 				int32 j = i;
@@ -350,7 +387,7 @@ void UGList::AddSelection(int32 Index, bool bScrollItToView)
 	UGButton* Obj = nullptr;
 	if (bVirtual)
 	{
-		FItemInfo& ii = VirtualItems[Index];
+		FFairyListItemInfo& ii = VirtualItems[Index];
 		if (ii.Obj != nullptr)
 		{
 			Obj = ii.Obj->As<UGButton>();
@@ -379,7 +416,7 @@ void UGList::RemoveSelection(int32 Index)
 	UGButton* Obj = nullptr;
 	if (bVirtual)
 	{
-		FItemInfo& ii = VirtualItems[Index];
+		FFairyListItemInfo& ii = VirtualItems[Index];
 		if (ii.Obj != nullptr)
 		{
 			Obj = ii.Obj->As<UGButton>();
@@ -404,7 +441,7 @@ void UGList::ClearSelection()
 		int32 cnt = RealNumItems;
 		for (int32 i = 0; i < cnt; i++)
 		{
-			FItemInfo& ii = VirtualItems[i];
+			FFairyListItemInfo& ii = VirtualItems[i];
 			if (Cast<UGButton>(ii.Obj))
 			{
 				((UGButton*)ii.Obj)->SetSelected(false);
@@ -433,7 +470,7 @@ void UGList::ClearSelectionExcept(UFairyObject* Obj)
 		int32 cnt = RealNumItems;
 		for (int32 i = 0; i < cnt; i++)
 		{
-			FItemInfo& ii = VirtualItems[i];
+			FFairyListItemInfo& ii = VirtualItems[i];
 			if (ii.Obj != Obj)
 			{
 				if (Cast<UGButton>(ii.Obj))
@@ -468,7 +505,7 @@ void UGList::SelectAll()
 		int32 cnt = RealNumItems;
 		for (int32 i = 0; i < cnt; i++)
 		{
-			FItemInfo& ii = VirtualItems[i];
+			FFairyListItemInfo& ii = VirtualItems[i];
 			if (Cast<UGButton>(ii.Obj) && !((UGButton*)ii.Obj)->IsSelected())
 			{
 				((UGButton*)ii.Obj)->SetSelected(true);
@@ -507,7 +544,7 @@ void UGList::SelectReverse()
 		int32 cnt = RealNumItems;
 		for (int32 i = 0; i < cnt; i++)
 		{
-			FItemInfo& ii = VirtualItems[i];
+			FFairyListItemInfo& ii = VirtualItems[i];
 			if (Cast<UGButton>(ii.Obj))
 			{
 				((UGButton*)ii.Obj)->SetSelected(!((UGButton*)ii.Obj)->IsSelected());
@@ -553,7 +590,7 @@ void UGList::HandleArrowKey(int32 Direction)
 	switch (Direction)
 	{
 	case 1: //up
-		if (Layout == EListLayoutType::SingleColumn || Layout == EListLayoutType::FlowVertical)
+		if (LayoutType == EListLayoutType::SingleCol || LayoutType == EListLayoutType::VerticalFlow)
 		{
 			index--;
 			if (index >= 0)
@@ -562,7 +599,7 @@ void UGList::HandleArrowKey(int32 Direction)
 				AddSelection(index, true);
 			}
 		}
-		else if (Layout == EListLayoutType::FlowHorizontal || Layout == EListLayoutType::Pagination)
+		else if (LayoutType == EListLayoutType::HorizontalFlow || LayoutType == EListLayoutType::Pagination)
 		{
 			UFairyObject* current = Children[index];
 			int32 k = 0;
@@ -591,7 +628,7 @@ void UGList::HandleArrowKey(int32 Direction)
 		break;
 
 	case 3: //right
-		if (Layout == EListLayoutType::SingleRow || Layout == EListLayoutType::FlowHorizontal || Layout == EListLayoutType::Pagination)
+		if (LayoutType == EListLayoutType::SingleRow || LayoutType == EListLayoutType::HorizontalFlow || LayoutType == EListLayoutType::Pagination)
 		{
 			index++;
 			if (index < Children.Num())
@@ -600,7 +637,7 @@ void UGList::HandleArrowKey(int32 Direction)
 				AddSelection(index, true);
 			}
 		}
-		else if (Layout == EListLayoutType::FlowVertical)
+		else if (LayoutType == EListLayoutType::VerticalFlow)
 		{
 			UFairyObject* current = Children[index];
 			int32 k = 0;
@@ -630,7 +667,7 @@ void UGList::HandleArrowKey(int32 Direction)
 		break;
 
 	case 5: //down
-		if (Layout == EListLayoutType::SingleColumn || Layout == EListLayoutType::FlowVertical)
+		if (LayoutType == EListLayoutType::SingleCol || LayoutType == EListLayoutType::VerticalFlow)
 		{
 			index++;
 			if (index < Children.Num())
@@ -639,7 +676,7 @@ void UGList::HandleArrowKey(int32 Direction)
 				AddSelection(index, true);
 			}
 		}
-		else if (Layout == EListLayoutType::FlowHorizontal || Layout == EListLayoutType::Pagination)
+		else if (LayoutType == EListLayoutType::HorizontalFlow || LayoutType == EListLayoutType::Pagination)
 		{
 			UFairyObject* current = Children[index];
 			int32 k = 0;
@@ -669,7 +706,7 @@ void UGList::HandleArrowKey(int32 Direction)
 		break;
 
 	case 7: //left
-		if (Layout == EListLayoutType::SingleRow || Layout == EListLayoutType::FlowHorizontal || Layout == EListLayoutType::Pagination)
+		if (LayoutType == EListLayoutType::SingleRow || LayoutType == EListLayoutType::HorizontalFlow || LayoutType == EListLayoutType::Pagination)
 		{
 			index--;
 			if (index >= 0)
@@ -678,7 +715,7 @@ void UGList::HandleArrowKey(int32 Direction)
 				AddSelection(index, true);
 			}
 		}
-		else if (Layout == EListLayoutType::FlowVertical)
+		else if (LayoutType == EListLayoutType::VerticalFlow)
 		{
 			UFairyObject* current = Children[index];
 			int32 k = 0;
@@ -758,7 +795,7 @@ void UGList::SetSelectionOnEvent(UFairyObject* Obj, UEventContext* Context)
 					{
 						for (int32 i = min; i <= max; i++)
 						{
-							FItemInfo& ii = VirtualItems[i];
+							FFairyListItemInfo& ii = VirtualItems[i];
 							if (ii.Obj != nullptr && ii.Obj->IsA<UGButton>())
 							{
 								Cast<UGButton>(ii.Obj)->SetSelected(true);
@@ -828,18 +865,18 @@ void UGList::ResizeToFit(int32 ItemCount, int32 InMinSize)
 	if (bVirtual)
 	{
 		int32 lineCount = FMath::CeilToInt((float)ItemCount / CurLineItemCount);
-		if (Layout == EListLayoutType::SingleColumn || Layout == EListLayoutType::FlowHorizontal)
+		if (LayoutType == EListLayoutType::SingleCol || LayoutType == EListLayoutType::HorizontalFlow)
 		{
-			SetViewHeight(lineCount * ItemSize.Y + FMath::Max(0, lineCount - 1) * LineGap);
+			SetViewHeight(lineCount * ItemSize.Y + FMath::Max(0, lineCount - 1) * RowSpacing);
 		}
 		else
 		{
-			SetViewWidth(lineCount * ItemSize.X + FMath::Max(0, lineCount - 1) * ColumnGap);
+			SetViewWidth(lineCount * ItemSize.X + FMath::Max(0, lineCount - 1) * ColSpacing);
 		}
 	}
 	else if (ItemCount == 0)
 	{
-		if (Layout == EListLayoutType::SingleColumn || Layout == EListLayoutType::FlowHorizontal)
+		if (LayoutType == EListLayoutType::SingleCol || LayoutType == EListLayoutType::HorizontalFlow)
 		{
 			SetViewHeight(InMinSize);
 		}
@@ -863,7 +900,7 @@ void UGList::ResizeToFit(int32 ItemCount, int32 InMinSize)
 		}
 		if (i < 0)
 		{
-			if (Layout == EListLayoutType::SingleColumn || Layout == EListLayoutType::FlowHorizontal)
+			if (LayoutType == EListLayoutType::SingleCol || LayoutType == EListLayoutType::HorizontalFlow)
 			{
 				SetViewHeight(InMinSize);
 			}
@@ -875,7 +912,7 @@ void UGList::ResizeToFit(int32 ItemCount, int32 InMinSize)
 		else
 		{
 			float size;
-			if (Layout == EListLayoutType::SingleColumn || Layout == EListLayoutType::FlowHorizontal)
+			if (LayoutType == EListLayoutType::SingleCol || LayoutType == EListLayoutType::HorizontalFlow)
 			{
 				size = obj->GetPosition().Y + obj->GetHeight();
 				if (size < InMinSize)
@@ -953,23 +990,23 @@ void UGList::ScrollToView(int32 Index, bool bAnimation, bool bSetFirst)
 		}
 
 		FBox2D rect;
-		FItemInfo& ii = VirtualItems[Index];
-		if (Layout == EListLayoutType::SingleColumn || Layout == EListLayoutType::FlowHorizontal)
+		FFairyListItemInfo& ii = VirtualItems[Index];
+		if (LayoutType == EListLayoutType::SingleCol || LayoutType == EListLayoutType::HorizontalFlow)
 		{
 			float pos = 0;
 			for (int32 i = CurLineItemCount - 1; i < Index; i += CurLineItemCount)
 			{
-				pos += VirtualItems[i].Size.Y + LineGap;
+				pos += VirtualItems[i].Size.Y + RowSpacing;
 			}
 			rect.Min.Set(0, pos);
 			rect.Max = rect.Min + FVector2D(ItemSize.X, ii.Size.Y);
 		}
-		else if (Layout == EListLayoutType::SingleRow || Layout == EListLayoutType::FlowVertical)
+		else if (LayoutType == EListLayoutType::SingleRow || LayoutType == EListLayoutType::VerticalFlow)
 		{
 			float pos = 0;
 			for (int32 i = CurLineItemCount - 1; i < Index; i += CurLineItemCount)
 			{
-				pos += VirtualItems[i].Size.X + ColumnGap;
+				pos += VirtualItems[i].Size.X + ColSpacing;
 			}
 			rect.Min.Set(pos, 0);
 			rect.Max = rect.Min + FVector2D(ii.Size.X, ItemSize.Y);
@@ -977,8 +1014,8 @@ void UGList::ScrollToView(int32 Index, bool bAnimation, bool bSetFirst)
 		else
 		{
 			int32 page = Index / (CurLineItemCount * CurLineItemCount2);
-			rect.Min.Set(page * GetViewWidth() + (Index % CurLineItemCount) * (ii.Size.X + ColumnGap),
-				(Index / CurLineItemCount) % CurLineItemCount2 * (ii.Size.Y + LineGap));
+			rect.Min.Set(page * GetViewWidth() + (Index % CurLineItemCount) * (ii.Size.X + ColSpacing),
+				(Index / CurLineItemCount) % CurLineItemCount2 * (ii.Size.Y + RowSpacing));
 			rect.Max = rect.Min + ii.Size;
 		}
 
@@ -1014,7 +1051,7 @@ int32 UGList::ChildIndexToItemIndex(int32 Index) const
 		return Index;
 	}
 
-	if (Layout == EListLayoutType::Pagination)
+	if (LayoutType == EListLayoutType::Pagination)
 	{
 		for (int32 i = FirstIndex; i < RealNumItems; i++)
 		{
@@ -1047,7 +1084,7 @@ int32 UGList::ItemIndexToChildIndex(int32 Index) const
 	if (!bVirtual)
 		return Index;
 
-	if (Layout == EListLayoutType::Pagination)
+	if (LayoutType == EListLayoutType::Pagination)
 	{
 		return GetChildIndex(VirtualItems[Index].Obj);
 	}
@@ -1093,8 +1130,8 @@ void UGList::SetVirtual(bool bInLoop)
 
 		if (bInLoop)
 		{
-			verifyf(Layout != EListLayoutType::FlowHorizontal && Layout != EListLayoutType::FlowVertical,
-				TEXT("Loop list is not supported for FlowHorizontal or FlowVertical layout!"));
+			verifyf(LayoutType != EListLayoutType::HorizontalFlow && LayoutType != EListLayoutType::VerticalFlow,
+				TEXT("Loop list is not supported for HorizontalFlow or VerticalFlow layout!"));
 
 			ScrollPane->bBouncebackEffect = false;
 		}
@@ -1113,7 +1150,7 @@ void UGList::SetVirtual(bool bInLoop)
 			ReturnToPool(obj);
 		}
 
-		if (Layout == EListLayoutType::SingleColumn || Layout == EListLayoutType::FlowHorizontal)
+		if (LayoutType == EListLayoutType::SingleCol || LayoutType == EListLayoutType::HorizontalFlow)
 		{
 			ScrollPane->ScrollStep = ItemSize.Y;
 			if (bLoop)
@@ -1154,7 +1191,7 @@ void UGList::SetNumItems(int32 InNumItems)
 		{
 			for (int32 i = oldCount; i < RealNumItems; i++)
 			{
-				FItemInfo ii;
+				FFairyListItemInfo ii;
 				ii.Size = ItemSize;
 
 				VirtualItems.Add(MoveTemp(ii));
@@ -1219,20 +1256,20 @@ FVector2D UGList::GetSnappingPosition(const FVector2D& InPoint)
 	if (bVirtual)
 	{
 		FVector2D ret = InPoint;
-		if (Layout == EListLayoutType::SingleColumn || Layout == EListLayoutType::FlowHorizontal)
+		if (LayoutType == EListLayoutType::SingleCol || LayoutType == EListLayoutType::HorizontalFlow)
 		{
 			int32 index = GetIndexOnPos1(ret.Y, false);
 			if (index < VirtualItems.Num() && InPoint.Y - ret.Y > VirtualItems[index].Size.Y / 2 && index < RealNumItems)
 			{
-				ret.Y += VirtualItems[index].Size.Y + LineGap;
+				ret.Y += VirtualItems[index].Size.Y + RowSpacing;
 			}
 		}
-		else if (Layout == EListLayoutType::SingleRow || Layout == EListLayoutType::FlowVertical)
+		else if (LayoutType == EListLayoutType::SingleRow || LayoutType == EListLayoutType::VerticalFlow)
 		{
 			int32 index = GetIndexOnPos2(ret.X, false);
 			if (index < VirtualItems.Num() && InPoint.X - ret.X > VirtualItems[index].Size.X / 2 && index < RealNumItems)
 			{
-				ret.X += VirtualItems[index].Size.X + ColumnGap;
+				ret.X += VirtualItems[index].Size.X + ColSpacing;
 			}
 		}
 		else
@@ -1240,7 +1277,7 @@ FVector2D UGList::GetSnappingPosition(const FVector2D& InPoint)
 			int32 index = GetIndexOnPos3(ret.X, false);
 			if (index < VirtualItems.Num() && InPoint.X - ret.X > VirtualItems[index].Size.X / 2 && index < RealNumItems)
 			{
-				ret.X += VirtualItems[index].Size.X + ColumnGap;
+				ret.X += VirtualItems[index].Size.X + ColSpacing;
 			}
 		}
 
@@ -1284,34 +1321,34 @@ void UGList::DoRefreshVirtualList()
 
 	if (bLayoutChanged)
 	{
-		if (Layout == EListLayoutType::SingleColumn || Layout == EListLayoutType::SingleRow)
+		if (LayoutType == EListLayoutType::SingleCol || LayoutType == EListLayoutType::SingleRow)
 		{
 			CurLineItemCount = 1;
 		}
-		else if (Layout == EListLayoutType::FlowHorizontal)
+		else if (LayoutType == EListLayoutType::HorizontalFlow)
 		{
-			if (ColumnCount > 0)
+			if (ColNum > 0)
 			{
-				CurLineItemCount = ColumnCount;
+				CurLineItemCount = ColNum;
 			}
 			else
 			{
-				CurLineItemCount = FMath::FloorToInt((ScrollPane->GetViewSize().X + ColumnGap) / (ItemSize.X + ColumnGap));
+				CurLineItemCount = FMath::FloorToInt((ScrollPane->GetViewSize().X + ColSpacing) / (ItemSize.X + ColSpacing));
 				if (CurLineItemCount <= 0)
 				{
 					CurLineItemCount = 1;
 				}
 			}
 		}
-		else if (Layout == EListLayoutType::FlowVertical)
+		else if (LayoutType == EListLayoutType::VerticalFlow)
 		{
-			if (LineCount > 0)
+			if (RowNum > 0)
 			{
-				CurLineItemCount = LineCount;
+				CurLineItemCount = RowNum;
 			}
 			else
 			{
-				CurLineItemCount = FMath::FloorToInt((ScrollPane->GetViewSize().Y + LineGap) / (ItemSize.Y + LineGap));
+				CurLineItemCount = FMath::FloorToInt((ScrollPane->GetViewSize().Y + RowSpacing) / (ItemSize.Y + RowSpacing));
 				if (CurLineItemCount <= 0)
 				{
 					CurLineItemCount = 1;
@@ -1320,26 +1357,26 @@ void UGList::DoRefreshVirtualList()
 		}
 		else //Pagination
 		{
-			if (ColumnCount > 0)
+			if (ColNum > 0)
 			{
-				CurLineItemCount = ColumnCount;
+				CurLineItemCount = ColNum;
 			}
 			else
 			{
-				CurLineItemCount = FMath::FloorToInt((ScrollPane->GetViewSize().X + ColumnGap) / (ItemSize.X + ColumnGap));
+				CurLineItemCount = FMath::FloorToInt((ScrollPane->GetViewSize().X + ColSpacing) / (ItemSize.X + ColSpacing));
 				if (CurLineItemCount <= 0)
 				{
 					CurLineItemCount = 1;
 				}
 			}
 
-			if (LineCount > 0)
+			if (RowNum > 0)
 			{
-				CurLineItemCount2 = LineCount;
+				CurLineItemCount2 = RowNum;
 			}
 			else
 			{
-				CurLineItemCount2 = FMath::FloorToInt((ScrollPane->GetViewSize().Y + LineGap) / (ItemSize.Y + LineGap));
+				CurLineItemCount2 = FMath::FloorToInt((ScrollPane->GetViewSize().Y + RowSpacing) / (ItemSize.Y + RowSpacing));
 				if (CurLineItemCount2 <= 0)
 				{
 					CurLineItemCount2 = 1;
@@ -1352,15 +1389,15 @@ void UGList::DoRefreshVirtualList()
 	{
 		int32 len = FMath::FloorToInt((float)RealNumItems / CurLineItemCount) * CurLineItemCount;
 		int32 len2 = FMath::Min(CurLineItemCount, RealNumItems);
-		if (Layout == EListLayoutType::SingleColumn || Layout == EListLayoutType::FlowHorizontal)
+		if (LayoutType == EListLayoutType::SingleCol || LayoutType == EListLayoutType::HorizontalFlow)
 		{
 			for (int32 i = 0; i < len; i += CurLineItemCount)
 			{
-				ch += VirtualItems[i].Size.Y + LineGap;
+				ch += VirtualItems[i].Size.Y + RowSpacing;
 			}
 			if (ch > 0)
 			{
-				ch -= LineGap;
+				ch -= RowSpacing;
 			}
 
 			if (bAutoResizeItem)
@@ -1371,23 +1408,23 @@ void UGList::DoRefreshVirtualList()
 			{
 				for (int32 i = 0; i < len2; i++)
 				{
-					cw += VirtualItems[i].Size.X + ColumnGap;
+					cw += VirtualItems[i].Size.X + ColSpacing;
 				}
 				if (cw > 0)
 				{
-					cw -= ColumnGap;
+					cw -= ColSpacing;
 				}
 			}
 		}
-		else if (Layout == EListLayoutType::SingleRow || Layout == EListLayoutType::FlowVertical)
+		else if (LayoutType == EListLayoutType::SingleRow || LayoutType == EListLayoutType::VerticalFlow)
 		{
 			for (int32 i = 0; i < len; i += CurLineItemCount)
 			{
-				cw += VirtualItems[i].Size.X + ColumnGap;
+				cw += VirtualItems[i].Size.X + ColSpacing;
 			}
 			if (cw > 0)
 			{
-				cw -= ColumnGap;
+				cw -= ColSpacing;
 			}
 
 			if (bAutoResizeItem)
@@ -1398,11 +1435,11 @@ void UGList::DoRefreshVirtualList()
 			{
 				for (int32 i = 0; i < len2; i++)
 				{
-					ch += VirtualItems[i].Size.Y + LineGap;
+					ch += VirtualItems[i].Size.Y + RowSpacing;
 				}
 				if (ch > 0)
 				{
-					ch -= LineGap;
+					ch -= RowSpacing;
 				}
 			}
 		}
@@ -1438,11 +1475,11 @@ int32 UGList::GetIndexOnPos1(float& pos, bool forceUpdate)
 	if (NumChildren() > 0 && !forceUpdate)
 	{
 		float pos2 = GetChildAt(0)->GetPosition().Y;
-		if (pos2 + (LineGap > 0 ? 0 : -LineGap) > pos)
+		if (pos2 + (RowSpacing > 0 ? 0 : -RowSpacing) > pos)
 		{
 			for (int32 i = FirstIndex - CurLineItemCount; i >= 0; i -= CurLineItemCount)
 			{
-				pos2 -= (VirtualItems[i].Size.Y + LineGap);
+				pos2 -= (VirtualItems[i].Size.Y + RowSpacing);
 				if (pos2 <= pos)
 				{
 					pos = pos2;
@@ -1455,7 +1492,7 @@ int32 UGList::GetIndexOnPos1(float& pos, bool forceUpdate)
 		}
 		else
 		{
-			float testGap = LineGap > 0 ? LineGap : 0;
+			float testGap = RowSpacing > 0 ? RowSpacing : 0;
 			for (int32 i = FirstIndex; i < RealNumItems; i += CurLineItemCount)
 			{
 				float pos3 = pos2 + VirtualItems[i].Size.Y;
@@ -1464,7 +1501,7 @@ int32 UGList::GetIndexOnPos1(float& pos, bool forceUpdate)
 					pos = pos2;
 					return i;
 				}
-				pos2 = pos3 + LineGap;
+				pos2 = pos3 + RowSpacing;
 			}
 
 			pos = pos2;
@@ -1474,7 +1511,7 @@ int32 UGList::GetIndexOnPos1(float& pos, bool forceUpdate)
 	else
 	{
 		float pos2 = 0;
-		float testGap = LineGap > 0 ? LineGap : 0;
+		float testGap = RowSpacing > 0 ? RowSpacing : 0;
 		for (int32 i = 0; i < RealNumItems; i += CurLineItemCount)
 		{
 			float pos3 = pos2 + VirtualItems[i].Size.Y;
@@ -1483,7 +1520,7 @@ int32 UGList::GetIndexOnPos1(float& pos, bool forceUpdate)
 				pos = pos2;
 				return i;
 			}
-			pos2 = pos3 + LineGap;
+			pos2 = pos3 + RowSpacing;
 		}
 
 		pos = pos2;
@@ -1502,11 +1539,11 @@ int32 UGList::GetIndexOnPos2(float& pos, bool forceUpdate)
 	if (NumChildren() > 0 && !forceUpdate)
 	{
 		float pos2 = GetChildAt(0)->GetPosition().X;
-		if (pos2 + (ColumnGap > 0 ? 0 : -ColumnGap) > pos)
+		if (pos2 + (ColSpacing > 0 ? 0 : -ColSpacing) > pos)
 		{
 			for (int32 i = FirstIndex - CurLineItemCount; i >= 0; i -= CurLineItemCount)
 			{
-				pos2 -= (VirtualItems[i].Size.X + ColumnGap);
+				pos2 -= (VirtualItems[i].Size.X + ColSpacing);
 				if (pos2 <= pos)
 				{
 					pos = pos2;
@@ -1519,7 +1556,7 @@ int32 UGList::GetIndexOnPos2(float& pos, bool forceUpdate)
 		}
 		else
 		{
-			float testGap = ColumnGap > 0 ? ColumnGap : 0;
+			float testGap = ColSpacing > 0 ? ColSpacing : 0;
 			for (int32 i = FirstIndex; i < RealNumItems; i += CurLineItemCount)
 			{
 				float pos3 = pos2 + VirtualItems[i].Size.X;
@@ -1528,7 +1565,7 @@ int32 UGList::GetIndexOnPos2(float& pos, bool forceUpdate)
 					pos = pos2;
 					return i;
 				}
-				pos2 = pos3 + ColumnGap;
+				pos2 = pos3 + ColSpacing;
 			}
 
 			pos = pos2;
@@ -1538,7 +1575,7 @@ int32 UGList::GetIndexOnPos2(float& pos, bool forceUpdate)
 	else
 	{
 		float pos2 = 0;
-		float testGap = ColumnGap > 0 ? ColumnGap : 0;
+		float testGap = ColSpacing > 0 ? ColSpacing : 0;
 		for (int32 i = 0; i < RealNumItems; i += CurLineItemCount)
 		{
 			float pos3 = pos2 + VirtualItems[i].Size.X;
@@ -1547,7 +1584,7 @@ int32 UGList::GetIndexOnPos2(float& pos, bool forceUpdate)
 				pos = pos2;
 				return i;
 			}
-			pos2 = pos3 + ColumnGap;
+			pos2 = pos3 + ColSpacing;
 		}
 
 		pos = pos2;
@@ -1567,7 +1604,7 @@ int32 UGList::GetIndexOnPos3(float& pos, bool forceUpdate)
 	int32 page = FMath::FloorToInt(pos / viewWidth);
 	int32 startIndex = page * (CurLineItemCount * CurLineItemCount2);
 	float pos2 = page * viewWidth;
-	float testGap = ColumnGap > 0 ? ColumnGap : 0;
+	float testGap = ColSpacing > 0 ? ColSpacing : 0;
 	for (int32 i = 0; i < CurLineItemCount; i++)
 	{
 		float pos3 = pos2 + VirtualItems[startIndex + i].Size.X;
@@ -1576,7 +1613,7 @@ int32 UGList::GetIndexOnPos3(float& pos, bool forceUpdate)
 			pos = pos2;
 			return startIndex + i;
 		}
-		pos2 = pos3 + ColumnGap;
+		pos2 = pos3 + ColSpacing;
 	}
 
 	pos = pos2;
@@ -1590,7 +1627,7 @@ void UGList::HandleScroll(bool forceUpdate)
 		return;
 	}
 
-	if (Layout == EListLayoutType::SingleColumn || Layout == EListLayoutType::FlowHorizontal)
+	if (LayoutType == EListLayoutType::SingleCol || LayoutType == EListLayoutType::HorizontalFlow)
 	{
 		int32 enterCounter = 0;
 		while (HandleScroll1(forceUpdate))
@@ -1605,7 +1642,7 @@ void UGList::HandleScroll(bool forceUpdate)
 		}
 		HandleArchOrder1();
 	}
-	else if (Layout == EListLayoutType::SingleRow || Layout == EListLayoutType::FlowVertical)
+	else if (LayoutType == EListLayoutType::SingleRow || LayoutType == EListLayoutType::VerticalFlow)
 	{
 		int32 enterCounter = 0;
 		while (HandleScroll2(forceUpdate))
@@ -1650,12 +1687,12 @@ bool UGList::HandleScroll1(bool forceUpdate)
 	float deltaSize = 0;
 	float firstItemDeltaSize = 0;
 	FString url = DefaultItem;
-	int32 partSize = (int32)((ScrollPane->GetViewSize().X - ColumnGap * (CurLineItemCount - 1)) / CurLineItemCount);
+	int32 partSize = (int32)((ScrollPane->GetViewSize().X - ColSpacing * (CurLineItemCount - 1)) / CurLineItemCount);
 
 	ItemInfoVer++;
 	while (curIndex < RealNumItems && (end || curY < max))
 	{
-		FItemInfo& ii = VirtualItems[curIndex];
+		FFairyListItemInfo& ii = VirtualItems[curIndex];
 
 		if (ii.Obj == nullptr || forceUpdate)
 		{
@@ -1686,7 +1723,7 @@ bool UGList::HandleScroll1(bool forceUpdate)
 			{
 				for (int32 j = reuseIndex; j >= oldFirstIndex; j--)
 				{
-					FItemInfo& ii2 = VirtualItems[j];
+					FFairyListItemInfo& ii2 = VirtualItems[j];
 					if (ii2.Obj != nullptr && ii2.UpdateFlag != ItemInfoVer && ii2.Obj->GetResourceURL().Compare(url) == 0)
 					{
 						if (Cast<UGButton>(ii2.Obj))
@@ -1707,7 +1744,7 @@ bool UGList::HandleScroll1(bool forceUpdate)
 			{
 				for (int32 j = reuseIndex; j <= lastIndex; j++)
 				{
-					FItemInfo& ii2 = VirtualItems[j];
+					FFairyListItemInfo& ii2 = VirtualItems[j];
 					if (ii2.Obj != nullptr && ii2.UpdateFlag != ItemInfoVer && ii2.Obj->GetResourceURL().Compare(url) == 0)
 					{
 						if (Cast<UGButton>(ii2.Obj))
@@ -1755,7 +1792,7 @@ bool UGList::HandleScroll1(bool forceUpdate)
 
 		if (needRender)
 		{
-			if (bAutoResizeItem && (Layout == EListLayoutType::SingleColumn || ColumnCount > 0))
+			if (bAutoResizeItem && (LayoutType == EListLayoutType::SingleCol || ColNum > 0))
 			{
 				ii.Obj->SetSize(FVector2D(partSize, ii.Obj->GetHeight()));
 				ii.Obj->SetPivot(ii.Obj->GetPivot(), true);
@@ -1781,19 +1818,19 @@ bool UGList::HandleScroll1(bool forceUpdate)
 			max += ii.Size.Y;
 		}
 
-		curX += ii.Size.X + ColumnGap;
+		curX += ii.Size.X + ColSpacing;
 
 		if (curIndex % CurLineItemCount == CurLineItemCount - 1)
 		{
 			curX = 0;
-			curY += ii.Size.Y + LineGap;
+			curY += ii.Size.Y + RowSpacing;
 		}
 		curIndex++;
 	}
 
 	for (int32 i = 0; i < childCount; i++)
 	{
-		FItemInfo& ii = VirtualItems[oldFirstIndex + i];
+		FFairyListItemInfo& ii = VirtualItems[oldFirstIndex + i];
 		if (ii.UpdateFlag != ItemInfoVer && ii.Obj != nullptr)
 		{
 			if (Cast<UGButton>(ii.Obj))
@@ -1855,12 +1892,12 @@ bool UGList::HandleScroll2(bool forceUpdate)
 	float deltaSize = 0;
 	float firstItemDeltaSize = 0;
 	FString url = DefaultItem;
-	int32 partSize = (int32)((ScrollPane->GetViewSize().Y - LineGap * (CurLineItemCount - 1)) / CurLineItemCount);
+	int32 partSize = (int32)((ScrollPane->GetViewSize().Y - RowSpacing * (CurLineItemCount - 1)) / CurLineItemCount);
 
 	ItemInfoVer++;
 	while (curIndex < RealNumItems && (end || curX < max))
 	{
-		FItemInfo& ii = VirtualItems[curIndex];
+		FFairyListItemInfo& ii = VirtualItems[curIndex];
 
 		if (ii.Obj == nullptr || forceUpdate)
 		{
@@ -1891,7 +1928,7 @@ bool UGList::HandleScroll2(bool forceUpdate)
 			{
 				for (int32 j = reuseIndex; j >= oldFirstIndex; j--)
 				{
-					FItemInfo& ii2 = VirtualItems[j];
+					FFairyListItemInfo& ii2 = VirtualItems[j];
 					if (ii2.Obj != nullptr && ii2.UpdateFlag != ItemInfoVer && ii2.Obj->GetResourceURL().Compare(url) == 0)
 					{
 						if (Cast<UGButton>(ii2.Obj))
@@ -1912,7 +1949,7 @@ bool UGList::HandleScroll2(bool forceUpdate)
 			{
 				for (int32 j = reuseIndex; j <= lastIndex; j++)
 				{
-					FItemInfo& ii2 = VirtualItems[j];
+					FFairyListItemInfo& ii2 = VirtualItems[j];
 					if (ii2.Obj != nullptr && ii2.UpdateFlag != ItemInfoVer && ii2.Obj->GetResourceURL().Compare(url) == 0)
 					{
 						if (Cast<UGButton>(ii2.Obj))
@@ -1960,7 +1997,7 @@ bool UGList::HandleScroll2(bool forceUpdate)
 
 		if (needRender)
 		{
-			if (bAutoResizeItem && (Layout == EListLayoutType::SingleRow || LineCount > 0))
+			if (bAutoResizeItem && (LayoutType == EListLayoutType::SingleRow || RowNum > 0))
 			{
 				ii.Obj->SetSize(FVector2D(ii.Obj->GetWidth(), partSize));
 				ii.Obj->SetPivot(ii.Obj->GetPivot(), true);
@@ -1986,19 +2023,19 @@ bool UGList::HandleScroll2(bool forceUpdate)
 			max += ii.Size.X;
 		}
 
-		curY += ii.Size.Y + LineGap;
+		curY += ii.Size.Y + RowSpacing;
 
 		if (curIndex % CurLineItemCount == CurLineItemCount - 1)
 		{
 			curY = 0;
-			curX += ii.Size.X + ColumnGap;
+			curX += ii.Size.X + ColSpacing;
 		}
 		curIndex++;
 	}
 
 	for (int32 i = 0; i < childCount; i++)
 	{
-		FItemInfo& ii = VirtualItems[oldFirstIndex + i];
+		FFairyListItemInfo& ii = VirtualItems[oldFirstIndex + i];
 		if (ii.UpdateFlag != ItemInfoVer && ii.Obj != nullptr)
 		{
 			if (Cast<UGButton>(ii.Obj))
@@ -2017,7 +2054,9 @@ bool UGList::HandleScroll2(bool forceUpdate)
 	}
 
 	if (deltaSize != 0 || firstItemDeltaSize != 0)
+	{
 		ScrollPane->ChangeContentSizeOnScrolling(deltaSize, 0, firstItemDeltaSize, 0);
+	}
 
 	//if (curIndex > 0 && NumChildren() > 0 && Container->GetPosition().X <= 0 && GetChildAt(0)->GetPosition().X > -Container->GetPosition().X)
 	//	return true;
@@ -2047,8 +2086,8 @@ void UGList::HandleScroll3(bool forceUpdate)
 	int32 lastIndex = startIndex + pageSize * 2;
 	bool needRender;
 	FString url = DefaultItem;
-	int32 partWidth = (int32)((ScrollPane->GetViewSize().X - ColumnGap * (CurLineItemCount - 1)) / CurLineItemCount);
-	int32 partHeight = (int32)((ScrollPane->GetViewSize().Y - LineGap * (CurLineItemCount2 - 1)) / CurLineItemCount2);
+	int32 partWidth = (int32)((ScrollPane->GetViewSize().X - ColSpacing * (CurLineItemCount - 1)) / CurLineItemCount);
+	int32 partHeight = (int32)((ScrollPane->GetViewSize().Y - RowSpacing * (CurLineItemCount2 - 1)) / CurLineItemCount2);
 	ItemInfoVer++;
 
 	for (int32 i = startIndex; i < lastIndex; i++)
@@ -2068,7 +2107,7 @@ void UGList::HandleScroll3(bool forceUpdate)
 				continue;
 		}
 
-		FItemInfo& ii = VirtualItems[i];
+		FFairyListItemInfo& ii = VirtualItems[i];
 		ii.UpdateFlag = ItemInfoVer;
 	}
 
@@ -2079,7 +2118,7 @@ void UGList::HandleScroll3(bool forceUpdate)
 		if (i >= RealNumItems)
 			continue;
 
-		FItemInfo& ii = VirtualItems[i];
+		FFairyListItemInfo& ii = VirtualItems[i];
 		if (ii.UpdateFlag != ItemInfoVer)
 			continue;
 
@@ -2088,7 +2127,7 @@ void UGList::HandleScroll3(bool forceUpdate)
 			reuseIndex = reuseIndex < 0 ? 0 : reuseIndex;
 			while (reuseIndex < virtualItemCount)
 			{
-				FItemInfo& ii2 = VirtualItems[reuseIndex];
+				FFairyListItemInfo& ii2 = VirtualItems[reuseIndex];
 				if (ii2.Obj != nullptr && ii2.UpdateFlag != ItemInfoVer)
 				{
 					if (Cast<UGButton>(ii2.Obj))
@@ -2139,15 +2178,15 @@ void UGList::HandleScroll3(bool forceUpdate)
 			if (bAutoResizeItem)
 			{
 				UFairyObject* Object = ii.Obj;
-				if (CurLineItemCount == ColumnCount && CurLineItemCount2 == LineCount)
+				if (CurLineItemCount == ColNum && CurLineItemCount2 == RowNum)
 				{
 					Object->SetSize(FVector2D(partWidth, partHeight));
 				}
-				else if (CurLineItemCount == ColumnCount)
+				else if (CurLineItemCount == ColNum)
 				{
 					Object->SetSize(FVector2D(partWidth, ii.Obj->GetHeight()));
 				}
-				else if (CurLineItemCount2 == LineCount)
+				else if (CurLineItemCount2 == RowNum)
 				{
 					Object->SetSize(FVector2D(ii.Obj->GetWidth(), partHeight));
 				}
@@ -2169,7 +2208,7 @@ void UGList::HandleScroll3(bool forceUpdate)
 		if (i >= RealNumItems)
 			continue;
 
-		FItemInfo& ii = VirtualItems[i];
+		FFairyListItemInfo& ii = VirtualItems[i];
 		if (ii.UpdateFlag == ItemInfoVer)
 			ii.Obj->SetPosition(FVector2D(xx, yy));
 
@@ -2178,7 +2217,7 @@ void UGList::HandleScroll3(bool forceUpdate)
 		if (i % CurLineItemCount == CurLineItemCount - 1)
 		{
 			xx = borderX;
-			yy += lineHeight + LineGap;
+			yy += lineHeight + RowSpacing;
 			lineHeight = 0;
 
 			if (i == startIndex + pageSize - 1)
@@ -2190,13 +2229,13 @@ void UGList::HandleScroll3(bool forceUpdate)
 		}
 		else
 		{
-			xx += ii.Size.X + ColumnGap;
+			xx += ii.Size.X + ColSpacing;
 		}
 	}
 
 	for (int32 i = reuseIndex; i < virtualItemCount; i++)
 	{
-		FItemInfo& ii = VirtualItems[i];
+		FFairyListItemInfo& ii = VirtualItems[i];
 		if (ii.UpdateFlag != ItemInfoVer && ii.Obj != nullptr)
 		{
 			if (Cast<UGButton>(ii.Obj))
@@ -2268,17 +2307,25 @@ void UGList::HandleAlign(float contentWidth, float contentHeight)
 	if (contentHeight < viewHeight)
 	{
 		if (VerticalAlign == EVAlignType::Middle)
+		{
 			newOffset.Y = (int32)((viewHeight - contentHeight) / 2);
+		}
 		else if (VerticalAlign == EVAlignType::Bottom)
+		{
 			newOffset.Y = viewHeight - contentHeight;
+		}
 	}
 
 	if (contentWidth < viewWidth)
 	{
-		if (Align == EHAlignType::Center)
+		if (HorizontalAlign == EHAlignType::Center)
+		{
 			newOffset.X = (int32)((viewWidth - contentWidth) / 2);
-		else if (Align == EHAlignType::Right)
+		}
+		else if (HorizontalAlign == EHAlignType::Right)
+		{
 			newOffset.X = viewWidth - contentWidth;
+		}
 	}
 
 	if (newOffset != AlignOffset)
@@ -2316,7 +2363,7 @@ void UGList::UpdateBounds()
 	float viewWidth = GetViewWidth();
 	float viewHeight = GetViewHeight();
 
-	if (Layout == EListLayoutType::SingleColumn)
+	if (LayoutType == EListLayoutType::SingleCol)
 	{
 		for (i = 0; i < cnt; i++)
 		{
@@ -2329,7 +2376,7 @@ void UGList::UpdateBounds()
 
 			if (curY != 0)
 			{
-				curY += LineGap;
+				curY += RowSpacing;
 			}
 			child->SetPosition(FVector2D(curPos.X, curY));
 			if (bAutoResizeItem)
@@ -2367,7 +2414,7 @@ void UGList::UpdateBounds()
 		}
 		cw = FMath::CeilToFloat(maxWidth);
 	}
-	else if (Layout == EListLayoutType::SingleRow)
+	else if (LayoutType == EListLayoutType::SingleRow)
 	{
 		for (i = 0; i < cnt; i++)
 		{
@@ -2381,7 +2428,7 @@ void UGList::UpdateBounds()
 			curPos = child->GetPosition();
 			if (curX != 0)
 			{
-				curX += ColumnGap;
+				curX += ColSpacing;
 			}
 			child->SetPosition(FVector2D(curX, curPos.Y));
 			if (bAutoResizeItem)
@@ -2420,9 +2467,9 @@ void UGList::UpdateBounds()
 		}
 		ch = FMath::CeilToFloat(maxHeight);
 	}
-	else if (Layout == EListLayoutType::FlowHorizontal)
+	else if (LayoutType == EListLayoutType::HorizontalFlow)
 	{
-		if (bAutoResizeItem && ColumnCount > 0)
+		if (bAutoResizeItem && ColNum > 0)
 		{
 			float lineSize = 0;
 			int32 lineStart = 0;
@@ -2438,9 +2485,9 @@ void UGList::UpdateBounds()
 
 				lineSize += child->GetSize().X;
 				j++;
-				if (j == ColumnCount || i == cnt - 1)
+				if (j == ColNum || i == cnt - 1)
 				{
-					ratio = (viewWidth - lineSize - (j - 1) * ColumnGap) / lineSize;
+					ratio = (viewWidth - lineSize - (j - 1) * ColSpacing) / lineSize;
 					curX = 0;
 					for (j = lineStart; j <= i; j++)
 					{
@@ -2456,7 +2503,7 @@ void UGList::UpdateBounds()
 						{
 							child->SetSize(FVector2D(child->GetSize().X + round(child->GetSize().X * ratio), child->GetHeight()));
 							child->SetPivot(child->GetPivot(), true);
-							curX += FMath::CeilToFloat(child->GetWidth()) + ColumnGap;
+							curX += FMath::CeilToFloat(child->GetWidth()) + ColSpacing;
 						}
 						else
 						{
@@ -2468,7 +2515,7 @@ void UGList::UpdateBounds()
 							maxHeight = child->GetHeight();
 						}
 					}
-					curY += FMath::CeilToFloat(maxHeight) + LineGap;
+					curY += FMath::CeilToFloat(maxHeight) + RowSpacing;
 					maxHeight = 0;
 					j = 0;
 					lineStart = i + 1;
@@ -2490,13 +2537,13 @@ void UGList::UpdateBounds()
 
 				if (curX != 0)
 				{
-					curX += ColumnGap;
+					curX += ColSpacing;
 				}
 
-				if ((ColumnCount != 0 && j >= ColumnCount) || (ColumnCount == 0 && curX + child->GetWidth() > viewWidth && maxHeight != 0))
+				if ((ColNum != 0 && j >= ColNum) || (ColNum == 0 && curX + child->GetWidth() > viewWidth && maxHeight != 0))
 				{
 					curX = 0;
-					curY += FMath::CeilToFloat(maxHeight) + LineGap;
+					curY += FMath::CeilToFloat(maxHeight) + RowSpacing;
 					maxHeight = 0;
 					j = 0;
 				}
@@ -2517,9 +2564,9 @@ void UGList::UpdateBounds()
 			cw = FMath::CeilToFloat(maxWidth);
 		}
 	}
-	else if (Layout == EListLayoutType::FlowVertical)
+	else if (LayoutType == EListLayoutType::VerticalFlow)
 	{
-		if (bAutoResizeItem && LineCount > 0)
+		if (bAutoResizeItem && RowNum > 0)
 		{
 			float lineSize = 0;
 			int32 lineStart = 0;
@@ -2535,9 +2582,9 @@ void UGList::UpdateBounds()
 
 				lineSize += child->GetSize().Y;
 				j++;
-				if (j == LineCount || i == cnt - 1)
+				if (j == RowNum || i == cnt - 1)
 				{
-					ratio = (viewHeight - lineSize - (j - 1) * LineGap) / lineSize;
+					ratio = (viewHeight - lineSize - (j - 1) * RowSpacing) / lineSize;
 					curY = 0;
 					for (j = lineStart; j <= i; j++)
 					{
@@ -2553,7 +2600,7 @@ void UGList::UpdateBounds()
 						{
 							child->SetSize(FVector2D(child->GetWidth(), child->GetSize().Y + FMath::RoundToFloat(child->GetSize().Y * ratio)));
 							child->SetPivot(child->GetPivot(), true);
-							curY += FMath::CeilToFloat(child->GetHeight()) + LineGap;
+							curY += FMath::CeilToFloat(child->GetHeight()) + RowSpacing;
 						}
 						else
 						{
@@ -2565,7 +2612,7 @@ void UGList::UpdateBounds()
 							maxWidth = child->GetWidth();
 						}
 					}
-					curX += FMath::CeilToFloat(maxWidth) + ColumnGap;
+					curX += FMath::CeilToFloat(maxWidth) + ColSpacing;
 					maxWidth = 0;
 					j = 0;
 					lineStart = i + 1;
@@ -2587,13 +2634,13 @@ void UGList::UpdateBounds()
 
 				if (curY != 0)
 				{
-					curY += LineGap;
+					curY += RowSpacing;
 				}
 
-				if ((LineCount != 0 && j >= LineCount) || (LineCount == 0 && curY + child->GetHeight() > viewHeight && maxWidth != 0))
+				if ((RowNum != 0 && j >= RowNum) || (RowNum == 0 && curY + child->GetHeight() > viewHeight && maxWidth != 0))
 				{
 					curY = 0;
-					curX += FMath::CeilToFloat(maxWidth) + ColumnGap;
+					curX += FMath::CeilToFloat(maxWidth) + ColSpacing;
 					maxWidth = 0;
 					j = 0;
 				}
@@ -2618,12 +2665,12 @@ void UGList::UpdateBounds()
 		int32 page = 0;
 		int32 k = 0;
 		float eachHeight = 0;
-		if (bAutoResizeItem && LineCount > 0)
+		if (bAutoResizeItem && RowNum > 0)
 		{
-			eachHeight = FMath::FloorToFloat((viewHeight - (LineCount - 1) * LineGap) / LineCount);
+			eachHeight = FMath::FloorToFloat((viewHeight - (RowNum - 1) * RowSpacing) / RowNum);
 		}
 
-		if (bAutoResizeItem && ColumnCount > 0)
+		if (bAutoResizeItem && ColNum > 0)
 		{
 			float lineSize = 0;
 			int32 lineStart = 0;
@@ -2637,7 +2684,7 @@ void UGList::UpdateBounds()
 					continue;
 				}
 
-				if (j == 0 && ((LineCount != 0 && k >= LineCount) || (LineCount == 0 && curY + (LineCount > 0 ? eachHeight : child->GetHeight()) > viewHeight)))
+				if (j == 0 && ((RowNum != 0 && k >= RowNum) || (RowNum == 0 && curY + (RowNum > 0 ? eachHeight : child->GetHeight()) > viewHeight)))
 				{
 					page++;
 					curY = 0;
@@ -2646,9 +2693,9 @@ void UGList::UpdateBounds()
 
 				lineSize += child->GetSize().X;
 				j++;
-				if (j == ColumnCount || i == cnt - 1)
+				if (j == ColNum || i == cnt - 1)
 				{
-					ratio = (viewWidth - lineSize - (j - 1) * ColumnGap) / lineSize;
+					ratio = (viewWidth - lineSize - (j - 1) * ColSpacing) / lineSize;
 					curX = 0;
 					for (j = lineStart; j <= i; j++)
 					{
@@ -2663,13 +2710,13 @@ void UGList::UpdateBounds()
 						if (j < i)
 						{
 							child->SetSize(FVector2D(child->GetSize().X + FMath::RoundToFloat(child->GetSize().X * ratio),
-								LineCount > 0 ? eachHeight : child->GetHeight()));
+								RowNum > 0 ? eachHeight : child->GetHeight()));
 							child->SetPivot(child->GetPivot(), true);
-							curX += FMath::CeilToFloat(child->GetWidth()) + ColumnGap;
+							curX += FMath::CeilToFloat(child->GetWidth()) + ColSpacing;
 						}
 						else
 						{
-							child->SetSize(FVector2D(viewWidth - curX, LineCount > 0 ? eachHeight : child->GetHeight()));
+							child->SetSize(FVector2D(viewWidth - curX, RowNum > 0 ? eachHeight : child->GetHeight()));
 							child->SetPivot(child->GetPivot(), true);
 						}
 						if (child->GetHeight() > maxHeight)
@@ -2677,7 +2724,7 @@ void UGList::UpdateBounds()
 							maxHeight = child->GetHeight();
 						}
 					}
-					curY += FMath::CeilToFloat(maxHeight) + LineGap;
+					curY += FMath::CeilToFloat(maxHeight) + RowSpacing;
 					maxHeight = 0;
 					j = 0;
 					lineStart = i + 1;
@@ -2699,24 +2746,24 @@ void UGList::UpdateBounds()
 
 				if (curX != 0)
 				{
-					curX += ColumnGap;
+					curX += ColSpacing;
 				}
 
-				if (bAutoResizeItem && LineCount > 0)
+				if (bAutoResizeItem && RowNum > 0)
 				{
 					child->SetSize(FVector2D(child->GetWidth(), eachHeight));
 					child->SetPivot(child->GetPivot(), true);
 				}
 
-				if ((ColumnCount != 0 && j >= ColumnCount) || (ColumnCount == 0 && curX + child->GetWidth() > viewWidth && maxHeight != 0))
+				if ((ColNum != 0 && j >= ColNum) || (ColNum == 0 && curX + child->GetWidth() > viewWidth && maxHeight != 0))
 				{
 					curX = 0;
-					curY += maxHeight + LineGap;
+					curY += maxHeight + RowSpacing;
 					maxHeight = 0;
 					j = 0;
 					k++;
 
-					if ((LineCount != 0 && k >= LineCount) || (LineCount == 0 && curY + child->GetHeight() > viewHeight && maxWidth != 0)) //new page
+					if ((RowNum != 0 && k >= RowNum) || (RowNum == 0 && curY + child->GetHeight() > viewHeight && maxWidth != 0)) //new page
 					{
 						page++;
 						curY = 0;
@@ -2744,20 +2791,44 @@ void UGList::UpdateBounds()
 	SetBounds(0, 0, cw, ch);
 }
 
+void UGList::SetItemRenderer(const FDynListItemRenderer& InItemRenderer)
+{
+	if (InItemRenderer.IsBound())
+	{
+		ItemRenderer = FListItemRenderer::CreateUFunction(const_cast<UObject*>(InItemRenderer.GetUObject()), InItemRenderer.GetFunctionName());
+	}
+	else
+	{
+		ItemRenderer.Unbind();
+	}
+}
+
+void UGList::SetItemProvider(const FDynListItemProvider& InItemProvider)
+{
+	if (InItemProvider.IsBound())
+	{
+		ItemProvider = FListItemProvider::CreateUFunction(const_cast<UObject*>(InItemProvider.GetUObject()), InItemProvider.GetFunctionName());
+	}
+	else
+	{
+		ItemProvider.Unbind();
+	}
+}
+
 void UGList::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
 	UFairyComponent::SetupBeforeAdd(Buffer, BeginPos);
 
 	Buffer->Seek(BeginPos, 5);
 
-	Layout = (EListLayoutType)Buffer->ReadByte();
+	LayoutType = (EListLayoutType)Buffer->ReadByte();
 	SelectionMode = (EListSelectionMode)Buffer->ReadByte();
-	Align = (EHAlignType)Buffer->ReadByte();
+	HorizontalAlign = (EHAlignType)Buffer->ReadByte();
 	VerticalAlign = (EVAlignType)Buffer->ReadByte();
-	LineGap = Buffer->ReadShort();
-	ColumnGap = Buffer->ReadShort();
-	LineCount = Buffer->ReadShort();
-	ColumnCount = Buffer->ReadShort();
+	RowSpacing = Buffer->ReadShort();
+	ColSpacing = Buffer->ReadShort();
+	RowNum = Buffer->ReadShort();
+	ColNum = Buffer->ReadShort();
 	bAutoResizeItem = Buffer->ReadBool();
 	ChildrenRenderOrder = (EChildrenRenderOrder)Buffer->ReadByte();
 	ApexIndex = Buffer->ReadShort();
@@ -2802,7 +2873,7 @@ void UGList::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 
 void UGList::ReadItems(FByteBuffer* Buffer)
 {
-	const FString* str;
+	const FString* str = nullptr;
 
 	int32 itemCount = Buffer->ReadShort();
 	for (int32 i = 0; i < itemCount; i++)

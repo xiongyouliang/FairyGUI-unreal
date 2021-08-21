@@ -5,7 +5,7 @@
 #include "FieldTypes.h"
 #include "Tween/GTween.h"
 #include "Event/EventContext.h"
-#include "ScrollPane.generated.h"
+#include "ScrollPanel.generated.h"
 
 class UFairyObject;
 class UFairyComponent;
@@ -16,12 +16,12 @@ class FGTweener;
 class SContainer;
 
 UCLASS(BlueprintType)
-class FAIRYGUI_API UScrollPane : public UObject
+class FAIRYGUI_API UScrollPanel : public UObject
 {
     GENERATED_BODY()
 public:
-    UScrollPane();
-    ~UScrollPane();
+    UScrollPanel();
+    ~UScrollPanel();
 
     void Setup(FByteBuffer* Buffer);
 
@@ -119,7 +119,7 @@ public:
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     void CancelDragging();
 
-    static UScrollPane* GetDraggingPane() { return DraggingPane.Get(); }
+    static UScrollPanel* GetDraggingPane() { return DraggingPane.Get(); }
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
     uint8 bBouncebackEffect : 1;
@@ -256,7 +256,7 @@ private:
     FTimerHandle TickTimerHandle;
 
     static int32 GestureFlag;
-    static TWeakObjectPtr<UScrollPane> DraggingPane;
+    static TWeakObjectPtr<UScrollPanel> DraggingPane;
 
     friend class UFairyComponent;
     friend class UGList;

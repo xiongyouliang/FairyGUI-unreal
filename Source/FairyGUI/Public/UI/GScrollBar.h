@@ -14,7 +14,7 @@ public:
     UGScrollBar();
     virtual ~UGScrollBar();
 
-    void SetScrollPane(UScrollPane* Target, bool bVertical);
+    void SetScrollPane(UScrollPanel* Target, bool bVertical);
     void SetDisplayPerc(float Value);
     void SetScrollPerc(float Value);
     float GetMinSize();
@@ -36,7 +36,7 @@ private:
     UFairyObject* ArrowButton1;
     UFairyObject* ArrowButton2;
     UFairyObject* BarObject;
-    UScrollPane* Target;
+    UScrollPanel* Target;
 
     bool bVertical;
     float ScrollPerc;

@@ -71,7 +71,8 @@ TSharedPtr<SContainer> UGList::GetMaskContainerWidget()
 
 void UGList::SetupScroll(FByteBuffer* Buffer)
 {
-	Super::SetupScroll(Buffer);
+	ScrollPanel = NewObject<UScrollPanel>(this);
+	ScrollPanel->Setup(Buffer);
 }
 
 void UGList::SetLayout(EListLayoutType InLayout)
@@ -753,9 +754,9 @@ void UGList::OnClickItemHandler(UEventContext* Context)
 		SetSelectionOnEvent(Obj, Context);
 	}
 
-	if (ScrollPane != nullptr && bScrollItemToViewOnClick)
+	if (ScrollPanel != nullptr && bScrollItemToViewOnClick)
 	{
-		ScrollPane->ScrollToView(Obj, true);
+		ScrollPanel->ScrollToView(Obj, true);
 	}
 
 	DispatchItemEvent(Obj, Context);
@@ -1019,9 +1020,9 @@ void UGList::ScrollToView(int32 Index, bool bAnimation, bool bSetFirst)
 			rect.Max = rect.Min + ii.Size;
 		}
 
-		if (ScrollPane != nullptr)
+		if (ScrollPanel != nullptr)
 		{
-			ScrollPane->ScrollToView(rect, bAnimation, bSetFirst);
+			ScrollPanel->ScrollToView(rect, bAnimation, bSetFirst);
 		}
 		else if (Parent && Parent->GetScrollPane() != nullptr)
 		{
@@ -1033,9 +1034,9 @@ void UGList::ScrollToView(int32 Index, bool bAnimation, bool bSetFirst)
 	else
 	{
 		UFairyObject* obj = GetChildAt(Index);
-		if (ScrollPane != nullptr)
+		if (ScrollPanel != nullptr)
 		{
-			ScrollPane->ScrollToView(obj, bAnimation, bSetFirst);
+			ScrollPanel->ScrollToView(obj, bAnimation, bSetFirst);
 		}
 		else if (Parent && Parent->GetScrollPane() != nullptr)
 		{
@@ -1126,14 +1127,14 @@ void UGList::SetVirtual(bool bInLoop)
 {
 	if (!bVirtual)
 	{
-		verifyf(ScrollPane != nullptr, TEXT("FairyGUI: Virtual list must be scrollable!"));
+		verifyf(ScrollPanel != nullptr, TEXT("FairyGUI: Virtual list must be scrollable!"));
 
 		if (bInLoop)
 		{
 			verifyf(LayoutType != EListLayoutType::HorizontalFlow && LayoutType != EListLayoutType::VerticalFlow,
 				TEXT("Loop list is not supported for HorizontalFlow or VerticalFlow layout!"));
 
-			ScrollPane->bBouncebackEffect = false;
+			ScrollPanel->bBouncebackEffect = false;
 		}
 
 		bVirtual = true;
@@ -1152,18 +1153,18 @@ void UGList::SetVirtual(bool bInLoop)
 
 		if (LayoutType == EListLayoutType::SingleCol || LayoutType == EListLayoutType::HorizontalFlow)
 		{
-			ScrollPane->ScrollStep = ItemSize.Y;
+			ScrollPanel->ScrollStep = ItemSize.Y;
 			if (bLoop)
 			{
-				ScrollPane->LoopMode = 2;
+				ScrollPanel->LoopMode = 2;
 			}
 		}
 		else
 		{
-			ScrollPane->ScrollStep = ItemSize.X;
+			ScrollPanel->ScrollStep = ItemSize.X;
 			if (bLoop)
 			{
-				ScrollPane->LoopMode = 1;
+				ScrollPanel->LoopMode = 1;
 			}
 		}
 
@@ -1333,7 +1334,7 @@ void UGList::DoRefreshVirtualList()
 			}
 			else
 			{
-				CurLineItemCount = FMath::FloorToInt((ScrollPane->GetViewSize().X + ColSpacing) / (ItemSize.X + ColSpacing));
+				CurLineItemCount = FMath::FloorToInt((ScrollPanel->GetViewSize().X + ColSpacing) / (ItemSize.X + ColSpacing));
 				if (CurLineItemCount <= 0)
 				{
 					CurLineItemCount = 1;
@@ -1348,7 +1349,7 @@ void UGList::DoRefreshVirtualList()
 			}
 			else
 			{
-				CurLineItemCount = FMath::FloorToInt((ScrollPane->GetViewSize().Y + RowSpacing) / (ItemSize.Y + RowSpacing));
+				CurLineItemCount = FMath::FloorToInt((ScrollPanel->GetViewSize().Y + RowSpacing) / (ItemSize.Y + RowSpacing));
 				if (CurLineItemCount <= 0)
 				{
 					CurLineItemCount = 1;
@@ -1363,7 +1364,7 @@ void UGList::DoRefreshVirtualList()
 			}
 			else
 			{
-				CurLineItemCount = FMath::FloorToInt((ScrollPane->GetViewSize().X + ColSpacing) / (ItemSize.X + ColSpacing));
+				CurLineItemCount = FMath::FloorToInt((ScrollPanel->GetViewSize().X + ColSpacing) / (ItemSize.X + ColSpacing));
 				if (CurLineItemCount <= 0)
 				{
 					CurLineItemCount = 1;
@@ -1376,7 +1377,7 @@ void UGList::DoRefreshVirtualList()
 			}
 			else
 			{
-				CurLineItemCount2 = FMath::FloorToInt((ScrollPane->GetViewSize().Y + RowSpacing) / (ItemSize.Y + RowSpacing));
+				CurLineItemCount2 = FMath::FloorToInt((ScrollPanel->GetViewSize().Y + RowSpacing) / (ItemSize.Y + RowSpacing));
 				if (CurLineItemCount2 <= 0)
 				{
 					CurLineItemCount2 = 1;
@@ -1402,7 +1403,7 @@ void UGList::DoRefreshVirtualList()
 
 			if (bAutoResizeItem)
 			{
-				cw = ScrollPane->GetViewSize().X;
+				cw = ScrollPanel->GetViewSize().X;
 			}
 			else
 			{
@@ -1429,7 +1430,7 @@ void UGList::DoRefreshVirtualList()
 
 			if (bAutoResizeItem)
 			{
-				ch = ScrollPane->GetViewSize().Y;
+				ch = ScrollPanel->GetViewSize().Y;
 			}
 			else
 			{
@@ -1452,7 +1453,7 @@ void UGList::DoRefreshVirtualList()
 	}
 
 	HandleAlign(cw, ch);
-	ScrollPane->SetContentSize(FVector2D(cw, ch));
+	ScrollPanel->SetContentSize(FVector2D(cw, ch));
 
 	bEventLocked = false;
 
@@ -1667,9 +1668,9 @@ void UGList::HandleScroll(bool forceUpdate)
 
 bool UGList::HandleScroll1(bool forceUpdate)
 {
-	float pos = ScrollPane->GetScrollingPosY();
-	float max = pos + ScrollPane->GetViewSize().Y;
-	bool end = max == ScrollPane->GetContentSize().Y;
+	float pos = ScrollPanel->GetScrollingPosY();
+	float max = pos + ScrollPanel->GetViewSize().Y;
+	bool end = max == ScrollPanel->GetContentSize().Y;
 
 	int32 newFirstIndex = GetIndexOnPos1(pos, forceUpdate);
 	if (newFirstIndex == FirstIndex && !forceUpdate)
@@ -1687,7 +1688,7 @@ bool UGList::HandleScroll1(bool forceUpdate)
 	float deltaSize = 0;
 	float firstItemDeltaSize = 0;
 	FString url = DefaultItem;
-	int32 partSize = (int32)((ScrollPane->GetViewSize().X - ColSpacing * (CurLineItemCount - 1)) / CurLineItemCount);
+	int32 partSize = (int32)((ScrollPanel->GetViewSize().X - ColSpacing * (CurLineItemCount - 1)) / CurLineItemCount);
 
 	ItemInfoVer++;
 	while (curIndex < RealNumItems && (end || curY < max))
@@ -1854,7 +1855,7 @@ bool UGList::HandleScroll1(bool forceUpdate)
 
 	if (deltaSize != 0 || firstItemDeltaSize != 0)
 	{
-		ScrollPane->ChangeContentSizeOnScrolling(0, deltaSize, 0, firstItemDeltaSize);
+		ScrollPanel->ChangeContentSizeOnScrolling(0, deltaSize, 0, firstItemDeltaSize);
 	}
 
 	//if (curIndex > 0 && NumChildren() > 0 && Container->GetPosition().Y <= 0 && GetChildAt(0)->GetPosition().Y > -Container->GetPosition().Y)
@@ -1870,9 +1871,9 @@ bool UGList::HandleScroll1(bool forceUpdate)
 
 bool UGList::HandleScroll2(bool forceUpdate)
 {
-	float pos = ScrollPane->GetScrollingPosX();
-	float max = pos + ScrollPane->GetViewSize().X;
-	bool end = pos == ScrollPane->GetContentSize().X;
+	float pos = ScrollPanel->GetScrollingPosX();
+	float max = pos + ScrollPanel->GetViewSize().X;
+	bool end = pos == ScrollPanel->GetContentSize().X;
 
 	int32 newFirstIndex = GetIndexOnPos2(pos, forceUpdate);
 	if (newFirstIndex == FirstIndex && !forceUpdate)
@@ -1892,7 +1893,7 @@ bool UGList::HandleScroll2(bool forceUpdate)
 	float deltaSize = 0;
 	float firstItemDeltaSize = 0;
 	FString url = DefaultItem;
-	int32 partSize = (int32)((ScrollPane->GetViewSize().Y - RowSpacing * (CurLineItemCount - 1)) / CurLineItemCount);
+	int32 partSize = (int32)((ScrollPanel->GetViewSize().Y - RowSpacing * (CurLineItemCount - 1)) / CurLineItemCount);
 
 	ItemInfoVer++;
 	while (curIndex < RealNumItems && (end || curX < max))
@@ -2055,7 +2056,7 @@ bool UGList::HandleScroll2(bool forceUpdate)
 
 	if (deltaSize != 0 || firstItemDeltaSize != 0)
 	{
-		ScrollPane->ChangeContentSizeOnScrolling(deltaSize, 0, firstItemDeltaSize, 0);
+		ScrollPanel->ChangeContentSizeOnScrolling(deltaSize, 0, firstItemDeltaSize, 0);
 	}
 
 	//if (curIndex > 0 && NumChildren() > 0 && Container->GetPosition().X <= 0 && GetChildAt(0)->GetPosition().X > -Container->GetPosition().X)
@@ -2067,7 +2068,7 @@ bool UGList::HandleScroll2(bool forceUpdate)
 
 void UGList::HandleScroll3(bool forceUpdate)
 {
-	float pos = ScrollPane->GetScrollingPosX();
+	float pos = ScrollPanel->GetScrollingPosX();
 
 	int32 newFirstIndex = GetIndexOnPos3(pos, forceUpdate);
 	if (newFirstIndex == FirstIndex && !forceUpdate)
@@ -2086,8 +2087,8 @@ void UGList::HandleScroll3(bool forceUpdate)
 	int32 lastIndex = startIndex + pageSize * 2;
 	bool needRender;
 	FString url = DefaultItem;
-	int32 partWidth = (int32)((ScrollPane->GetViewSize().X - ColSpacing * (CurLineItemCount - 1)) / CurLineItemCount);
-	int32 partHeight = (int32)((ScrollPane->GetViewSize().Y - RowSpacing * (CurLineItemCount2 - 1)) / CurLineItemCount2);
+	int32 partWidth = (int32)((ScrollPanel->GetViewSize().X - ColSpacing * (CurLineItemCount - 1)) / CurLineItemCount);
+	int32 partHeight = (int32)((ScrollPanel->GetViewSize().Y - RowSpacing * (CurLineItemCount2 - 1)) / CurLineItemCount2);
 	ItemInfoVer++;
 
 	for (int32 i = startIndex; i < lastIndex; i++)
@@ -2252,7 +2253,7 @@ void UGList::HandleArchOrder1()
 {
 	if (ChildrenRenderOrder == EChildrenRenderOrder::Arch)
 	{
-		float mid = ScrollPane->GetPosY() + GetViewHeight() / 2;
+		float mid = ScrollPanel->GetPosY() + GetViewHeight() / 2;
 		float minDist = FLT_MAX, dist;
 		int32 apexIndex = 0;
 		int32 cnt = NumChildren();
@@ -2277,7 +2278,7 @@ void UGList::HandleArchOrder2()
 {
 	if (ChildrenRenderOrder == EChildrenRenderOrder::Arch)
 	{
-		float mid = ScrollPane->GetPosX() + GetViewWidth() / 2;
+		float mid = ScrollPanel->GetPosX() + GetViewWidth() / 2;
 		float minDist = FLT_MAX, dist;
 		int32 apexIndex = 0;
 		int32 cnt = NumChildren();
@@ -2331,9 +2332,9 @@ void UGList::HandleAlign(float contentWidth, float contentHeight)
 	if (newOffset != AlignOffset)
 	{
 		AlignOffset = newOffset;
-		if (ScrollPane != nullptr)
+		if (ScrollPanel != nullptr)
 		{
-			ScrollPane->AdjustMaskContainer();
+			ScrollPanel->AdjustMaskContainer();
 		}
 		else
 		{
@@ -2393,9 +2394,9 @@ void UGList::UpdateBounds()
 
 		ch = curY;
 
-		if (ch <= viewHeight && bAutoResizeItem && ScrollPane != nullptr && ScrollPane->bDisplayInDemand && ScrollPane->VtScrollBar != nullptr)
+		if (ch <= viewHeight && bAutoResizeItem && ScrollPanel != nullptr && ScrollPanel->bDisplayInDemand && ScrollPanel->VtScrollBar != nullptr)
 		{
-			viewWidth += ScrollPane->VtScrollBar->GetWidth();
+			viewWidth += ScrollPanel->VtScrollBar->GetWidth();
 			for (i = 0; i < cnt; i++)
 			{
 				child = GetChildAt(i);
@@ -2445,9 +2446,9 @@ void UGList::UpdateBounds()
 			}
 		}
 		cw = curX;
-		if (cw <= viewWidth && bAutoResizeItem && ScrollPane != nullptr && ScrollPane->bDisplayInDemand && ScrollPane->HzScrollBar != nullptr)
+		if (cw <= viewWidth && bAutoResizeItem && ScrollPanel != nullptr && ScrollPanel->bDisplayInDemand && ScrollPanel->HzScrollBar != nullptr)
 		{
-			viewHeight += ScrollPane->HzScrollBar->GetHeight();
+			viewHeight += ScrollPanel->HzScrollBar->GetHeight();
 			for (i = 0; i < cnt; i++)
 			{
 				child = GetChildAt(i);

@@ -10,7 +10,7 @@ UGScrollBar::~UGScrollBar()
 }
 
 
-void UGScrollBar::SetScrollPane(UScrollPane* InTarget, bool bInVertical)
+void UGScrollBar::SetScrollPane(UScrollPanel* InTarget, bool bInVertical)
 {
     Target = InTarget;
     bVertical = bInVertical;

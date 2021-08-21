@@ -468,9 +468,9 @@ bool UFairyComponent::IsAncestorOf(const UFairyObject* Obj) const
 
 bool UFairyComponent::IsChildInView(UFairyObject* Child) const
 {
-	if (ScrollPane != nullptr)
+	if (ScrollPanel != nullptr)
 	{
-		return ScrollPane->IsChildInView(Child);
+		return ScrollPanel->IsChildInView(Child);
 	}
 	else if (GetDisplayObject()->GetClipping() != EWidgetClipping::Inherit)
 	{
@@ -555,9 +555,9 @@ void UFairyComponent::ApplyController(UGController* Controller)
 	}
 	Controller->RunActions();
 
-	if (ScrollPane != nullptr)
+	if (ScrollPanel != nullptr)
 	{
-		ScrollPane->ApplyController(Controller);
+		ScrollPanel->ApplyController(Controller);
 	}
 
 	ApplyingController = nullptr;
@@ -663,9 +663,9 @@ void UFairyComponent::SetApexIndex(int32 InApexIndex)
 
 float UFairyComponent::GetViewWidth() const
 {
-	if (ScrollPane != nullptr)
+	if (ScrollPanel != nullptr)
 	{
-		return ScrollPane->GetViewSize().X;
+		return ScrollPanel->GetViewSize().X;
 	}
 	else
 	{
@@ -675,9 +675,9 @@ float UFairyComponent::GetViewWidth() const
 
 void UFairyComponent::SetViewWidth(float InViewWidth)
 {
-	if (ScrollPane != nullptr)
+	if (ScrollPanel != nullptr)
 	{
-		ScrollPane->SetViewWidth(InViewWidth);
+		ScrollPanel->SetViewWidth(InViewWidth);
 	}
 	else
 	{
@@ -687,9 +687,9 @@ void UFairyComponent::SetViewWidth(float InViewWidth)
 
 float UFairyComponent::GetViewHeight() const
 {
-	if (ScrollPane != nullptr)
+	if (ScrollPanel != nullptr)
 	{
-		return ScrollPane->GetViewSize().Y;
+		return ScrollPanel->GetViewSize().Y;
 	}
 	else
 	{
@@ -699,9 +699,9 @@ float UFairyComponent::GetViewHeight() const
 
 void UFairyComponent::SetViewHeight(float InViewHeight)
 {
-	if (ScrollPane != nullptr)
+	if (ScrollPanel != nullptr)
 	{
-		ScrollPane->SetViewHeight(InViewHeight);
+		ScrollPanel->SetViewHeight(InViewHeight);
 	}
 	else
 	{
@@ -778,9 +778,9 @@ void UFairyComponent::UpdateBounds()
 void UFairyComponent::SetBounds(float ax, float ay, float aw, float ah)
 {
 	bBoundsChanged = false;
-	if (ScrollPane)
+	if (ScrollPanel)
 	{
-		ScrollPane->SetContentSize(FVector2D(FMath::CeilToFloat(ax + aw), FMath::CeilToFloat(ay + ah)));
+		ScrollPanel->SetContentSize(FVector2D(FMath::CeilToFloat(ax + aw), FMath::CeilToFloat(ay + ah)));
 	}
 }
 
@@ -1049,8 +1049,8 @@ void UFairyComponent::SetupOverflow(EOverflowType InOverflow)
 
 void UFairyComponent::SetupScroll(FByteBuffer* Buffer)
 {
-	ScrollPane = NewObject<UScrollPane>(this);
-	ScrollPane->Setup(Buffer);
+	ScrollPanel = NewObject<UScrollPanel>(this);
+	ScrollPanel->Setup(Buffer);
 }
 
 void UFairyComponent::HandleGrayedChanged()
@@ -1342,9 +1342,9 @@ void UFairyComponent::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 	Buffer->Seek(BeginPos, 4);
 
 	int32 pageController = Buffer->ReadShort();
-	if (pageController != -1 && ScrollPane != nullptr && ScrollPane->bPageMode)
+	if (pageController != -1 && ScrollPanel != nullptr && ScrollPanel->bPageMode)
 	{
-		ScrollPane->PageController = Parent->GetControllerAt(pageController);
+		ScrollPanel->PageController = Parent->GetControllerAt(pageController);
 	}
 
 	int32 cnt = Buffer->ReadShort();

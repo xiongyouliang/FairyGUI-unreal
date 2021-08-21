@@ -1,4 +1,4 @@
-#include "UI/ScrollPane.h"
+#include "UI/ScrollPanel.h"
 #include "Engine/World.h"
 #include "Engine/GameViewportClient.h"
 #include "TimerManager.h"
@@ -11,8 +11,8 @@
 #include "Widgets/SContainer.h"
 #include "FairyApplication.h"
 
-TWeakObjectPtr<UScrollPane> UScrollPane::DraggingPane;
-int32 UScrollPane::GestureFlag = 0;
+TWeakObjectPtr<UScrollPanel> UScrollPanel::DraggingPane;
+int32 UScrollPanel::GestureFlag = 0;
 
 static const float TWEEN_TIME_GO = 0.5f;      //tween time for SetPos(ani)
 static const float TWEEN_TIME_DEFAULT = 0.3f; //min tween time for inertial scroll
@@ -24,15 +24,15 @@ static inline float sp_EaseFunc(float t, float d)
 	return t * t * t + 1; //cubicOut
 }
 
-UScrollPane::UScrollPane()
+UScrollPanel::UScrollPanel()
 {
 }
 
-UScrollPane::~UScrollPane()
+UScrollPanel::~UScrollPanel()
 {
 }
 
-void UScrollPane::Setup(FByteBuffer* Buffer)
+void UScrollPanel::Setup(FByteBuffer* Buffer)
 {
 	Owner = Cast<UFairyComponent>(GetOuter());
 	RootContainer = Owner->GetRootContainerWidget();
@@ -48,10 +48,10 @@ void UScrollPane::Setup(FByteBuffer* Buffer)
 	MaskContainer = Owner->GetMaskContainerWidget();
 	MaskContainer->SetOpaque(false);
 
-	Owner->On(FFairyEventNames::MouseWheel).AddUObject(this, &UScrollPane::OnMouseWheel);
-	Owner->On(FFairyEventNames::TouchBegin).AddUObject(this, &UScrollPane::OnTouchBegin);
-	Owner->On(FFairyEventNames::TouchMove).AddUObject(this, &UScrollPane::OnTouchMove);
-	Owner->On(FFairyEventNames::TouchEnd).AddUObject(this, &UScrollPane::OnTouchEnd);
+	Owner->On(FFairyEventNames::MouseWheel).AddUObject(this, &UScrollPanel::OnMouseWheel);
+	Owner->On(FFairyEventNames::TouchBegin).AddUObject(this, &UScrollPanel::OnTouchBegin);
+	Owner->On(FFairyEventNames::TouchMove).AddUObject(this, &UScrollPanel::OnTouchMove);
+	Owner->On(FFairyEventNames::TouchEnd).AddUObject(this, &UScrollPanel::OnTouchEnd);
 	Owner->On(FFairyEventNames::RemovedFromStage).AddLambda([this](UEventContext*) {
 		if (DraggingPane.Get() == this)
 		{
@@ -162,8 +162,8 @@ void UScrollPane::Setup(FByteBuffer* Buffer)
 				HzScrollBar->SetVisible(false);
 			}
 
-			Owner->On(FFairyEventNames::RollOver).AddUObject(this, &UScrollPane::OnRollOver);
-			Owner->On(FFairyEventNames::RollOut).AddUObject(this, &UScrollPane::OnRollOut);
+			Owner->On(FFairyEventNames::RollOver).AddUObject(this, &UScrollPanel::OnRollOver);
+			Owner->On(FFairyEventNames::RollOut).AddUObject(this, &UScrollPanel::OnRollOut);
 		}
 	}
 	else
@@ -176,7 +176,7 @@ void UScrollPane::Setup(FByteBuffer* Buffer)
 		Header = Cast<UFairyComponent>(UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), headerRes));
 		if (Header == nullptr)
 		{
-			UE_LOG(LogFairyGUI, Warning, TEXT("cannot create UScrollPane header from %s"), *headerRes);
+			UE_LOG(LogFairyGUI, Warning, TEXT("cannot create UScrollPanel header from %s"), *headerRes);
 		}
 		else
 		{
@@ -190,7 +190,7 @@ void UScrollPane::Setup(FByteBuffer* Buffer)
 		Footer = Cast<UFairyComponent>(UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), footerRes));
 		if (Footer == nullptr)
 		{
-			UE_LOG(LogFairyGUI, Warning, TEXT("cannot create UScrollPane footer from %s"), *footerRes);
+			UE_LOG(LogFairyGUI, Warning, TEXT("cannot create UScrollPanel footer from %s"), *footerRes);
 		}
 		else
 		{
@@ -207,7 +207,7 @@ void UScrollPane::Setup(FByteBuffer* Buffer)
 	SetSize(Owner->GetSize());
 }
 
-void UScrollPane::SetPosX(float Value, bool bAnimation)
+void UScrollPanel::SetPosX(float Value, bool bAnimation)
 {
 	Owner->EnsureBoundsCorrect();
 
@@ -224,7 +224,7 @@ void UScrollPane::SetPosX(float Value, bool bAnimation)
 	}
 }
 
-void UScrollPane::SetPosY(float Value, bool bAnimation)
+void UScrollPanel::SetPosY(float Value, bool bAnimation)
 {
 	Owner->EnsureBoundsCorrect();
 
@@ -241,39 +241,39 @@ void UScrollPane::SetPosY(float Value, bool bAnimation)
 	}
 }
 
-float UScrollPane::GetPercX() const
+float UScrollPanel::GetPercX() const
 {
 	return OverlapSize.X == 0 ? 0 : XPos / OverlapSize.X;
 }
 
-void UScrollPane::SetPercX(float Value, bool bAnimation)
+void UScrollPanel::SetPercX(float Value, bool bAnimation)
 {
 	Owner->EnsureBoundsCorrect();
 	SetPosX(OverlapSize.X * FMath::Clamp(Value, 0.f, 1.f), bAnimation);
 }
 
-float UScrollPane::GetPercY() const
+float UScrollPanel::GetPercY() const
 {
 	return OverlapSize.Y == 0 ? 0 : YPos / OverlapSize.Y;
 }
 
-void UScrollPane::SetPercY(float Value, bool bAnimation)
+void UScrollPanel::SetPercY(float Value, bool bAnimation)
 {
 	Owner->EnsureBoundsCorrect();
 	SetPosY(OverlapSize.Y * FMath::Clamp(Value, 0.f, 1.f), bAnimation);
 }
 
-bool UScrollPane::IsBottomMost() const
+bool UScrollPanel::IsBottomMost() const
 {
 	return YPos == OverlapSize.Y || OverlapSize.Y == 0;
 }
 
-bool UScrollPane::IsRightMost() const
+bool UScrollPanel::IsRightMost() const
 {
 	return XPos == OverlapSize.X || OverlapSize.X == 0;
 }
 
-void UScrollPane::ScrollLeft(float Ratio, bool bAnimation)
+void UScrollPanel::ScrollLeft(float Ratio, bool bAnimation)
 {
 	if (bPageMode)
 	{
@@ -285,7 +285,7 @@ void UScrollPane::ScrollLeft(float Ratio, bool bAnimation)
 	}
 }
 
-void UScrollPane::ScrollRight(float Ratio, bool bAnimation)
+void UScrollPanel::ScrollRight(float Ratio, bool bAnimation)
 {
 	if (bPageMode)
 	{
@@ -297,7 +297,7 @@ void UScrollPane::ScrollRight(float Ratio, bool bAnimation)
 	}
 }
 
-void UScrollPane::ScrollUp(float Ratio, bool bAnimation)
+void UScrollPanel::ScrollUp(float Ratio, bool bAnimation)
 {
 	if (bPageMode)
 	{
@@ -309,7 +309,7 @@ void UScrollPane::ScrollUp(float Ratio, bool bAnimation)
 	}
 }
 
-void UScrollPane::ScrollDown(float Ratio, bool bAnimation)
+void UScrollPanel::ScrollDown(float Ratio, bool bAnimation)
 {
 	if (bPageMode)
 	{
@@ -321,17 +321,17 @@ void UScrollPane::ScrollDown(float Ratio, bool bAnimation)
 	}
 }
 
-void UScrollPane::ScrollTop(bool bAnimation)
+void UScrollPanel::ScrollTop(bool bAnimation)
 {
 	SetPercY(0, bAnimation);
 }
 
-void UScrollPane::ScrollBottom(bool bAnimation)
+void UScrollPanel::ScrollBottom(bool bAnimation)
 {
 	SetPercY(1, bAnimation);
 }
 
-void UScrollPane::ScrollToView(UFairyObject* Obj, bool bAnimation, bool bSetFirst)
+void UScrollPanel::ScrollToView(UFairyObject* Obj, bool bAnimation, bool bSetFirst)
 {
 	Owner->EnsureBoundsCorrect();
 	if (bNeedRefresh)
@@ -348,7 +348,7 @@ void UScrollPane::ScrollToView(UFairyObject* Obj, bool bAnimation, bool bSetFirs
 	ScrollToView(rect, bAnimation, bSetFirst);
 }
 
-void UScrollPane::ScrollToView(const FBox2D& Rect, bool bAnimation, bool bSetFirst)
+void UScrollPanel::ScrollToView(const FBox2D& Rect, bool bAnimation, bool bSetFirst)
 {
 	Owner->EnsureBoundsCorrect();
 	if (bNeedRefresh)
@@ -420,7 +420,7 @@ void UScrollPane::ScrollToView(const FBox2D& Rect, bool bAnimation, bool bSetFir
 	}
 }
 
-bool UScrollPane::IsChildInView(UFairyObject* Obj) const
+bool UScrollPanel::IsChildInView(UFairyObject* Obj) const
 {
 	//if (OverlapSize.Y > 0)
 	//{
@@ -443,7 +443,7 @@ bool UScrollPane::IsChildInView(UFairyObject* Obj) const
 	return true;
 }
 
-int32 UScrollPane::GetPageX() const
+int32 UScrollPanel::GetPageX() const
 {
 	if (!bPageMode)
 	{
@@ -459,7 +459,7 @@ int32 UScrollPane::GetPageX() const
 	return page;
 }
 
-void UScrollPane::SetPageX(int32 Value, bool bAnimation)
+void UScrollPanel::SetPageX(int32 Value, bool bAnimation)
 {
 	if (!bPageMode)
 	{
@@ -474,7 +474,7 @@ void UScrollPane::SetPageX(int32 Value, bool bAnimation)
 	}
 }
 
-int32 UScrollPane::GetPageY() const
+int32 UScrollPanel::GetPageY() const
 {
 	if (!bPageMode)
 	{
@@ -490,7 +490,7 @@ int32 UScrollPane::GetPageY() const
 	return page;
 }
 
-void UScrollPane::SetPageY(int32 Value, bool bAnimation)
+void UScrollPanel::SetPageY(int32 Value, bool bAnimation)
 {
 	if (!bPageMode)
 	{
@@ -505,17 +505,17 @@ void UScrollPane::SetPageY(int32 Value, bool bAnimation)
 	}
 }
 
-float UScrollPane::GetScrollingPosX() const
+float UScrollPanel::GetScrollingPosX() const
 {
 	return 0.0f;// FMath::Clamp(-Container->GetPosition().X, 0.f, OverlapSize.X);
 }
 
-float UScrollPane::GetScrollingPosY() const
+float UScrollPanel::GetScrollingPosY() const
 {
 	return 0.0f;// FMath::Clamp(-Container->GetPosition().Y, 0.f, OverlapSize.Y);
 }
 
-void UScrollPane::SetViewWidth(float Width)
+void UScrollPanel::SetViewWidth(float Width)
 {
 	Width = Width + Owner->Margin.Left + Owner->Margin.Right;
 	if (VtScrollBar != nullptr && !bFloating)
@@ -525,7 +525,7 @@ void UScrollPane::SetViewWidth(float Width)
 	Owner->SetWidth(Width);
 }
 
-void UScrollPane::SetViewHeight(float Height)
+void UScrollPanel::SetViewHeight(float Height)
 {
 	Height = Height + Owner->Margin.Top + Owner->Margin.Bottom;
 	if (HzScrollBar != nullptr && !bFloating)
@@ -535,7 +535,7 @@ void UScrollPane::SetViewHeight(float Height)
 	Owner->SetHeight(Height);
 }
 
-void UScrollPane::LockHeader(int32 Size)
+void UScrollPanel::LockHeader(int32 Size)
 {
 	//if (HeaderLockedSize == Size)
 	//{
@@ -555,7 +555,7 @@ void UScrollPane::LockHeader(int32 Size)
 	//}
 }
 
-void UScrollPane::LockFooter(int32 Size)
+void UScrollPanel::LockFooter(int32 Size)
 {
 	//if (FooterLockedSize == Size)
 	//{
@@ -584,7 +584,7 @@ void UScrollPane::LockFooter(int32 Size)
 	//}
 }
 
-void UScrollPane::CancelDragging()
+void UScrollPanel::CancelDragging()
 {
 	if (DraggingPane.Get() == this)
 	{
@@ -595,7 +595,7 @@ void UScrollPane::CancelDragging()
 	bDragged = false;
 }
 
-void UScrollPane::ApplyController(UGController* Controller)
+void UScrollPanel::ApplyController(UGController* Controller)
 {
 	if (PageController == Controller)
 	{
@@ -610,7 +610,7 @@ void UScrollPane::ApplyController(UGController* Controller)
 	}
 }
 
-void UScrollPane::UpdatePageController()
+void UScrollPanel::UpdatePageController()
 {
 	if (PageController != nullptr && !PageController->bChanging)
 	{
@@ -634,7 +634,7 @@ void UScrollPane::UpdatePageController()
 	}
 }
 
-void UScrollPane::AdjustMaskContainer()
+void UScrollPanel::AdjustMaskContainer()
 {
 	//FVector2D Pos;
 	//if (bDisplayOnLeft && VtScrollBar != nullptr && !bFloating)
@@ -651,13 +651,13 @@ void UScrollPane::AdjustMaskContainer()
 	//MaskContainer->SetPosition(Pos);
 }
 
-void UScrollPane::OnOwnerSizeChanged()
+void UScrollPanel::OnOwnerSizeChanged()
 {
 	SetSize(Owner->GetSize());
 	PosChanged(false);
 }
 
-void UScrollPane::SetSize(const FVector2D& InSize)
+void UScrollPanel::SetSize(const FVector2D& InSize)
 {
 	if (HzScrollBar != nullptr)
 	{
@@ -717,7 +717,7 @@ void UScrollPane::SetSize(const FVector2D& InSize)
 	HandleSizeChanged();
 }
 
-void UScrollPane::SetContentSize(const FVector2D& InSize)
+void UScrollPanel::SetContentSize(const FVector2D& InSize)
 {
 	if (ContentSize == InSize)
 	{
@@ -728,7 +728,7 @@ void UScrollPane::SetContentSize(const FVector2D& InSize)
 	HandleSizeChanged();
 }
 
-void UScrollPane::ChangeContentSizeOnScrolling(float DeltaWidth, float DeltaHeight, float DeltaPosX, float DeltaPosY)
+void UScrollPanel::ChangeContentSizeOnScrolling(float DeltaWidth, float DeltaHeight, float DeltaPosX, float DeltaPosY)
 {
 	//bool isRightmost = XPos == OverlapSize.X;
 	//bool isBottom = YPos == OverlapSize.Y;
@@ -802,7 +802,7 @@ void UScrollPane::ChangeContentSizeOnScrolling(float DeltaWidth, float DeltaHeig
 	//}
 }
 
-void UScrollPane::HandleSizeChanged()
+void UScrollPanel::HandleSizeChanged()
 {
 	//if (bDisplayInDemand)
 	//{
@@ -922,7 +922,7 @@ void UScrollPane::HandleSizeChanged()
 	//}
 }
 
-void UScrollPane::PosChanged(bool bAnimation)
+void UScrollPanel::PosChanged(bool bAnimation)
 {
 	if (AniFlag == 0)
 	{
@@ -934,11 +934,11 @@ void UScrollPane::PosChanged(bool bAnimation)
 	}
 
 	bNeedRefresh = true;
-	//DelayCall(RefreshTimerHandle, this, &UScrollPane::Refresh);
+	//DelayCall(RefreshTimerHandle, this, &UScrollPanel::Refresh);
 	Refresh();
 }
 
-void UScrollPane::Refresh()
+void UScrollPanel::Refresh()
 {
 	CancelDelayCall(RefreshTimerHandle);
 
@@ -967,7 +967,7 @@ void UScrollPane::Refresh()
 	AniFlag = 0;
 }
 
-void UScrollPane::Refresh2()
+void UScrollPanel::Refresh2()
 {
 	//if (AniFlag == 1 && !bDragged)
 	//{
@@ -1028,7 +1028,7 @@ void UScrollPane::Refresh2()
 	//}
 }
 
-void UScrollPane::UpdateScrollBarPos()
+void UScrollPanel::UpdateScrollBarPos()
 {
 	//if (VtScrollBar != nullptr)
 	//{
@@ -1043,7 +1043,7 @@ void UScrollPane::UpdateScrollBarPos()
 	CheckRefreshBar();
 }
 
-void UScrollPane::UpdateScrollBarVisible()
+void UScrollPanel::UpdateScrollBarVisible()
 {
 	if (VtScrollBar != nullptr)
 	{
@@ -1070,7 +1070,7 @@ void UScrollPane::UpdateScrollBarVisible()
 	}
 }
 
-void UScrollPane::UpdateScrollBarVisible2(UGScrollBar* Bar)
+void UScrollPanel::UpdateScrollBarVisible2(UGScrollBar* Bar)
 {
 	if (bScrollBarDisplayAuto)
 	{
@@ -1084,7 +1084,7 @@ void UScrollPane::UpdateScrollBarVisible2(UGScrollBar* Bar)
 			FGTween::To(1, 0, 0.5f)
 				->SetDelay(0.5f)
 				->OnUpdate(FTweenDelegate::CreateStatic(&FGTween::Action::SetAlpha))
-				->OnComplete(FTweenDelegate::CreateUObject(this, &UScrollPane::OnBarTweenComplete))
+				->OnComplete(FTweenDelegate::CreateUObject(this, &UScrollPanel::OnBarTweenComplete))
 				->SetTarget(Bar);
 		}
 	}
@@ -1095,19 +1095,19 @@ void UScrollPane::UpdateScrollBarVisible2(UGScrollBar* Bar)
 	}
 }
 
-void UScrollPane::OnBarTweenComplete(FGTweener* Tweener)
+void UScrollPanel::OnBarTweenComplete(FGTweener* Tweener)
 {
 	UFairyObject* bar = (UFairyObject*)Tweener->GetTarget();
 	bar->SetAlpha(1);
 	bar->SetVisible(false);
 }
 
-float UScrollPane::GetLoopPartSize(float Division, int32 Axis)
+float UScrollPanel::GetLoopPartSize(float Division, int32 Axis)
 {
 	return (ContentSize.Component(Axis) + (Axis == 0 ? ((UGList*)Owner)->GetColumnGap() : ((UGList*)Owner)->GetLineGap())) / Division;
 }
 
-bool UScrollPane::LoopCheckingCurrent()
+bool UScrollPanel::LoopCheckingCurrent()
 {
 	bool changed = false;
 	if (LoopMode == 1 && OverlapSize.X > 0)
@@ -1145,7 +1145,7 @@ bool UScrollPane::LoopCheckingCurrent()
 	return changed;
 }
 
-void UScrollPane::LoopCheckingTarget(FVector2D& EndPos)
+void UScrollPanel::LoopCheckingTarget(FVector2D& EndPos)
 {
 	if (LoopMode == 1)
 	{
@@ -1158,7 +1158,7 @@ void UScrollPane::LoopCheckingTarget(FVector2D& EndPos)
 	}
 }
 
-void UScrollPane::LoopCheckingTarget(FVector2D& EndPos, int32 Axis)
+void UScrollPanel::LoopCheckingTarget(FVector2D& EndPos, int32 Axis)
 {
 	if (EndPos.Component(Axis) > 0)
 	{
@@ -1182,7 +1182,7 @@ void UScrollPane::LoopCheckingTarget(FVector2D& EndPos, int32 Axis)
 	}
 }
 
-void UScrollPane::LoopCheckingNewPos(float& Value, int32 Axis)
+void UScrollPanel::LoopCheckingNewPos(float& Value, int32 Axis)
 {
 	float overlapSize = OverlapSize.Component(Axis);
 	if (overlapSize == 0)
@@ -1226,7 +1226,7 @@ void UScrollPane::LoopCheckingNewPos(float& Value, int32 Axis)
 	//}
 }
 
-void UScrollPane::AlignPosition(FVector2D& Pos, bool bInertialScrolling)
+void UScrollPanel::AlignPosition(FVector2D& Pos, bool bInertialScrolling)
 {
 	if (bPageMode)
 	{
@@ -1249,7 +1249,7 @@ void UScrollPane::AlignPosition(FVector2D& Pos, bool bInertialScrolling)
 	}
 }
 
-float UScrollPane::AlignByPage(float Pos, int32 Axis, bool bInertialScrolling)
+float UScrollPanel::AlignByPage(float Pos, int32 Axis, bool bInertialScrolling)
 {
 	int32 page;
 	float pageSize = PageSize.Component(Axis);
@@ -1323,7 +1323,7 @@ float UScrollPane::AlignByPage(float Pos, int32 Axis, bool bInertialScrolling)
 	return Pos;
 }
 
-FVector2D UScrollPane::UpdateTargetAndDuration(const FVector2D& OrignPos)
+FVector2D UScrollPanel::UpdateTargetAndDuration(const FVector2D& OrignPos)
 {
 	FVector2D ret(0, 0);
 	ret.X = UpdateTargetAndDuration(OrignPos.X, 0);
@@ -1331,7 +1331,7 @@ FVector2D UScrollPane::UpdateTargetAndDuration(const FVector2D& OrignPos)
 	return ret;
 }
 
-float UScrollPane::UpdateTargetAndDuration(float Pos, int32 Axis)
+float UScrollPanel::UpdateTargetAndDuration(float Pos, int32 Axis)
 {
 	float v = Velocity.Component(Axis);
 	float duration = 0;
@@ -1403,7 +1403,7 @@ float UScrollPane::UpdateTargetAndDuration(float Pos, int32 Axis)
 	return Pos;
 }
 
-void UScrollPane::FixDuration(int32 Axis, float OldChange)
+void UScrollPanel::FixDuration(int32 Axis, float OldChange)
 {
 	float tweenChange = TweenChange.Component(Axis);
 	if (tweenChange == 0 || FMath::Abs(tweenChange) >= FMath::Abs(OldChange))
@@ -1420,18 +1420,18 @@ void UScrollPane::FixDuration(int32 Axis, float OldChange)
 	TweenDuration.Component(Axis) = newDuration;
 }
 
-void UScrollPane::StartTween(int32 Type)
+void UScrollPanel::StartTween(int32 Type)
 {
 	TweenTime.Set(0, 0);
 	Tweening = Type;
 	GWorld->GetTimerManager().SetTimer(TickTimerHandle,
-		FTimerDelegate::CreateUObject(this, &UScrollPane::TweenUpdate),
+		FTimerDelegate::CreateUObject(this, &UScrollPanel::TweenUpdate),
 		0.016f,
 		true);
 	UpdateScrollBarVisible();
 }
 
-void UScrollPane::KillTween()
+void UScrollPanel::KillTween()
 {
 	if (Tweening == 1)
 	{
@@ -1445,7 +1445,7 @@ void UScrollPane::KillTween()
 	Owner->DispatchEvent(FFairyEventNames::ScrollEnd);
 }
 
-void UScrollPane::CheckRefreshBar()
+void UScrollPanel::CheckRefreshBar()
 {
 	if (Header == nullptr && Footer == nullptr)
 	{
@@ -1508,7 +1508,7 @@ void UScrollPane::CheckRefreshBar()
 	}
 }
 
-void UScrollPane::TweenUpdate()
+void UScrollPanel::TweenUpdate()
 {
 	float dt = GWorld->GetTimerManager().GetTimerElapsed(TickTimerHandle);
 
@@ -1554,7 +1554,7 @@ void UScrollPane::TweenUpdate()
 	}
 }
 
-float UScrollPane::RunTween(int32 Axis, float DeltaTime)
+float UScrollPanel::RunTween(int32 Axis, float DeltaTime)
 {
 	float newValue = 0.0f;
 	if (TweenChange.Component(Axis) != 0)
@@ -1630,7 +1630,7 @@ float UScrollPane::RunTween(int32 Axis, float DeltaTime)
 	return newValue;
 }
 
-void UScrollPane::OnTouchBegin(UEventContext* Context)
+void UScrollPanel::OnTouchBegin(UEventContext* Context)
 {
 	UE_LOG(LogTemp, Warning, TEXT("UScrollPanel::OnTouchBegin(...)"));
 	if (!bTouchEffect)
@@ -1662,7 +1662,7 @@ void UScrollPane::OnTouchBegin(UEventContext* Context)
 	LastMoveTime = GWorld->GetTimeSeconds();
 }
 
-void UScrollPane::OnTouchMove(UEventContext* Context)
+void UScrollPanel::OnTouchMove(UEventContext* Context)
 {
 	if (!bTouchEffect)
 	{
@@ -1899,7 +1899,7 @@ void UScrollPane::OnTouchMove(UEventContext* Context)
 	Owner->DispatchEvent(FFairyEventNames::Scroll);
 }
 
-void UScrollPane::OnTouchEnd(UEventContext* Context)
+void UScrollPanel::OnTouchEnd(UEventContext* Context)
 {
 	if (DraggingPane.Get() == this)
 	{
@@ -2018,7 +2018,7 @@ void UScrollPane::OnTouchEnd(UEventContext* Context)
 	StartTween(2);
 }
 
-void UScrollPane::OnMouseWheel(UEventContext* Context)
+void UScrollPanel::OnMouseWheel(UEventContext* Context)
 {
 	if (!bMouseWheelEnabled)
 	{
@@ -2043,13 +2043,13 @@ void UScrollPane::OnMouseWheel(UEventContext* Context)
 	}
 }
 
-void UScrollPane::OnRollOver(UEventContext* Context)
+void UScrollPanel::OnRollOver(UEventContext* Context)
 {
 	bHover = true;
 	UpdateScrollBarVisible();
 }
 
-void UScrollPane::OnRollOut(UEventContext* Context)
+void UScrollPanel::OnRollOut(UEventContext* Context)
 {
 	bHover = false;
 	UpdateScrollBarVisible();

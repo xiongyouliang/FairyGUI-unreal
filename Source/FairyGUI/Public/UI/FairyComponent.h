@@ -1,7 +1,7 @@
 #pragma once
 
 #include "UI/FairyObject.h"
-#include "UI/ScrollPane.h"
+#include "UI/ScrollPanel.h"
 
 #include "FairyComponent.generated.h"
 
@@ -127,7 +127,7 @@ public:
 	//void setHitArea(IHitTest* value);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	UScrollPane* GetScrollPane() const { return ScrollPane; }
+	UScrollPanel* GetScrollPane() const { return ScrollPanel; }
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	float GetViewWidth() const;
@@ -210,7 +210,7 @@ protected:
 	UPROPERTY(Transient)
 	TArray<UTransition*> Transitions;
 	UPROPERTY(Transient)
-	UScrollPane* ScrollPane;
+	UScrollPanel* ScrollPanel;
 
 	// Slate Resource
 	TSharedPtr<SContainer> Container;
@@ -239,5 +239,5 @@ private:
 	FTimerHandle UpdateBoundsTimerHandle;
 	FTimerHandle BuildDisplayListTimerHandle;
 
-	friend class UScrollPane;
+	friend class UScrollPanel;
 };

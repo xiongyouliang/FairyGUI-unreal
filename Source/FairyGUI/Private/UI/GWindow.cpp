@@ -7,7 +7,7 @@
 
 UGWindow::UGWindow()
 {
-    bBringToFontOnClick = FUIConfig::Config.BringWindowToFrontOnClick;
+    //bBringToFontOnClick = UFairyConfig::Config->BringWindowToFrontOnClick;
 
     On(FFairyEventNames::AddedToStage).AddUObject(this, &UGWindow::OnAddedToStageHandler);
     On(FFairyEventNames::RemovedFromStage).AddUObject(this, &UGWindow::OnRemovedFromStageHandler);
@@ -121,10 +121,10 @@ void UGWindow::ShowModalWait(int32 InRequestingCmd)
     if (InRequestingCmd != 0)
         RequestingCmd = InRequestingCmd;
 
-    if (!FUIConfig::Config.WindowModalWaiting.IsEmpty())
+    if (!UFairyConfig::Config->WindowModalWaiting.IsEmpty())
     {
         if (ModalWaitPane == nullptr)
-            ModalWaitPane = UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), FUIConfig::Config.WindowModalWaiting);
+            ModalWaitPane = UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), UFairyConfig::Config->WindowModalWaiting);
 
         LayoutModalWaitPane();
 

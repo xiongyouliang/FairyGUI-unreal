@@ -1,13 +1,13 @@
 #include "FairyBlueprintLibrary.h"
 
-const FUIConfig& UFairyBlueprintLibrary::GetUIConfig()
+UFairyConfig* UFairyBlueprintLibrary::GetUIConfig()
 {
-	return FUIConfig::Config;
+	return UFairyConfig::Get();
 }
 
-void UFairyBlueprintLibrary::SetUIConfig(const FUIConfig& InConfig)
+void UFairyBlueprintLibrary::SetUIConfig(UFairyConfig* InConfig)
 {
-	FUIConfig::Config = InConfig;
+	//UFairyConfig::Config = InConfig;
 }
 
 bool UFairyBlueprintLibrary::GetVariantAsBool(UPARAM(ref) FNVariant& InVariant)

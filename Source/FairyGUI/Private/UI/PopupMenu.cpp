@@ -26,7 +26,7 @@ void UPopupMenu::Create(const FString& ResourceURL)
     FString url = ResourceURL;
     if (url.IsEmpty())
     {
-        url = FUIConfig::Config.PopupMenu;
+        url = UFairyConfig::Config->PopupMenu;
         if (url.IsEmpty())
         {
             UE_LOG(LogFairyGUI, Warning, TEXT("UIConfig.PopupMenu not defined"));
@@ -94,13 +94,13 @@ UGButton* UPopupMenu::AddItemAt(const FString& Caption, int32 index, const FGUIE
 
 void UPopupMenu::AddSeperator()
 {
-    if (FUIConfig::Config.PopupMenuSeperator.IsEmpty())
+    if (UFairyConfig::Config->PopupMenuSeperator.IsEmpty())
     {
         UE_LOG(LogFairyGUI, Warning, TEXT("UIConfig.PopupMenuSeperator not defined"));
         return;
     }
 
-    List->AddItemFromPool(FUIConfig::Config.PopupMenuSeperator);
+    List->AddItemFromPool(UFairyConfig::Config->PopupMenuSeperator);
 }
 
 const FString& UPopupMenu::GetItemName(int32 Index) const

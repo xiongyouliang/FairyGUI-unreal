@@ -7,7 +7,7 @@
 #include "FairyCommons.h"
 #include "Event/EventContext.h"
 #include "Tween/TweenManager.h"
-#include "UI/UIConfig.h"
+#include "UI/FairyConfig.h"
 #include "FairyApplication.generated.h"
 
 class UFairyPackage;
@@ -53,11 +53,16 @@ public:
 	UFUNCTION(BlueprintPure, Category = "FairyGUI", meta = (DisplayName = "Get Application"))
 	static UFairyApplication* Get();
 
+	
+
 	static void Destroy();
 	static bool IsStarted() { return Instance != nullptr; }
 
 	UFairyApplication();
 	~UFairyApplication();
+
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI | FairyApplication")
+	void Init();
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI | FairyApplication")
 	void AddUIRoot(UObject* WorldContextObject);

@@ -14,7 +14,7 @@ UGComboBox::UGComboBox() :
     bItemsUpdated(true),
     SelectedIndex(-1)
 {
-    VisibleItemCount = FUIConfig::Config.DefaultComboBoxVisibleItemCount;
+    
 }
 
 UGComboBox::~UGComboBox()
@@ -296,6 +296,8 @@ void UGComboBox::SetProp(EObjectPropID PropID, const FNVariant& InValue)
 
 void UGComboBox::ConstructExtension(FByteBuffer* Buffer)
 {
+    VisibleItemCount = UFairyConfig::Config->DefaultComboBoxVisibleItemCount;
+
     Buffer->Seek(0, 6);
 
     ButtonController = GetController("button");

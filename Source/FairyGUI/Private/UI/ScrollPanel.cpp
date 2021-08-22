@@ -38,10 +38,10 @@ void UScrollPanel::Setup(FByteBuffer* Buffer)
 	RootContainer = Owner->GetRootContainerWidget();
 	ContentContainer = Owner->GetContentContainerWidget();
 
-	ScrollStep = FUIConfig::Config.DefaultScrollStep;
-	DecelerationRate = FUIConfig::Config.DefaultScrollDecelerationRate;
-	bTouchEffect = FUIConfig::Config.DefaultScrollTouchEffect;
-	bBouncebackEffect = FUIConfig::Config.DefaultScrollBounceEffect;
+	ScrollStep = UFairyConfig::Config->DefaultScrollStep;
+	DecelerationRate = UFairyConfig::Config->DefaultScrollDecelerationRate;
+	bTouchEffect = UFairyConfig::Config->DefaultScrollTouchEffect;
+	bBouncebackEffect = UFairyConfig::Config->DefaultScrollBounceEffect;
 	bMouseWheelEnabled = true;
 	PageSize.Set(0, 0);
 
@@ -109,7 +109,7 @@ void UScrollPanel::Setup(FByteBuffer* Buffer)
 
 	if (scrollBarDisplay == EScrollBarDisplayType::Default)
 	{
-		scrollBarDisplay = FUIConfig::Config.DefaultScrollBarDisplay;
+		scrollBarDisplay = UFairyConfig::Config->DefaultScrollBarDisplay;
 	}
 
 	if (scrollBarDisplay != EScrollBarDisplayType::Hidden)
@@ -117,7 +117,7 @@ void UScrollPanel::Setup(FByteBuffer* Buffer)
 		if (ScrollType == EScrollType::Both || ScrollType == EScrollType::Vertical)
 		{
 			
-			const FString& res = vtScrollBarRes.Len() == 0 ? FUIConfig::Config.VerticalScrollBar : vtScrollBarRes;
+			const FString& res = vtScrollBarRes.Len() == 0 ? UFairyConfig::Config->VerticalScrollBar : vtScrollBarRes;
 			if (res.Len() > 0)
 			{
 				VtScrollBar = Cast<UGScrollBar>(UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), res));
@@ -134,7 +134,7 @@ void UScrollPanel::Setup(FByteBuffer* Buffer)
 		}
 		if (ScrollType == EScrollType::Both || ScrollType == EScrollType::Horizontal)
 		{
-			const FString& res = hzScrollBarRes.Len() == 0 ? FUIConfig::Config.HorizontalScrollBar : hzScrollBarRes;
+			const FString& res = hzScrollBarRes.Len() == 0 ? UFairyConfig::Config->HorizontalScrollBar : hzScrollBarRes;
 			if (res.Len() > 0)
 			{
 				HzScrollBar = Cast<UGScrollBar>(UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), res));
@@ -1683,7 +1683,7 @@ void UScrollPanel::OnTouchMove(UEventContext* Context)
 	}
 	else
 	{
-		sensitivity = FUIConfig::Config.TouchScrollSensitivity;
+		sensitivity = UFairyConfig::Config->TouchScrollSensitivity;
 	}
 
 	float diff;
@@ -1943,11 +1943,11 @@ void UScrollPanel::OnTouchEnd(UEventContext* Context)
 	if (flag)
 	{
 		TweenChange = endPos - TweenStart;
-		if (TweenChange.X < -FUIConfig::Config.TouchDragSensitivity || TweenChange.Y < -FUIConfig::Config.TouchDragSensitivity)
+		if (TweenChange.X < -UFairyConfig::Config->TouchDragSensitivity || TweenChange.Y < -UFairyConfig::Config->TouchDragSensitivity)
 		{
 			Owner->DispatchEvent(FFairyEventNames::PullDownRelease);
 		}
-		else if (TweenChange.X > FUIConfig::Config.TouchDragSensitivity || TweenChange.Y > FUIConfig::Config.TouchDragSensitivity)
+		else if (TweenChange.X > UFairyConfig::Config->TouchDragSensitivity || TweenChange.Y > UFairyConfig::Config->TouchDragSensitivity)
 		{
 			Owner->DispatchEvent(FFairyEventNames::PullUpRelease);
 		}

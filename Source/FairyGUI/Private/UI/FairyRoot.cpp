@@ -212,7 +212,7 @@ void UFairyRoot::CreateModalLayer()
 {
     ModalLayer = NewObject<UGGraph>();
     ModalLayer->SetSize(Size);
-    ModalLayer->DrawRect(0, FColor::White, FUIConfig::Config.ModalLayerColor);
+    ModalLayer->DrawRect(0, FColor::White, UFairyConfig::Config->ModalLayerColor);
     ModalLayer->AddRelation(this, ERelationType::Size);
 }
 
@@ -277,11 +277,11 @@ void UFairyRoot::CloseModalWait()
 
 UFairyObject* UFairyRoot::GetModalWaitingPane()
 {
-    if (!FUIConfig::Config.GlobalModalWaiting.IsEmpty())
+    if (!UFairyConfig::Config->GlobalModalWaiting.IsEmpty())
     {
         if (ModalWaitPane == nullptr)
         {
-            ModalWaitPane = UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), FUIConfig::Config.GlobalModalWaiting);
+            ModalWaitPane = UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), UFairyConfig::Config->GlobalModalWaiting);
             ModalWaitPane->SetSortingOrder(INT_MAX);
         }
 
@@ -485,7 +485,7 @@ void UFairyRoot::ShowTooltips(const FString& Text)
 {
     if (DefaultTooltipWin == nullptr)
     {
-        const FString& resourceURL = FUIConfig::Config.TooltipsWin;
+        const FString& resourceURL = UFairyConfig::Config->TooltipsWin;
         if (resourceURL.IsEmpty())
         {
             UE_LOG(LogFairyGUI, Warning, TEXT("UIConfig.tooltipsWin not defined"));

@@ -5,7 +5,7 @@
 #include "Editor.h"
 #include "FairyApplication.h"
 #endif
-#include "UI/UIConfig.h"
+#include "UI/FairyConfig.h"
 
 #define LOCTEXT_NAMESPACE "FFairyGUIModule"
 

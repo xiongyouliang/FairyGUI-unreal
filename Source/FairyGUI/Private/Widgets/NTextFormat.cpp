@@ -1,5 +1,5 @@
 #include "Widgets/NTextFormat.h"
-#include "UI/UIConfig.h"
+#include "UI/FairyConfig.h"
 #include "Engine/Font.h"
 
 FNTextFormat::FNTextFormat() :
@@ -37,7 +37,7 @@ FTextBlockStyle FNTextFormat::GetStyle() const
 {
 	FTextBlockStyle Style;
 	
-	FString TempStr = Face.IsEmpty() ? FUIConfig::Config.DefaultFont.TrimStart() : Face.TrimStart();
+	FString TempStr = Face.IsEmpty() ? UFairyConfig::Config->DefaultFont.TrimStart() : Face.TrimStart();
 	FString FontName = TempStr.Replace(TEXT(" "), TEXT(""));
 	if (!FontName.StartsWith("ui://"))
 	{

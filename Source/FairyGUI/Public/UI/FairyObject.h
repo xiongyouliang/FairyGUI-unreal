@@ -5,7 +5,7 @@
 #include "UI/Relation/Relations.h"
 #include "UI/Controller/Gears/GearBase.h"
 #include "Package/FairyPackageItem.h"
-#include "UIConfig.h"
+#include "UI/FairyConfig.h"
 #include "FairyCommons.h"
 #include "Event/EventContext.h"
 #include "Utils/NVariant.h"

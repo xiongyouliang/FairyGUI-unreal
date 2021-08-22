@@ -88,6 +88,11 @@ UFairyApplication* UFairyApplication::Get()
 	return Instance;
 }
 
+void UFairyApplication::Init()
+{
+	UFairyConfig::Create(this);
+}
+
 void UFairyApplication::Destroy()
 {
 	if (Instance != nullptr)
@@ -160,7 +165,7 @@ void UFairyApplication::OnDestroy()
 	FUIObjectFactory::LoaderCreator.Unbind();
 
 	UNTexture::DestroyWhiteTexture();
-	FUIConfig::Config = FUIConfig(); //Reset Configuration to default values
+	//UFairyConfig::Config = UFairyConfig(); //Reset Configuration to default values
 
 	if (InputProcessor.IsValid())
 	{

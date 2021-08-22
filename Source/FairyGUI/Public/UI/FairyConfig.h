@@ -3,17 +3,18 @@
 #include "CoreMinimal.h"
 #include "Engine/Texture2D.h"
 #include "FieldTypes.h"
-#include "UIConfig.generated.h"
+#include "FairyConfig.generated.h"
 
-USTRUCT(BlueprintType)
-struct FAIRYGUI_API FUIConfig
+UCLASS(BlueprintType)
+class FAIRYGUI_API UFairyConfig : public UObject
 {
-    GENERATED_USTRUCT_BODY()
-
+    GENERATED_BODY()
 public:
-    static FUIConfig Config;
+    static UFairyConfig *Config;
+    static void Create(UObject* Owner);
+    static UFairyConfig* Get();
 
-    FUIConfig();
+    UFairyConfig();
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
     FString DefaultFont;

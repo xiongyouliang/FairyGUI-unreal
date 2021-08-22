@@ -1,9 +1,9 @@
-#include "UI/UIConfig.h"
+#include "UI/FairyConfig.h"
 #include "FairyApplication.h"
 
-FUIConfig FUIConfig::Config;
+UFairyConfig* UFairyConfig::Config = nullptr;
 
-FUIConfig::FUIConfig() :
+UFairyConfig::UFairyConfig() :
     ButtonSoundVolumeScale(1),
     DefaultScrollStep(25),
     DefaultScrollDecelerationRate(0.967f),
@@ -17,4 +17,17 @@ FUIConfig::FUIConfig() :
     ModalLayerColor(0, 0, 0, 120),
     BringWindowToFrontOnClick(true)
 {
+}
+
+void UFairyConfig::Create(UObject* owner)
+{
+	if (UFairyConfig::Config == nullptr)
+	{
+		UFairyConfig::Config = NewObject<UFairyConfig>(owner);
+	}
+}
+
+UFairyConfig* UFairyConfig::Get()
+{
+    return UFairyConfig::Config;
 }

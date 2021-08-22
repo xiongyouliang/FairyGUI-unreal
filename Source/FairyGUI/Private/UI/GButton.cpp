@@ -17,8 +17,7 @@ UGButton::UGButton() :
 	bChangeStateOnClick(true),
 	DownEffectValue(0.8f)
 {
-	Sound = FUIConfig::Config.ButtonSound;
-	SoundVolumeScale = FUIConfig::Config.ButtonSoundVolumeScale;
+	
 }
 
 UGButton::~UGButton()
@@ -330,6 +329,9 @@ void UGButton::SetProp(EObjectPropID PropID, const FNVariant& InValue)
 
 void UGButton::ConstructExtension(FByteBuffer* Buffer)
 {
+	Sound = UFairyConfig::Config->ButtonSound;
+	SoundVolumeScale = UFairyConfig::Config->ButtonSoundVolumeScale;
+
 	Buffer->Seek(0, 6);
 
 	Mode = (EButtonMode)Buffer->ReadByte();

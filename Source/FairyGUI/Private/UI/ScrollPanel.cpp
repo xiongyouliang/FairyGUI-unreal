@@ -59,8 +59,8 @@ void UScrollPanel::Setup(FByteBuffer* Buffer)
 		}
 	});
 
-	ScrollType = (EScrollType)Buffer->ReadByte();
-	EScrollBarDisplayType scrollBarDisplay = (EScrollBarDisplayType)Buffer->ReadByte();
+	ScrollDirection = (EScrollType)Buffer->ReadByte();
+	EScrollBarDisplayType ScrollBarDisplayType = (EScrollBarDisplayType)Buffer->ReadByte();
 	int32 flags = Buffer->ReadInt();
 
 	if (Buffer->ReadBool())
@@ -107,59 +107,59 @@ void UScrollPanel::Setup(FByteBuffer* Buffer)
 	bFloating = (flags & 1024) != 0;
 	bDontClipMargin = (flags & 2048) != 0;
 
-	if (scrollBarDisplay == EScrollBarDisplayType::Default)
+	if (ScrollBarDisplayType == EScrollBarDisplayType::Default)
 	{
-		scrollBarDisplay = UFairyConfig::Config->DefaultScrollBarDisplay;
+		ScrollBarDisplayType = UFairyConfig::Config->DefaultScrollBarDisplay;
 	}
 
-	if (scrollBarDisplay != EScrollBarDisplayType::Hidden)
+	if (ScrollBarDisplayType != EScrollBarDisplayType::Hidden)
 	{
-		if (ScrollType == EScrollType::Both || ScrollType == EScrollType::Vertical)
+		if (ScrollDirection == EScrollType::Both || ScrollDirection == EScrollType::Vertical)
 		{
 			
 			const FString& res = vtScrollBarRes.Len() == 0 ? UFairyConfig::Config->VerticalScrollBar : vtScrollBarRes;
 			if (res.Len() > 0)
 			{
-				VtScrollBar = Cast<UGScrollBar>(UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), res));
-				if (VtScrollBar == nullptr)
+				VScrollBar = Cast<UGScrollBar>(UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), res));
+				if (VScrollBar == nullptr)
 				{
 					UE_LOG(LogFairyGUI, Warning, TEXT("cannot create scrollbar from %s"), *res);
 				}
 				else
 				{
-					VtScrollBar->SetScrollPane(this, true);
-					RootContainer->AddChild(VtScrollBar->GetDisplayObject());
+					VScrollBar->SetScrollPane(this, true);
+					RootContainer->AddChild(VScrollBar->GetDisplayObject());
 				}
 			}
 		}
-		if (ScrollType == EScrollType::Both || ScrollType == EScrollType::Horizontal)
+		if (ScrollDirection == EScrollType::Both || ScrollDirection == EScrollType::Horizontal)
 		{
 			const FString& res = hzScrollBarRes.Len() == 0 ? UFairyConfig::Config->HorizontalScrollBar : hzScrollBarRes;
 			if (res.Len() > 0)
 			{
-				HzScrollBar = Cast<UGScrollBar>(UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), res));
-				if (HzScrollBar == nullptr)
+				HScrollBar = Cast<UGScrollBar>(UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), res));
+				if (HScrollBar == nullptr)
 				{
 					UE_LOG(LogFairyGUI, Warning, TEXT("cannot create scrollbar from %s"), *res);
 				}
 				else
 				{
-					HzScrollBar->SetScrollPane(this, false);
-					RootContainer->AddChild(HzScrollBar->GetDisplayObject());
+					HScrollBar->SetScrollPane(this, false);
+					RootContainer->AddChild(HScrollBar->GetDisplayObject());
 				}
 			}
 		}
 
-		bScrollBarDisplayAuto = scrollBarDisplay == EScrollBarDisplayType::Auto;
+		bScrollBarDisplayAuto = ScrollBarDisplayType == EScrollBarDisplayType::Auto;
 		if (bScrollBarDisplayAuto)
 		{
-			if (VtScrollBar != nullptr)
+			if (VScrollBar != nullptr)
 			{
-				VtScrollBar->SetVisible(false);
+				VScrollBar->SetVisible(false);
 			}
-			if (HzScrollBar != nullptr)
+			if (HScrollBar != nullptr)
 			{
-				HzScrollBar->SetVisible(false);
+				HScrollBar->SetVisible(false);
 			}
 
 			Owner->On(FFairyEventNames::RollOver).AddUObject(this, &UScrollPanel::OnRollOver);
@@ -201,7 +201,7 @@ void UScrollPanel::Setup(FByteBuffer* Buffer)
 
 	if (Header != nullptr || Footer != nullptr)
 	{
-		RefreshBarAxis = (ScrollType == EScrollType::Both || ScrollType == EScrollType::Vertical) ? 1 : 0;
+		RefreshBarAxis = (ScrollDirection == EScrollType::Both || ScrollDirection == EScrollType::Vertical) ? 1 : 0;
 	}
 
 	SetSize(Owner->GetSize());
@@ -518,9 +518,9 @@ float UScrollPanel::GetScrollingPosY() const
 void UScrollPanel::SetViewWidth(float Width)
 {
 	Width = Width + Owner->Margin.Left + Owner->Margin.Right;
-	if (VtScrollBar != nullptr && !bFloating)
+	if (VScrollBar != nullptr && !bFloating)
 	{
-		Width += VtScrollBar->GetWidth();
+		Width += VScrollBar->GetWidth();
 	}
 	Owner->SetWidth(Width);
 }
@@ -528,9 +528,9 @@ void UScrollPanel::SetViewWidth(float Width)
 void UScrollPanel::SetViewHeight(float Height)
 {
 	Height = Height + Owner->Margin.Top + Owner->Margin.Bottom;
-	if (HzScrollBar != nullptr && !bFloating)
+	if (HScrollBar != nullptr && !bFloating)
 	{
-		Height += HzScrollBar->GetHeight();
+		Height += HScrollBar->GetHeight();
 	}
 	Owner->SetHeight(Height);
 }
@@ -599,7 +599,7 @@ void UScrollPanel::ApplyController(UGController* Controller)
 {
 	if (PageController == Controller)
 	{
-		if (ScrollType == EScrollType::Horizontal)
+		if (ScrollDirection == EScrollType::Horizontal)
 		{
 			SetPageX(Controller->GetSelectedIndex(), true);
 		}
@@ -615,7 +615,7 @@ void UScrollPanel::UpdatePageController()
 	if (PageController != nullptr && !PageController->bChanging)
 	{
 		int32 index;
-		if (ScrollType == EScrollType::Horizontal)
+		if (ScrollDirection == EScrollType::Horizontal)
 		{
 			index = GetPageX();
 
@@ -637,9 +637,9 @@ void UScrollPanel::UpdatePageController()
 void UScrollPanel::AdjustMaskContainer()
 {
 	//FVector2D Pos;
-	//if (bDisplayOnLeft && VtScrollBar != nullptr && !bFloating)
+	//if (bDisplayOnLeft && VScrollBar != nullptr && !bFloating)
 	//{
-	//	Pos.X = FMath::FloorToFloat(Owner->Margin.Left + VtScrollBar->GetWidth());
+	//	Pos.X = FMath::FloorToFloat(Owner->Margin.Left + VScrollBar->GetWidth());
 	//}
 	//else
 	//{
@@ -659,52 +659,52 @@ void UScrollPanel::OnOwnerSizeChanged()
 
 void UScrollPanel::SetSize(const FVector2D& InSize)
 {
-	if (HzScrollBar != nullptr)
+	if (HScrollBar != nullptr)
 	{
-		HzScrollBar->SetPositionY(InSize.Y - HzScrollBar->GetHeight());
-		if (VtScrollBar != nullptr)
+		HScrollBar->SetPositionY(InSize.Y - HScrollBar->GetHeight());
+		if (VScrollBar != nullptr)
 		{
-			HzScrollBar->SetWidth(InSize.X - VtScrollBar->GetWidth() - ScrollBarMargin.Left - ScrollBarMargin.Right);
+			HScrollBar->SetWidth(InSize.X - VScrollBar->GetWidth() - ScrollBarMargin.Left - ScrollBarMargin.Right);
 			if (bDisplayOnLeft)
 			{
-				HzScrollBar->SetPositionX(ScrollBarMargin.Left + VtScrollBar->GetWidth());
+				HScrollBar->SetPositionX(ScrollBarMargin.Left + VScrollBar->GetWidth());
 			}
 			else
 			{
-				HzScrollBar->SetPositionX(ScrollBarMargin.Left);
+				HScrollBar->SetPositionX(ScrollBarMargin.Left);
 			}
 		}
 		else
 		{
-			HzScrollBar->SetWidth(InSize.X - ScrollBarMargin.Left - ScrollBarMargin.Right);
-			HzScrollBar->SetPositionX(ScrollBarMargin.Left);
+			HScrollBar->SetWidth(InSize.X - ScrollBarMargin.Left - ScrollBarMargin.Right);
+			HScrollBar->SetPositionX(ScrollBarMargin.Left);
 		}
 	}
-	if (VtScrollBar != nullptr)
+	if (VScrollBar != nullptr)
 	{
 		if (!bDisplayOnLeft)
 		{
-			VtScrollBar->SetPositionX(InSize.X - VtScrollBar->GetWidth());
+			VScrollBar->SetPositionX(InSize.X - VScrollBar->GetWidth());
 		}
-		if (HzScrollBar != nullptr)
+		if (HScrollBar != nullptr)
 		{
-			VtScrollBar->SetHeight(InSize.Y - HzScrollBar->GetHeight() - ScrollBarMargin.Top - ScrollBarMargin.Bottom);
+			VScrollBar->SetHeight(InSize.Y - HScrollBar->GetHeight() - ScrollBarMargin.Top - ScrollBarMargin.Bottom);
 		}
 		else
 		{
-			VtScrollBar->SetHeight(InSize.Y - ScrollBarMargin.Top - ScrollBarMargin.Bottom);
+			VScrollBar->SetHeight(InSize.Y - ScrollBarMargin.Top - ScrollBarMargin.Bottom);
 		}
-		VtScrollBar->SetPositionY(ScrollBarMargin.Top);
+		VScrollBar->SetPositionY(ScrollBarMargin.Top);
 	}
 
 	ViewSize = InSize;
-	if (HzScrollBar != nullptr && !bFloating)
+	if (HScrollBar != nullptr && !bFloating)
 	{
-		ViewSize.Y -= HzScrollBar->GetHeight();
+		ViewSize.Y -= HScrollBar->GetHeight();
 	}
-	if (VtScrollBar != nullptr && !bFloating)
+	if (VScrollBar != nullptr && !bFloating)
 	{
-		ViewSize.X -= VtScrollBar->GetWidth();
+		ViewSize.X -= VScrollBar->GetWidth();
 	}
 	ViewSize.X -= (Owner->Margin.Left + Owner->Margin.Right);
 	ViewSize.Y -= (Owner->Margin.Top + Owner->Margin.Bottom);
@@ -810,26 +810,26 @@ void UScrollPanel::HandleSizeChanged()
 	//	bHScrollNone = ContentSize.X <= ViewSize.X;
 	//}
 
-	//if (VtScrollBar != nullptr)
+	//if (VScrollBar != nullptr)
 	//{
 	//	if (ContentSize.Y == 0)
 	//	{
-	//		VtScrollBar->SetDisplayPerc(0);
+	//		VScrollBar->SetDisplayPerc(0);
 	//	}
 	//	else
 	//	{
-	//		VtScrollBar->SetDisplayPerc(FMath::Min(1.f, ViewSize.Y / ContentSize.Y));
+	//		VScrollBar->SetDisplayPerc(FMath::Min(1.f, ViewSize.Y / ContentSize.Y));
 	//	}
 	//}
-	//if (HzScrollBar != nullptr)
+	//if (HScrollBar != nullptr)
 	//{
 	//	if (ContentSize.X == 0)
 	//	{
-	//		HzScrollBar->SetDisplayPerc(0);
+	//		HScrollBar->SetDisplayPerc(0);
 	//	}
 	//	else
 	//	{
-	//		HzScrollBar->SetDisplayPerc(FMath::Min(1.f, ViewSize.X / ContentSize.X));
+	//		HScrollBar->SetDisplayPerc(FMath::Min(1.f, ViewSize.X / ContentSize.X));
 	//	}
 	//}
 
@@ -837,13 +837,13 @@ void UScrollPanel::HandleSizeChanged()
 
 	//MaskContainer->SetSize(ViewSize);
 	//FBox2D maskRect(-Owner->AlignOffset, -Owner->AlignOffset + ViewSize);
-	//if (bVScrollNone && VtScrollBar != nullptr)
+	//if (bVScrollNone && VScrollBar != nullptr)
 	//{
-	//	maskRect.Max.X += VtScrollBar->GetWidth();
+	//	maskRect.Max.X += VScrollBar->GetWidth();
 	//}
-	//if (bHScrollNone && HzScrollBar != nullptr)
+	//if (bHScrollNone && HScrollBar != nullptr)
 	//{
-	//	maskRect.Max.Y += HzScrollBar->GetHeight();
+	//	maskRect.Max.Y += HScrollBar->GetHeight();
 	//}
 	//if (bDontClipMargin)
 	//{
@@ -853,7 +853,7 @@ void UScrollPanel::HandleSizeChanged()
 	//}
 	//MaskContainer->SetCullingBoundsExtension(FMargin(-maskRect.Min.X, -maskRect.Min.Y, maskRect.Max.X - ViewSize.X, maskRect.Max.Y - ViewSize.Y));
 
-	//if (ScrollType == EScrollType::Horizontal || ScrollType == EScrollType::Both)
+	//if (ScrollDirection == EScrollType::Horizontal || ScrollDirection == EScrollType::Both)
 	//{
 	//	OverlapSize.X = FMath::CeilToFloat(FMath::Max(0.f, ContentSize.X - ViewSize.X));
 	//}
@@ -861,7 +861,7 @@ void UScrollPanel::HandleSizeChanged()
 	//{
 	//	OverlapSize.X = 0;
 	//}
-	//if (ScrollType == EScrollType::Vertical || ScrollType == EScrollType::Both)
+	//if (ScrollDirection == EScrollType::Vertical || ScrollDirection == EScrollType::Both)
 	//{
 	//	OverlapSize.Y = FMath::CeilToFloat(FMath::Max(0.f, ContentSize.Y - ViewSize.Y));
 	//}
@@ -1030,14 +1030,14 @@ void UScrollPanel::Refresh2()
 
 void UScrollPanel::UpdateScrollBarPos()
 {
-	//if (VtScrollBar != nullptr)
+	//if (VScrollBar != nullptr)
 	//{
-	//	VtScrollBar->SetScrollPerc(OverlapSize.Y == 0 ? 0 : FMath::Clamp(-Container->GetPosition().Y, 0.f, OverlapSize.Y) / OverlapSize.Y);
+	//	VScrollBar->SetScrollPerc(OverlapSize.Y == 0 ? 0 : FMath::Clamp(-Container->GetPosition().Y, 0.f, OverlapSize.Y) / OverlapSize.Y);
 	//}
 
-	//if (HzScrollBar != nullptr)
+	//if (HScrollBar != nullptr)
 	//{
-	//	HzScrollBar->SetScrollPerc(OverlapSize.X == 0 ? 0 : FMath::Clamp(-Container->GetPosition().X, 0.f, OverlapSize.X) / OverlapSize.X);
+	//	HScrollBar->SetScrollPerc(OverlapSize.X == 0 ? 0 : FMath::Clamp(-Container->GetPosition().X, 0.f, OverlapSize.X) / OverlapSize.X);
 	//}
 
 	CheckRefreshBar();
@@ -1045,27 +1045,27 @@ void UScrollPanel::UpdateScrollBarPos()
 
 void UScrollPanel::UpdateScrollBarVisible()
 {
-	if (VtScrollBar != nullptr)
+	if (VScrollBar != nullptr)
 	{
-		if (ViewSize.Y <= VtScrollBar->GetMinSize() || bVScrollNone)
+		if (ViewSize.Y <= VScrollBar->GetMinSize() || bVScrollNone)
 		{
-			VtScrollBar->SetVisible(false);
+			VScrollBar->SetVisible(false);
 		}
 		else
 		{
-			UpdateScrollBarVisible2(VtScrollBar);
+			UpdateScrollBarVisible2(VScrollBar);
 		}
 	}
 
-	if (HzScrollBar != nullptr)
+	if (HScrollBar != nullptr)
 	{
-		if (ViewSize.X <= HzScrollBar->GetMinSize() || bHScrollNone)
+		if (ViewSize.X <= HScrollBar->GetMinSize() || bHScrollNone)
 		{
-			HzScrollBar->SetVisible(false);
+			HScrollBar->SetVisible(false);
 		}
 		else
 		{
-			UpdateScrollBarVisible2(HzScrollBar);
+			UpdateScrollBarVisible2(HScrollBar);
 		}
 	}
 }
@@ -1689,7 +1689,7 @@ void UScrollPanel::OnTouchMove(UEventContext* Context)
 	float diff;
 	bool sv = false, sh = false;
 
-	if (ScrollType == EScrollType::Vertical)
+	if (ScrollDirection == EScrollType::Vertical)
 	{
 		if (!bIsHoldAreaDone)
 		{
@@ -1713,7 +1713,7 @@ void UScrollPanel::OnTouchMove(UEventContext* Context)
 
 		sv = true;
 	}
-	else if (ScrollType == EScrollType::Horizontal)
+	else if (ScrollDirection == EScrollType::Horizontal)
 	{
 		if (!bIsHoldAreaDone)
 		{

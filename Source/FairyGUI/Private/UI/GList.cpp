@@ -2394,9 +2394,9 @@ void UGList::UpdateBounds()
 
 		ch = curY;
 
-		if (ch <= viewHeight && bAutoResizeItem && ScrollPanel != nullptr && ScrollPanel->bDisplayInDemand && ScrollPanel->VtScrollBar != nullptr)
+		if (ch <= viewHeight && bAutoResizeItem && ScrollPanel != nullptr && ScrollPanel->bDisplayInDemand && ScrollPanel->VScrollBar != nullptr)
 		{
-			viewWidth += ScrollPanel->VtScrollBar->GetWidth();
+			viewWidth += ScrollPanel->VScrollBar->GetWidth();
 			for (i = 0; i < cnt; i++)
 			{
 				child = GetChildAt(i);
@@ -2446,9 +2446,9 @@ void UGList::UpdateBounds()
 			}
 		}
 		cw = curX;
-		if (cw <= viewWidth && bAutoResizeItem && ScrollPanel != nullptr && ScrollPanel->bDisplayInDemand && ScrollPanel->HzScrollBar != nullptr)
+		if (cw <= viewWidth && bAutoResizeItem && ScrollPanel != nullptr && ScrollPanel->bDisplayInDemand && ScrollPanel->HScrollBar != nullptr)
 		{
-			viewHeight += ScrollPanel->HzScrollBar->GetHeight();
+			viewHeight += ScrollPanel->HScrollBar->GetHeight();
 			for (i = 0; i < cnt; i++)
 			{
 				child = GetChildAt(i);

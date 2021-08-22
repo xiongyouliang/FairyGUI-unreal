@@ -32,10 +32,10 @@ public:
     UFairyComponent* GetFooter() const { return Footer; }
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    UGScrollBar* GetVtScrollBar() const { return VtScrollBar; }
+    UGScrollBar* GetVtScrollBar() const { return VScrollBar; }
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    UGScrollBar* GetHzScrollBar() const { return HzScrollBar; }
+    UGScrollBar* GetHzScrollBar() const { return HScrollBar; }
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     float GetPosX() const { return XPos; }
@@ -201,15 +201,15 @@ private:
     TSharedPtr<SContainer> MaskContainer;
     TSharedPtr<SContainer> ContentContainer;
     UPROPERTY(Transient)
-    UGScrollBar* HzScrollBar;
+    UGScrollBar* HScrollBar;
     UPROPERTY(Transient)
-    UGScrollBar* VtScrollBar;
+    UGScrollBar* VScrollBar;
     UPROPERTY(Transient)
     UFairyComponent* Header;
     UPROPERTY(Transient)
     UFairyComponent* Footer;
 
-    EScrollType ScrollType;
+    EScrollType ScrollDirection;
     FMargin ScrollBarMargin;
     uint8 bScrollBarDisplayAuto : 1;
     uint8 bVScrollNone : 1;

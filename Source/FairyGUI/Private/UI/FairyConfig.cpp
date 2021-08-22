@@ -29,5 +29,9 @@ void UFairyConfig::Create(UObject* owner)
 
 UFairyConfig* UFairyConfig::Get()
 {
+    if (UFairyConfig::Config == nullptr)
+    {
+        UFairyConfig::Create(UFairyApplication::Get());
+    }
     return UFairyConfig::Config;
 }

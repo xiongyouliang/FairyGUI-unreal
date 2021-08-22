@@ -88,11 +88,6 @@ UFairyApplication* UFairyApplication::Get()
 	return Instance;
 }
 
-void UFairyApplication::Init()
-{
-	UFairyConfig::Create(this);
-}
-
 void UFairyApplication::Destroy()
 {
 	if (Instance != nullptr)

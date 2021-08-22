@@ -53,16 +53,11 @@ public:
 	UFUNCTION(BlueprintPure, Category = "FairyGUI", meta = (DisplayName = "Get Application"))
 	static UFairyApplication* Get();
 
-	
-
 	static void Destroy();
 	static bool IsStarted() { return Instance != nullptr; }
 
 	UFairyApplication();
 	~UFairyApplication();
-
-	UFUNCTION(BlueprintCallable, Category = "FairyGUI | FairyApplication")
-	void Init();
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI | FairyApplication")
 	void AddUIRoot(UObject* WorldContextObject);

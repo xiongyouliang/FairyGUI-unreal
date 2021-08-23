@@ -1,4 +1,5 @@
 #include "FairyBlueprintLibrary.h"
+#include "UI/FairyConfig.h"
 
 UFairyConfig* UFairyBlueprintLibrary::GetUIConfig()
 {

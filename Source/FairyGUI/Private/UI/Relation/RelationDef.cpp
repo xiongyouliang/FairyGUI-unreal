@@ -159,7 +159,10 @@ FRelationDef* CreateRelationDef(FRelationItem* InOwner, ERelationType InRelation
 
 void FRelationDef_Left_Left::ApplyRelation()
 {
-	ApplyRelationPos(Owner->GetOwnerLeftPos(), Owner->GetTargetCachedLeftPos(), Owner->GetTargetLeftPos());
+	if (!Owner->IsRelatedToContainer())
+	{
+		ApplyRelationPos(Owner->GetOwnerLeftPos(), Owner->GetTargetCachedLeftPos(), Owner->GetTargetLeftPos());
+	}
 }
 
 void FRelationDef_Left_Center::ApplyRelation()
@@ -194,7 +197,10 @@ void FRelationDef_Right_Right::ApplyRelation()
 
 void FRelationDef_Top_Top::ApplyRelation()
 {
-	ApplyRelationPos(Owner->GetOwnerTopPos(), Owner->GetTargetCachedTopPos(), Owner->GetTargetTopPos());
+	if (!Owner->IsRelatedToContainer())
+	{
+		ApplyRelationPos(Owner->GetOwnerTopPos(), Owner->GetTargetCachedTopPos(), Owner->GetTargetTopPos());
+	}
 }
 
 void FRelationDef_Top_Middle::ApplyRelation()

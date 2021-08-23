@@ -31,6 +31,7 @@ public:
 	void Remove(ERelationType RelationType);
 	void CopyFrom(const FRelationItem& Source);
 	bool IsEmpty() const;
+	bool IsRelatedToContainer();
 
 	/**
 	* Extension Owner Object's Left/Right/Top/Bottom edge(this means size, position both changed)
@@ -61,8 +62,8 @@ public:
 protected:
 	void CacheRelationValue();
 
-	UFairyObject* Owner;
-	UFairyObject* Target;
+	UFairyObject* Owner; // Element
+	UFairyObject* Target; // Container
 	TArray<FRelationDef*> Defs;
 
 	FVector2D TargetCachePos;

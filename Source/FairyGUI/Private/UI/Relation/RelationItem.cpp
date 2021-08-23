@@ -174,6 +174,16 @@ bool FRelationItem::IsEmpty() const
 	return Defs.Num() == 0;
 }
 
+bool FRelationItem::IsRelatedToContainer()
+{
+	if (Target == Owner->GetParent())
+	{
+		return true;
+	}
+
+	return false;
+}
+
 void FRelationItem::ApplyRelation()
 {
 	const FVector2D TargetSize = Target->GetSize(); // if target has relation from other object

@@ -109,6 +109,11 @@ void FRelationItem::CacheRelationValue()
 	}
 }
 
+FVector2D FRelationItem::GetOwnerScale()
+{
+	return Owner->GetScale();
+}
+
 void FRelationItem::Add(ERelationType RelationType, bool bUsePercent)
 {
 	if (RelationType == ERelationType::Size)

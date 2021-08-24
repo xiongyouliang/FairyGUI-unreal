@@ -27,6 +27,7 @@ public:
 	inline FVector2D GetOwnerPosInTargetSpace();
 	inline FVector2D GetOwnerCachePos();
 	inline FVector2D GetOwnerAnchor();
+	inline FVector2D GetOwnerScale();
 
 	void Add(ERelationType RelationType, bool bUsePercent);
 	void InternalAdd(ERelationType RelationType, bool bUsePercent);

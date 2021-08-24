@@ -25,85 +25,85 @@ FRelationDef* CreateRelationDef(FRelationItem* InOwner, ERelationType InRelation
 ERelation::PosDirection GetPosRelationDirection(ERelationType RelationType);
 ERelation::ExtDirection GetExtensionDirection(ERelationType RelationType);
 
-class FRelationDef_Left_Left : public FRelationDef
+class FRelationDef_Pos_Left_Left : public FRelationDef
 {
 public:
 	virtual void ApplyRelation() override;
 };
 
-class FRelationDef_Left_Center : public FRelationDef
+class FRelationDef_Pos_Left_Center : public FRelationDef
 {
 public:
 	virtual void ApplyRelation() override;
 };
 
-class FRelationDef_Left_Right : public FRelationDef
+class FRelationDef_Pos_Left_Right : public FRelationDef
 {
 public:
 	virtual void ApplyRelation() override;
 };
 
-class FRelationDef_Center_Center : public FRelationDef
+class FRelationDef_Pos_Center_Center : public FRelationDef
 {
 public:
 	virtual void ApplyRelation() override;
 };
 
-class FRelationDef_Right_Left : public FRelationDef
+class FRelationDef_Pos_Right_Left : public FRelationDef
 {
 public:
 	virtual void ApplyRelation() override;
 };
 
-class FRelationDef_Right_Center : public FRelationDef
+class FRelationDef_Pos_Right_Center : public FRelationDef
 {
 public:
 	virtual void ApplyRelation() override;
 };
 
-class FRelationDef_Right_Right : public FRelationDef
+class FRelationDef_Pos_Right_Right : public FRelationDef
 {
 public:
 	virtual void ApplyRelation() override;
 };
 
-class FRelationDef_Top_Top: public FRelationDef
+class FRelationDef_Pos_Top_Top: public FRelationDef
 {
 public:
 	virtual void ApplyRelation() override;
 };
 
-class FRelationDef_Top_Middle : public FRelationDef
+class FRelationDef_Pos_Top_Middle : public FRelationDef
 {
 public:
 	virtual void ApplyRelation() override;
 };
 
-class FRelationDef_Top_Bottom : public FRelationDef
+class FRelationDef_Pos_Top_Bottom : public FRelationDef
 {
 public:
 	virtual void ApplyRelation() override;
 };
 
-class FRelationDef_Middle_Middle : public FRelationDef
+class FRelationDef_Pos_Middle_Middle : public FRelationDef
 {
 public:
 	virtual void ApplyRelation() override;
 };
 
-class FRelationDef_Bottom_Top : public FRelationDef
+class FRelationDef_Pos_Bottom_Top : public FRelationDef
 {
 public:
 	virtual void ApplyRelation() override;
 };
 
-class FRelationDef_Bottom_Middle : public FRelationDef
+class FRelationDef_Pos_Bottom_Middle : public FRelationDef
 {
 public:
 	virtual void ApplyRelation() override;
 };
 
-class FRelationDef_Bottom_Bottom : public FRelationDef
+class FRelationDef_Pos_Bottom_Bottom : public FRelationDef
 {
 public:
 	virtual void ApplyRelation() override;

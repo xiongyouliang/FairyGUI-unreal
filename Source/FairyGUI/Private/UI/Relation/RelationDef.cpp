@@ -17,6 +17,131 @@ void FRelationDef::ApplyRelation()
 {
 }
 
+
+
+ERelation::PosDirection GetPosRelationDirection(ERelationType RelationType)
+{
+	if (RelationType >= ERelationType::Left_Left && RelationType <= ERelationType::Right_Right)
+	{
+		return ERelation::PosDirection::Horizontal;
+	}
+
+	if (RelationType >= ERelationType::Top_Top && RelationType <= ERelationType::Bottom_Bottom)
+	{
+		return ERelation::PosDirection::Vertical;
+	}
+
+	return ERelation::PosDirection::NoPosDirection;
+}
+
+ERelation::ExtDirection GetExtensionDirection(ERelationType RelationType)
+{
+	if (RelationType >= ERelationType::LeftExt_Left && RelationType <= ERelationType::RightExt_Right)
+	{
+		return ERelation::ExtDirection::Width;
+	}
+
+	if (RelationType == ERelationType::Width)
+	{
+		return ERelation::ExtDirection::Width;
+	}
+
+	if (RelationType >= ERelationType::TopExt_Top && RelationType <= ERelationType::BottomExt_Bottom)
+	{
+		return ERelation::ExtDirection::Height;
+	}
+
+	if (RelationType == ERelationType::Height)
+	{
+		return ERelation::ExtDirection::Height;
+	}
+
+	return ERelation::ExtDirection::NoExtDirection;
+}
+
+FRelationDef* CreateRelationDef(FRelationItem* InOwner, ERelationType InRelationType, bool InbUsePercent)
+{
+	FRelationDef* DefPtr = nullptr;
+	switch (InRelationType)
+	{
+	case ERelationType::Left_Left:
+		DefPtr = new FRelationDef_Pos_Left_Left();
+		break;
+	case ERelationType::Left_Center:
+		DefPtr = new FRelationDef_Pos_Left_Center();
+		break;
+	case ERelationType::Left_Right:
+		DefPtr = new FRelationDef_Pos_Left_Right();
+		break;
+	case ERelationType::Center_Center:
+		DefPtr = new FRelationDef_Pos_Center_Center();
+		break;
+	case ERelationType::Right_Left:
+		DefPtr = new FRelationDef_Pos_Right_Left();
+		break;
+	case ERelationType::Right_Center:
+		DefPtr = new FRelationDef_Pos_Right_Center();
+		break;
+	case ERelationType::Right_Right:
+		DefPtr = new FRelationDef_Pos_Right_Right();
+		break;
+	case ERelationType::Top_Top:
+		DefPtr = new FRelationDef_Pos_Top_Top();
+		break;
+	case ERelationType::Top_Middle:
+		DefPtr = new FRelationDef_Pos_Top_Middle();
+		break;
+	case ERelationType::Top_Bottom:
+		DefPtr = new FRelationDef_Pos_Top_Bottom();
+		break;
+	case ERelationType::Bottom_Top:
+		DefPtr = new FRelationDef_Pos_Bottom_Top();
+		break;
+	case ERelationType::Bottom_Middle:
+		DefPtr = new FRelationDef_Pos_Bottom_Middle();
+		break;
+	case ERelationType::Bottom_Bottom:
+		DefPtr = new FRelationDef_Pos_Bottom_Bottom();
+		break;
+	case ERelationType::Width:
+		DefPtr = new FRelationDef_Width();
+		break;
+	case ERelationType::Height:
+		DefPtr = new FRelationDef_Height();
+		break;
+	case ERelationType::LeftExt_Left:
+		DefPtr = new FRelationDef_Ext_Left_Left();
+		break;
+	case ERelationType::LeftExt_Right:
+		DefPtr = new FRelationDef_Ext_Left_Right();
+		break;
+	case ERelationType::RightExt_Left:
+		DefPtr = new FRelationDef_Ext_Right_Left();
+		break;
+	case ERelationType::RightExt_Right:
+		DefPtr = new FRelationDef_Ext_Right_Right();
+		break;
+	case ERelationType::TopExt_Top:
+		DefPtr = new FRelationDef_Ext_Top_Top();
+		break;
+	case ERelationType::TopExt_Bottom:
+		DefPtr = new FRelationDef_Ext_Top_Bottom();
+		break;
+	case ERelationType::BottomExt_Top:
+		DefPtr = new FRelationDef_Ext_Bottom_Top();
+		break;
+	case ERelationType::BottomExt_Bottom:
+		DefPtr = new FRelationDef_Ext_Bottom_Bottom();
+		break;
+	default:
+		break;
+	}
+	DefPtr->OwnerRelationItem = InOwner;
+	DefPtr->RelationType = InRelationType;
+	DefPtr->bUsePercent = InbUsePercent;
+	return DefPtr;
+}
+
 void FRelationDef::ApplyRelationPos(const float OwnerOldEdgePos, const float TargetOldEdgePos, const float TargetNewEdgePos)
 {
 	FVector2D FinalPos = OwnerRelationItem->GetOwnerCachePos();
@@ -71,130 +196,7 @@ void FRelationDef::ApplyRelationPos(const float OwnerOldEdgePos, const float Tar
 	OwnerRelationItem->GetOwner()->SetPosition(FinalPos);
 }
 
-ERelation::PosDirection GetPosRelationDirection(ERelationType RelationType)
-{
-	if (RelationType >= ERelationType::Left_Left && RelationType <= ERelationType::Right_Right)
-	{
-		return ERelation::PosDirection::Horizontal;
-	}
-
-	if (RelationType >= ERelationType::Top_Top && RelationType <= ERelationType::Bottom_Bottom)
-	{
-		return ERelation::PosDirection::Vertical;
-	}
-
-	return ERelation::PosDirection::NoPosDirection;
-}
-
-ERelation::ExtDirection GetExtensionDirection(ERelationType RelationType)
-{
-	if (RelationType >= ERelationType::LeftExt_Left && RelationType <= ERelationType::RightExt_Right)
-	{
-		return ERelation::ExtDirection::Width;
-	}
-
-	if (RelationType == ERelationType::Width)
-	{
-		return ERelation::ExtDirection::Width;
-	}
-
-	if (RelationType >= ERelationType::TopExt_Top && RelationType <= ERelationType::BottomExt_Bottom)
-	{
-		return ERelation::ExtDirection::Height;
-	}
-
-	if (RelationType == ERelationType::Height)
-	{
-		return ERelation::ExtDirection::Height;
-	}
-
-	return ERelation::ExtDirection::NoExtDirection;
-}
-
-FRelationDef* CreateRelationDef(FRelationItem* InOwner, ERelationType InRelationType, bool InbUsePercent)
-{
-	FRelationDef* DefPtr = nullptr;
-	switch (InRelationType)
-	{
-	case ERelationType::Left_Left:
-		DefPtr = new FRelationDef_Left_Left();
-		break;
-	case ERelationType::Left_Center:
-		DefPtr = new FRelationDef_Left_Center();
-		break;
-	case ERelationType::Left_Right:
-		DefPtr = new FRelationDef_Left_Right();
-		break;
-	case ERelationType::Center_Center:
-		DefPtr = new FRelationDef_Center_Center();
-		break;
-	case ERelationType::Right_Left:
-		DefPtr = new FRelationDef_Right_Left();
-		break;
-	case ERelationType::Right_Center:
-		DefPtr = new FRelationDef_Right_Center();
-		break;
-	case ERelationType::Right_Right:
-		DefPtr = new FRelationDef_Right_Right();
-		break;
-	case ERelationType::Top_Top:
-		DefPtr = new FRelationDef_Top_Top();
-		break;
-	case ERelationType::Top_Middle:
-		DefPtr = new FRelationDef_Top_Middle();
-		break;
-	case ERelationType::Top_Bottom:
-		DefPtr = new FRelationDef_Top_Bottom();
-		break;
-	case ERelationType::Bottom_Top:
-		DefPtr = new FRelationDef_Bottom_Top();
-		break;
-	case ERelationType::Bottom_Middle:
-		DefPtr = new FRelationDef_Bottom_Middle();
-		break;
-	case ERelationType::Bottom_Bottom:
-		DefPtr = new FRelationDef_Bottom_Bottom();
-		break;
-	case ERelationType::Width:
-		DefPtr = new FRelationDef_Width();
-		break;
-	case ERelationType::Height:
-		DefPtr = new FRelationDef_Height();
-		break;
-	case ERelationType::LeftExt_Left:
-		DefPtr = new FRelationDef_Ext_Left_Left();
-		break;
-	case ERelationType::LeftExt_Right:
-		DefPtr = new FRelationDef_Ext_Left_Right();
-		break;
-	case ERelationType::RightExt_Left:
-		DefPtr = new FRelationDef_Ext_Right_Left();
-		break;
-	case ERelationType::RightExt_Right:
-		DefPtr = new FRelationDef_Ext_Right_Right();
-		break;
-	case ERelationType::TopExt_Top:
-		DefPtr = new FRelationDef_Ext_Top_Top();
-		break;
-	case ERelationType::TopExt_Bottom:
-		DefPtr = new FRelationDef_Ext_Top_Bottom();
-		break;
-	case ERelationType::BottomExt_Top:
-		DefPtr = new FRelationDef_Ext_Bottom_Top();
-		break;
-	case ERelationType::BottomExt_Bottom:
-		DefPtr = new FRelationDef_Ext_Bottom_Bottom();
-		break;
-	default:
-		break;
-	}
-	DefPtr->OwnerRelationItem = InOwner;
-	DefPtr->RelationType = InRelationType;
-	DefPtr->bUsePercent = InbUsePercent;
-	return DefPtr;
-}
-
-void FRelationDef_Left_Left::ApplyRelation()
+void FRelationDef_Pos_Left_Left::ApplyRelation()
 {
 	if (!OwnerRelationItem->IsRelatedToContainer())
 	{
@@ -202,37 +204,37 @@ void FRelationDef_Left_Left::ApplyRelation()
 	}
 }
 
-void FRelationDef_Left_Center::ApplyRelation()
+void FRelationDef_Pos_Left_Center::ApplyRelation()
 {
 	ApplyRelationPos(OwnerRelationItem->GetOwnerLeftPos(), OwnerRelationItem->GetTargetCachedCenterPos(), OwnerRelationItem->GetTargetCenterPos());
 }
 
-void FRelationDef_Left_Right::ApplyRelation()
+void FRelationDef_Pos_Left_Right::ApplyRelation()
 {
 	ApplyRelationPos(OwnerRelationItem->GetOwnerLeftPos(), OwnerRelationItem->GetTargetCachedRightPos(), OwnerRelationItem->GetTargetRightPos());
 }
 
-void FRelationDef_Center_Center::ApplyRelation()
+void FRelationDef_Pos_Center_Center::ApplyRelation()
 {
 	ApplyRelationPos(OwnerRelationItem->GetOwnerCenterPos(), OwnerRelationItem->GetTargetCachedCenterPos(), OwnerRelationItem->GetTargetCenterPos());
 }
 
-void FRelationDef_Right_Left::ApplyRelation()
+void FRelationDef_Pos_Right_Left::ApplyRelation()
 {
 	ApplyRelationPos(OwnerRelationItem->GetOwnerRightPos(), OwnerRelationItem->GetTargetCachedLeftPos(), OwnerRelationItem->GetTargetLeftPos());
 }
 
-void FRelationDef_Right_Center::ApplyRelation()
+void FRelationDef_Pos_Right_Center::ApplyRelation()
 {
 	ApplyRelationPos(OwnerRelationItem->GetOwnerRightPos(), OwnerRelationItem->GetTargetCachedCenterPos(), OwnerRelationItem->GetTargetCenterPos());
 }
 
-void FRelationDef_Right_Right::ApplyRelation()
+void FRelationDef_Pos_Right_Right::ApplyRelation()
 {
 	ApplyRelationPos(OwnerRelationItem->GetOwnerRightPos(), OwnerRelationItem->GetTargetCachedRightPos(), OwnerRelationItem->GetTargetRightPos());
 }
 
-void FRelationDef_Top_Top::ApplyRelation()
+void FRelationDef_Pos_Top_Top::ApplyRelation()
 {
 	if (!OwnerRelationItem->IsRelatedToContainer())
 	{
@@ -240,32 +242,32 @@ void FRelationDef_Top_Top::ApplyRelation()
 	}
 }
 
-void FRelationDef_Top_Middle::ApplyRelation()
+void FRelationDef_Pos_Top_Middle::ApplyRelation()
 {
 	ApplyRelationPos(OwnerRelationItem->GetOwnerTopPos(), OwnerRelationItem->GetTargetCachedMiddlePos(), OwnerRelationItem->GetTargetMiddlePos());
 }
 
-void FRelationDef_Top_Bottom::ApplyRelation()
+void FRelationDef_Pos_Top_Bottom::ApplyRelation()
 {
 	ApplyRelationPos(OwnerRelationItem->GetOwnerTopPos(), OwnerRelationItem->GetTargetCachedBottomPos(), OwnerRelationItem->GetTargetBottomPos());
 }
 
-void FRelationDef_Middle_Middle::ApplyRelation()
+void FRelationDef_Pos_Middle_Middle::ApplyRelation()
 {
 	ApplyRelationPos(OwnerRelationItem->GetOwnerMiddlePos(), OwnerRelationItem->GetTargetCachedMiddlePos(), OwnerRelationItem->GetTargetMiddlePos());
 }
 
-void FRelationDef_Bottom_Top::ApplyRelation()
+void FRelationDef_Pos_Bottom_Top::ApplyRelation()
 {
 	ApplyRelationPos(OwnerRelationItem->GetOwnerBottomPos(), OwnerRelationItem->GetTargetCachedTopPos(), OwnerRelationItem->GetTargetTopPos());
 }
 
-void FRelationDef_Bottom_Middle::ApplyRelation()
+void FRelationDef_Pos_Bottom_Middle::ApplyRelation()
 {
 	ApplyRelationPos(OwnerRelationItem->GetOwnerBottomPos(), OwnerRelationItem->GetTargetCachedMiddlePos(), OwnerRelationItem->GetTargetMiddlePos());
 }
 
-void FRelationDef_Bottom_Bottom::ApplyRelation()
+void FRelationDef_Pos_Bottom_Bottom::ApplyRelation()
 {
 	ApplyRelationPos(OwnerRelationItem->GetOwnerBottomPos(), OwnerRelationItem->GetTargetCachedBottomPos(), OwnerRelationItem->GetTargetBottomPos());
 }
@@ -326,6 +328,7 @@ void FRelationDef::ApplyRelationExt(const float InOwnerExtEdgePos, const float I
 	const FVector2D OwnerSize = OwnerRelationItem->GetOwnerSize();
 	const FVector2D OwnerPos = OwnerRelationItem->GetOwnerPos();
 	const FVector2D OwnerAnchor = OwnerRelationItem->GetOwnerAnchor();
+	const FVector2D OwnerScale = OwnerRelationItem->GetOwnerScale();
 
 	const FVector2D TargetOldSize = OwnerRelationItem->GetTargetCachedSize();
 	const FVector2D TargetNewSize = OwnerRelationItem->GetTargetSize();
@@ -350,17 +353,17 @@ void FRelationDef::ApplyRelationExt(const float InOwnerExtEdgePos, const float I
 		TargetEdgeDeltaValue = InTargetNewEdgePos - InTargetOldEdgePos;
 	}
 
-	float OwnerNewEdgePos = InOwnerExtEdgePos + TargetEdgeDeltaValue;
-	float MinorPos = OwnerNewEdgePos < InOwnerConstantEdgePos ? OwnerNewEdgePos : InOwnerConstantEdgePos; // get owner object left or top edge position
+	float OwnerExtEdgeNewPos = InOwnerExtEdgePos + TargetEdgeDeltaValue;
+	float MinorPos = OwnerExtEdgeNewPos < InOwnerConstantEdgePos ? OwnerExtEdgeNewPos : InOwnerConstantEdgePos; // get owner object left or top edge position
 	if (direction == ERelation::ExtDirection::Width)
 	{
-		NewSize.X += TargetEdgeDeltaValue;
-		NewPos.X = MinorPos + NewSize.X * OwnerAnchor.X;
+		NewSize.X = FMath::Abs(InOwnerConstantEdgePos - OwnerExtEdgeNewPos);
+		NewPos.X = MinorPos + NewSize.X * OwnerScale.X * OwnerAnchor.X;
 	}
 	else
 	{
-		NewSize.Y += TargetEdgeDeltaValue;
-		NewPos.Y = MinorPos + NewSize.Y * OwnerAnchor.Y;
+		NewSize.Y = FMath::Abs(InOwnerConstantEdgePos - OwnerExtEdgeNewPos);
+		NewPos.Y = MinorPos + NewSize.Y * OwnerScale.Y * OwnerAnchor.Y;
 	}
 
 	OwnerRelationItem->GetOwner()->SetPosition(NewPos);

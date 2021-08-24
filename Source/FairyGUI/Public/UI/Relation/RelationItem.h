@@ -24,6 +24,8 @@ public:
 	UFairyObject* GetOwner();
 	inline FVector2D GetOwnerSize();
 	inline FVector2D GetOwnerPos();
+	inline FVector2D GetOwnerPosInTargetSpace();
+	inline FVector2D GetOwnerCachePos();
 	inline FVector2D GetOwnerAnchor();
 
 	void Add(ERelationType RelationType, bool bUsePercent);
@@ -66,7 +68,10 @@ protected:
 	UFairyObject* Target; // Container
 	TArray<FRelationDef*> Defs;
 
+	/// OwnerCachePos and TargetCachePos in the same coordination space
+	FVector2D OwnerCachePos;
 	FVector2D TargetCachePos;
 	FVector2D TargetCacheSize;
+	FVector2D TargetCacheScale;
 	FVector2D TargetCacheAnchor;
 };

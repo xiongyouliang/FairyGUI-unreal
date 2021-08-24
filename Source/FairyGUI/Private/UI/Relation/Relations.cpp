@@ -132,7 +132,7 @@ void FRelations::Setup(FByteBuffer * Buffer, bool bParentToChild)
 		else
 		{
 			// target is a brothers
-			//TargetObject = Owner->GetParent()->GetChildAt(targetIndex);
+			TargetObject = Owner->GetParent()->GetChildAt(targetIndex);
 		}
 
 		int32 RelationNum = Buffer->ReadByte();

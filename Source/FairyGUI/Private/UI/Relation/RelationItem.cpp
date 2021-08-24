@@ -72,7 +72,23 @@ FVector2D FRelationItem::GetOwnerSize()
 
 FVector2D FRelationItem::GetOwnerPos()
 {
-	return Owner->GetPosition();
+	FVector2D OwnerPos = Owner->GetPosition();
+	return OwnerPos;
+}
+
+FVector2D FRelationItem::GetOwnerPosInTargetSpace()
+{
+	FVector2D Pos = Owner->GetPosition();
+	if (IsRelatedToContainer())
+	{
+		Pos += Target->GetPosition();
+	}
+	return Pos;
+}
+
+FVector2D FRelationItem::GetOwnerCachePos()
+{
+	return OwnerCachePos;
 }
 
 FVector2D FRelationItem::GetOwnerAnchor()
@@ -87,6 +103,9 @@ void FRelationItem::CacheRelationValue()
 		TargetCachePos = Target->GetPosition();
 		TargetCacheSize = Target->GetSize();
 		TargetCacheAnchor = Target->GetAnchor();
+		TargetCacheScale = Target->GetScale();
+
+		OwnerCachePos = GetOwnerPosInTargetSpace();
 	}
 }
 
@@ -201,67 +220,80 @@ void FRelationItem::ApplyRelation()
 	}
 }
 
+// *********************** Owner object edge position start ********************
 float FRelationItem::GetOwnerLeftPos()
 {
-	FVector2D OwnerSize = Owner->GetSize();
-	FVector2D OwnerPos = Owner->GetPosition();
-	FVector2D OwnerAnchor = Owner->GetAnchor();
-	return OwnerPos.X - OwnerSize.X * OwnerAnchor.X;
+	const FVector2D OwnerSize = Owner->GetSize();
+	FVector2D OwnerPos = GetOwnerPosInTargetSpace();
+	const FVector2D OwnerAnchor = Owner->GetAnchor();
+	const FVector2D OwnerScale = Owner->GetScale();
+	return OwnerPos.X - OwnerSize.X * OwnerAnchor.X * OwnerScale.X;
 }
 
 float FRelationItem::GetOwnerCenterPos()
 {
-	return GetOwnerLeftPos() + Owner->GetSize().X * 0.5f;
+	const FVector2D OwnerSize = Owner->GetSize();
+	const FVector2D OwnerScale = Owner->GetScale();
+	return GetOwnerLeftPos() + OwnerSize.X * OwnerScale.X * 0.5f;
 }
 
 float FRelationItem::GetOwnerRightPos()
 {
-	FVector2D OwnerSize = Owner->GetSize();
-	FVector2D OwnerPos = Owner->GetPosition();
-	FVector2D OwnerAnchor = Owner->GetAnchor();
-	return OwnerPos.X + OwnerSize.X * OwnerAnchor.X;
+	const FVector2D OwnerSize = Owner->GetSize();
+	const FVector2D OwnerScale = Owner->GetScale();
+	return GetOwnerLeftPos() + OwnerSize.X * OwnerScale.X;
 }
 
 float FRelationItem::GetOwnerTopPos()
 {
-	FVector2D OwnerSize = Owner->GetSize();
+	const FVector2D OwnerSize = Owner->GetSize();
 	FVector2D OwnerPos = Owner->GetPosition();
-	FVector2D OwnerAnchor = Owner->GetAnchor();
-	return OwnerPos.Y - OwnerSize.Y * OwnerAnchor.Y;
+	if (IsRelatedToContainer())
+	{
+		OwnerPos += Target->GetPosition();
+	}
+	const FVector2D OwnerAnchor = Owner->GetAnchor();
+	const FVector2D OwnerScale = Owner->GetScale();
+	return OwnerPos.Y - OwnerSize.Y * OwnerAnchor.Y * OwnerScale.Y;
 }
 
 float FRelationItem::GetOwnerMiddlePos()
 {
-	return GetOwnerTopPos() + Owner->GetSize().Y * 0.5f;
+	const FVector2D OwnerSize = Owner->GetSize();
+	const FVector2D OwnerScale = Owner->GetScale();
+	return GetOwnerTopPos() + OwnerSize.Y * OwnerScale.Y * 0.5f;
 }
 
 float FRelationItem::GetOwnerBottomPos()
 {
-	FVector2D OwnerSize = Owner->GetSize();
-	FVector2D OwnerPos = Owner->GetPosition();
-	FVector2D OwnerAnchor = Owner->GetAnchor();
-	return OwnerPos.Y + OwnerSize.Y * OwnerAnchor.Y;
+	const FVector2D OwnerSize = Owner->GetSize();
+	const FVector2D OwnerScale = Owner->GetScale();
+	return GetOwnerTopPos() + OwnerSize.Y * OwnerScale.Y;
 }
+// *********************** Owner object edge position end ********************
 
+// *********************** Target object edge position and cached position start ********************
 float FRelationItem::GetTargetLeftPos()
 {
 	const FVector2D& TargetSize = Target->GetSize();
 	const FVector2D& TargetPos = Target->GetPosition();
 	const FVector2D& TargetAnchor = Target->GetAnchor();
+	const FVector2D& TargetScale = Target->GetScale();
 	return TargetPos.X - TargetSize.X * TargetAnchor.X;
 }
 
 float FRelationItem::GetTargetCenterPos()
 {
-	return GetTargetLeftPos() + Target->GetSize().X * 0.5f;
+	const FVector2D& TargetSize = Target->GetSize();
+	const FVector2D& TargetScale = Target->GetScale();
+	return GetTargetLeftPos() + TargetSize.X * TargetScale.X * 0.5f;
 }
 
 float FRelationItem::GetTargetRightPos()
 {
 	const FVector2D& TargetSize = Target->GetSize();
-	const FVector2D& TargetPos = Target->GetPosition();
-	const FVector2D& TargetAnchor = Target->GetAnchor();
-	return TargetPos.X + TargetSize.X * TargetAnchor.X;
+	const FVector2D& TargetScale = Target->GetScale();
+	return GetTargetLeftPos() + TargetSize.X * TargetScale.X;
 }
 
 float FRelationItem::GetTargetTopPos()
@@ -269,48 +301,52 @@ float FRelationItem::GetTargetTopPos()
 	const FVector2D& TargetSize = Target->GetSize();
 	const FVector2D& TargetPos = Target->GetPosition();
 	const FVector2D& TargetAnchor = Target->GetAnchor();
-	return TargetPos.Y - TargetSize.Y * TargetAnchor.Y;
+	const FVector2D& TargetScale = Target->GetScale();
+	return TargetPos.Y - TargetSize.Y * TargetAnchor.Y * TargetScale.Y;
 }
 
 float FRelationItem::GetTargetMiddlePos()
 {
-	return GetTargetTopPos() + Target->GetSize().Y * 0.5f;
+	const FVector2D& TargetSize = Target->GetSize();
+	const FVector2D& TargetScale = Target->GetScale();
+	return GetTargetTopPos() + TargetSize.Y * TargetScale.Y * 0.5f;
 }
 
 float FRelationItem::GetTargetBottomPos()
 {
 	const FVector2D& TargetSize = Target->GetSize();
-	const FVector2D& TargetPos = Target->GetPosition();
-	const FVector2D& TargetAnchor = Target->GetAnchor();
-	return TargetPos.Y + TargetSize.Y * TargetAnchor.Y;
+	const FVector2D& TargetScale = Target->GetScale();
+	return GetTargetTopPos() + TargetSize.Y * TargetScale.Y;
 }
 
 float FRelationItem::GetTargetCachedLeftPos()
 {
-	return TargetCachePos.X - TargetCacheSize.X * TargetCacheAnchor.X;
+	return TargetCachePos.X - TargetCacheSize.X * TargetCacheScale.X * TargetCacheAnchor.X;
 }
 
 float FRelationItem::GetTargetCachedCenterPos()
 {
-	return GetTargetCachedLeftPos() + TargetCacheSize.X * 0.5;
+	return GetTargetCachedLeftPos() + TargetCacheSize.X * TargetCacheScale.X * 0.5;
 }
 
 float FRelationItem::GetTargetCachedRightPos()
 {
-	return TargetCachePos.X + TargetCacheSize.X * TargetCacheAnchor.X;
+	return GetTargetCachedLeftPos() + TargetCacheSize.X * TargetCacheScale.X;
 }
 
 float FRelationItem::GetTargetCachedTopPos()
 {
-	return TargetCachePos.Y - TargetCacheSize.Y * TargetCacheAnchor.Y;
+	return TargetCachePos.Y - TargetCacheSize.Y * TargetCacheScale.Y * TargetCacheAnchor.Y;
 }
 
 float FRelationItem::GetTargetCachedMiddlePos()
 {
-	return GetTargetCachedTopPos() + TargetCacheSize.Y * 0.5;
+	return GetTargetCachedTopPos() + TargetCacheSize.Y * TargetCacheScale.Y * 0.5;
 }
 
 float FRelationItem::GetTargetCachedBottomPos()
 {
-	return TargetCachePos.Y + TargetCacheSize.Y * TargetCacheAnchor.Y;
+	return GetTargetCachedTopPos() + TargetCacheSize.Y * TargetCacheScale.Y;
 }
+
+// *********************** Target object edge position start ********************

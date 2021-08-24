@@ -8,7 +8,7 @@ class FRelationItem;
 class FRelationDef
 {
 public:
-	FRelationItem* Owner;
+	FRelationItem* OwnerRelationItem;
 	ERelationType RelationType;
 	bool bUsePercent;
 

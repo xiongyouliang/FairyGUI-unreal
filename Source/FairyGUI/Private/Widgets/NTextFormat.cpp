@@ -37,7 +37,15 @@ FTextBlockStyle FNTextFormat::GetStyle() const
 {
 	FTextBlockStyle Style;
 	
-	FString TempStr = Face.IsEmpty() ? UFairyConfig::Config->DefaultFont.TrimStart() : Face.TrimStart();
+	FString TempStr;
+	if (!Face.IsEmpty())
+	{
+		TempStr = Face.TrimStart();
+	}
+	else if (!UFairyConfig::Config->DefaultFont.IsEmpty())
+	{
+		TempStr = UFairyConfig::Config->DefaultFont.TrimStart();
+	}
 	FString FontName = TempStr.Replace(TEXT(" "), TEXT(""));
 	if (!FontName.StartsWith("ui://"))
 	{

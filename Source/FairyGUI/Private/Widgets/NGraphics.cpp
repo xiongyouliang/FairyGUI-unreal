@@ -1,7 +1,6 @@
 #include "Widgets/NGraphics.h"
 
 FNGraphics::FNGraphics() :
-    Size(ForceInit),
     Color(FColor::White),
     Flip(EFlipType::None),
     Texture(nullptr),
@@ -62,52 +61,29 @@ void FNGraphics::SetTexture(UNTexture* InTexture)
 void FNGraphics::Paint(const FGeometry& AllottedGeometry,
     FSlateWindowElementList& OutDrawElements,
     int32 LayerId,
-    float Alpha,
+    float InAlpha,
     bool bEnabled)
 {
-    if (Size != AllottedGeometry.GetLocalSize())
-    {
-        Size = AllottedGeometry.GetLocalSize();
-        bMeshDirty = true;
-    }
-
-    if (bMeshDirty)
-    {
-        UsingAlpha = Alpha;
-        UpdateMeshNow();
-    }
-    else if (Alpha != UsingAlpha)
-    {
-        UsingAlpha = Alpha;
-        int32 cnt = Vertices.Num();
-        for (int32 i = 0; i < cnt; i++)
-        {
-            Vertices[i].Color.A = (uint8)FMath::Clamp<int32>(FMath::TruncToInt(AlphaBackup[i] * UsingAlpha), 0, 255);
-        }
-    }
-
+    UpdateMeshNow(AllottedGeometry, InAlpha);
     const ESlateDrawEffect DrawEffects = bEnabled ? ESlateDrawEffect::None : ESlateDrawEffect::DisabledEffect;
-
-    int32 VerticeLength = Vertices.Num();
-    for (int32 i = 0; i < VerticeLength; i++)
-    {
-        Vertices[i].Position = AllottedGeometry.LocalToAbsolute(PositionsBackup[i]);
-    }
-
     FSlateDrawElement::MakeCustomVerts(OutDrawElements, LayerId, ResourceHandle, Vertices, Triangles, nullptr, 0, 0, DrawEffects);
 }
 
-void FNGraphics::UpdateMeshNow()
+void FNGraphics::UpdateMeshNow(const FGeometry& AllottedGeometry, const float InAlpha)
 {
     bMeshDirty = false;
     Vertices.Reset();
     Triangles.Reset();
 
     if (Texture == nullptr || !MeshFactory.IsValid())
+    {
         return;
+    }
+
+    FVector2D LocalSize = AllottedGeometry.GetLocalSize();
 
     FVertexHelper Helper;
-    Helper.ContentRect = FBox2D(FVector2D::ZeroVector, Size);
+    Helper.ContentRect = FBox2D(FVector2D::ZeroVector, LocalSize);
     Helper.UVRect = Texture->UVRect;
     Helper.TextureSize = Texture->GetSize();
     if (Flip != EFlipType::None)
@@ -118,6 +94,7 @@ void FNGraphics::UpdateMeshNow()
             Helper.UVRect.Min.X = Helper.UVRect.Max.X;
             Helper.UVRect.Max.X = tmp;
         }
+
         if (Flip == EFlipType::Vertical || Flip == EFlipType::Both)
         {
             float tmp = Helper.UVRect.Min.Y;
@@ -130,7 +107,9 @@ void FNGraphics::UpdateMeshNow()
 
     int32 vertCount = Helper.GetVertexCount();
     if (vertCount == 0)
+    {
         return;
+    }
 
     if (Texture->bRotated)
     {
@@ -147,21 +126,16 @@ void FNGraphics::UpdateMeshNow()
         }
     }
 
-    AlphaBackup.SetNum(vertCount, false);
-    PositionsBackup.SetNum(vertCount, false);
-
-    for (int32 i = 0; i < vertCount; i++)
-    {
-        FSlateVertex& Vertex = Helper.Vertices[i];
-
-        AlphaBackup[i] = Vertex.Color.A;
-        Vertex.Color.A = (uint8)FMath::Clamp<int32>(FMath::TruncToInt(Vertex.Color.A * UsingAlpha), 0, 255),
-
-        PositionsBackup[i] = Vertex.Position;
-    }
-
     Vertices += Helper.Vertices;
     Triangles += Helper.Triangles;
+
+    int32 VerticeLength = Vertices.Num();
+    for (int32 i = 0; i < VerticeLength; i++)
+    {
+        FSlateVertex& Vertex = Vertices[i];
+        Vertex.Position = AllottedGeometry.LocalToAbsolute(Vertex.Position);
+        Vertex.Color.A = FMath::Clamp<uint8>(Vertex.Color.A * InAlpha, 0, 255);
+    }
 }
 
 void FNGraphics::PopulateDefaultMesh(FVertexHelper& Helper)
@@ -175,5 +149,7 @@ void FNGraphics::PopulateDefaultMesh(FVertexHelper& Helper)
 void FNGraphics::AddReferencedObjects(FReferenceCollector& Collector)
 {
     if (Texture != nullptr)
+    {
         Collector.AddReferencedObject(Texture);
+    }
 }

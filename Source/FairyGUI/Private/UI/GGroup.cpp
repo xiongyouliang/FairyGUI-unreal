@@ -1,5 +1,5 @@
 #include "UI/GGroup.h"
-#include "UI/GComponent.h"
+#include "UI/FairyComponent.h"
 #include "Utils/ByteBuffer.h"
 #include "Widgets/SDisplayObject.h"
 
@@ -8,8 +8,11 @@ UGGroup::UGGroup() :
     MainGridMinSize(10),
     MainChildIndex(-1)
 {
-    DisplayObject = SNew(SDisplayObject).GObject(this);;
-    DisplayObject->SetInteractable(false);
+    if (HasAnyFlags(RF_ClassDefaultObject) == false) 
+    {
+        DisplayObject = SNew(SDisplayObject).GObject(this);;
+        DisplayObject->SetInteractable(false);
+    }
 }
 
 UGGroup::~UGGroup()
@@ -80,10 +83,12 @@ void UGGroup::SetMainGridMinSize(int32 InSize)
 
 void UGGroup::SetBoundsChangedFlag(bool bPositionChangedOnly)
 {
-    if (Updating == 0 && Parent.IsValid())
+    if (Updating == 0 && Parent)
     {
         if (!bPositionChangedOnly)
+        {
             bPercentReady = false;
+        }
 
         if (!bBoundsChanged)
         {
@@ -91,7 +96,8 @@ void UGGroup::SetBoundsChangedFlag(bool bPositionChangedOnly)
 
             if (Layout != EGroupLayoutType::None)
             {
-                GetApp()->DelayCall(UpdateBoundsTimerHandle, this, &UGGroup::EnsureBoundsCorrect);
+                //DelayCall(UpdateBoundsTimerHandle, this, &UGGroup::EnsureBoundsCorrect);
+                EnsureBoundsCorrect();
             }
         }
     }
@@ -99,13 +105,17 @@ void UGGroup::SetBoundsChangedFlag(bool bPositionChangedOnly)
 
 void UGGroup::EnsureBoundsCorrect()
 {
-    if (!Parent.IsValid() || !bBoundsChanged)
+    if (Parent == nullptr || !bBoundsChanged)
+    {
         return;
+    }
 
     bBoundsChanged = false;
 
     if (bAutoSizeDisabled)
+    {
         ResizeChildren(FVector2D::ZeroVector);
+    }
     else
     {
         HandleLayout();
@@ -117,7 +127,7 @@ void UGGroup::UpdateBounds()
 {
     int32 cnt = Parent->NumChildren();
     int32 i;
-    UGObject* child;
+    UFairyObject* child;
     float ax = FLT_MAX, ay = FLT_MAX;
     float ar = FLT_MIN, ab = FLT_MIN;
     float tmp;
@@ -127,20 +137,30 @@ void UGGroup::UpdateBounds()
     {
         child = Parent->GetChildAt(i);
         if (child->GetGroup() != this || (bExcludeInvisibles && !child->InternalVisible3()))
+        {
             continue;
+        }
 
-        tmp = child->GetX();
+        tmp = child->GetPosition().X;
         if (tmp < ax)
+        {
             ax = tmp;
-        tmp = child->GetY();
+        }
+        tmp = child->GetPosition().Y;
         if (tmp < ay)
+        {
             ay = tmp;
-        tmp = child->GetX() + child->GetWidth();
+        }
+        tmp = child->GetPosition().X + child->GetWidth();
         if (tmp > ar)
+        {
             ar = tmp;
-        tmp = child->GetY() + child->GetHeight();
+        }
+        tmp = child->GetPosition().Y + child->GetHeight();
         if (tmp > ab)
+        {
             ab = tmp;
+        }
 
         empty = false;
     }
@@ -157,7 +177,9 @@ void UGGroup::UpdateBounds()
         h = ab - ay;
     }
     else
+    {
         w = h = 0;
+    }
 
     if ((Updating & 2) == 0)
     {
@@ -178,36 +200,49 @@ void UGGroup::HandleLayout()
 
     if (Layout == EGroupLayoutType::Horizontal)
     {
-        float curX = GetX();
+        float curX = GetPosition().X;
         int32 cnt = Parent->NumChildren();
         for (int32 i = 0; i < cnt; i++)
         {
-            UGObject* child = Parent->GetChildAt(i);
+            UFairyObject* child = Parent->GetChildAt(i);
             if (child->GetGroup() != this)
+            {
                 continue;
-            if (bExcludeInvisibles && !child->InternalVisible3())
-                continue;
+            }
 
-            child->SetXMin(curX);
+            if (bExcludeInvisibles && !child->InternalVisible3())
+            {
+                continue;
+            }
+
+            child->SetMinWidth(curX);
             if (child->GetWidth() != 0)
+            {
                 curX += child->GetWidth() + ColumnGap;
+            }
         }
     }
     else if (Layout == EGroupLayoutType::Vertical)
     {
-        float curY = GetY();
+        float curY = GetPosition().Y;
         int32 cnt = Parent->NumChildren();
         for (int32 i = 0; i < cnt; i++)
         {
-            UGObject* child = Parent->GetChildAt(i);
+            UFairyObject* child = Parent->GetChildAt(i);
             if (child->GetGroup() != this)
+            {
                 continue;
+            }
             if (bExcludeInvisibles && !child->InternalVisible3())
+            {
                 continue;
+            }
 
-            child->SetYMin(curY);
+            child->SetMinHeight(curY);
             if (child->GetHeight() != 0)
+            {
                 curY += child->GetHeight() + LineGap;
+            }
         }
     }
 
@@ -216,15 +251,17 @@ void UGGroup::HandleLayout()
 
 void UGGroup::MoveChildren(const FVector2D& Delta)
 {
-    if ((Updating & 1) != 0 || !Parent.IsValid())
+    if ((Updating & 1) != 0 || Parent == nullptr)
+    {
         return;
+    }
 
     Updating |= 1;
 
     int32 cnt = Parent->NumChildren();
     for (int32 i = 0; i < cnt; i++)
     {
-        UGObject* child = Parent->GetChildAt(i);
+        UFairyObject* child = Parent->GetChildAt(i);
         if (child->GetGroup() == this)
         {
             child->SetPosition(child->GetPosition() + Delta);
@@ -236,200 +273,208 @@ void UGGroup::MoveChildren(const FVector2D& Delta)
 
 void UGGroup::ResizeChildren(const FVector2D& Delta)
 {
-    if (Layout == EGroupLayoutType::None || (Updating & 2) != 0 || !Parent.IsValid())
-        return;
+    //if (Layout == EGroupLayoutType::None || (Updating & 2) != 0 || !Parent.IsValid())
+    //    return;
 
-    Updating |= 2;
+    //Updating |= 2;
 
-    if (bBoundsChanged)
-    {
-        bBoundsChanged = false;
-        if (!bAutoSizeDisabled)
-        {
-            UpdateBounds();
-            return;
-        }
-    }
+    //if (bBoundsChanged)
+    //{
+    //    bBoundsChanged = false;
+    //    if (!bAutoSizeDisabled)
+    //    {
+    //        UpdateBounds();
+    //        return;
+    //    }
+    //}
 
-    int32 cnt = Parent->NumChildren();
+    //int32 cnt = Parent->NumChildren();
 
-    if (!bPercentReady)
-    {
-        bPercentReady = true;
-        NumChildren = 0;
-        TotalSize = 0;
-        MainChildIndex = -1;
+    //if (!bPercentReady)
+    //{
+    //    bPercentReady = true;
+    //    NumChildren = 0;
+    //    TotalSize = 0;
+    //    MainChildIndex = -1;
 
-        int32 j = 0;
-        for (int32 i = 0; i < cnt; i++)
-        {
-            UGObject* child = Parent->GetChildAt(i);
-            if (child->GetGroup() != this)
-                continue;
+    //    int32 j = 0;
+    //    for (int32 i = 0; i < cnt; i++)
+    //    {
+    //        UFairyObject* child = Parent->GetChildAt(i);
+    //        if (child->GetGroup() != this)
+    //            continue;
 
-            if (!bExcludeInvisibles || child->InternalVisible3())
-            {
-                if (j == MainGridIndex)
-                    MainChildIndex = i;
+    //        if (!bExcludeInvisibles || child->InternalVisible3())
+    //        {
+    //            if (j == MainGridIndex)
+    //                MainChildIndex = i;
 
-                NumChildren++;
+    //            NumChildren++;
 
-                if (Layout == EGroupLayoutType::Horizontal)
-                    TotalSize += child->GetWidth();
-                else
-                    TotalSize += child->GetHeight();
-            }
+    //            if (Layout == EGroupLayoutType::Horizontal)
+    //                TotalSize += child->GetWidth();
+    //            else
+    //                TotalSize += child->GetHeight();
+    //        }
 
-            j++;
-        }
+    //        j++;
+    //    }
 
-        if (MainChildIndex != -1)
-        {
-            if (Layout == EGroupLayoutType::Horizontal)
-            {
-                UGObject* child = Parent->GetChildAt(MainChildIndex);
-                TotalSize += MainGridMinSize - child->GetWidth();
-                child->SizePercentInGroup = MainGridMinSize / TotalSize;
-            }
-            else
-            {
-                UGObject* child = Parent->GetChildAt(MainChildIndex);
-                TotalSize += MainGridMinSize - child->GetHeight();
-                child->SizePercentInGroup = MainGridMinSize / TotalSize;
-            }
-        }
+    //    if (MainChildIndex != -1)
+    //    {
+    //        if (Layout == EGroupLayoutType::Horizontal)
+    //        {
+    //            UFairyObject* child = Parent->GetChildAt(MainChildIndex);
+    //            TotalSize += MainGridMinSize - child->GetWidth();
+    //            child->SizePercentInGroup = MainGridMinSize / TotalSize;
+    //        }
+    //        else
+    //        {
+    //            UFairyObject* child = Parent->GetChildAt(MainChildIndex);
+    //            TotalSize += MainGridMinSize - child->GetHeight();
+    //            child->SizePercentInGroup = MainGridMinSize / TotalSize;
+    //        }
+    //    }
 
-        for (int32 i = 0; i < cnt; i++)
-        {
-            UGObject* child = Parent->GetChildAt(i);
-            if (child->GetGroup() != this)
-                continue;
+    //    for (int32 i = 0; i < cnt; i++)
+    //    {
+    //        UFairyObject* child = Parent->GetChildAt(i);
+    //        if (child->GetGroup() != this)
+    //            continue;
 
-            if (i == MainChildIndex)
-                continue;
+    //        if (i == MainChildIndex)
+    //            continue;
 
-            if (TotalSize > 0)
-                child->SizePercentInGroup = (Layout == EGroupLayoutType::Horizontal ? child->GetWidth() : child->GetHeight()) / TotalSize;
-            else
-                child->SizePercentInGroup = 0;
-        }
-    }
+    //        if (TotalSize > 0)
+    //            child->SizePercentInGroup = (Layout == EGroupLayoutType::Horizontal ? child->GetWidth() : child->GetHeight()) / TotalSize;
+    //        else
+    //            child->SizePercentInGroup = 0;
+    //    }
+    //}
 
-    float remainSize = 0;
-    float remainPercent = 1;
-    bool priorHandled = false;
+    //float remainSize = 0;
+    //float remainPercent = 1;
+    //bool priorHandled = false;
 
-    if (Layout == EGroupLayoutType::Horizontal)
-    {
-        remainSize = GetWidth() - (NumChildren - 1) * ColumnGap;
-        if (MainChildIndex != -1 && remainSize >= TotalSize)
-        {
-            UGObject* child = Parent->GetChildAt(MainChildIndex);
-            child->SetSize(FVector2D(remainSize - (TotalSize - MainGridMinSize), child->RawSize.Y + Delta.Y), true);
-            remainSize -= child->GetWidth();
-            remainPercent -= child->SizePercentInGroup;
-            priorHandled = true;
-        }
+    //if (Layout == EGroupLayoutType::Horizontal)
+    //{
+    //    remainSize = GetWidth() - (NumChildren - 1) * ColumnGap;
+    //    if (MainChildIndex != -1 && remainSize >= TotalSize)
+    //    {
+    //        UFairyObject* child = Parent->GetChildAt(MainChildIndex);
+    //        child->SetSize(FVector2D(remainSize - (TotalSize - MainGridMinSize), child->RawSize.Y + Delta.Y), true);
+    //        remainSize -= child->GetWidth();
+    //        remainPercent -= child->SizePercentInGroup;
+    //        priorHandled = true;
+    //    }
 
-        float curX = GetX();
-        for (int32 i = 0; i < cnt; i++)
-        {
-            UGObject* child = Parent->GetChildAt(i);
-            if (child->GetGroup() != this)
-                continue;
+    //    float curX = GetPosition().X;
+    //    for (int32 i = 0; i < cnt; i++)
+    //    {
+    //        UFairyObject* child = Parent->GetChildAt(i);
+    //        if (child->GetGroup() != this)
+    //            continue;
 
-            if (bExcludeInvisibles && !child->InternalVisible3())
-            {
-                child->SetSize(FVector2D(child->RawSize.X, child->RawSize.Y + Delta.Y), true);
-                continue;
-            }
+    //        if (bExcludeInvisibles && !child->InternalVisible3())
+    //        {
+    //            child->SetSize(FVector2D(child->RawSize.X, child->RawSize.Y + Delta.Y), true);
+    //            continue;
+    //        }
 
-            if (!priorHandled || i != MainChildIndex)
-            {
-                child->SetSize(FVector2D(FMath::RoundToInt(child->SizePercentInGroup / remainPercent * remainSize), child->RawSize.Y + Delta.Y), true);
-                remainPercent -= child->SizePercentInGroup;
-                remainSize -= child->GetWidth();
-            }
+    //        if (!priorHandled || i != MainChildIndex)
+    //        {
+    //            child->SetSize(FVector2D(FMath::RoundToInt(child->SizePercentInGroup / remainPercent * remainSize), child->RawSize.Y + Delta.Y), true);
+    //            remainPercent -= child->SizePercentInGroup;
+    //            remainSize -= child->GetWidth();
+    //        }
 
-            child->SetXMin(curX);
-            if (child->GetWidth() != 0)
-                curX += child->GetWidth() + ColumnGap;
-        }
-    }
-    else
-    {
-        remainSize = GetHeight() - (NumChildren - 1) * LineGap;
-        if (MainChildIndex != -1 && remainSize >= TotalSize)
-        {
-            UGObject* child = Parent->GetChildAt(MainChildIndex);
-            child->SetSize(FVector2D(child->RawSize.X + Delta.X, remainSize - (TotalSize - MainGridMinSize)), true);
-            remainSize -= child->GetHeight();
-            remainPercent -= child->SizePercentInGroup;
-            priorHandled = true;
-        }
+    //        child->SetMinWidth(curX);
+    //        if (child->GetWidth() != 0)
+    //            curX += child->GetWidth() + ColumnGap;
+    //    }
+    //}
+    //else
+    //{
+    //    remainSize = GetHeight() - (NumChildren - 1) * LineGap;
+    //    if (MainChildIndex != -1 && remainSize >= TotalSize)
+    //    {
+    //        UFairyObject* child = Parent->GetChildAt(MainChildIndex);
+    //        child->SetSize(FVector2D(child->RawSize.X + Delta.X, remainSize - (TotalSize - MainGridMinSize)), true);
+    //        remainSize -= child->GetHeight();
+    //        remainPercent -= child->SizePercentInGroup;
+    //        priorHandled = true;
+    //    }
 
-        float curY = GetY();
-        for (int32 i = 0; i < cnt; i++)
-        {
-            UGObject* child = Parent->GetChildAt(i);
-            if (child->GetGroup() != this)
-                continue;
+    //    float curY = GetPosition().Y;
+    //    for (int32 i = 0; i < cnt; i++)
+    //    {
+    //        UFairyObject* child = Parent->GetChildAt(i);
+    //        if (child->GetGroup() != this)
+    //            continue;
 
-            if (bExcludeInvisibles && !child->InternalVisible3())
-            {
-                child->SetSize(FVector2D(child->RawSize.X + Delta.X, child->RawSize.Y), true);
-                continue;
-            }
+    //        if (bExcludeInvisibles && !child->InternalVisible3())
+    //        {
+    //            //child->SetSize(FVector2D(child->RawSize.X + Delta.X, child->RawSize.Y), true);
+    //            continue;
+    //        }
 
-            if (!priorHandled || i != MainChildIndex)
-            {
-                child->SetSize(FVector2D(child->RawSize.X + Delta.X, FMath::RoundToInt(child->SizePercentInGroup / remainPercent * remainSize)), true);
-                remainPercent -= child->SizePercentInGroup;
-                remainSize -= child->GetHeight();
-            }
+    //        if (!priorHandled || i != MainChildIndex)
+    //        {
+    //            child->SetSize(FVector2D(child->RawSize.X + Delta.X, FMath::RoundToInt(child->SizePercentInGroup / remainPercent * remainSize)), true);
+    //            remainPercent -= child->SizePercentInGroup;
+    //            remainSize -= child->GetHeight();
+    //        }
 
-            child->SetYMin(curY);
-            if (child->GetHeight() != 0)
-                curY += child->GetHeight() + LineGap;
-        }
-    }
+    //        child->SetMinHeight(curY);
+    //        if (child->GetHeight() != 0)
+    //            curY += child->GetHeight() + LineGap;
+    //    }
+    //}
 
-    Updating &= 1;
+    //Updating &= 1;
 }
 
 void UGGroup::HandleAlphaChanged()
 {
-    UGObject::HandleAlphaChanged();
+    UFairyObject::HandleAlphaChanged();
 
     if (bUnderConstruct)
+    {
         return;
+    }
 
     int32 cnt = Parent->NumChildren();
     for (int32 i = 0; i < cnt; i++)
     {
-        UGObject* child = Parent->GetChildAt(i);
+        UFairyObject* child = Parent->GetChildAt(i);
         if (child->GetGroup() == this)
+        {
             child->SetAlpha(Alpha);
+        }
     }
 }
 
 void UGGroup::HandleVisibleChanged()
 {
-    if (!Parent.IsValid())
+    if (Parent == nullptr)
+    {
         return;
+    }
 
     int32 cnt = Parent->NumChildren();
     for (int32 i = 0; i < cnt; i++)
     {
-        UGObject* child = Parent->GetChildAt(i);
+        UFairyObject* child = Parent->GetChildAt(i);
         if (child->GetGroup() == this)
+        {
             child->HandleVisibleChanged();
+        }
     }
 }
 
 void UGGroup::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
-    UGObject::SetupBeforeAdd(Buffer, BeginPos);
+    UFairyObject::SetupBeforeAdd(Buffer, BeginPos);
 
     Buffer->Seek(BeginPos, 5);
 
@@ -446,8 +491,10 @@ void UGGroup::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 
 void UGGroup::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
-    UGObject::SetupAfterAdd(Buffer, BeginPos);
+    UFairyObject::SetupAfterAdd(Buffer, BeginPos);
 
     if (!bVisible)
+    {
         HandleVisibleChanged();
+    }
 }

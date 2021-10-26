@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GComponent.h"
+#include "UI/FairyComponent.h"
 #include "GComboBox.generated.h"
 
 class UGController;
@@ -8,7 +8,7 @@ class UGTextField;
 class UGList;
 
 UCLASS(BlueprintType, Blueprintable)
-class FAIRYGUI_API UGComboBox : public UGComponent
+class FAIRYGUI_API UGComboBox : public UFairyComponent
 {
     GENERATED_BODY()
 
@@ -53,7 +53,7 @@ public:
     void SetSelectionController(UGController* InController) { SelectionController = InController; }
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    UGObject* GetDropdown() const { return DropdownObject; }
+    UFairyObject* GetDropdown() const { return DropdownObject; }
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     void Refresh();
@@ -78,14 +78,11 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
     TArray<FString> Values;
 
-    UPROPERTY(BlueprintAssignable, Category = "FairyGUI|Event")
-    FGUIEventDynMDelegate OnChanged;
-
 protected:
     virtual void ConstructExtension(FByteBuffer* Buffer);
     virtual void SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos) override;
 
-    virtual void HandleControllerChanged(UGController* Controller) override;
+    virtual void ApplyController(UGController* Controller) override;
     virtual void HandleGrayedChanged() override;
 
     void SetState(const FString& InState);
@@ -96,9 +93,9 @@ protected:
     void RenderDropdownList();
 
     UPROPERTY(Transient)
-    UGComponent* DropdownObject;
-    UGObject* TitleObject;
-    UGObject* IconObject;
+    UFairyComponent* DropdownObject;
+    UFairyObject* TitleObject;
+    UFairyObject* IconObject;
     UGList* ListObject;
     UGController* SelectionController;
 

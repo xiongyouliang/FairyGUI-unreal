@@ -59,22 +59,22 @@ void UGMovieClip::Advance(float Time)
 
 EFlipType UGMovieClip::GetFlip() const
 {
-    return Content->Graphics.GetFlip();
+    return Content->Graphics->GetFlip();
 }
 
 void UGMovieClip::SetFlip(EFlipType InFlip)
 {
-    Content->Graphics.SetFlip(InFlip);
+    Content->Graphics->SetFlip(InFlip);
 }
 
 FColor UGMovieClip::GetColor() const
 {
-    return Content->Graphics.GetColor();
+    return Content->Graphics->GetColor();
 }
 
 void UGMovieClip::SetColor(const FColor& InColor)
 {
-    Content->Graphics.SetColor(InColor);
+    Content->Graphics->SetColor(InColor);
 }
 
 FNVariant UGMovieClip::GetProp(EObjectPropID PropID) const
@@ -90,7 +90,7 @@ FNVariant UGMovieClip::GetProp(EObjectPropID PropID) const
     case EObjectPropID::TimeScale:
         return FNVariant(Content->GetTimeScale());
     default:
-        return UGObject::GetProp(PropID);
+        return UFairyObject::GetProp(PropID);
     }
 }
 
@@ -114,28 +114,28 @@ void UGMovieClip::SetProp(EObjectPropID PropID, const FNVariant& InValue)
         Content->Advance(InValue.AsFloat());
         break;
     default:
-        UGObject::SetProp(PropID, InValue);
+        UFairyObject::SetProp(PropID, InValue);
         break;
     }
 }
 
 void UGMovieClip::ConstructFromResource()
 {
-    TSharedPtr<FPackageItem> contentItem = PackageItem->GetBranch();
-    SourceSize = contentItem->Size;
-    InitSize = SourceSize;
+    TSharedPtr<FFairyPackageItem> contentItem = PackageItem->GetBranch();
+    //SourceSize = contentItem->Size;
+    //InitSize = SourceSize;
 
     contentItem = contentItem->GetHighResolution();
     contentItem->Load();
 
     Content->SetClipData(contentItem->MovieClipData);
 
-    SetSize(SourceSize);
+    SetSize(contentItem->Size);
 }
 
 void UGMovieClip::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
-    UGObject::SetupBeforeAdd(Buffer, BeginPos);
+    UFairyObject::SetupBeforeAdd(Buffer, BeginPos);
 
     Buffer->Seek(BeginPos, 5);
 

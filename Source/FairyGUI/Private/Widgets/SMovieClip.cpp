@@ -46,7 +46,7 @@ void SMovieClip::SetClipData(TSharedPtr<FMovieClipData> InData)
     if (!Data.IsValid())
     {
         SetCanTick(false);
-        Graphics.SetTexture(nullptr);
+        Graphics->SetTexture(nullptr);
         return;
     }
 
@@ -184,7 +184,7 @@ void SMovieClip::SetPlaySettings(int32 InStart, int32 InEnd, int32 InTimes, int3
 void SMovieClip::DrawFrame()
 {
     if (Data.IsValid() && Frame < Data->Frames.Num())
-        Graphics.SetTexture(Data->Frames[Frame].Texture);
+        Graphics->SetTexture(Data->Frames[Frame].Texture);
 }
 
 void SMovieClip::Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime)

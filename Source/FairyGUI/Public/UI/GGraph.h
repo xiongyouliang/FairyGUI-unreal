@@ -1,10 +1,10 @@
 #pragma once
 
-#include "GObject.h"
+#include "UI/FairyObject.h"
 #include "GGraph.generated.h"
 
 UCLASS(BlueprintType)
-class FAIRYGUI_API UGGraph : public UGObject
+class FAIRYGUI_API UGGraph : public UFairyObject
 {
     GENERATED_BODY()
 
@@ -38,8 +38,6 @@ public:
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     bool IsEmpty() const;
-
-    virtual IHitTest* GetHitArea() const override;
 
     virtual FNVariant GetProp(EObjectPropID PropID) const override;
     virtual void SetProp(EObjectPropID PropID, const FNVariant& InValue) override;

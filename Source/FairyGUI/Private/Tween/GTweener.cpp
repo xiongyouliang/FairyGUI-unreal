@@ -1,7 +1,7 @@
 #include "Tween/GTweener.h"
 #include "Tween/EaseManager.h"
 #include "Tween/GPath.h"
-#include "UI/GObject.h"
+#include "UI/FairyObject.h"
 
 FGTweener::FGTweener()
 {

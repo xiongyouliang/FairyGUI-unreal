@@ -3,8 +3,9 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 
-struct FAIRYGUI_API FUIEvents
+struct FAIRYGUI_API FFairyEventNames
 {
+    static const FName Null;
     static const FName Click;
     static const FName TouchBegin;
     static const FName TouchMove;
@@ -30,6 +31,4 @@ struct FAIRYGUI_API FUIEvents
     static const FName ScrollEnd;
     static const FName PullDownRelease;
     static const FName PullUpRelease;
-
-    static const FName Submit;
 };

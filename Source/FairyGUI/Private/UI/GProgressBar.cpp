@@ -58,7 +58,7 @@ void UGProgressBar::TweenValue(float InValue, float Duration)
     FGTweener* tweener = FGTween::GetTween(TweenHandle);
     if (tweener != nullptr)
     {
-        oldValule = tweener->Value.X;
+        oldValule = tweener->Value.D;
         tweener->Kill(false);
     }
     else
@@ -67,7 +67,6 @@ void UGProgressBar::TweenValue(float InValue, float Duration)
     Value = InValue;
     TweenHandle = FGTween::To(oldValule, Value, Duration)
         ->SetEase(EEaseType::Linear)
-        ->OnUpdate(FTweenDelegate::CreateStatic(&FGTweenAction::SetProgress))
         ->SetTarget(this)
         ->GetHandle();
 }
@@ -76,9 +75,13 @@ void UGProgressBar::Update(float InValue)
 {
     float percent;
     if (Max == Min)
+    {
         percent = 0;
+    }
     else
+    {
         percent = FMath::Clamp<float>((InValue - Min) / (Max - Min), 0, 1);
+    }
 
     if (TitleObject != nullptr)
     {
@@ -115,12 +118,16 @@ void UGProgressBar::Update(float InValue)
         if (BarObjectH != nullptr)
         {
             if (!SetFillAmount(BarObjectH, percent))
+            {
                 BarObjectH->SetWidth(FMath::RoundToFloat(FullSize.X * percent));
+            }
         }
         if (BarObjectV != nullptr)
         {
             if (!SetFillAmount(BarObjectV, percent))
+            {
                 BarObjectV->SetHeight(FMath::RoundToFloat(FullSize.Y * percent));
+            }
         }
     }
     else
@@ -130,21 +137,24 @@ void UGProgressBar::Update(float InValue)
             if (!SetFillAmount(BarObjectH, 1 - percent))
             {
                 BarObjectH->SetWidth(FMath::RoundToFloat(FullSize.X * percent));
-                BarObjectH->SetX(BarStartPosition.X + (FullSize.X - BarObjectH->GetWidth()));
+                const FVector2D Pos = BarObjectH->GetPosition();
+                float PosX = BarStartPosition.X + (FullSize.X - BarObjectH->GetWidth());
+                BarObjectH->SetPosition(FVector2D(PosX, Pos.Y));
             }
         }
         if (BarObjectV != nullptr)
         {
             if (!SetFillAmount(BarObjectV, 1 - percent))
             {
-                BarObjectV->SetHeight(round(FullSize.Y * percent));
-                BarObjectV->SetY(BarStartPosition.Y + (FullSize.Y - BarObjectV->GetHeight()));
+                const FVector2D OldPos = BarObjectH->GetPosition();
+                float NewPosY = BarStartPosition.Y + (FullSize.Y - BarObjectV->GetHeight());
+                BarObjectV->SetPosition(FVector2D(OldPos.X, NewPosY));
             }
         }
     }
 }
 
-bool UGProgressBar::SetFillAmount(UGObject* Bar, float Amount)
+bool UGProgressBar::SetFillAmount(UFairyObject* Bar, float Amount)
 {
     UGImage* image = nullptr;
     UGLoader* loader = nullptr;
@@ -159,15 +169,17 @@ bool UGProgressBar::SetFillAmount(UGObject* Bar, float Amount)
     return true;
 }
 
-void UGProgressBar::HandleSizeChanged()
-{
-    UGComponent::HandleSizeChanged();
-
-    BarMaxSize = GetSize() - BarMaxSizeDelta;
-
-    if (!bUnderConstruct)
-        Update(Value);
-}
+//void UGProgressBar::HandleSizeChanged()
+//{
+//    UFairyComponent::HandleSizeChanged();
+//
+//    BarMaxSize = GetSize() - BarMaxSizeDelta;
+//
+//    if (!bUnderConstruct)
+//    {
+//        Update(Value);
+//    }
+//}
 
 void UGProgressBar::ConstructExtension(FByteBuffer* Buffer)
 {
@@ -184,19 +196,19 @@ void UGProgressBar::ConstructExtension(FByteBuffer* Buffer)
     {
         BarMaxSize.X = BarObjectH->GetWidth();
         BarMaxSizeDelta.X = GetWidth() - BarMaxSize.X;
-        BarStartPosition.X = BarObjectH->GetX();
+        BarStartPosition.X = BarObjectH->GetPosition().X;
     }
     if (BarObjectV != nullptr)
     {
         BarMaxSize.Y = BarObjectV->GetHeight();
         BarMaxSizeDelta.Y = GetHeight() - BarMaxSize.Y;
-        BarStartPosition.Y = BarObjectV->GetY();
+        BarStartPosition.Y = BarObjectV->GetPosition().Y;
     }
 }
 
 void UGProgressBar::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
-    UGComponent::SetupAfterAdd(Buffer, BeginPos);
+    UFairyComponent::SetupAfterAdd(Buffer, BeginPos);
 
     if (!Buffer->Seek(BeginPos, 6))
     {

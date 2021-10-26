@@ -25,7 +25,7 @@ public:
     SLATE_BEGIN_ARGS(SMovieClip) :
         _GObject(nullptr)
     {}
-    SLATE_ARGUMENT(UGObject*, GObject)
+        SLATE_ARGUMENT(UFairyObject*, GObject)
     SLATE_END_ARGS()
 
         SMovieClip();

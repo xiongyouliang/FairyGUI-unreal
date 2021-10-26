@@ -1,155 +1,151 @@
 #include "FairyBlueprintLibrary.h"
-#include "UI/UIConfig.h"
-#include "UI/UIObjectFactory.h"
-#include "Tween/GTween.h"
+#include "UI/FairyConfig.h"
 
-const FUIConfig& UFairyBlueprintLibrary::GetUIConfig()
+UFairyConfig* UFairyBlueprintLibrary::GetUIConfig()
 {
-    return FUIConfig::Config;
+	return UFairyConfig::Get();
 }
 
-void UFairyBlueprintLibrary::SetUIConfig(const FUIConfig& InConfig)
+void UFairyBlueprintLibrary::SetUIConfig(UFairyConfig* InConfig)
 {
-    FUIConfig::Config = InConfig;
+	//UFairyConfig::Config = InConfig;
 }
 
 bool UFairyBlueprintLibrary::GetVariantAsBool(UPARAM(ref) FNVariant& InVariant)
 {
-    return InVariant.AsBool();
+	return InVariant.AsBool();
 }
 
 int32 UFairyBlueprintLibrary::GetVariantAsInt(UPARAM(ref) FNVariant& InVariant)
 {
-    return InVariant.AsInt();
+	return InVariant.AsInt();
 }
 
 float UFairyBlueprintLibrary::GetVariantAsFloat(UPARAM(ref) FNVariant& InVariant)
 {
-    return InVariant.AsFloat();
+	return InVariant.AsFloat();
 }
 
 FString UFairyBlueprintLibrary::GetVariantAsString(UPARAM(ref) FNVariant& InVariant)
 {
-    return InVariant.AsString();
+	return InVariant.AsString();
 }
 
 FColor UFairyBlueprintLibrary::GetVariantAsColor(UPARAM(ref) FNVariant& InVariant)
 {
-    return InVariant.AsColor();
+	return InVariant.AsColor();
 }
 
 UObject* UFairyBlueprintLibrary::GetVariantAsUObject(UPARAM(ref) FNVariant& InVariant, TSubclassOf<UObject> ClassType)
 {
-    return InVariant.AsUObject();
+	return InVariant.AsUObject();
 }
 
 FNVariant& UFairyBlueprintLibrary::SetVariantBool(UPARAM(ref) FNVariant& InVariant, bool bInValue)
 {
-    InVariant = bInValue;
-    return InVariant;
+	InVariant = bInValue;
+	return InVariant;
 }
 
 FNVariant& UFairyBlueprintLibrary::SetVariantInt(UPARAM(ref) FNVariant& InVariant, int32 InValue)
 {
-    InVariant = InValue;
-    return InVariant;
+	InVariant = InValue;
+	return InVariant;
 }
 
 FNVariant& UFairyBlueprintLibrary::SetVariantFloat(UPARAM(ref) FNVariant& InVariant, float InValue)
 {
-    InVariant = InValue;
-    return InVariant;
+	InVariant = InValue;
+	return InVariant;
 }
 
 FNVariant& UFairyBlueprintLibrary::SetVariantString(UPARAM(ref) FNVariant& InVariant, const FString& InValue)
 {
-    InVariant = InValue;
-    return InVariant;
+	InVariant = InValue;
+	return InVariant;
 }
 
 FNVariant& UFairyBlueprintLibrary::SetVariantColor(UPARAM(ref) FNVariant& InVariant, const FColor& InValue)
 {
-    InVariant = InValue;
-    return InVariant;
+	InVariant = InValue;
+	return InVariant;
 }
 
 FNVariant& UFairyBlueprintLibrary::SetVariantUObject(UPARAM(ref) FNVariant& InVariant, UObject* InValue)
 {
-    InVariant = (void*)InValue;
-    return InVariant;
+	InVariant = (void*)InValue;
+	return InVariant;
 }
 
-FTweenerHandle UFairyBlueprintLibrary::TweenFloat(float StartValue, float EndValue, EEaseType EaseType, float Duration, int32 Repeat, const FTweenUpdateDynDelegate& OnUpdate, const FSimpleDynDelegate& OnComplete)
+FTweenerHandle UFairyBlueprintLibrary::TweenFloat(float StartValue, float EndValue, EEaseType EaseType, float Duration, const FTweenUpdateDynDelegate& OnUpdate, const FSimpleDynDelegate& OnComplete)
 {
-    const UObject* Target = nullptr;
-    if (OnUpdate.IsBound())
-        Target = OnUpdate.GetUObject();
-    else
-        Target = OnComplete.GetUObject();
+	const UObject* Target = nullptr;
+	if (OnUpdate.IsBound())
+		Target = OnUpdate.GetUObject();
+	else
+		Target = OnComplete.GetUObject();
 
-    if (Target == nullptr)
-        return FTweenerHandle();
+	if (Target == nullptr)
+		return FTweenerHandle();
 
-    FGTweener* Tweener = FGTween::To(StartValue, EndValue, Duration)
-        ->SetEase(EaseType)
-        ->SetRepeat(Repeat)
-        ->SetTarget(const_cast<UObject*>(Target));
-    if (OnUpdate.IsBound())
-    {
-        Tweener->OnUpdate(FTweenDelegate::CreateLambda([OnUpdate](FGTweener* Tweener) {
-            OnUpdate.ExecuteIfBound(Tweener->Value, Tweener->DeltaValue);
-        }));
-    }
+	FGTweener* Tweener = FGTween::To(StartValue, EndValue, Duration)
+		->SetEase(EaseType)
+		->SetTarget(const_cast<UObject*>(Target));
+	if (OnUpdate.IsBound())
+	{
+		Tweener->OnUpdate(FTweenDelegate::CreateLambda([OnUpdate](FGTweener* Tweener) {
+			OnUpdate.ExecuteIfBound(Tweener->Value, Tweener->DeltaValue);
+		}));
+	}
 
-    if (OnComplete.IsBound())
-    {
-        Tweener->OnComplete(FSimpleDelegate::CreateLambda([OnComplete]() {
-            OnComplete.ExecuteIfBound();
-        }));
-    }
+	if (OnComplete.IsBound())
+	{
+		Tweener->OnComplete(FSimpleDelegate::CreateLambda([OnComplete]() {
+			OnComplete.ExecuteIfBound();
+		}));
+	}
 
-    return Tweener->GetHandle();
+	return Tweener->GetHandle();
 }
 
-FTweenerHandle UFairyBlueprintLibrary::TweenVector2(const FVector2D& StartValue, const FVector2D& EndValue, EEaseType EaseType, float Duration, int32 Repeat, const FTweenUpdateDynDelegate& OnUpdate, const FSimpleDynDelegate& OnComplete)
+FTweenerHandle UFairyBlueprintLibrary::TweenVector2(const FVector2D& StartValue, const FVector2D& EndValue, EEaseType EaseType, float Duration, const FTweenUpdateDynDelegate& OnUpdate, const FSimpleDynDelegate& OnComplete)
 {
-    const UObject* Target = nullptr;
-    if (OnUpdate.IsBound())
-        Target = OnUpdate.GetUObject();
-    else
-        Target = OnComplete.GetUObject();
+	const UObject* Target = nullptr;
+	if (OnUpdate.IsBound())
+		Target = OnUpdate.GetUObject();
+	else
+		Target = OnComplete.GetUObject();
 
-    if (Target == nullptr)
-        return FTweenerHandle();
+	if (Target == nullptr)
+		return FTweenerHandle();
 
-    FGTweener* Tweener = FGTween::To(StartValue, EndValue, Duration)
-        ->SetEase(EaseType)
-        ->SetRepeat(Repeat)
-        ->SetTarget(const_cast<UObject*>(Target));
+	FGTweener* Tweener = FGTween::To(StartValue, EndValue, Duration)
+		->SetEase(EaseType)
+		->SetTarget(const_cast<UObject*>(Target));
 
-    if (OnUpdate.IsBound())
-    {
-        Tweener->OnUpdate(FTweenDelegate::CreateLambda([OnUpdate](FGTweener* Tweener) {
-            OnUpdate.ExecuteIfBound(Tweener->Value, Tweener->DeltaValue);
-        }));
-    }
+	if (OnUpdate.IsBound())
+	{
+		Tweener->OnUpdate(FTweenDelegate::CreateLambda([&OnUpdate](FGTweener* Tweener) {
+			OnUpdate.ExecuteIfBound(Tweener->Value, Tweener->DeltaValue);
+		}));
+	}
 
-    if (OnComplete.IsBound())
-    {
-        Tweener->OnComplete(FSimpleDelegate::CreateLambda([OnComplete]() {
-            OnComplete.ExecuteIfBound();
-        }));
-    }
+	if (OnComplete.IsBound())
+	{
+		Tweener->OnComplete(FSimpleDelegate::CreateLambda([&OnComplete]() {
+			OnComplete.ExecuteIfBound();
+		}));
+	}
 
-    return Tweener->GetHandle();
+	return Tweener->GetHandle();
 }
 
 void UFairyBlueprintLibrary::KillTween(UPARAM(ref) FTweenerHandle& Handle, bool bSetComplete)
 {
-    FGTween::Kill(Handle, bSetComplete);
+	FGTween::Kill(Handle, bSetComplete);
 }
 
-void UFairyBlueprintLibrary::SetPackageItemExtension(const FString& URL, TSubclassOf<UGComponent> ClassType)
+void UFairyBlueprintLibrary::SetPackageItemExtension(const FString& URL, TSubclassOf<UFairyComponent> ClassType)
 {
-    FUIObjectFactory::SetExtension(URL, ClassType);
+	FUIObjectFactory::SetExtension(URL, ClassType);
 }

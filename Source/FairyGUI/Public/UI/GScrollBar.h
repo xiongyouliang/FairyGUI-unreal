@@ -1,12 +1,12 @@
 #pragma once
 
-#include "GComponent.h"
+#include "UI/FairyComponent.h"
 #include "GScrollBar.generated.h"
 
-class UScrollPane;
+class UFairyScrollPane;
 
 UCLASS(BlueprintType, Blueprintable)
-class FAIRYGUI_API UGScrollBar : public UGComponent
+class FAIRYGUI_API UGScrollBar : public UFairyComponent
 {
     GENERATED_BODY()
 
@@ -14,7 +14,7 @@ public:
     UGScrollBar();
     virtual ~UGScrollBar();
 
-    void SetScrollPane(UScrollPane* Target, bool bVertical);
+    void SetScrollPane(UScrollPanel* Target, bool bVertical);
     void SetDisplayPerc(float Value);
     void SetScrollPerc(float Value);
     float GetMinSize();
@@ -32,11 +32,16 @@ private:
     void OnArrowButton1Click(UEventContext* Context);
     void OnArrowButton2Click(UEventContext* Context);
 
-    UGObject* GripObject;
-    UGObject* ArrowButton1;
-    UGObject* ArrowButton2;
-    UGObject* BarObject;
-    UScrollPane* Target;
+    UPROPERTY()
+    UFairyObject* GripObject;
+    UPROPERTY()
+    UFairyObject* ArrowButton1;
+    UPROPERTY()
+    UFairyObject* ArrowButton2;
+    UPROPERTY()
+    UFairyObject* BarObject;
+    UPROPERTY()
+    UScrollPanel* Target;
 
     bool bVertical;
     float ScrollPerc;

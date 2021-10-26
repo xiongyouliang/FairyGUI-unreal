@@ -1,10 +1,10 @@
 #pragma once
 
-#include "GComponent.h"
+#include "UI/FairyComponent.h"
 #include "GSlider.generated.h"
 
 UCLASS(BlueprintType, Blueprintable)
-class FAIRYGUI_API UGSlider : public UGComponent
+class FAIRYGUI_API UGSlider : public UFairyComponent
 {
     GENERATED_BODY()
 
@@ -43,11 +43,8 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
     bool bCanDrag;
 
-    UPROPERTY(BlueprintAssignable, Category = "FairyGUI|Event")
-    FGUIEventDynMDelegate OnChanged;
-
 protected:
-    virtual void HandleSizeChanged() override;
+    //virtual void HandleSizeChanged() override;
     virtual void ConstructExtension(FByteBuffer* Buffer);
     virtual void SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos) override;
 
@@ -66,10 +63,10 @@ private:
     bool bReverse;
     bool bWholeNumbers;
 
-    UGObject* TitleObject;
-    UGObject* BarObjectH;
-    UGObject* BarObjectV;
-    UGObject* GripObject;
+    UFairyObject* TitleObject;
+    UFairyObject* BarObjectH;
+    UFairyObject* BarObjectV;
+    UFairyObject* GripObject;
     FVector2D BarMaxSize;
     FVector2D BarMaxSizeDelta;
     FVector2D BarStartPosition;

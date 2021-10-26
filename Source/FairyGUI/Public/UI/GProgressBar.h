@@ -1,10 +1,10 @@
 #pragma once
 
-#include "GComponent.h"
+#include "UI/FairyComponent.h"
 #include "GProgressBar.generated.h"
 
 UCLASS(BlueprintType, Blueprintable)
-class FAIRYGUI_API UGProgressBar : public UGComponent
+class FAIRYGUI_API UGProgressBar : public UFairyComponent
 {
     GENERATED_BODY()
 
@@ -38,11 +38,11 @@ public:
     void Update(float NewValue);
 
 protected:
-    virtual void HandleSizeChanged() override;
+    //virtual void HandleSizeChanged() override;
     virtual void ConstructExtension(FByteBuffer* Buffer);
     virtual void SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos) override;
 
-    bool SetFillAmount(UGObject* Bar, float Amount);
+    bool SetFillAmount(UFairyObject* Bar, float Amount);
 
 private:
     float Min;
@@ -52,9 +52,9 @@ private:
     bool bReverse;
     FTweenerHandle TweenHandle;
 
-    UGObject* TitleObject;
-    UGObject* BarObjectH;
-    UGObject* BarObjectV;
+    UFairyObject* TitleObject;
+    UFairyObject* BarObjectH;
+    UFairyObject* BarObjectV;
     FVector2D BarMaxSize;
     FVector2D BarMaxSizeDelta;
     FVector2D BarStartPosition;

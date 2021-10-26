@@ -1,32 +1,24 @@
 #include "UI/GWindow.h"
 #include "UI/GGraph.h"
-#include "UI/GRoot.h"
-#include "UI/UIPackage.h"
-
-UGWindow* UGWindow::CreateWindow(const FString& PackageName, const FString& ResourceName, UObject* WorldContextObject)
-{
-    UGObject* ContentPane = UUIPackage::CreateObject(PackageName, ResourceName, WorldContextObject);
-    verifyf(ContentPane->IsA<UGComponent>(), TEXT("Window content should be a component"));
-    UGWindow* Window = NewObject<UGWindow>(WorldContextObject);
-    Window->SetContentPane(Cast<UGComponent>(ContentPane));
-
-    return Window;
-}
+#include "UI/FairyRoot.h"
+#include "Package/FairyPackage.h"
+#include "Package/FairyPackageMgr.h"
+#include "FairyApplication.h"
 
 UGWindow::UGWindow()
 {
-    bBringToFontOnClick = FUIConfig::Config.BringWindowToFrontOnClick;
+    //bBringToFontOnClick = UFairyConfig::Config->BringWindowToFrontOnClick;
 
-    On(FUIEvents::AddedToStage).AddUObject(this, &UGWindow::OnAddedToStageHandler);
-    On(FUIEvents::RemovedFromStage).AddUObject(this, &UGWindow::OnRemovedFromStageHandler);
-    On(FUIEvents::TouchBegin).AddUObject(this, &UGWindow::OnTouchBeginHandler);
+    On(FFairyEventNames::AddedToStage).AddUObject(this, &UGWindow::OnAddedToStageHandler);
+    On(FFairyEventNames::RemovedFromStage).AddUObject(this, &UGWindow::OnRemovedFromStageHandler);
+    On(FFairyEventNames::TouchBegin).AddUObject(this, &UGWindow::OnTouchBeginHandler);
 }
 
 UGWindow::~UGWindow()
 {
 }
 
-void UGWindow::SetContentPane(UGComponent* Obj)
+void UGWindow::SetContentPane(UFairyComponent* Obj)
 {
     if (ContentPane != Obj)
     {
@@ -42,7 +34,7 @@ void UGWindow::SetContentPane(UGComponent* Obj)
             AddChild(ContentPane);
             SetSize(ContentPane->GetSize());
             ContentPane->AddRelation(this, ERelationType::Size);
-            FrameObject = Cast<UGComponent>(ContentPane->GetChild("frame"));
+            FrameObject = Cast<UFairyComponent>(ContentPane->GetChild("frame"));
             if (FrameObject != nullptr)
             {
                 SetCloseButton(FrameObject->GetChild("closeButton"));
@@ -55,7 +47,7 @@ void UGWindow::SetContentPane(UGComponent* Obj)
     }
 }
 
-void UGWindow::SetCloseButton(UGObject * Obj)
+void UGWindow::SetCloseButton(UFairyObject * Obj)
 {
     if (CloseButton != Obj)
     {
@@ -67,7 +59,7 @@ void UGWindow::SetCloseButton(UGObject * Obj)
     }
 }
 
-void UGWindow::SetDragArea(UGObject * Obj)
+void UGWindow::SetDragArea(UFairyObject * Obj)
 {
     if (DragArea != Obj)
     {
@@ -92,7 +84,7 @@ void UGWindow::SetDragArea(UGObject * Obj)
 
 void UGWindow::Show()
 {
-    GetUIRoot()->ShowWindow(this);
+    UFairyApplication::Get()->GetUIRoot(this)->ShowWindow(this);
 }
 
 void UGWindow::Hide()
@@ -103,7 +95,7 @@ void UGWindow::Hide()
 
 void UGWindow::HideImmediately()
 {
-    GetUIRoot()->HideWindowImmediately(this);
+    UFairyApplication::Get()->GetUIRoot(this)->HideWindowImmediately(this);
 }
 
 void UGWindow::ToggleStatus()
@@ -116,12 +108,12 @@ void UGWindow::ToggleStatus()
 
 void UGWindow::BringToFront()
 {
-    GetUIRoot()->BringToFront(this);
+    UFairyApplication::Get()->GetUIRoot(this)->BringToFront(this);
 }
 
 bool UGWindow::IsTop() const
 {
-    return Parent.IsValid() && Parent->GetChildIndex(this) == Parent->NumChildren() - 1;
+    return Parent != nullptr && Parent->GetChildIndex(this) == Parent->NumChildren() - 1;
 }
 
 void UGWindow::ShowModalWait(int32 InRequestingCmd)
@@ -129,10 +121,10 @@ void UGWindow::ShowModalWait(int32 InRequestingCmd)
     if (InRequestingCmd != 0)
         RequestingCmd = InRequestingCmd;
 
-    if (!FUIConfig::Config.WindowModalWaiting.IsEmpty())
+    if (!UFairyConfig::Config->WindowModalWaiting.IsEmpty())
     {
         if (ModalWaitPane == nullptr)
-            ModalWaitPane = UUIPackage::CreateObjectFromURL(FUIConfig::Config.WindowModalWaiting, this);
+            ModalWaitPane = UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), UFairyConfig::Config->WindowModalWaiting);
 
         LayoutModalWaitPane();
 
@@ -210,23 +202,23 @@ void UGWindow::AddUISource(TSharedPtr<IUISource> UISource)
 
 void UGWindow::OnInit()
 {
-    InitCallback.ExecuteIfBound(this);
+    InitCallback.ExecuteIfBound();
 }
 
 void UGWindow::OnShown()
 {
-    ShownCallback.ExecuteIfBound(this);
+    ShownCallback.ExecuteIfBound();
 }
 
 void UGWindow::OnHide()
 {
-    HideCallback.ExecuteIfBound(this);
+    HideCallback.ExecuteIfBound();
 }
 
 void UGWindow::DoShowAnimation()
 {
     if (ShowingCallback.IsBound())
-        ShowingCallback.Execute(this);
+        ShowingCallback.Execute();
     else
         OnShown();
 }
@@ -234,7 +226,7 @@ void UGWindow::DoShowAnimation()
 void UGWindow::DoHideAnimation()
 {
     if (HidingCallback.IsBound())
-        HidingCallback.Execute(this);
+        HidingCallback.Execute();
     else
         HideImmediately();
 }

@@ -9,30 +9,34 @@
 UCLASS(BlueprintType)
 class UDragDropManager : public UObject
 {
-    GENERATED_BODY()
+	GENERATED_BODY()
 
 public:
-    UDragDropManager();
-    virtual ~UDragDropManager();
+	UDragDropManager();
+	virtual ~UDragDropManager();
 
-    UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    UGLoader* GetAgent() const { return Agent; }
+	void Init(UObject* WorldContextObject);
 
-    UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    bool IsDragging() const { return Agent->GetParent() != nullptr; }
+	//UFUNCTION(BlueprintPure, Category = "FairyGUI", meta = (DisplayName = "Get DragDropManager"))
+	//static UDragDropManager* Get();
 
-    UFUNCTION(BlueprintCallable, Category = "FairyGUI", meta = (AutoCreateRefTerm="InSourceData"))
-    void StartDrag(const FString& InIcon, const FNVariant& InUserData, int32 InUserIndex = -1, int32 InPointerIndex = -1);
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+	UGLoader* GetAgent() const { return Agent; }
 
-    UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    void Cancel();
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+	bool IsDragging() const { return Agent->GetParent() != nullptr; }
 
-    void CreateAgent();
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI", meta = (AutoCreateRefTerm="InSourceData"))
+	void StartDrag(const FString& InIcon, const FNVariant& InUserData, int32 InUserIndex = -1, int32 InPointerIndex = -1);
+
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+	void Cancel();
+
 private:
-    void DelayStartDrag(int32 InUserIndex, int32 InPointerIndex);
-    void OnDragEnd(UEventContext* Context);
+	void DelayStartDrag(int32 InUserIndex, int32 InPointerIndex);
+	void OnDragEnd(UEventContext* Context);
 
-    UPROPERTY(Transient)
-    UGLoader* Agent;
-    FNVariant UserData;
+	UPROPERTY(Transient)
+	UGLoader* Agent;
+	FNVariant UserData;
 };

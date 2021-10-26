@@ -1,7 +1,7 @@
 #include "UI/UIObjectFactory.h"
-#include "UI/UIPackage.h"
-#include "UI/PackageItem.h"
-#include "UI/GComponent.h"
+#include "Package/FairyPackage.h"
+#include "Package/FairyPackageItem.h"
+#include "UI/FairyComponent.h"
 #include "UI/GImage.h"
 #include "UI/GMovieClip.h"
 #include "UI/GTextField.h"
@@ -19,9 +19,10 @@
 #include "UI/GScrollBar.h"
 #include "UI/GList.h"
 #include "UI/GTree.h"
+#include "Package/FairyPackageMgr.h"
 
 TMap<FString, FGComponentCreator> FUIObjectFactory::PackageItemExtensions;
-TSubclassOf<UGLoader> FUIObjectFactory::LoaderExtension;
+FGLoaderCreator FUIObjectFactory::LoaderCreator;
 
 void FUIObjectFactory::SetExtension(const FString& URL, FGComponentCreator Creator)
 {
@@ -30,109 +31,102 @@ void FUIObjectFactory::SetExtension(const FString& URL, FGComponentCreator Creat
         UE_LOG(LogFairyGUI, Warning, TEXT("Invaild url: %s"), *URL);
         return;
     }
-
-    TSharedPtr<FPackageItem> PackageItem = UUIPackage::GetItemByURL(URL);
+    TSharedPtr<FFairyPackageItem> PackageItem = UFairyPackageMgr::Get()->GetPackageItemByURL(URL);
     if (PackageItem.IsValid())
+    {
         PackageItem->ExtensionCreator = Creator;
+    }
 
     PackageItemExtensions.Add(URL, Creator);
 }
 
-void FUIObjectFactory::SetExtension(const FString& URL, TSubclassOf<UGComponent> ClassType)
+void FUIObjectFactory::SetExtension(const FString& URL, TSubclassOf<UFairyComponent> ClassType)
 {
-    SetExtension(URL, FGComponentCreator::CreateLambda([ClassType](UObject* Outer) {
-        return ::NewObject<UGComponent>(Outer, ClassType);
+    SetExtension(URL, FGComponentCreator::CreateLambda([ClassType]() {
+        return ::NewObject<UFairyComponent>(GetTransientPackage(), ClassType);
     }));
 }
 
-UGObject* FUIObjectFactory::NewObject(const TSharedPtr<FPackageItem>& PackageItem, UObject* Outer)
+UFairyObject* FUIObjectFactory::NewObject(UObject* Outer, const TSharedPtr<FFairyPackageItem>& PackageItem)
 {
-    UGObject* obj = nullptr;
+    UFairyObject* FairyObject = nullptr;
     if (PackageItem->ExtensionCreator.IsBound())
-        obj = PackageItem->ExtensionCreator.Execute(Outer);
+    {
+        FairyObject = PackageItem->ExtensionCreator.Execute();
+    }
     else
-        obj = NewObject(PackageItem->ObjectType, Outer);
-    if (obj != nullptr)
-        obj->PackageItem = PackageItem;
+    {
+        FairyObject = FUIObjectFactory::NewObject(Outer, PackageItem->ObjectType);
+    }
 
-    return obj;
+    if (FairyObject != nullptr)
+    {
+        FairyObject->SetPackageItem(PackageItem);
+    }
+    return FairyObject;
 }
 
-UGObject* FUIObjectFactory::NewObject(EObjectType Type, UObject* Outer)
+UFairyObject* FUIObjectFactory::NewObject(UObject* Outer, EObjectType Type)
 {
     switch (Type)
     {
     case EObjectType::Image:
         return ::NewObject<UGImage>(Outer);
-
     case EObjectType::MovieClip:
         return ::NewObject<UGMovieClip>(Outer);
-
     case EObjectType::Component:
-        return ::NewObject<UGComponent>(Outer);
-
+        return ::NewObject<UFairyComponent>(Outer);
     case EObjectType::Text:
         return ::NewObject<UGTextField>(Outer);
-
     case EObjectType::RichText:
         return ::NewObject<UGRichTextField>(Outer);
-
     case EObjectType::InputText:
         return ::NewObject<UGTextInput>(Outer);
-
     case EObjectType::Group:
         return ::NewObject<UGGroup>(Outer);
-
     case EObjectType::List:
         return ::NewObject<UGList>(Outer);
-
     case EObjectType::Graph:
         return ::NewObject<UGGraph>(Outer);
-
     case EObjectType::Loader:
-        if (LoaderExtension != nullptr)
-            return ::NewObject<UGLoader>(Outer, LoaderExtension);
+        if (LoaderCreator.IsBound())
+        {
+            return LoaderCreator.Execute();
+        }
         else
+        {
             return ::NewObject<UGLoader>(Outer);
-
+        }
     case EObjectType::Button:
         return ::NewObject<UGButton>(Outer);
-
     case EObjectType::Label:
         return ::NewObject<UGLabel>(Outer);
-
     case EObjectType::ProgressBar:
         return ::NewObject<UGProgressBar>(Outer);
-
     case EObjectType::Slider:
         return ::NewObject<UGSlider>(Outer);
-
     case EObjectType::ScrollBar:
         return ::NewObject<UGScrollBar>(Outer);
-
     case EObjectType::ComboBox:
         return ::NewObject<UGComboBox>(Outer);
-
     case EObjectType::Tree:
         return ::NewObject<UGTree>(Outer);
-
     case EObjectType::Loader3D:
         return ::NewObject<UGLoader3D>(Outer);
-
     default:
         return nullptr;
     }
 }
 
-void FUIObjectFactory::ResolvePackageItemExtension(const TSharedPtr<FPackageItem>& PackageItem)
+void FUIObjectFactory::ResolvePackageItemExtension(const TSharedPtr<FFairyPackageItem>& PackageItem)
 {
-    auto it = PackageItemExtensions.Find("ui://" + PackageItem->Owner->GetID() + PackageItem->ID);
+    auto it = PackageItemExtensions.Find("ui://" + PackageItem->OwnerPackage->GetID() + PackageItem->ID);
     if (it != nullptr)
     {
         PackageItem->ExtensionCreator = *it;
         return;
     }
-    it = PackageItemExtensions.Find("ui://" + PackageItem->Owner->GetName() + "/" + PackageItem->Name);
+    it = PackageItemExtensions.Find("ui://" + PackageItem->OwnerPackage->GetName() + "/" + PackageItem->Name);
     if (it != nullptr)
     {
         PackageItem->ExtensionCreator = *it;

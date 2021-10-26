@@ -2,10 +2,10 @@
 
 #include "MeshFactory.h"
 
-class FAIRYGUI_API FPolygonMesh : public IMeshFactory, public IHitTest
+class FAIRYGUI_API FPolygonMesh : public IMeshFactory
 {
 public:
-    MESHFACTORY_TYPE(FPolygonMesh, this)
+    MESH_FACTORY_TYPE(FPolygonMesh)
 
     FPolygonMesh();
     virtual ~FPolygonMesh() {}
@@ -19,7 +19,6 @@ public:
     bool bUsePercentPositions;
 
     void OnPopulateMesh(FVertexHelper& Helper);
-    bool HitTest(const FBox2D& ContentRect, const FVector2D& LayoutScaleMultiplier, const FVector2D& LocalPoint) const;
 
 private:
     void DrawOutline(FVertexHelper& Helper);

@@ -20,23 +20,19 @@ public:
     UNTexture* GetTexture() const { return Texture; }
 
     void SetMeshFactory(const TSharedPtr<IMeshFactory>& InMeshFactory);
-    const TSharedPtr<IMeshFactory>& GetMeshFactory() { return MeshFactory; }
+    IMeshFactory* GetMeshFactory() { return MeshFactory.Get(); }
     template <typename T> T& GetMeshFactory();
 
     void SetMeshDirty() { bMeshDirty = true; }
 
-    void Paint(const FGeometry& AllottedGeometry,
-        FSlateWindowElementList& OutDrawElements,
-        int32 LayerId,
-        float Alpha,
-        bool bEnabled);
+    void Paint(const FGeometry& AllottedGeometry, FSlateWindowElementList& OutDrawElements, int32 LayerId, float Alpha, bool bEnabled);
 
     void PopulateDefaultMesh(FVertexHelper& Helper);
 
     virtual void AddReferencedObjects(FReferenceCollector& Collector) override;
 
 private:
-    void UpdateMeshNow();
+    void UpdateMeshNow(const FGeometry& AllottedGeometry, const float InAlpha);
 
     FVector2D Size;
     FColor Color;
@@ -49,8 +45,6 @@ private:
 
     TArray<FSlateVertex> Vertices;
     TArray<SlateIndex> Triangles;
-    TArray<FVector2D> PositionsBackup;
-    TArray<float> AlphaBackup;
     float UsingAlpha;
     bool bMeshDirty;
 };

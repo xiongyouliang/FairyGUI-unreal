@@ -1,12 +1,12 @@
 #pragma once
 
-#include "GComponent.h"
+#include "UI/FairyComponent.h"
 #include "GLabel.generated.h"
 
 class UGTextField;
 
 UCLASS(BlueprintType, Blueprintable)
-class FAIRYGUI_API UGLabel : public UGComponent
+class FAIRYGUI_API UGLabel : public UFairyComponent
 {
     GENERATED_BODY()
 
@@ -41,9 +41,9 @@ public:
     virtual void SetProp(EObjectPropID PropID, const FNVariant& InValue) override;
 
 protected:
-    virtual void ConstructExtension(FByteBuffer* Buffer);
+    virtual void ConstructExtension(FByteBuffer* Buffer) override;
     virtual void SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos) override;
 
-    UGObject* TitleObject;
-    UGObject* IconObject;
+    UFairyObject* TitleObject;
+    UFairyObject* IconObject;
 };

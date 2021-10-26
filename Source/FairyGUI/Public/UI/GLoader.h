@@ -1,10 +1,10 @@
 #pragma once
 
-#include "GObject.h"
+#include "UI/FairyObject.h"
 #include "GLoader.generated.h"
 
 UCLASS(BlueprintType, Blueprintable)
-class FAIRYGUI_API UGLoader : public UGObject
+class FAIRYGUI_API UGLoader : public UFairyObject
 {
     GENERATED_BODY()
 
@@ -21,14 +21,14 @@ public:
     virtual void SetIcon(const FString& InIcon) override { SetURL(InIcon); }
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    EAlignType GetAlign() const { return Align; }
+    EHAlignType GetAlign() const { return Align; }
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    void SetAlign(EAlignType InAlign);
+    void SetAlign(EHAlignType InAlign);
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    EVerticalAlignType GetVerticalAlign() const { return VerticalAlign; }
+    EVAlignType GetVerticalAlign() const { return VerticalAlign; }
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    void SetVerticalAlign(EVerticalAlignType InVerticalAlign);
+    void SetVerticalAlign(EVAlignType InVerticalAlign);
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     bool GetAutoSize() const { return bAutoSize; }
@@ -89,31 +89,28 @@ public:
     virtual void SetProp(EObjectPropID PropID, const FNVariant& InValue);
 
 protected:
-    virtual void HandleSizeChanged() override;
+    //virtual void HandleSizeChanged() override;
     virtual void SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos) override;
 
     void LoadContent();
     void ClearContent();
     void LoadFromPackage(const FString& ItemURL);
     void LoadExternal();
-    void OnExternalLoaded(FString LoadingURL);
     void UpdateLayout();
     void SetErrorState();
-
-    TSharedPtr<FSoftObjectPath> SoftObjectPath;
 
 private:
     TSharedPtr<class SContainer> Container;
     TSharedPtr<class SMovieClip> Content;
     UPROPERTY(Transient)
-    UGObject* Content2;
-    TSharedPtr<FPackageItem> ContentItem;
+    UFairyObject* Content2;
+    TSharedPtr<FFairyPackageItem> ContentItem;
     FString URL;
     ELoaderFillType Fill;
-    EAlignType Align;
-    EVerticalAlignType VerticalAlign;
-    uint8 bShowErrorSign : 1;
-    uint8 bShrinkOnly : 1;
-    uint8 bAutoSize : 1;
-    uint8 bUpdatingLayout : 1;
+    EHAlignType Align;
+    EVAlignType VerticalAlign;
+    bool bShowErrorSign;
+    bool bShrinkOnly;
+    bool bAutoSize;
+    bool bUpdatingLayout;
 };

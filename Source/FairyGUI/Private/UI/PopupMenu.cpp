@@ -1,13 +1,14 @@
 #include "UI/PopupMenu.h"
-#include "UI/GRoot.h"
-#include "UI/UIPackage.h"
-#include "UI/GController.h"
+#include "UI/FairyRoot.h"
+#include "Package/FairyPackage.h"
+#include "UI/Controller/GController.h"
+#include "FairyApplication.h"
 
 const FName UPopupMenu::ClickMenu("ClickMenu");
 
-UPopupMenu* UPopupMenu::CreatePopupMenu(const FString& ResourceURL, UObject* WorldContextObject)
+UPopupMenu* UPopupMenu::CreatePopupMenu(const FString& ResourceURL)
 {
-    UPopupMenu* Instance = NewObject<UPopupMenu>(WorldContextObject);
+    UPopupMenu* Instance = NewObject<UPopupMenu>();
     Instance->Create(ResourceURL);
     return Instance;
 }
@@ -25,7 +26,7 @@ void UPopupMenu::Create(const FString& ResourceURL)
     FString url = ResourceURL;
     if (url.IsEmpty())
     {
-        url = FUIConfig::Config.PopupMenu;
+        url = UFairyConfig::Config->PopupMenu;
         if (url.IsEmpty())
         {
             UE_LOG(LogFairyGUI, Warning, TEXT("UIConfig.PopupMenu not defined"));
@@ -33,8 +34,8 @@ void UPopupMenu::Create(const FString& ResourceURL)
         }
     }
 
-    ContentPane = UUIPackage::CreateObjectFromURL(url, this)->As<UGComponent>();
-    ContentPane->On(FUIEvents::AddedToStage).AddUObject(this, &UPopupMenu::OnAddedToStage);
+    ContentPane = UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), url)->As<UFairyComponent>();
+    ContentPane->On(FFairyEventNames::AddedToStage).AddUObject(this, &UPopupMenu::OnAddedToStage);
 
     List = ContentPane->GetChild("list")->As<UGList>();
     List->RemoveChildrenToPool();
@@ -43,7 +44,7 @@ void UPopupMenu::Create(const FString& ResourceURL)
     List->RemoveRelation(ContentPane, ERelationType::Height);
     ContentPane->AddRelation(List, ERelationType::Height);
 
-    List->On(FUIEvents::ClickItem).AddUObject(this, &UPopupMenu::OnClickItem);
+    List->On(FFairyEventNames::ClickItem).AddUObject(this, &UPopupMenu::OnClickItem);
 }
 
 UGButton* UPopupMenu::AddItem(const FString& Caption, FGUIEventDelegate Callback)
@@ -70,7 +71,7 @@ UGButton* UPopupMenu::AddItem(const FString& Caption, const FGUIEventDynDelegate
 
 UGButton* UPopupMenu::AddItemAt(const FString& Caption, int32 Index, FGUIEventDelegate Callback)
 {
-    UGButton* item = List->GetFromPool(List->GetDefaultItem())->As<UGButton>();
+    UGButton* item = List->GetFromPool(List->DefaultItem)->As<UGButton>();
     List->AddChildAt(item, Index);
 
     item->SetTitle(Caption);
@@ -93,19 +94,19 @@ UGButton* UPopupMenu::AddItemAt(const FString& Caption, int32 index, const FGUIE
 
 void UPopupMenu::AddSeperator()
 {
-    if (FUIConfig::Config.PopupMenuSeperator.IsEmpty())
+    if (UFairyConfig::Config->PopupMenuSeperator.IsEmpty())
     {
         UE_LOG(LogFairyGUI, Warning, TEXT("UIConfig.PopupMenuSeperator not defined"));
         return;
     }
 
-    List->AddItemFromPool(FUIConfig::Config.PopupMenuSeperator);
+    List->AddItemFromPool(UFairyConfig::Config->PopupMenuSeperator);
 }
 
 const FString& UPopupMenu::GetItemName(int32 Index) const
 {
     UGButton* item = List->GetChildAt(Index)->As<UGButton>();
-    return item->Name;
+    return item->GetName();
 }
 
 void UPopupMenu::SetItemText(const FString& Name, const FString& Caption)
@@ -166,7 +167,7 @@ bool UPopupMenu::IsItemChecked(const FString& Name) const
 
 bool UPopupMenu::RemoveItem(const FString& Name)
 {
-    UGObject* item = List->GetChild(Name);
+    UFairyObject* item = List->GetChild(Name);
     if (item != nullptr)
     {
         int32 index = List->GetChildIndex(item);
@@ -192,12 +193,12 @@ int32 UPopupMenu::GetItemCount() const
     return List->NumChildren();
 }
 
-void UPopupMenu::Show(UGObject* AtObject, EPopupDirection Dir)
+void UPopupMenu::Show(UFairyObject * AtObject, EPopupDirection Dir)
 {
-    ContentPane->GetUIRoot()->ShowPopup(ContentPane, AtObject, Dir);
+    UFairyApplication::Get()->GetUIRoot(this)->ShowPopup(ContentPane, AtObject, Dir);
 }
 
-void UPopupMenu::OnClickItem(UEventContext* Context)
+void UPopupMenu::OnClickItem(UEventContext * Context)
 {
     UGButton* item = Cast<UGButton>(Context->GetData().AsUObject());
     if (item == nullptr)
@@ -218,12 +219,12 @@ void UPopupMenu::OnClickItem(UEventContext* Context)
             c->SetSelectedIndex(1);
     }
 
-    ContentPane->GetUIRoot()->HidePopup(ContentPane);
+    UFairyApplication::Get()->GetUIRoot(this)->HidePopup(ContentPane);
 
     item->DispatchEvent(ClickMenu, Context->GetData());
 }
 
-void UPopupMenu::OnAddedToStage(UEventContext* Context)
+void UPopupMenu::OnAddedToStage(UEventContext * Context)
 {
     List->SetSelectedIndex(-1);
     List->ResizeToFit(INT_MAX, 10);

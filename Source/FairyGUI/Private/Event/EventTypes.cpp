@@ -1,29 +1,29 @@
 #include "Event/EventTypes.h"
 
-const FName FUIEvents::Click("Click");
-const FName FUIEvents::TouchBegin("TouchBegin");
-const FName FUIEvents::TouchMove("TouchMove");
-const FName FUIEvents::TouchEnd("TouchEnd");
-const FName FUIEvents::RollOver("RollOver");
-const FName FUIEvents::RollOut("RollOut");
-const FName FUIEvents::MouseWheel("MouseWheel");
+const FName FFairyEventNames::Null("");
 
-const FName FUIEvents::DragStart("DragStart");
-const FName FUIEvents::DragMove("DragMove");
-const FName FUIEvents::DragEnd("DragEnd");
-const FName FUIEvents::Drop("Drop");
+const FName FFairyEventNames::Click("Click");
+const FName FFairyEventNames::TouchBegin("TouchBegin");
+const FName FFairyEventNames::TouchMove("TouchMove");
+const FName FFairyEventNames::TouchEnd("TouchEnd");
+const FName FFairyEventNames::RollOver("RollOver");
+const FName FFairyEventNames::RollOut("RollOut");
+const FName FFairyEventNames::MouseWheel("MouseWheel");
 
-const FName FUIEvents::AddedToStage("AddedToStage");
-const FName FUIEvents::RemovedFromStage("RemovedFromStage");
+const FName FFairyEventNames::DragStart("DragStart");
+const FName FFairyEventNames::DragMove("DragMove");
+const FName FFairyEventNames::DragEnd("DragEnd");
+const FName FFairyEventNames::Drop("Drop");
 
-const FName FUIEvents::Changed("Changed");
-const FName FUIEvents::ClickItem("ClickItem");
-const FName FUIEvents::ClickLink("ClickLink");
-const FName FUIEvents::GearStop("GearStop");
+const FName FFairyEventNames::AddedToStage("AddedToStage");
+const FName FFairyEventNames::RemovedFromStage("RemovedFromStage");
 
-const FName FUIEvents::Scroll("Scroll");
-const FName FUIEvents::ScrollEnd("ScrollEnd");
-const FName FUIEvents::PullDownRelease("PullDownRelease");
-const FName FUIEvents::PullUpRelease("PullUpRelease");
+const FName FFairyEventNames::Changed("Changed");
+const FName FFairyEventNames::ClickItem("ClickItem");
+const FName FFairyEventNames::ClickLink("ClickLink");
+const FName FFairyEventNames::GearStop("GearStop");
 
-const FName FUIEvents::Submit("Submit");
+const FName FFairyEventNames::Scroll("Scroll");
+const FName FFairyEventNames::ScrollEnd("ScrollEnd");
+const FName FFairyEventNames::PullDownRelease("PullDownRelease");
+const FName FFairyEventNames::PullUpRelease("PullUpRelease");

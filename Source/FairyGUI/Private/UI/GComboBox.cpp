@@ -1,19 +1,20 @@
 #include "UI/GComboBox.h"
-#include "UI/UIPackage.h"
+#include "Package/FairyPackage.h"
+#include "Package/FairyPackageMgr.h"
 #include "UI/GTextField.h"
 #include "UI/GTextInput.h"
 #include "UI/GLabel.h"
 #include "UI/GButton.h"
-#include "UI/GController.h"
+#include "UI/Controller/GController.h"
 #include "UI/GList.h"
-#include "UI/GRoot.h"
+#include "UI/FairyRoot.h"
 #include "Utils/ByteBuffer.h"
 
 UGComboBox::UGComboBox() :
     bItemsUpdated(true),
     SelectedIndex(-1)
 {
-    VisibleItemCount = FUIConfig::Config.DefaultComboBoxVisibleItemCount;
+    
 }
 
 UGComboBox::~UGComboBox()
@@ -195,7 +196,7 @@ void UGComboBox::ShowDropdown()
     DropdownObject->SetWidth(Size.X);
     ListObject->EnsureBoundsCorrect();
 
-    GetUIRoot()->TogglePopup(DropdownObject, this, PopupDirection);
+    UFairyApplication::Get()->GetUIRoot(this)->TogglePopup(DropdownObject, this, PopupDirection);
     if (DropdownObject->GetParent() != nullptr)
         SetState(UGButton::DOWN);
 }
@@ -206,16 +207,16 @@ void UGComboBox::RenderDropdownList()
     int32 cnt = Items.Num();
     for (int32 i = 0; i < cnt; i++)
     {
-        UGObject* Obj = ListObject->AddItemFromPool();
+        UFairyObject* Obj = ListObject->AddItemFromPool();
         Obj->SetText(Items[i]);
         Obj->SetIcon((Icons.Num() > 0 && i < Icons.Num()) ? Icons[i] : G_EMPTY_STRING);
-        Obj->Name = i < Values.Num() ? Values[i] : G_EMPTY_STRING;
+        Obj->SetName(i < Values.Num() ? Values[i] : G_EMPTY_STRING);
     }
 }
 
-void UGComboBox::HandleControllerChanged(UGController* Controller)
+void UGComboBox::ApplyController(UGController* Controller)
 {
-    UGComponent::HandleControllerChanged(Controller);
+    UFairyComponent::ApplyController(Controller);
 
     if (SelectionController == Controller)
         SetSelectedIndex(Controller->GetSelectedIndex());
@@ -231,7 +232,7 @@ void UGComboBox::HandleGrayedChanged()
             SetState(UGButton::UP);
     }
     else
-        UGComponent::HandleGrayedChanged();
+        UFairyComponent::HandleGrayedChanged();
 }
 
 UGTextField* UGComboBox::GetTextField() const
@@ -263,7 +264,7 @@ FNVariant UGComboBox::GetProp(EObjectPropID PropID) const
     case EObjectPropID::FontSize:
         return FNVariant(GetTitleFontSize());
     default:
-        return UGComponent::GetProp(PropID);
+        return UFairyComponent::GetProp(PropID);
     }
 }
 
@@ -288,13 +289,15 @@ void UGComboBox::SetProp(EObjectPropID PropID, const FNVariant& InValue)
         SetTitleFontSize(InValue.AsInt());
         break;
     default:
-        UGComponent::SetProp(PropID, InValue);
+        UFairyComponent::SetProp(PropID, InValue);
         break;
     }
 }
 
 void UGComboBox::ConstructExtension(FByteBuffer* Buffer)
 {
+    VisibleItemCount = UFairyConfig::Config->DefaultComboBoxVisibleItemCount;
+
     Buffer->Seek(0, 6);
 
     ButtonController = GetController("button");
@@ -304,13 +307,13 @@ void UGComboBox::ConstructExtension(FByteBuffer* Buffer)
     const FString& dropdownResource = Buffer->ReadS();
     if (!dropdownResource.IsEmpty())
     {
-        DropdownObject = Cast<UGComponent>(UUIPackage::CreateObjectFromURL(dropdownResource, this));
+        DropdownObject = Cast<UFairyComponent>(UFairyPackageMgr::Get()->CreateObjectFromURL(this, dropdownResource));
         verifyf(DropdownObject != nullptr, TEXT("should be a component."));
 
         ListObject = Cast<UGList>(DropdownObject->GetChild("list"));
         verifyf(ListObject != nullptr, TEXT("should container a list component named list."));
 
-        ListObject->On(FUIEvents::ClickItem).AddUObject(this, &UGComboBox::OnClickItem);
+        ListObject->On(FFairyEventNames::ClickItem).AddUObject(this, &UGComboBox::OnClickItem);
 
         ListObject->AddRelation(DropdownObject, ERelationType::Width);
         ListObject->RemoveRelation(DropdownObject, ERelationType::Height);
@@ -318,18 +321,18 @@ void UGComboBox::ConstructExtension(FByteBuffer* Buffer)
         DropdownObject->AddRelation(ListObject, ERelationType::Height);
         DropdownObject->RemoveRelation(ListObject, ERelationType::Width);
 
-        DropdownObject->On(FUIEvents::RemovedFromStage).AddUObject(this, &UGComboBox::OnPopupWinClosed);
+        DropdownObject->On(FFairyEventNames::RemovedFromStage).AddUObject(this, &UGComboBox::OnPopupWinClosed);
     }
 
-    On(FUIEvents::RollOver).AddUObject(this, &UGComboBox::OnRollOverHandler);
-    On(FUIEvents::RollOut).AddUObject(this, &UGComboBox::OnRollOutHandler);
-    On(FUIEvents::TouchBegin).AddUObject(this, &UGComboBox::OnTouchBeginHandler);
-    On(FUIEvents::TouchEnd).AddUObject(this, &UGComboBox::OnTouchEndHandler);
+    On(FFairyEventNames::RollOver).AddUObject(this, &UGComboBox::OnRollOverHandler);
+    On(FFairyEventNames::RollOut).AddUObject(this, &UGComboBox::OnRollOutHandler);
+    On(FFairyEventNames::TouchBegin).AddUObject(this, &UGComboBox::OnTouchBeginHandler);
+    On(FFairyEventNames::TouchEnd).AddUObject(this, &UGComboBox::OnTouchEndHandler);
 }
 
 void UGComboBox::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
-    UGComponent::SetupAfterAdd(Buffer, BeginPos);
+    UFairyComponent::SetupAfterAdd(Buffer, BeginPos);
 
     if (!Buffer->Seek(BeginPos, 6))
         return;
@@ -390,12 +393,12 @@ void UGComboBox::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 
 void UGComboBox::OnClickItem(UEventContext* Context)
 {
-    if (DropdownObject->GetParent()->IsA<UGRoot>())
-        ((UGRoot*)DropdownObject->GetParent())->HidePopup(DropdownObject);
+    if (DropdownObject->GetParent()->IsA<UFairyRoot>())
+        ((UFairyRoot*)DropdownObject->GetParent())->HidePopup(DropdownObject);
     SelectedIndex = INT_MIN;
-    SetSelectedIndex(ListObject->GetChildIndex(Cast<UGObject>(Context->GetData().AsUObject())));
+    SetSelectedIndex(ListObject->GetChildIndex(Cast<UFairyObject>(Context->GetData().AsUObject())));
 
-    DispatchEvent(FUIEvents::Changed);
+    DispatchEvent(FFairyEventNames::Changed);
 }
 
 void UGComboBox::OnRollOverHandler(UEventContext* Context)

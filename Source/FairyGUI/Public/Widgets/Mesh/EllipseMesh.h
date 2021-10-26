@@ -1,12 +1,11 @@
 #pragma once
 
 #include "MeshFactory.h"
-#include "Widgets/HitTest.h"
 
-class FAIRYGUI_API FEllipseMesh : public IMeshFactory, public IHitTest
+class FAIRYGUI_API FEllipseMesh : public IMeshFactory
 {
 public:
-    MESHFACTORY_TYPE(FEllipseMesh, this)
+    MESH_FACTORY_TYPE(FEllipseMesh)
 
     FEllipseMesh();
     virtual ~FEllipseMesh() {}
@@ -20,5 +19,4 @@ public:
     float EndDegreee;
 
     void OnPopulateMesh(FVertexHelper& Helper);
-    bool HitTest(const FBox2D& ContentRect, const FVector2D& LayoutScaleMultiplier, const FVector2D& LocalPoint) const;
 };

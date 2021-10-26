@@ -108,16 +108,7 @@ void UGGraph::Clear()
 
 bool UGGraph::IsEmpty() const
 {
-    return !Content->Graphics.GetMeshFactory().IsValid();
-}
-
-IHitTest* UGGraph::GetHitArea() const
-{
-    const TSharedPtr<IMeshFactory>& Factory = Content->Graphics.GetMeshFactory();
-    if (Factory.IsValid())
-        return Factory->GetMeshHitTest();
-    else
-        return nullptr;
+    return Content->Graphics.GetMeshFactory() == nullptr;
 }
 
 FNVariant UGGraph::GetProp(EObjectPropID PropID) const
@@ -127,7 +118,7 @@ FNVariant UGGraph::GetProp(EObjectPropID PropID) const
     case EObjectPropID::Color:
         return FNVariant(Content->Graphics.GetColor());
     default:
-        return UGObject::GetProp(PropID);
+        return UFairyObject::GetProp(PropID);
     }
 }
 
@@ -139,17 +130,15 @@ void UGGraph::SetProp(EObjectPropID PropID, const FNVariant& InValue)
         SetColor(InValue.AsColor());
         break;
     default:
-        UGObject::SetProp(PropID, InValue);
+        UFairyObject::SetProp(PropID, InValue);
         break;
     }
 }
 
 void UGGraph::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
-    UGObject::SetupBeforeAdd(Buffer, BeginPos);
-
+    UFairyObject::SetupBeforeAdd(Buffer, BeginPos);
     Buffer->Seek(BeginPos, 5);
-
     int32 type = Buffer->ReadByte();
     if (type != 0)
     {
@@ -161,18 +150,26 @@ void UGGraph::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
         if (roundedRect)
         {
             for (int32 i = 0; i < 4; i++)
+            {
                 cornerRadius[i] = Buffer->ReadFloat();
+            }
         }
 
         if (type == 1)
         {
             if (roundedRect)
+            {
                 DrawRoundRect(lineWidth, lineColor, fillColor, cornerRadius.X, cornerRadius.Y, cornerRadius.Z, cornerRadius.W);
+            }
             else
+            {
                 DrawRect(lineWidth, lineColor, fillColor);
+            }
         }
         else if (type == 2)
+        {
             DrawEllipse(lineWidth, lineColor, fillColor);
+        }
         else if (type == 3)
         {
             int32 cnt = Buffer->ReadShort() / 2;
@@ -195,9 +192,10 @@ void UGGraph::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
             if (cnt > 0)
             {
                 for (int32 i = 0; i < cnt; i++)
+                {
                     distances.Add(Buffer->ReadFloat());
+                }
             }
-
             DrawRegularPolygon(sides, lineWidth, lineColor, fillColor, startAngle, distances);
         }
     }

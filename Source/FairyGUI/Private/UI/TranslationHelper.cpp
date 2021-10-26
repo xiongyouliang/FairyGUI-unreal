@@ -7,7 +7,7 @@ void FTranslationHelper::LoadFromXML(const FString XmlString)
 
 }
 
-void FTranslationHelper::TranslateComponent(const TSharedPtr<FPackageItem>& Item)
+void FTranslationHelper::TranslateComponent(const TSharedPtr<FFairyPackageItem>& Item)
 {
 
 }

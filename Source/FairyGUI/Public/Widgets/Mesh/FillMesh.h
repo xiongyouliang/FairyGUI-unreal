@@ -6,7 +6,7 @@
 class FAIRYGUI_API FFillMesh : public IMeshFactory
 {
 public:
-    MESHFACTORY_TYPE(FFillMesh, nullptr)
+    MESH_FACTORY_TYPE(FFillMesh)
 
     FFillMesh();
     virtual ~FFillMesh() {}

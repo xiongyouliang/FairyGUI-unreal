@@ -1,7 +1,7 @@
 #include "UI/Transition.h"
-#include "UI/GComponent.h"
-#include "UI/UIPackage.h"
-#include "UI/GController.h"
+#include "UI/FairyComponent.h"
+#include "Package/FairyPackage.h"
+#include "UI/Controller/GController.h"
 #include "Utils/ByteBuffer.h"
 #include "Tween/GPath.h"
 
@@ -142,7 +142,7 @@ struct FTransitionItem
 
     //running properties
     FGTweener* Tweener;
-    UGObject* Target;
+    UFairyObject* Target;
     uint32 DisplayLockToken;
 
     FTransitionItem(ETransitionActionType aType);
@@ -260,7 +260,7 @@ void UTransition::Play(int32 InTimes, float InDelay, float InStartTime, float In
 
         if (item->Target != nullptr && item->Type == ETransitionActionType::Transition)
         {
-            UTransition* trans = Cast<UGComponent>(item->Target)->GetTransition(item->TransData->Name);
+            UTransition* trans = Cast<UFairyComponent>(item->Target)->GetTransition(item->TransData->Name);
             if (trans == this)
                 trans = nullptr;
             if (trans != nullptr)
@@ -547,14 +547,14 @@ void UTransition::ClearHooks()
     }
 }
 
-void UTransition::SetTarget(const FString& InLabel, UGObject* InTarget)
+void UTransition::SetTarget(const FString& InLabel, UFairyObject* InTarget)
 {
     for (auto& item : Items)
     {
         if (item->Label == InLabel)
         {
 
-            item->TargetID = InTarget->ID;
+            item->TargetID = InTarget->GetID();
             item->Target = nullptr;
         }
     }
@@ -841,7 +841,7 @@ void UTransition::SkipAnimations()
     int32 frame;
     float playStartTime;
     float playTotalTime;
-    UGObject* target;
+    UFairyObject* target;
 
     int32 cnt = Items.Num();
     for (int32 i = 0; i < cnt; i++)
@@ -940,49 +940,81 @@ void UTransition::OnTweenStart(FGTweener* Tweener)
             if (item->Target != Owner)
             {
                 if (!startValue->b1)
-                    Tweener->StartValue.X = item->Target->GetX();
+                {
+                    Tweener->StartValue.X = item->Target->GetPosition().X;
+                }
                 else if (startValue->b3) //percent
+                {
                     Tweener->StartValue.X = startValue->f1 * Owner->GetWidth();
+                }
 
                 if (!startValue->b2)
-                    Tweener->StartValue.Y = item->Target->GetY();
+                {
+                    Tweener->StartValue.Y = item->Target->GetPosition().Y;
+                }
                 else if (startValue->b3) //percent
+                {
                     Tweener->StartValue.Y = startValue->f2 * Owner->GetHeight();
+                }
 
                 if (!endValue->b1)
+                {
                     Tweener->EndValue.X = Tweener->StartValue.X;
+                }
                 else if (endValue->b3)
+                {
                     Tweener->EndValue.X = endValue->f1 * Owner->GetWidth();
+                }
 
                 if (!endValue->b2)
+                {
                     Tweener->EndValue.Y = Tweener->StartValue.Y;
+                }
                 else if (endValue->b3)
+                {
                     Tweener->EndValue.Y = endValue->f2 * Owner->GetHeight();
+                }
             }
             else
             {
                 if (!startValue->b1)
-                    Tweener->StartValue.X = item->Target->GetX() - OwnerBasePos.X;
+                {
+                    Tweener->StartValue.X = item->Target->GetPosition().X - OwnerBasePos.X;
+                }
                 if (!startValue->b2)
-                    Tweener->StartValue.Y = item->Target->GetY() - OwnerBasePos.Y;
+                {
+                    Tweener->StartValue.Y = item->Target->GetPosition().Y - OwnerBasePos.Y;
+                }
 
                 if (!endValue->b1)
+                {
                     Tweener->EndValue.X = Tweener->StartValue.X;
+                }
                 if (!endValue->b2)
+                {
                     Tweener->EndValue.Y = Tweener->StartValue.Y;
+                }
             }
         }
         else
         {
             if (!startValue->b1)
+            {
                 Tweener->StartValue.X = item->Target->GetWidth();
+            }
             if (!startValue->b2)
+            {
                 Tweener->StartValue.Y = item->Target->GetHeight();
+            }
 
             if (!endValue->b1)
+            {
                 Tweener->EndValue.X = Tweener->StartValue.X;
+            }
             if (!endValue->b2)
+            {
                 Tweener->EndValue.Y = Tweener->StartValue.Y;
+            }
         }
 
         if (item->TweenConfig->Path.IsValid())
@@ -1114,31 +1146,49 @@ void UTransition::ApplyValue(FTransitionItem* item)
         if (item->Target == Owner)
         {
             if (item->Data->b1 && item->Data->b2)
+            {
                 item->Target->SetPosition(item->Data->GetVec2() + OwnerBasePos);
+            }
             else if (item->Data->b1)
-                item->Target->SetX(item->Data->f1 + OwnerBasePos.X);
+            {
+                item->Target->SetPositionX(item->Data->f1 + OwnerBasePos.X);
+            }
             else
-                item->Target->SetY(item->Data->f2 + OwnerBasePos.Y);
+            {
+                item->Target->SetPositionY(item->Data->f2 + OwnerBasePos.Y);
+            }
         }
         else
         {
             if (item->Data->b3) //position in percent
             {
                 if (item->Data->b1 && item->Data->b2)
+                {
                     item->Target->SetPosition(item->Data->GetVec2() * Owner->GetSize());
+                }
                 else if (item->Data->b1)
-                    item->Target->SetX(item->Data->f1 * Owner->GetWidth());
+                {
+                    item->Target->SetPositionX(item->Data->f1 * Owner->GetWidth());
+                }
                 else if (item->Data->b2)
-                    item->Target->SetY(item->Data->f2 * Owner->GetHeight());
+                {
+                    item->Target->SetPositionY(item->Data->f2 * Owner->GetHeight());
+                }
             }
             else
             {
                 if (item->Data->b1 && item->Data->b2)
+                {
                     item->Target->SetPosition(item->Data->GetVec2());
+                }
                 else if (item->Data->b1)
-                    item->Target->SetX(item->Data->f1);
+                {
+                    item->Target->SetPositionX(item->Data->f1);
+                }
                 else if (item->Data->b2)
-                    item->Target->SetY(item->Data->f2);
+                {
+                    item->Target->SetPositionY(item->Data->f2);
+                }
             }
         }
     }
@@ -1220,7 +1270,9 @@ void UTransition::ApplyValue(FTransitionItem* item)
         if (bPlaying && item->Time >= StartTime)
         {
             if (!item->SoundData->URL.IsEmpty())
-                Owner->GetApp()->PlaySound(item->SoundData->URL, item->SoundData->Volume);
+            {
+                UFairyApplication::Get()->PlaySound(item->SoundData->URL, item->SoundData->Volume);
+            }
             break;
         }
 
@@ -1243,7 +1295,7 @@ void UTransition::ApplyValue(FTransitionItem* item)
 
 void UTransition::Setup(FByteBuffer* Buffer)
 {
-    Owner = Cast<UGComponent>(GetOuter());
+    Owner = Cast<UFairyComponent>(GetOuter());
 
     Name = Buffer->ReadS();
     Options = Buffer->ReadInt();
@@ -1265,9 +1317,13 @@ void UTransition::Setup(FByteBuffer* Buffer)
         item->Time = Buffer->ReadFloat();
         int32 TargetID = Buffer->ReadShort();
         if (TargetID < 0)
+        {
             item->TargetID = G_EMPTY_STRING;
+        }
         else
-            item->TargetID = Owner->GetChildAt(TargetID)->ID;
+        {
+            item->TargetID = Owner->GetChildAt(TargetID)->GetID();
+        }
         item->Label = Buffer->ReadS();
 
         if (Buffer->ReadBool())

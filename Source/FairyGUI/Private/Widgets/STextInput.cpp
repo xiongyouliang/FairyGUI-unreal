@@ -1,44 +1,21 @@
 #include "Widgets/STextInput.h"
 #include "Widgets/Text/SlateEditableTextLayout.h"
 
-class SMyTextInput : public SMultiLineEditableText
+class SMyTextInput : public SEditableText
 {
 public:
-    SMyTextInput() :bPassword(false)
-    {
-
-    }
-
     void SetTextFormat(const FNTextFormat& InTextFormat)
     {
-        EditableTextLayout->SetTextStyle(InTextFormat.GetStyle());
-        EditableTextLayout->SetJustification((ETextJustify::Type)InTextFormat.Align);
+        this->EditableTextLayout->SetTextStyle(InTextFormat.GetStyle());
     }
 
     void SetOnTextChanged(FOnTextChanged Callback)
     {
         OnTextChangedCallback = Callback;
     }
-
-    void SetOnTextCommitted(FOnTextCommitted Callback)
-    {
-        OnTextCommittedCallback = Callback;
-    }
-
-    void SetAllowMultiLine(bool bInAllowMultiLine)
-    {
-        bAllowMultiLine = bInAllowMultiLine;
-    }
-
-    virtual bool IsTextPassword() const override
-    {
-        return bPassword;
-    }
-
-    bool bPassword;
 };
 
-STextInput::STextInput() :
+STextInput::STextInput():
     Widget(SNew(SMyTextInput)),
     ChildSlot(this)
 {
@@ -56,24 +33,9 @@ void STextInput::SetTextFormat(const FNTextFormat& InTextFormat)
     StaticCastSharedRef<SMyTextInput>(Widget)->SetTextFormat(InTextFormat);
 }
 
-void STextInput::SetPassword(bool bInPassword)
-{
-    StaticCastSharedRef<SMyTextInput>(Widget)->bPassword = bInPassword;
-}
-
-void STextInput::SetSingleLine(bool bInSingleLine)
-{
-    StaticCastSharedRef<SMyTextInput>(Widget)->SetAllowMultiLine(!bInSingleLine);
-}
-
 void STextInput::SetOnTextChanged(FOnTextChanged Callback)
 {
     StaticCastSharedRef<SMyTextInput>(Widget)->SetOnTextChanged(Callback);
-}
-
-void STextInput::SetOnTextCommitted(FOnTextCommitted Callback)
-{
-    StaticCastSharedRef<SMyTextInput>(Widget)->SetOnTextCommitted(Callback);
 }
 
 FChildren* STextInput::GetChildren()
@@ -83,10 +45,11 @@ FChildren* STextInput::GetChildren()
 
 void STextInput::OnArrangeChildren(const FGeometry& AllottedGeometry, FArrangedChildren& ArrangedChildren) const
 {
+
     if (ArrangedChildren.Accepts(Widget->GetVisibility()))
-        ArrangedChildren.AddWidget(AllottedGeometry.MakeChild(
-            Widget, FVector2D::ZeroVector, Size
-        ));
+    {
+        ArrangedChildren.AddWidget(AllottedGeometry.MakeChild(Widget, FVector2D::ZeroVector, GetInViewSize()));
+    }   
 }
 
 int32 STextInput::OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const

@@ -10,7 +10,7 @@ UGScrollBar::~UGScrollBar()
 }
 
 
-void UGScrollBar::SetScrollPane(UScrollPane* InTarget, bool bInVertical)
+void UGScrollBar::SetScrollPane(UScrollPanel* InTarget, bool bInVertical)
 {
     Target = InTarget;
     bVertical = bInVertical;
@@ -18,17 +18,24 @@ void UGScrollBar::SetScrollPane(UScrollPane* InTarget, bool bInVertical)
 
 void UGScrollBar::SetDisplayPerc(float Value)
 {
+    const FVector2D& OldPos = GripObject->GetPosition();
     if (bVertical)
     {
         if (!bFixedGripSize)
+        {
             GripObject->SetHeight(FMath::FloorToFloat(Value * BarObject->GetHeight()));
-        GripObject->SetY(round(BarObject->GetY() + (BarObject->GetHeight() - GripObject->GetHeight()) * ScrollPerc));
+        }
+        const float NewPosY = round(BarObject->GetPosition().Y + (BarObject->GetHeight() - GripObject->GetHeight()) * ScrollPerc);
+        GripObject->SetPosition(FVector2D(OldPos.X, NewPosY));
     }
     else
     {
         if (!bFixedGripSize)
+        {
             GripObject->SetWidth(FMath::FloorToFloat(Value * BarObject->GetWidth()));
-        GripObject->SetX(round(BarObject->GetX() + (BarObject->GetWidth() - GripObject->GetWidth()) * ScrollPerc));
+        }
+        const float NewPosX = round(BarObject->GetPosition().X + (BarObject->GetWidth() - GripObject->GetWidth()) * ScrollPerc);
+        GripObject->SetPosition(FVector2D(NewPosX, OldPos.Y));
     }
 
     GripObject->SetVisible(Value != 0 && Value != 1);
@@ -36,19 +43,30 @@ void UGScrollBar::SetDisplayPerc(float Value)
 
 void UGScrollBar::SetScrollPerc(float Value)
 {
+    FVector2D NewPos = GripObject->GetPosition();
     ScrollPerc = Value;
     if (bVertical)
-        GripObject->SetY(round(BarObject->GetY() + (BarObject->GetHeight() - GripObject->GetHeight()) * ScrollPerc));
+    {
+        NewPos.Y = round(BarObject->GetPosition().Y + (BarObject->GetHeight() - GripObject->GetHeight()) * ScrollPerc);
+    }
     else
-        GripObject->SetX(round(BarObject->GetX() + (BarObject->GetWidth() - GripObject->GetWidth()) * ScrollPerc));
+    {
+        NewPos.X = round(BarObject->GetPosition().X + (BarObject->GetWidth() - GripObject->GetWidth()) * ScrollPerc);
+    }
+    GripObject->SetPosition(NewPos);
 }
 
 float UGScrollBar::GetMinSize()
 {
     if (bVertical)
+    {
         return (ArrowButton1 != nullptr ? ArrowButton1->GetHeight() : 0) + (ArrowButton2 != nullptr ? ArrowButton2->GetHeight() : 0);
+
+    }
     else
+    {
         return (ArrowButton1 != nullptr ? ArrowButton1->GetWidth() : 0) + (ArrowButton2 != nullptr ? ArrowButton2->GetWidth() : 0);
+    }
 }
 
 void UGScrollBar::ConstructExtension(FByteBuffer* buffer)
@@ -65,16 +83,21 @@ void UGScrollBar::ConstructExtension(FByteBuffer* buffer)
     ArrowButton1 = GetChild("arrow1");
     ArrowButton2 = GetChild("arrow2");
 
-    GripObject->On(FUIEvents::TouchBegin).AddUObject(this, &UGScrollBar::OnGripTouchBegin);
-    GripObject->On(FUIEvents::TouchMove).AddUObject(this, &UGScrollBar::OnGripTouchMove);
-    GripObject->On(FUIEvents::TouchEnd).AddUObject(this, &UGScrollBar::OnGripTouchEnd);
+    GripObject->On(FFairyEventNames::TouchBegin).AddUObject(this, &UGScrollBar::OnGripTouchBegin);
+    GripObject->On(FFairyEventNames::TouchMove).AddUObject(this, &UGScrollBar::OnGripTouchMove);
+    GripObject->On(FFairyEventNames::TouchEnd).AddUObject(this, &UGScrollBar::OnGripTouchEnd);
 
-    On(FUIEvents::TouchBegin).AddUObject(this, &UGScrollBar::OnTouchBeginHandler);
+    On(FFairyEventNames::TouchBegin).AddUObject(this, &UGScrollBar::OnTouchBeginHandler);
 
     if (ArrowButton1 != nullptr)
-        ArrowButton1->On(FUIEvents::TouchBegin).AddUObject(this, &UGScrollBar::OnArrowButton1Click);
+    {
+        ArrowButton1->On(FFairyEventNames::TouchBegin).AddUObject(this, &UGScrollBar::OnArrowButton1Click);
+    }
+
     if (ArrowButton2 != nullptr)
-        ArrowButton2->On(FUIEvents::TouchBegin).AddUObject(this, &UGScrollBar::OnArrowButton2Click);
+    {
+        ArrowButton2->On(FFairyEventNames::TouchBegin).AddUObject(this, &UGScrollBar::OnArrowButton2Click);
+    }
 }
 
 void UGScrollBar::OnTouchBeginHandler(UEventContext* Context)
@@ -85,29 +108,39 @@ void UGScrollBar::OnTouchBeginHandler(UEventContext* Context)
     if (bVertical)
     {
         if (pt.Y < 0)
-            Target->ScrollUp(4, false);
+        {
+            //Target->ScrollUp(4, false);
+        }
         else
-            Target->ScrollDown(4, false);
+        {
+            //Target->ScrollDown(4, false);
+        }
     }
     else
     {
         if (pt.X < 0)
-            Target->ScrollLeft(4, false);
+        {
+            //Target->ScrollLeft(4, false);
+        }
         else
-            Target->ScrollRight(4, false);
+        {
+            //Target->ScrollRight(4, false);
+        }
     }
 }
 
 void UGScrollBar::OnGripTouchBegin(UEventContext* Context)
 {
     if (BarObject == nullptr)
+    {
         return;
+    }
 
     Context->StopPropagation();
     Context->CaptureTouch();
 
     bGripDragging = true;
-    Target->UpdateScrollBarVisible();
+    //Target->UpdateScrollBarVisible();
 
     FVector2D pt = GlobalToLocal(Context->GetPointerPosition());
     DragOffset = pt - GripObject->GetPosition();
@@ -121,18 +154,26 @@ void UGScrollBar::OnGripTouchMove(UEventContext* Context)
         float curY = pt.Y - DragOffset.Y;
         float diff = BarObject->GetHeight() - GripObject->GetHeight();
         if (diff == 0)
-            Target->SetPercY(0);
+        {
+            //Target->SetPercY(0);
+        }
         else
-            Target->SetPercY((curY - BarObject->GetY()) / diff);
+        {
+            //Target->SetPercY((curY - BarObject->GetPosition().Y) / diff);
+        }
     }
     else
     {
         float curX = pt.X - DragOffset.X;
         float diff = BarObject->GetWidth() - GripObject->GetWidth();
         if (diff == 0)
-            Target->SetPercX(0);
+        {
+            //Target->SetPercX(0);
+        }
         else
-            Target->SetPercX((curX - BarObject->GetX()) / diff);
+        {
+            //Target->SetPercX((curX - BarObject->GetPosition().X) / diff);
+        }
     }
 }
 
@@ -147,9 +188,13 @@ void UGScrollBar::OnArrowButton1Click(UEventContext* Context)
     Context->StopPropagation();
 
     if (bVertical)
-        Target->ScrollUp();
+    {
+        //Target->ScrollUp();
+    }
     else
-        Target->ScrollLeft();
+    {
+        //Target->ScrollLeft();
+    }
 }
 
 void UGScrollBar::OnArrowButton2Click(UEventContext* Context)
@@ -157,7 +202,11 @@ void UGScrollBar::OnArrowButton2Click(UEventContext* Context)
     Context->StopPropagation();
 
     if (bVertical)
-        Target->ScrollDown();
+    {
+        //Target->ScrollDown();
+    }
     else
-        Target->ScrollRight();
+    {
+        //Target->ScrollRight();
+    }
 }

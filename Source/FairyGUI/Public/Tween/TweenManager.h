@@ -5,16 +5,13 @@
 #include "Tickable.h"
 #include "GTweener.h"
 
-class UGObject;
+class UFairyObject;
 
 class FAIRYGUI_API FTweenManager : public FTickableGameObject
 {
 public:
-    static FTweenManager Singleton;
-
     FTweenManager();
-    virtual ~FTweenManager();
-    void Reset();
+    ~FTweenManager();
 
     FGTweener* CreateTween();
 

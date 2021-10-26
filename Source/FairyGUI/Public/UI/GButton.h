@@ -1,13 +1,13 @@
 #pragma once
 
-#include "GComponent.h"
+#include "UI/FairyComponent.h"
 #include "GButton.generated.h"
 
 class UGController;
 class UGTextField;
 
 UCLASS(BlueprintType, Blueprintable)
-class FAIRYGUI_API UGButton : public UGComponent
+class FAIRYGUI_API UGButton : public UFairyComponent
 {
     GENERATED_BODY()
 
@@ -75,10 +75,10 @@ public:
     static const FString SELECTED_DISABLED;
 
 protected:
-    virtual void ConstructExtension(FByteBuffer* Buffer);
+    virtual void ConstructExtension(FByteBuffer* Buffer) override;
     virtual void SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos) override;
 
-    virtual void HandleControllerChanged(UGController* Controller) override;
+    virtual void ApplyController(UGController* Controller) override;
 
     void SetState(const FString& InState);
     void SetCurrentState();
@@ -92,10 +92,16 @@ private:
     void OnRemovedFromStageHandler(UEventContext* Context);
 
     EButtonMode Mode;
-    UGObject* TitleObject;
-    UGObject* IconObject;
+
+    UPROPERTY()
+    UFairyObject* TitleObject;
+    UPROPERTY()
+    UFairyObject* IconObject;
+    UPROPERTY()
     UGController* ButtonController;
+    UPROPERTY()
     UGController* RelatedController;
+
     FString RelatedPageID;
     FString Title;
     FString SelectedTitle;
@@ -106,7 +112,7 @@ private:
     bool bSelected;
     bool bOver;
     bool bDown;
-    int32 DownEffect;
+    EButtonPressedEffect DownEffect;
     bool bDownScaled;
     float DownEffectValue;
 };

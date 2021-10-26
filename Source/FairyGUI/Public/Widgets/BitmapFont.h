@@ -2,8 +2,6 @@
 
 #include "CoreMinimal.h"
 
-class UNTexture;
-
 struct FAIRYGUI_API FBitmapFont : public FGCObject
 {
     struct FGlyph

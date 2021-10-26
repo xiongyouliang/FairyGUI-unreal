@@ -1,16 +1,15 @@
 #include "UI/GLoader.h"
-#include "UI/UIPackage.h"
-#include "UI/GComponent.h"
+#include "Package/FairyPackage.h"
+#include "Package/FairyPackageMgr.h"
+#include "UI/FairyComponent.h"
 #include "Widgets/NTexture.h"
 #include "Widgets/SMovieClip.h"
 #include "Widgets/SContainer.h"
 #include "Utils/ByteBuffer.h"
-#include "Engine/AssetManager.h"
 
 UGLoader::UGLoader()
 {
-    if (!HasAnyFlags(RF_ClassDefaultObject | RF_ArchetypeObject))
-    {
+    if (!HasAnyFlags(RF_ClassDefaultObject | RF_ArchetypeObject)) {
         DisplayObject = Container = SNew(SContainer).GObject(this);
         Content = SNew(SMovieClip);
         Content->SetInteractable(false);
@@ -34,7 +33,7 @@ void UGLoader::SetURL(const FString& InURL)
     UpdateGear(7);
 }
 
-void UGLoader::SetAlign(EAlignType InAlign)
+void UGLoader::SetAlign(EHAlignType InAlign)
 {
     if (Align != InAlign)
     {
@@ -43,7 +42,7 @@ void UGLoader::SetAlign(EAlignType InAlign)
     }
 }
 
-void UGLoader::SetVerticalAlign(EVerticalAlignType InVerticalAlign)
+void UGLoader::SetVerticalAlign(EVAlignType InVerticalAlign)
 {
     if (VerticalAlign != InVerticalAlign)
     {
@@ -81,22 +80,22 @@ void UGLoader::SetShrinkOnly(bool bInShrinkOnly)
 
 EFlipType UGLoader::GetFlip() const
 {
-    return Content->Graphics.GetFlip();
+    return Content->Graphics->GetFlip();
 }
 
 void UGLoader::SetFlip(EFlipType InFlip)
 {
-    Content->Graphics.SetFlip(InFlip);
+    Content->Graphics->SetFlip(InFlip);
 }
 
 FColor UGLoader::GetColor() const
 {
-    return Content->Graphics.GetColor();
+    return Content->Graphics->GetColor();
 }
 
 void UGLoader::SetColor(const FColor& InColor)
 {
-    Content->Graphics.SetColor(InColor);
+    Content->Graphics->SetColor(InColor);
 }
 
 EFillMethod UGLoader::GetFillMethod() const
@@ -194,11 +193,12 @@ void UGLoader::ClearContent()
 
 void UGLoader::LoadFromPackage(const FString& ItemURL)
 {
-    ContentItem = UUIPackage::GetItemByURL(ItemURL);
+    ContentItem = UFairyPackageMgr::Get()->GetPackageItemByURL(ItemURL);
+
     if (ContentItem.IsValid())
     {
         ContentItem = ContentItem->GetBranch();
-        SourceSize = ContentItem->Size;
+        //SourceSize = ContentItem->Size;
         ContentItem = ContentItem->GetHighResolution();
         ContentItem->Load();
 
@@ -219,12 +219,12 @@ void UGLoader::LoadFromPackage(const FString& ItemURL)
         }
         else if (ContentItem->Type == EPackageItemType::Component)
         {
-            UGObject* obj = UUIPackage::CreateObjectFromURL(ItemURL, this);
-            if (obj == nullptr || !obj->IsA<UGComponent>())
+            UFairyObject* obj = UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), ItemURL);
+            if (obj == nullptr || !obj->IsA<UFairyComponent>())
                 SetErrorState();
             else
             {
-                Content2 = Cast<UGComponent>(obj);
+                Content2 = Cast<UFairyComponent>(obj);
                 Container->AddChild(Content2->GetDisplayObject());
                 UpdateLayout();
             }
@@ -245,25 +245,7 @@ void UGLoader::LoadFromPackage(const FString& ItemURL)
 
 void UGLoader::LoadExternal()
 {
-    SoftObjectPath = MakeShareable(new FSoftObjectPath(URL));
 
-    UAssetManager::GetStreamableManager().RequestAsyncLoad(*SoftObjectPath, FStreamableDelegate::CreateUObject(this, &UGLoader::OnExternalLoaded, URL));
-}
-
-void UGLoader::OnExternalLoaded(FString LoadingURL)
-{
-    if (!SoftObjectPath.IsValid() || LoadingURL != URL)
-        return;
-
-    TSoftObjectPtr<UTexture2D> NativeTexture(*SoftObjectPath);
-    UNTexture* NTexture = NewObject<UNTexture>(this);
-    NTexture->Init(NativeTexture.Get());
-    Content->SetTexture(NTexture);
-    Content->SetNativeSize();
-    SourceSize = NTexture->GetSize();
-    UpdateLayout();
-
-    SoftObjectPath.Reset();
 }
 
 void UGLoader::UpdateLayout()
@@ -278,7 +260,7 @@ void UGLoader::UpdateLayout()
         }
         return;
     }
-
+    FVector2D SourceSize = GetSize();
     FVector2D contentSize = SourceSize;
 
     if (bAutoSize)
@@ -301,8 +283,8 @@ void UGLoader::UpdateLayout()
             }
             else
             {
-                Content->SetPosition(FVector2D(0, 0));
-                Content->SetSize(contentSize);
+                //Content->SetPosition(FVector2D(0, 0));
+                //Content->SetSize(contentSize);
             }
 
             return;
@@ -348,29 +330,37 @@ void UGLoader::UpdateLayout()
     }
 
     if (Content2 != nullptr)
+    {
         Content2->SetScale(ContentScale);
+    }
     else
-        Content->SetSize(contentSize);
+    {
+        //Content->SetSize(contentSize);
+    }
 
     FVector2D ContentPosition;
-    if (Align == EAlignType::Center)
+    if (Align == EHAlignType::Center)
         ContentPosition.X = (Size.X - contentSize.X) / 2;
-    else if (Align == EAlignType::Right)
+    else if (Align == EHAlignType::Right)
         ContentPosition.X = Size.X - contentSize.X;
     else
         ContentPosition.X = 0;
 
-    if (VerticalAlign == EVerticalAlignType::Middle)
+    if (VerticalAlign == EVAlignType::Middle)
         ContentPosition.Y = (Size.Y - contentSize.Y) / 2;
-    else if (VerticalAlign == EVerticalAlignType::Bottom)
+    else if (VerticalAlign == EVAlignType::Bottom)
         ContentPosition.Y = Size.Y - contentSize.Y;
     else
         ContentPosition.Y = 0;
 
     if (Content2 != nullptr)
+    {
         Content2->SetPosition(ContentPosition);
+    }
     else
-        Content->SetPosition(ContentPosition);
+    {
+        //Content->SetPosition(ContentPosition);
+    }
 }
 
 void UGLoader::SetErrorState()
@@ -391,7 +381,7 @@ FNVariant UGLoader::GetProp(EObjectPropID PropID) const
     case EObjectPropID::TimeScale:
         return FNVariant(Content->GetTimeScale());
     default:
-        return UGObject::GetProp(PropID);
+        return UFairyObject::GetProp(PropID);
     }
 }
 
@@ -415,28 +405,30 @@ void UGLoader::SetProp(EObjectPropID PropID, const FNVariant& InValue)
         Content->Advance(InValue.AsFloat());
         break;
     default:
-        UGObject::SetProp(PropID, InValue);
+        UFairyObject::SetProp(PropID, InValue);
         break;
     }
 }
 
-void UGLoader::HandleSizeChanged()
-{
-    UGObject::HandleSizeChanged();
-
-    if (!bUpdatingLayout)
-        UpdateLayout();
-}
+//void UGLoader::HandleSizeChanged()
+//{
+//    UFairyObject::HandleSizeChanged();
+//
+//    if (!bUpdatingLayout)
+//    {
+//        UpdateLayout();
+//    }
+//}
 
 void UGLoader::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
-    UGObject::SetupBeforeAdd(Buffer, BeginPos);
+    UFairyObject::SetupBeforeAdd(Buffer, BeginPos);
 
     Buffer->Seek(BeginPos, 5);
 
     URL = Buffer->ReadS();
-    Align = (EAlignType)Buffer->ReadByte();
-    VerticalAlign = (EVerticalAlignType)Buffer->ReadByte();
+    Align = (EHAlignType)Buffer->ReadByte();
+    VerticalAlign = (EVAlignType)Buffer->ReadByte();
     Fill = (ELoaderFillType)Buffer->ReadByte();
     bShrinkOnly = Buffer->ReadBool();
     bAutoSize = Buffer->ReadBool();

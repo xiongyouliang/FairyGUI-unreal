@@ -3,11 +3,11 @@
 #include "EditorFramework/AssetImportData.h"
 #include "Misc/Paths.h"
 #include "Misc/FileHelper.h"
-#include "UIPackageAsset.h"
+#include "Package/FairyPackageAsset.h"
 
 UFairyGUIFactory::UFairyGUIFactory()
 {
-    SupportedClass = UUIPackageAsset::StaticClass();
+    SupportedClass = UFairyPackageAsset::StaticClass();
     bEditorImport = true;
     bCreateNew = false;
     bText = false;
@@ -16,7 +16,7 @@ UFairyGUIFactory::UFairyGUIFactory()
 
 UObject* UFairyGUIFactory::FactoryCreateBinary(UClass* InClass, UObject* InParent, FName InName, EObjectFlags Flags, UObject* Context, const TCHAR* Type, const uint8*& Buffer, const uint8* BufferEnd, FFeedbackContext* Warn)
 {
-    UUIPackageAsset* UIAsset = NewObject<UUIPackageAsset>(InParent, InName, Flags);
+    UFairyPackageAsset* UIAsset = NewObject<UFairyPackageAsset>(InParent, InName, Flags);
 
     const int32 InDataSize = BufferEnd - Buffer;
     UIAsset->Data.Empty(InDataSize);
@@ -34,7 +34,7 @@ UObject* UFairyGUIFactory::FactoryCreateBinary(UClass* InClass, UObject* InParen
 
 bool UFairyGUIFactory::CanReimport(UObject* Obj, TArray<FString>& OutFilenames)
 {
-    UUIPackageAsset* UIAsset = Cast<UUIPackageAsset>(Obj);
+    UFairyPackageAsset* UIAsset = Cast<UFairyPackageAsset>(Obj);
     if (UIAsset && UIAsset->AssetImportData)
     {
         UIAsset->AssetImportData->ExtractFilenames(OutFilenames);
@@ -45,7 +45,7 @@ bool UFairyGUIFactory::CanReimport(UObject* Obj, TArray<FString>& OutFilenames)
 
 void UFairyGUIFactory::SetReimportPaths(UObject* Obj, const TArray<FString>& NewReimportPaths)
 {
-    UUIPackageAsset* UIAsset = Cast<UUIPackageAsset>(Obj);
+    UFairyPackageAsset* UIAsset = Cast<UFairyPackageAsset>(Obj);
     if (UIAsset && ensure(NewReimportPaths.Num() == 1))
     {
         UIAsset->AssetImportData->UpdateFilenameOnly(NewReimportPaths[0]);
@@ -54,7 +54,7 @@ void UFairyGUIFactory::SetReimportPaths(UObject* Obj, const TArray<FString>& New
 
 EReimportResult::Type UFairyGUIFactory::Reimport(UObject* Obj)
 {
-    UUIPackageAsset* UIAsset = Cast<UUIPackageAsset>(Obj);
+    UFairyPackageAsset* UIAsset = Cast<UFairyPackageAsset>(Obj);
     if (!UIAsset)
     {
         return EReimportResult::Failed;

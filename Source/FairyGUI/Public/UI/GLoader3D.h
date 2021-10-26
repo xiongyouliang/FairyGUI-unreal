@@ -1,10 +1,10 @@
 #pragma once
 
-#include "GObject.h"
+#include "UI/FairyObject.h"
 #include "GLoader3D.generated.h"
 
 UCLASS(BlueprintType, Blueprintable)
-class FAIRYGUI_API UGLoader3D : public UGObject
+class FAIRYGUI_API UGLoader3D : public UFairyObject
 {
     GENERATED_BODY()
 
@@ -29,7 +29,7 @@ public:
     virtual void SetProp(EObjectPropID PropID, const FNVariant& InValue);
 
 protected:
-    virtual void HandleSizeChanged() override;
+    //virtual void HandleSizeChanged() override;
     virtual void SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos) override;
 
     void LoadContent();
@@ -41,11 +41,11 @@ protected:
 
 private:
     TSharedPtr<class SFImage> Content;
-    TSharedPtr<FPackageItem> ContentItem;
+    TSharedPtr<FFairyPackageItem> ContentItem;
     FString URL;
     ELoaderFillType Fill;
-    EAlignType Align;
-    EVerticalAlignType VerticalAlign;
+    EHAlignType HAlign;
+    EVAlignType VAlign;
     bool bShowErrorSign;
     bool bShrinkOnly;
     bool bAutoSize;

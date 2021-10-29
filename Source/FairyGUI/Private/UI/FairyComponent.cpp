@@ -52,7 +52,7 @@ void UFairyComponent::ReleaseSlateResources(bool bReleaseChildren)
 FSlateRect UFairyComponent::GetBounds()
 {
 	// Calculate child combine bounds
-	FSlateRect TargetRect = GetBounds();
+	FSlateRect TargetRect = Super::GetBounds();
 	const FVector2D ChildOffset = FVector2D(TargetRect.Left, TargetRect.Top);
 	if (Children.Num() > 0)
 	{

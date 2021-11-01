@@ -1,5 +1,5 @@
 #include "UI/FairyComponent.h"
-#include "UI/GButton.h"
+#include "UI/FairyButton.h"
 #include "UI/GGroup.h"
 #include "UI/Relation/Relations.h"
 #include "UI/TranslationHelper.h"
@@ -632,7 +632,7 @@ void UFairyComponent::AdjustRadioGroupDepth(UFairyObject* Obj, UGController* Con
 		{
 			myIndex = i;
 		}
-		else if (Child->IsA<UGButton>() && ((UGButton*)Child)->GetRelatedController() == Controller)
+		else if (Child->IsA<UFairyButton>() && ((UFairyButton*)Child)->GetRelatedController() == Controller)
 		{
 			if (i > maxIndex)
 			{

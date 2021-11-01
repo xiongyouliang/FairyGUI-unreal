@@ -1,4 +1,4 @@
-#include "UI/GButton.h"
+#include "UI/FairyButton.h"
 #include "UI/GTextField.h"
 #include "UI/GLabel.h"
 #include "UI/Controller/GController.h"
@@ -6,25 +6,25 @@
 
 #include "FairyApplication.h"
 
-const FString UGButton::UP = TEXT("up");
-const FString UGButton::DOWN = TEXT("down");
-const FString UGButton::OVER = TEXT("over");
-const FString UGButton::SELECTED_OVER = TEXT("selectedOver");
-const FString UGButton::DISABLED = TEXT("disabled");
-const FString UGButton::SELECTED_DISABLED = TEXT("selectedDisabled");
+const FString UFairyButton::UP = TEXT("up");
+const FString UFairyButton::DOWN = TEXT("down");
+const FString UFairyButton::OVER = TEXT("over");
+const FString UFairyButton::SELECTED_OVER = TEXT("selectedOver");
+const FString UFairyButton::DISABLED = TEXT("disabled");
+const FString UFairyButton::SELECTED_DISABLED = TEXT("selectedDisabled");
 
-UGButton::UGButton() :
+UFairyButton::UFairyButton() :
 	bChangeStateOnClick(true),
 	DownEffectValue(0.8f)
 {
 	
 }
 
-UGButton::~UGButton()
+UFairyButton::~UFairyButton()
 {
 }
 
-void UGButton::SetText(const FString& InText)
+void UFairyButton::SetText(const FString& InText)
 {
 	Title = InText;
 	if (TitleObject != nullptr)
@@ -34,7 +34,7 @@ void UGButton::SetText(const FString& InText)
 	UpdateGear(6);
 }
 
-const FString& UGButton::GetIcon() const
+const FString& UFairyButton::GetIcon() const
 {
 	if (IconObject != nullptr)
 	{
@@ -46,7 +46,7 @@ const FString& UGButton::GetIcon() const
 	}
 }
 
-void UGButton::SetIcon(const FString & InIcon)
+void UFairyButton::SetIcon(const FString & InIcon)
 {
 	if (IconObject != nullptr)
 	{
@@ -55,7 +55,7 @@ void UGButton::SetIcon(const FString & InIcon)
 	UpdateGear(7);
 }
 
-void UGButton::SetSelectedTitle(const FString& InTitle)
+void UFairyButton::SetSelectedTitle(const FString& InTitle)
 {
 	SelectedTitle = InTitle;
 	if (TitleObject != nullptr)
@@ -64,7 +64,7 @@ void UGButton::SetSelectedTitle(const FString& InTitle)
 	}
 }
 
-void UGButton::SetSelectedIcon(const FString& InIcon)
+void UFairyButton::SetSelectedIcon(const FString& InIcon)
 {
 	SelectedIcon = InIcon;
 	if (IconObject != nullptr)
@@ -73,7 +73,7 @@ void UGButton::SetSelectedIcon(const FString& InIcon)
 	}
 }
 
-FColor UGButton::GetTitleColor() const
+FColor UFairyButton::GetTitleColor() const
 {
 	UGTextField* TextField = GetTextField();
 	if (TextField)
@@ -87,7 +87,7 @@ FColor UGButton::GetTitleColor() const
 	}
 }
 
-void UGButton::SetTitleColor(const FColor & InColor)
+void UFairyButton::SetTitleColor(const FColor & InColor)
 {
 	UGTextField* TextField = GetTextField();
 	if (TextField)
@@ -97,7 +97,7 @@ void UGButton::SetTitleColor(const FColor & InColor)
 	}
 }
 
-int32 UGButton::GetTitleFontSize() const
+int32 UFairyButton::GetTitleFontSize() const
 {
 	UGTextField* TextField = GetTextField();
 	if (TextField)
@@ -110,7 +110,7 @@ int32 UGButton::GetTitleFontSize() const
 	}
 }
 
-void UGButton::SetTitleFontSize(int32 InFontSize)
+void UFairyButton::SetTitleFontSize(int32 InFontSize)
 {
 	UGTextField* TextField = GetTextField();
 	if (TextField)
@@ -120,7 +120,7 @@ void UGButton::SetTitleFontSize(int32 InFontSize)
 	}
 }
 
-void UGButton::SetSelected(bool bInSelected)
+void UFairyButton::SetSelected(bool bInSelected)
 {
 	if (Mode == EButtonMode::Common)
 	{
@@ -163,12 +163,12 @@ void UGButton::SetSelected(bool bInSelected)
 	}
 }
 
-void UGButton::SetRelatedController(UGController* InController)
+void UFairyButton::SetRelatedController(UGController* InController)
 {
 	RelatedController = InController;
 }
 
-void UGButton::SetState(const FString& InState)
+void UFairyButton::SetState(const FString& InState)
 {
 	if (ButtonController != nullptr)
 	{
@@ -178,7 +178,7 @@ void UGButton::SetState(const FString& InState)
 	if (DownEffect == EButtonPressedEffect::Dark)
 	{
 		int32 cnt = this->NumChildren();
-		if (InState == UGButton::DOWN || InState == UGButton::SELECTED_OVER || InState == UGButton::SELECTED_DISABLED)
+		if (InState == UFairyButton::DOWN || InState == UFairyButton::SELECTED_OVER || InState == UFairyButton::SELECTED_DISABLED)
 		{
 			int32 c = DownEffectValue * 255;
 			FNVariant Color(FColor(c, c, c, 255));
@@ -206,7 +206,7 @@ void UGButton::SetState(const FString& InState)
 	}
 	else if (DownEffect == EButtonPressedEffect::Scale)
 	{
-		if (InState == UGButton::DOWN || InState == UGButton::SELECTED_OVER || InState == UGButton::SELECTED_DISABLED)
+		if (InState == UFairyButton::DOWN || InState == UFairyButton::SELECTED_OVER || InState == UFairyButton::SELECTED_DISABLED)
 		{
 			if (!bDownScaled)
 			{
@@ -225,33 +225,33 @@ void UGButton::SetState(const FString& InState)
 	}
 }
 
-void UGButton::SetCurrentState()
+void UFairyButton::SetCurrentState()
 {
 	if (IsGrayed() && ButtonController != nullptr && ButtonController->HasPage(DISABLED))
 	{
 		if (bSelected)
 		{
-			SetState(UGButton::SELECTED_DISABLED);
+			SetState(UFairyButton::SELECTED_DISABLED);
 		}
 		else
 		{
-			SetState(UGButton::DISABLED);
+			SetState(UFairyButton::DISABLED);
 		}
 	}
 	else
 	{
 		if (bSelected)
 		{
-			SetState(bOver ? UGButton::SELECTED_OVER : UGButton::DOWN);
+			SetState(bOver ? UFairyButton::SELECTED_OVER : UFairyButton::DOWN);
 		}
 		else
 		{
-			SetState(bOver ? UGButton::OVER : UGButton::UP);
+			SetState(bOver ? UFairyButton::OVER : UFairyButton::UP);
 		}
 	}
 }
 
-UGTextField * UGButton::GetTextField() const
+UGTextField * UFairyButton::GetTextField() const
 {
 	if (TitleObject->IsA<UGTextField>())
 	{
@@ -261,9 +261,9 @@ UGTextField * UGButton::GetTextField() const
 	{
 		return Cast<UGLabel>(TitleObject)->GetTextField();
 	}
-	else if (TitleObject->IsA<UGButton>())
+	else if (TitleObject->IsA<UFairyButton>())
 	{
-		return Cast<UGButton>(TitleObject)->GetTextField();
+		return Cast<UFairyButton>(TitleObject)->GetTextField();
 	}
 	else
 	{
@@ -271,7 +271,7 @@ UGTextField * UGButton::GetTextField() const
 	}
 }
 
-FNVariant UGButton::GetProp(EObjectPropID PropID) const
+FNVariant UFairyButton::GetProp(EObjectPropID PropID) const
 {
 	switch (PropID)
 	{
@@ -298,7 +298,7 @@ FNVariant UGButton::GetProp(EObjectPropID PropID) const
 	}
 }
 
-void UGButton::SetProp(EObjectPropID PropID, const FNVariant& InValue)
+void UFairyButton::SetProp(EObjectPropID PropID, const FNVariant& InValue)
 {
 	switch (PropID)
 	{
@@ -327,7 +327,7 @@ void UGButton::SetProp(EObjectPropID PropID, const FNVariant& InValue)
 	}
 }
 
-void UGButton::ConstructExtension(FByteBuffer* Buffer)
+void UFairyButton::ConstructExtension(FByteBuffer* Buffer)
 {
 	Sound = UFairyConfig::Config->ButtonSound;
 	SoundVolumeScale = UFairyConfig::Config->ButtonSoundVolumeScale;
@@ -359,18 +359,18 @@ void UGButton::ConstructExtension(FByteBuffer* Buffer)
 
 	if (Mode == EButtonMode::Common)
 	{
-		SetState(UGButton::UP);
+		SetState(UFairyButton::UP);
 	}
 
-	On(FFairyEventNames::RollOver).AddUObject(this, &UGButton::OnRollOverHandler);
-	On(FFairyEventNames::RollOut).AddUObject(this, &UGButton::OnRollOutHandler);
-	On(FFairyEventNames::TouchBegin).AddUObject(this, &UGButton::OnTouchBeginHandler);
-	On(FFairyEventNames::TouchEnd).AddUObject(this, &UGButton::OnTouchEndHandler);
-	On(FFairyEventNames::Click).AddUObject(this, &UGButton::OnClickHandler);
-	On(FFairyEventNames::RemovedFromStage).AddUObject(this, &UGButton::OnRemovedFromStageHandler);
+	On(FFairyEventNames::RollOver).AddUObject(this, &UFairyButton::OnRollOverHandler);
+	On(FFairyEventNames::RollOut).AddUObject(this, &UFairyButton::OnRollOutHandler);
+	On(FFairyEventNames::TouchBegin).AddUObject(this, &UFairyButton::OnTouchBeginHandler);
+	On(FFairyEventNames::TouchEnd).AddUObject(this, &UFairyButton::OnTouchEndHandler);
+	On(FFairyEventNames::Click).AddUObject(this, &UFairyButton::OnClickHandler);
+	On(FFairyEventNames::RemovedFromStage).AddUObject(this, &UFairyButton::OnRemovedFromStageHandler);
 }
 
-void UGButton::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
+void UFairyButton::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
 	Super::SetupAfterAdd(Buffer, BeginPos);
 
@@ -433,7 +433,7 @@ void UGButton::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 	SetSelected(Buffer->ReadBool());
 }
 
-void UGButton::ApplyController(UGController* Controller)
+void UFairyButton::ApplyController(UGController* Controller)
 {
 	UFairyComponent::ApplyController(Controller);
 
@@ -443,7 +443,7 @@ void UGButton::ApplyController(UGController* Controller)
 	}
 }
 
-void UGButton::OnRollOverHandler(UEventContext* Context)
+void UFairyButton::OnRollOverHandler(UEventContext* Context)
 {
 	if (ButtonController == nullptr || !ButtonController->HasPage(OVER))
 	{
@@ -464,7 +464,7 @@ void UGButton::OnRollOverHandler(UEventContext* Context)
 	SetState(bSelected ? SELECTED_OVER : OVER);
 }
 
-void UGButton::OnRollOutHandler(UEventContext* Context)
+void UFairyButton::OnRollOutHandler(UEventContext* Context)
 {
 	if (ButtonController == nullptr || !ButtonController->HasPage(OVER))
 	{
@@ -485,7 +485,7 @@ void UGButton::OnRollOutHandler(UEventContext* Context)
 	SetState(bSelected ? DOWN : UP);
 }
 
-void UGButton::OnTouchBeginHandler(UEventContext* Context)
+void UFairyButton::OnTouchBeginHandler(UEventContext* Context)
 {
 	if (Context->GetMouseButton() != EKeys::LeftMouseButton)
 	{
@@ -499,16 +499,16 @@ void UGButton::OnTouchBeginHandler(UEventContext* Context)
 	{
 		if (IsGrayed() && ButtonController != nullptr && ButtonController->HasPage(DISABLED))
 		{
-			SetState(UGButton::SELECTED_DISABLED);
+			SetState(UFairyButton::SELECTED_DISABLED);
 		}
 		else
 		{
-			SetState(UGButton::DOWN);
+			SetState(UFairyButton::DOWN);
 		}
 	}
 }
 
-void UGButton::OnTouchEndHandler(UEventContext* Context)
+void UFairyButton::OnTouchEndHandler(UEventContext* Context)
 {
 	if (Context->GetMouseButton() != EKeys::LeftMouseButton)
 	{
@@ -520,23 +520,23 @@ void UGButton::OnTouchEndHandler(UEventContext* Context)
 		bDown = false;
 		if (Mode == EButtonMode::Common)
 		{
-			if (IsGrayed() && ButtonController != nullptr && ButtonController->HasPage(UGButton::DISABLED))
+			if (IsGrayed() && ButtonController != nullptr && ButtonController->HasPage(UFairyButton::DISABLED))
 			{
-				SetState(UGButton::DISABLED);
+				SetState(UFairyButton::DISABLED);
 			}
 			else if (bOver)
 			{
-				SetState(UGButton::OVER);
+				SetState(UFairyButton::OVER);
 			}
 			else
 			{
-				SetState(UGButton::UP);
+				SetState(UFairyButton::UP);
 			}
 		}
 		else
 		{
 			if (!bOver && ButtonController != nullptr
-				&& (ButtonController->GetSelectedPage() == UGButton::OVER || ButtonController->GetSelectedPage() == UGButton::SELECTED_OVER))
+				&& (ButtonController->GetSelectedPage() == UFairyButton::OVER || ButtonController->GetSelectedPage() == UFairyButton::SELECTED_OVER))
 			{
 				SetCurrentState();
 			}
@@ -544,7 +544,7 @@ void UGButton::OnTouchEndHandler(UEventContext* Context)
 	}
 }
 
-void UGButton::OnClickHandler(UEventContext* Context)
+void UFairyButton::OnClickHandler(UEventContext* Context)
 {
 	if (!Sound.IsEmpty())
 	{
@@ -576,7 +576,7 @@ void UGButton::OnClickHandler(UEventContext* Context)
 	}
 }
 
-void UGButton::OnRemovedFromStageHandler(UEventContext* Context)
+void UFairyButton::OnRemovedFromStageHandler(UEventContext* Context)
 {
 	if (bOver)
 	{

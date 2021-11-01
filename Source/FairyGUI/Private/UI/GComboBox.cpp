@@ -4,7 +4,7 @@
 #include "UI/GTextField.h"
 #include "UI/GTextInput.h"
 #include "UI/GLabel.h"
-#include "UI/GButton.h"
+#include "UI/FairyButton.h"
 #include "UI/Controller/GController.h"
 #include "UI/GList.h"
 #include "UI/FairyRoot.h"
@@ -159,12 +159,12 @@ void UGComboBox::SetState(const FString& InState)
 
 void UGComboBox::SetCurrentState()
 {
-    if (IsGrayed() && ButtonController != nullptr && ButtonController->HasPage(UGButton::DISABLED))
-        SetState(UGButton::DISABLED);
+    if (IsGrayed() && ButtonController != nullptr && ButtonController->HasPage(UFairyButton::DISABLED))
+        SetState(UFairyButton::DISABLED);
     else if (DropdownObject != nullptr && DropdownObject->GetParent() != nullptr)
-        SetState(UGButton::DOWN);
+        SetState(UFairyButton::DOWN);
     else
-        SetState(bOver ? UGButton::OVER : UGButton::UP);
+        SetState(bOver ? UFairyButton::OVER : UFairyButton::UP);
 }
 
 void UGComboBox::UpdateSelectionController()
@@ -198,7 +198,7 @@ void UGComboBox::ShowDropdown()
 
     UFairyApplication::Get()->GetUIRoot(this)->TogglePopup(DropdownObject, this, PopupDirection);
     if (DropdownObject->GetParent() != nullptr)
-        SetState(UGButton::DOWN);
+        SetState(UFairyButton::DOWN);
 }
 
 void UGComboBox::RenderDropdownList()
@@ -224,12 +224,12 @@ void UGComboBox::ApplyController(UGController* Controller)
 
 void UGComboBox::HandleGrayedChanged()
 {
-    if (ButtonController != nullptr && ButtonController->HasPage(UGButton::DISABLED))
+    if (ButtonController != nullptr && ButtonController->HasPage(UFairyButton::DISABLED))
     {
         if (IsGrayed())
-            SetState(UGButton::DISABLED);
+            SetState(UFairyButton::DISABLED);
         else
-            SetState(UGButton::UP);
+            SetState(UFairyButton::UP);
     }
     else
         UFairyComponent::HandleGrayedChanged();
@@ -241,8 +241,8 @@ UGTextField* UGComboBox::GetTextField() const
         return Cast<UGTextField>(TitleObject);
     else if (TitleObject->IsA<UGLabel>())
         return Cast<UGLabel>(TitleObject)->GetTextField();
-    else if (TitleObject->IsA<UGButton>())
-        return Cast<UGButton>(TitleObject)->GetTextField();
+    else if (TitleObject->IsA<UFairyButton>())
+        return Cast<UFairyButton>(TitleObject)->GetTextField();
     else
         return nullptr;
 }

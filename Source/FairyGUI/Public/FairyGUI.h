@@ -14,7 +14,7 @@
 #include "UI/GLoader3D.h"
 #include "UI/GGroup.h"
 #include "UI/GLabel.h"
-#include "UI/GButton.h"
+#include "UI/FairyButton.h"
 #include "UI/GComboBox.h"
 #include "UI/GProgressBar.h"
 #include "UI/GSlider.h"

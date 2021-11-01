@@ -12,7 +12,7 @@
 #include "UI/GLoader3D.h"
 #include "UI/GGroup.h"
 #include "UI/GLabel.h"
-#include "UI/GButton.h"
+#include "UI/FairyButton.h"
 #include "UI/GComboBox.h"
 #include "UI/GProgressBar.h"
 #include "UI/GSlider.h"
@@ -98,7 +98,7 @@ UFairyObject* FUIObjectFactory::NewObject(UObject* Outer, EObjectType Type)
             return ::NewObject<UGLoader>(Outer);
         }
     case EObjectType::Button:
-        return ::NewObject<UGButton>(Outer);
+        return ::NewObject<UFairyButton>(Outer);
     case EObjectType::Label:
         return ::NewObject<UGLabel>(Outer);
     case EObjectType::ProgressBar:

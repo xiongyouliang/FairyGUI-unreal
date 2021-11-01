@@ -1,19 +1,19 @@
 #pragma once
 
 #include "UI/FairyComponent.h"
-#include "GButton.generated.h"
+#include "FairyButton.generated.h"
 
 class UGController;
 class UGTextField;
 
 UCLASS(BlueprintType, Blueprintable)
-class FAIRYGUI_API UGButton : public UFairyComponent
+class FAIRYGUI_API UFairyButton : public UFairyComponent
 {
     GENERATED_BODY()
 
 public:
-    UGButton();
-    virtual ~UGButton();
+    UFairyButton();
+    virtual ~UFairyButton();
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     const FString& GetTitle() const { return Title; }

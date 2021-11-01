@@ -47,9 +47,9 @@ void UPopupMenu::Create(const FString& ResourceURL)
     List->On(FFairyEventNames::ClickItem).AddUObject(this, &UPopupMenu::OnClickItem);
 }
 
-UGButton* UPopupMenu::AddItem(const FString& Caption, FGUIEventDelegate Callback)
+UFairyButton* UPopupMenu::AddItem(const FString& Caption, FGUIEventDelegate Callback)
 {
-    UGButton* item = List->AddItemFromPool()->As<UGButton>();
+    UFairyButton* item = List->AddItemFromPool()->As<UFairyButton>();
     item->SetTitle(Caption);
     item->SetGrayed(false);
     UGController* c = item->GetController("checked");
@@ -62,16 +62,16 @@ UGButton* UPopupMenu::AddItem(const FString& Caption, FGUIEventDelegate Callback
     return item;
 }
 
-UGButton* UPopupMenu::AddItem(const FString& Caption, const FGUIEventDynDelegate& Callback)
+UFairyButton* UPopupMenu::AddItem(const FString& Caption, const FGUIEventDynDelegate& Callback)
 {
     return AddItem(Caption, Callback.IsBound() ?
         FGUIEventDelegate::CreateUFunction(const_cast<UObject*>(Callback.GetUObject()), Callback.GetFunctionName())
         : FGUIEventDelegate());
 }
 
-UGButton* UPopupMenu::AddItemAt(const FString& Caption, int32 Index, FGUIEventDelegate Callback)
+UFairyButton* UPopupMenu::AddItemAt(const FString& Caption, int32 Index, FGUIEventDelegate Callback)
 {
-    UGButton* item = List->GetFromPool(List->DefaultItem)->As<UGButton>();
+    UFairyButton* item = List->GetFromPool(List->DefaultItem)->As<UFairyButton>();
     List->AddChildAt(item, Index);
 
     item->SetTitle(Caption);
@@ -85,7 +85,7 @@ UGButton* UPopupMenu::AddItemAt(const FString& Caption, int32 Index, FGUIEventDe
     return item;
 }
 
-UGButton* UPopupMenu::AddItemAt(const FString& Caption, int32 index, const FGUIEventDynDelegate& Callback)
+UFairyButton* UPopupMenu::AddItemAt(const FString& Caption, int32 index, const FGUIEventDynDelegate& Callback)
 {
     return AddItemAt(Caption, index, Callback.IsBound() ?
         FGUIEventDelegate::CreateUFunction(const_cast<UObject*>(Callback.GetUObject()), Callback.GetFunctionName())
@@ -105,19 +105,19 @@ void UPopupMenu::AddSeperator()
 
 const FString& UPopupMenu::GetItemName(int32 Index) const
 {
-    UGButton* item = List->GetChildAt(Index)->As<UGButton>();
+    UFairyButton* item = List->GetChildAt(Index)->As<UFairyButton>();
     return item->GetName();
 }
 
 void UPopupMenu::SetItemText(const FString& Name, const FString& Caption)
 {
-    UGButton* item = List->GetChild(Name)->As<UGButton>();
+    UFairyButton* item = List->GetChild(Name)->As<UFairyButton>();
     item->SetTitle(Caption);
 }
 
 void UPopupMenu::SetItemVisible(const FString& Name, bool bVisible)
 {
-    UGButton* item = List->GetChild(Name)->As<UGButton>();
+    UFairyButton* item = List->GetChild(Name)->As<UFairyButton>();
     if (item->IsVisible() != bVisible)
     {
         item->SetVisible(bVisible);
@@ -127,13 +127,13 @@ void UPopupMenu::SetItemVisible(const FString& Name, bool bVisible)
 
 void UPopupMenu::SetItemGrayed(const FString& Name, bool bGrayed)
 {
-    UGButton* item = List->GetChild(Name)->As<UGButton>();
+    UFairyButton* item = List->GetChild(Name)->As<UFairyButton>();
     item->SetGrayed(bGrayed);
 }
 
 void UPopupMenu::SetItemCheckable(const FString& Name, bool bCheckable)
 {
-    UGButton* item = List->GetChild(Name)->As<UGButton>();
+    UFairyButton* item = List->GetChild(Name)->As<UFairyButton>();
     UGController* c = item->GetController("checked");
     if (c != nullptr)
     {
@@ -149,7 +149,7 @@ void UPopupMenu::SetItemCheckable(const FString& Name, bool bCheckable)
 
 void UPopupMenu::SetItemChecked(const FString& Name, bool bCheck)
 {
-    UGButton* item = List->GetChild(Name)->As<UGButton>();
+    UFairyButton* item = List->GetChild(Name)->As<UFairyButton>();
     UGController* c = item->GetController("checked");
     if (c != nullptr)
         c->SetSelectedIndex(bCheck ? 2 : 1);
@@ -157,7 +157,7 @@ void UPopupMenu::SetItemChecked(const FString& Name, bool bCheck)
 
 bool UPopupMenu::IsItemChecked(const FString& Name) const
 {
-    UGButton* item = List->GetChild(Name)->As<UGButton>();
+    UFairyButton* item = List->GetChild(Name)->As<UFairyButton>();
     UGController* c = item->GetController("checked");
     if (c != nullptr)
         return c->GetSelectedIndex() == 2;
@@ -200,7 +200,7 @@ void UPopupMenu::Show(UFairyObject * AtObject, EPopupDirection Dir)
 
 void UPopupMenu::OnClickItem(UEventContext * Context)
 {
-    UGButton* item = Cast<UGButton>(Context->GetData().AsUObject());
+    UFairyButton* item = Cast<UFairyButton>(Context->GetData().AsUObject());
     if (item == nullptr)
         return;
 

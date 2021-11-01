@@ -1,5 +1,5 @@
 ﻿#include "UI/GList.h"
-#include "UI/GButton.h"
+#include "UI/FairyButton.h"
 #include "UI/FairyObjectPool.h"
 #include "UI/Controller/GController.h"
 #include "UI/GScrollBar.h"
@@ -268,7 +268,7 @@ void UGList::ReadItems(FByteBuffer* Buffer)
 void UGList::SetupItem(FByteBuffer* Buffer, UFairyObject* Obj)
 {
 	const FString* str;
-	UGButton* btn = Cast<UGButton>(Obj);
+	UFairyButton* btn = Cast<UFairyButton>(Obj);
 
 	if ((str = Buffer->ReadSP()) != nullptr)
 	{
@@ -702,9 +702,9 @@ UFairyObject* UGList::AddChildAt(UFairyObject* Child, int32 Index)
 {
 	Super::AddChildAt(Child, Index); // Replace UFairyComponent with Super; maybe we need change inherit to de: UFairyComponent -> UFairyScrollPanel -> UFairyList
 
-	if (Child->IsA<UGButton>())
+	if (Child->IsA<UFairyButton>())
 	{
-		UGButton* Button = (UGButton*)Child;
+		UFairyButton* Button = (UFairyButton*)Child;
 		Button->SetSelected(false);
 		Button->bChangeStateOnClick = false;
 	}
@@ -755,7 +755,7 @@ int32 UGList::GetSelectedIndex() const
 		for (int32 i = 0; i < cnt; i++)
 		{
 			const FFairyListItemInfo& ii = VirtualItems[i];
-			if ((Cast<UGButton>(ii.Obj) && ((UGButton*)ii.Obj)->IsSelected()) || (ii.Obj == nullptr && ii.bSelected))
+			if ((Cast<UFairyButton>(ii.Obj) && ((UFairyButton*)ii.Obj)->IsSelected()) || (ii.Obj == nullptr && ii.bSelected))
 			{
 				if (bLoop)
 				{
@@ -773,7 +773,7 @@ int32 UGList::GetSelectedIndex() const
 		int32 cnt = Children.Num();
 		for (int32 i = 0; i < cnt; i++)
 		{
-			UGButton* Obj = Cast<UGButton>(Children[i]);
+			UFairyButton* Obj = Cast<UFairyButton>(Children[i]);
 			if (Obj != nullptr && Obj->IsSelected())
 			{
 				return i;
@@ -813,7 +813,7 @@ void UGList::GetSelection(TArray<int32>& OutIndice) const
 		for (int32 i = 0; i < cnt; i++)
 		{
 			const FFairyListItemInfo& ii = VirtualItems[i];
-			if ((Cast<UGButton>(ii.Obj) && ((UGButton*)ii.Obj)->IsSelected()) || (ii.Obj == nullptr && ii.bSelected))
+			if ((Cast<UFairyButton>(ii.Obj) && ((UFairyButton*)ii.Obj)->IsSelected()) || (ii.Obj == nullptr && ii.bSelected))
 			{
 				int32 j = i;
 				if (bLoop)
@@ -833,7 +833,7 @@ void UGList::GetSelection(TArray<int32>& OutIndice) const
 		int32 cnt = Children.Num();
 		for (int32 i = 0; i < cnt; i++)
 		{
-			UGButton* Obj = Cast<UGButton>(Children[i]);
+			UFairyButton* Obj = Cast<UFairyButton>(Children[i]);
 			if (Obj != nullptr && Obj->IsSelected())
 			{
 				OutIndice.Add(i);
@@ -862,19 +862,19 @@ void UGList::AddSelection(int32 Index, bool bScrollItToView)
 	}
 
 	LastSelectedIndex = Index;
-	UGButton* Obj = nullptr;
+	UFairyButton* Obj = nullptr;
 	if (bVirtual)
 	{
 		FFairyListItemInfo& ii = VirtualItems[Index];
 		if (ii.Obj != nullptr)
 		{
-			Obj = ii.Obj->As<UGButton>();
+			Obj = ii.Obj->As<UFairyButton>();
 		}
 		ii.bSelected = true;
 	}
 	else
 	{
-		Obj = GetChildAt(Index)->As<UGButton>();
+		Obj = GetChildAt(Index)->As<UFairyButton>();
 	}
 
 	if (Obj != nullptr && !Obj->IsSelected())
@@ -891,19 +891,19 @@ void UGList::RemoveSelection(int32 Index)
 		return;
 	}
 
-	UGButton* Obj = nullptr;
+	UFairyButton* Obj = nullptr;
 	if (bVirtual)
 	{
 		FFairyListItemInfo& ii = VirtualItems[Index];
 		if (ii.Obj != nullptr)
 		{
-			Obj = ii.Obj->As<UGButton>();
+			Obj = ii.Obj->As<UFairyButton>();
 		}
 		ii.bSelected = false;
 	}
 	else
 	{
-		Obj = GetChildAt(Index)->As<UGButton>();
+		Obj = GetChildAt(Index)->As<UFairyButton>();
 	}
 
 	if (Obj != nullptr)
@@ -920,9 +920,9 @@ void UGList::ClearSelection()
 		for (int32 i = 0; i < cnt; i++)
 		{
 			FFairyListItemInfo& ii = VirtualItems[i];
-			if (Cast<UGButton>(ii.Obj))
+			if (Cast<UFairyButton>(ii.Obj))
 			{
-				((UGButton*)ii.Obj)->SetSelected(false);
+				((UFairyButton*)ii.Obj)->SetSelected(false);
 			}
 			ii.bSelected = false;
 		}
@@ -932,7 +932,7 @@ void UGList::ClearSelection()
 		int32 cnt = Children.Num();
 		for (int32 i = 0; i < cnt; i++)
 		{
-			UGButton* Obj = Children[i]->As<UGButton>();
+			UFairyButton* Obj = Children[i]->As<UFairyButton>();
 			if (Obj != nullptr)
 			{
 				Obj->SetSelected(false);
@@ -951,9 +951,9 @@ void UGList::ClearSelectionExcept(UFairyObject* Obj)
 			FFairyListItemInfo& ii = VirtualItems[i];
 			if (ii.Obj != Obj)
 			{
-				if (Cast<UGButton>(ii.Obj))
+				if (Cast<UFairyButton>(ii.Obj))
 				{
-					((UGButton*)ii.Obj)->SetSelected(false);
+					((UFairyButton*)ii.Obj)->SetSelected(false);
 				}
 				ii.bSelected = false;
 			}
@@ -964,7 +964,7 @@ void UGList::ClearSelectionExcept(UFairyObject* Obj)
 		int32 cnt = Children.Num();
 		for (int32 i = 0; i < cnt; i++)
 		{
-			UGButton* Child = Children[i]->As<UGButton>();
+			UFairyButton* Child = Children[i]->As<UFairyButton>();
 			if (Child != nullptr && Child != Obj)
 			{
 				Child->SetSelected(false);
@@ -984,9 +984,9 @@ void UGList::SelectAll()
 		for (int32 i = 0; i < cnt; i++)
 		{
 			FFairyListItemInfo& ii = VirtualItems[i];
-			if (Cast<UGButton>(ii.Obj) && !((UGButton*)ii.Obj)->IsSelected())
+			if (Cast<UFairyButton>(ii.Obj) && !((UFairyButton*)ii.Obj)->IsSelected())
 			{
-				((UGButton*)ii.Obj)->SetSelected(true);
+				((UFairyButton*)ii.Obj)->SetSelected(true);
 				last = i;
 			}
 			ii.bSelected = true;
@@ -997,7 +997,7 @@ void UGList::SelectAll()
 		int32 cnt = Children.Num();
 		for (int32 i = 0; i < cnt; i++)
 		{
-			UGButton* Obj = Children[i]->As<UGButton>();
+			UFairyButton* Obj = Children[i]->As<UFairyButton>();
 			if (Obj != nullptr && !Obj->IsSelected())
 			{
 				Obj->SetSelected(true);
@@ -1023,10 +1023,10 @@ void UGList::SelectReverse()
 		for (int32 i = 0; i < cnt; i++)
 		{
 			FFairyListItemInfo& ii = VirtualItems[i];
-			if (Cast<UGButton>(ii.Obj))
+			if (Cast<UFairyButton>(ii.Obj))
 			{
-				((UGButton*)ii.Obj)->SetSelected(!((UGButton*)ii.Obj)->IsSelected());
-				if (((UGButton*)ii.Obj)->IsSelected())
+				((UFairyButton*)ii.Obj)->SetSelected(!((UFairyButton*)ii.Obj)->IsSelected());
+				if (((UFairyButton*)ii.Obj)->IsSelected())
 				{
 					last = i;
 				}
@@ -1039,7 +1039,7 @@ void UGList::SelectReverse()
 		int32 cnt = Children.Num();
 		for (int32 i = 0; i < cnt; i++)
 		{
-			UGButton* Obj = Children[i]->As<UGButton>();
+			UFairyButton* Obj = Children[i]->As<UFairyButton>();
 			if (Obj != nullptr)
 			{
 				Obj->SetSelected(!Obj->IsSelected());
@@ -1226,7 +1226,7 @@ void UGList::HandleArrowKey(int32 Direction)
 void UGList::OnClickItemHandler(UEventContext* Context)
 {
 	UFairyObject* Obj = Context->GetSender();
-	if (Obj->IsA<UGButton>() && SelectionMode != EListSelectionMode::None)
+	if (Obj->IsA<UFairyButton>() && SelectionMode != EListSelectionMode::None)
 	{
 		SetSelectionOnEvent(Obj, Context);
 	}
@@ -1247,7 +1247,7 @@ void UGList::DispatchItemEvent(UFairyObject* Obj, UEventContext* Context)
 void UGList::SetSelectionOnEvent(UFairyObject* Obj, UEventContext* Context)
 {
 	bool bDontChangeLastIndex = false;
-	UGButton* Button = Cast<UGButton>(Obj);
+	UFairyButton* Button = Cast<UFairyButton>(Obj);
 	int32 Index = ChildIndexToItemIndex(GetChildIndex(Obj));
 
 	if (SelectionMode == EListSelectionMode::Single)
@@ -1274,9 +1274,9 @@ void UGList::SetSelectionOnEvent(UFairyObject* Obj, UEventContext* Context)
 						for (int32 i = min; i <= max; i++)
 						{
 							FFairyListItemInfo& ii = VirtualItems[i];
-							if (ii.Obj != nullptr && ii.Obj->IsA<UGButton>())
+							if (ii.Obj != nullptr && ii.Obj->IsA<UFairyButton>())
 							{
-								Cast<UGButton>(ii.Obj)->SetSelected(true);
+								Cast<UFairyButton>(ii.Obj)->SetSelected(true);
 							}
 							ii.bSelected = true;
 						}
@@ -1285,7 +1285,7 @@ void UGList::SetSelectionOnEvent(UFairyObject* Obj, UEventContext* Context)
 					{
 						for (int32 i = min; i <= max; i++)
 						{
-							UGButton* Child = GetChildAt(i)->As<UGButton>();
+							UFairyButton* Child = GetChildAt(i)->As<UFairyButton>();
 							if (Child != nullptr && !Child->IsSelected())
 							{
 								Child->SetSelected(true);
@@ -2178,9 +2178,9 @@ bool UGList::HandleScroll1(bool forceUpdate)
 
 			if (ii.Obj != nullptr && ii.Obj->GetResourceURL().Compare(url) != 0)
 			{
-				if (Cast<UGButton>(ii.Obj))
+				if (Cast<UFairyButton>(ii.Obj))
 				{
-					ii.bSelected = ((UGButton*)ii.Obj)->IsSelected();
+					ii.bSelected = ((UFairyButton*)ii.Obj)->IsSelected();
 				}
 				RemoveChildToPool(ii.Obj);
 				ii.Obj = nullptr;
@@ -2196,9 +2196,9 @@ bool UGList::HandleScroll1(bool forceUpdate)
 					FFairyListItemInfo& ii2 = VirtualItems[j];
 					if (ii2.Obj != nullptr && ii2.UpdateFlag != ItemInfoVer && ii2.Obj->GetResourceURL().Compare(url) == 0)
 					{
-						if (Cast<UGButton>(ii2.Obj))
+						if (Cast<UFairyButton>(ii2.Obj))
 						{
-							ii2.bSelected = ((UGButton*)ii2.Obj)->IsSelected();
+							ii2.bSelected = ((UFairyButton*)ii2.Obj)->IsSelected();
 						}
 						ii.Obj = ii2.Obj;
 						ii2.Obj = nullptr;
@@ -2217,9 +2217,9 @@ bool UGList::HandleScroll1(bool forceUpdate)
 					FFairyListItemInfo& ii2 = VirtualItems[j];
 					if (ii2.Obj != nullptr && ii2.UpdateFlag != ItemInfoVer && ii2.Obj->GetResourceURL().Compare(url) == 0)
 					{
-						if (Cast<UGButton>(ii2.Obj))
+						if (Cast<UFairyButton>(ii2.Obj))
 						{
-							ii2.bSelected = ((UGButton*)ii2.Obj)->IsSelected();
+							ii2.bSelected = ((UFairyButton*)ii2.Obj)->IsSelected();
 						}
 						ii.Obj = ii2.Obj;
 						ii2.Obj = nullptr;
@@ -2248,9 +2248,9 @@ bool UGList::HandleScroll1(bool forceUpdate)
 					AddChild(ii.Obj);
 				}
 			}
-			if (Cast<UGButton>(ii.Obj))
+			if (Cast<UFairyButton>(ii.Obj))
 			{
-				((UGButton*)ii.Obj)->SetSelected(ii.bSelected);
+				((UFairyButton*)ii.Obj)->SetSelected(ii.bSelected);
 			}
 
 			needRender = true;
@@ -2303,9 +2303,9 @@ bool UGList::HandleScroll1(bool forceUpdate)
 		FFairyListItemInfo& ii = VirtualItems[oldFirstIndex + i];
 		if (ii.UpdateFlag != ItemInfoVer && ii.Obj != nullptr)
 		{
-			if (Cast<UGButton>(ii.Obj))
+			if (Cast<UFairyButton>(ii.Obj))
 			{
-				ii.bSelected = ((UGButton*)ii.Obj)->IsSelected();
+				ii.bSelected = ((UFairyButton*)ii.Obj)->IsSelected();
 			}
 			RemoveChildToPool(ii.Obj);
 			ii.Obj = nullptr;
@@ -2383,9 +2383,9 @@ bool UGList::HandleScroll2(bool forceUpdate)
 
 			if (ii.Obj != nullptr && ii.Obj->GetResourceURL().Compare(url) != 0)
 			{
-				if (Cast<UGButton>(ii.Obj))
+				if (Cast<UFairyButton>(ii.Obj))
 				{
-					ii.bSelected = ((UGButton*)ii.Obj)->IsSelected();
+					ii.bSelected = ((UFairyButton*)ii.Obj)->IsSelected();
 				}
 				RemoveChildToPool(ii.Obj);
 				ii.Obj = nullptr;
@@ -2401,9 +2401,9 @@ bool UGList::HandleScroll2(bool forceUpdate)
 					FFairyListItemInfo& ii2 = VirtualItems[j];
 					if (ii2.Obj != nullptr && ii2.UpdateFlag != ItemInfoVer && ii2.Obj->GetResourceURL().Compare(url) == 0)
 					{
-						if (Cast<UGButton>(ii2.Obj))
+						if (Cast<UFairyButton>(ii2.Obj))
 						{
-							ii2.bSelected = ((UGButton*)ii2.Obj)->IsSelected();
+							ii2.bSelected = ((UFairyButton*)ii2.Obj)->IsSelected();
 						}
 						ii.Obj = ii2.Obj;
 						ii2.Obj = nullptr;
@@ -2422,9 +2422,9 @@ bool UGList::HandleScroll2(bool forceUpdate)
 					FFairyListItemInfo& ii2 = VirtualItems[j];
 					if (ii2.Obj != nullptr && ii2.UpdateFlag != ItemInfoVer && ii2.Obj->GetResourceURL().Compare(url) == 0)
 					{
-						if (Cast<UGButton>(ii2.Obj))
+						if (Cast<UFairyButton>(ii2.Obj))
 						{
-							ii2.bSelected = ((UGButton*)ii2.Obj)->IsSelected();
+							ii2.bSelected = ((UFairyButton*)ii2.Obj)->IsSelected();
 						}
 						ii.Obj = ii2.Obj;
 						ii2.Obj = nullptr;
@@ -2453,9 +2453,9 @@ bool UGList::HandleScroll2(bool forceUpdate)
 					AddChild(ii.Obj);
 				}
 			}
-			if (Cast<UGButton>(ii.Obj))
+			if (Cast<UFairyButton>(ii.Obj))
 			{
-				((UGButton*)ii.Obj)->SetSelected(ii.bSelected);
+				((UFairyButton*)ii.Obj)->SetSelected(ii.bSelected);
 			}
 
 			needRender = true;
@@ -2508,8 +2508,8 @@ bool UGList::HandleScroll2(bool forceUpdate)
 		FFairyListItemInfo& ii = VirtualItems[oldFirstIndex + i];
 		if (ii.UpdateFlag != ItemInfoVer && ii.Obj != nullptr)
 		{
-			if (Cast<UGButton>(ii.Obj))
-				ii.bSelected = ((UGButton*)ii.Obj)->IsSelected();
+			if (Cast<UFairyButton>(ii.Obj))
+				ii.bSelected = ((UFairyButton*)ii.Obj)->IsSelected();
 			RemoveChildToPool(ii.Obj);
 			ii.Obj = nullptr;
 		}
@@ -2600,8 +2600,8 @@ void UGList::HandleScroll3(bool forceUpdate)
 				FFairyListItemInfo& ii2 = VirtualItems[reuseIndex];
 				if (ii2.Obj != nullptr && ii2.UpdateFlag != ItemInfoVer)
 				{
-					if (Cast<UGButton>(ii2.Obj))
-						ii2.bSelected = ((UGButton*)ii2.Obj)->IsSelected();
+					if (Cast<UFairyButton>(ii2.Obj))
+						ii2.bSelected = ((UFairyButton*)ii2.Obj)->IsSelected();
 					ii.Obj = ii2.Obj;
 					ii2.Obj = nullptr;
 					break;
@@ -2631,8 +2631,8 @@ void UGList::HandleScroll3(bool forceUpdate)
 			}
 			insertIndex++;
 
-			if (Cast<UGButton>(ii.Obj))
-				((UGButton*)ii.Obj)->SetSelected(ii.bSelected);
+			if (Cast<UFairyButton>(ii.Obj))
+				((UFairyButton*)ii.Obj)->SetSelected(ii.bSelected);
 
 			needRender = true;
 		}
@@ -2708,9 +2708,9 @@ void UGList::HandleScroll3(bool forceUpdate)
 		FFairyListItemInfo& ii = VirtualItems[i];
 		if (ii.UpdateFlag != ItemInfoVer && ii.Obj != nullptr)
 		{
-			if (Cast<UGButton>(ii.Obj))
+			if (Cast<UFairyButton>(ii.Obj))
 			{
-				ii.bSelected = ((UGButton*)ii.Obj)->IsSelected();
+				ii.bSelected = ((UFairyButton*)ii.Obj)->IsSelected();
 			}
 			RemoveChildToPool(ii.Obj);
 			ii.Obj = nullptr;

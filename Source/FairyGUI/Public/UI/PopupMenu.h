@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GList.h"
-#include "GButton.h"
+#include "UI/FairyButton.h"
 #include "PopupMenu.generated.h"
 
 UCLASS(BlueprintType)
@@ -16,15 +16,15 @@ public:
     UPopupMenu();
     virtual ~UPopupMenu();
 
-    UGButton* AddItem(const FString& Caption, FGUIEventDelegate Callback);
+    UFairyButton* AddItem(const FString& Caption, FGUIEventDelegate Callback);
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI", meta = (AutoCreateRefTerm = "Callback"))
-    UGButton* AddItem(const FString& Caption, const FGUIEventDynDelegate& Callback);
+    UFairyButton* AddItem(const FString& Caption, const FGUIEventDynDelegate& Callback);
 
-    UGButton* AddItemAt(const FString& Caption, int32 index, FGUIEventDelegate Callback);
+    UFairyButton* AddItemAt(const FString& Caption, int32 index, FGUIEventDelegate Callback);
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI", meta = (AutoCreateRefTerm = "Callback"))
-    UGButton* AddItemAt(const FString& Caption, int32 index, const FGUIEventDynDelegate& Callback);
+    UFairyButton* AddItemAt(const FString& Caption, int32 index, const FGUIEventDynDelegate& Callback);
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     void AddSeperator();

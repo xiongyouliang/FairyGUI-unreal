@@ -1,6 +1,6 @@
 #include "UI/GLabel.h"
 #include "UI/GTextInput.h"
-#include "UI/GButton.h"
+#include "UI/FairyButton.h"
 #include "UI/GTextField.h"
 #include "Utils/ByteBuffer.h"
 
@@ -110,9 +110,9 @@ UGTextField * UGLabel::GetTextField() const
     {
         return Cast<UGLabel>(TitleObject)->GetTextField();
     }
-    else if (TitleObject->IsA<UGButton>())
+    else if (TitleObject->IsA<UFairyButton>())
     {
-        return Cast<UGButton>(TitleObject)->GetTextField();
+        return Cast<UFairyButton>(TitleObject)->GetTextField();
     }
     else
     {

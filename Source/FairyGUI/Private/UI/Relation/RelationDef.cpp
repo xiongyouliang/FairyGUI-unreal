@@ -94,6 +94,9 @@ FRelationDef* CreateRelationDef(FRelationItem* InOwner, ERelationType InRelation
 	case ERelationType::Top_Bottom:
 		DefPtr = new FRelationDef_Pos_Top_Bottom();
 		break;
+	case ERelationType::Middle_Middle:
+		DefPtr = new FRelationDef_Pos_Middle_Middle();
+		break;
 	case ERelationType::Bottom_Top:
 		DefPtr = new FRelationDef_Pos_Bottom_Top();
 		break;

@@ -68,7 +68,6 @@ void UFairyPackageMgr::SetVar(const FString& VarKey, const FString& VarValue)
 
 UFairyPackage* UFairyPackageMgr::AddPackage(UFairyPackageAsset* InAsset)
 {
-	UE_LOG(LogFairyGUI, Log, TEXT("UFairyPackageMgr::AddPackage(...)"));
 	FString PathName = InAsset->GetPathName();
 	UFairyPackage* Pkg = PackageInstByID.FindRef(PathName);
 	if (Pkg != nullptr)

@@ -192,6 +192,8 @@ private:
     void OnRollOver(UEventContext* Context);
     void OnRollOut(UEventContext* Context);
 
+    inline void LimitContainerPos();
+
     void OnBarTweenComplete(FGTweener* Tweener);
 
 private:

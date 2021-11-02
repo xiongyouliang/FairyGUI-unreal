@@ -1657,6 +1657,8 @@ void UScrollPanel::OnTouchMove(UEventContext* Context)
 
 		ContainerPos = ContainerPosAtBegin + curTouchPos - BeginTouchPos;
 	}
+	LimitContainerPos();
+	
 
 	float deltaTime = FSlateApplication::Get().GetDeltaTime();// GWorld->GetDeltaSeconds();
 	float elapsed = GWorld->GetTimeSeconds() - LastMoveTime;
@@ -1860,4 +1862,33 @@ void UScrollPanel::OnRollOut(UEventContext* Context)
 	UE_LOG(LogTemp, Warning, TEXT("UScrollPanel::OnRollOut(...)"));
 	bHover = false;
 	UpdateScrollBarVisible();
+}
+
+void UScrollPanel::LimitContainerPos()
+{
+	const FVector2D OwnerPos = Owner->GetPosition();
+	const FSlateRect bounds = Owner->GetBounds();
+	const FVector2D maskSize = Owner->GetScrollMaskSize();
+
+	float max_x = OwnerPos.X - bounds.Left;
+	float min_x = OwnerPos.X - bounds.Right + maskSize.X;
+	if (ContainerPos.X > max_x)
+	{
+		ContainerPos.X = max_x;
+	}
+	if (ContainerPos.X < min_x)
+	{
+		ContainerPos.X = min_x;
+	}
+
+	float max_y = OwnerPos.Y - bounds.Top;
+	float min_y = OwnerPos.Y - bounds.Bottom + maskSize.Y;
+	if (ContainerPos.Y > max_y)
+	{
+		ContainerPos.Y = max_y;
+	}
+	if (ContainerPos.Y < min_y)
+	{
+		ContainerPos.Y = min_y;
+	}
 }

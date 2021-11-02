@@ -1424,7 +1424,6 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 	SetBoundsChangedFlag();
 	ConstructExtension(Buffer);
 
-	SetScrollContentSize(GetBounds().GetSize());
 	OnConstruct();
 }
 
@@ -1474,6 +1473,11 @@ void UFairyComponent::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 				Obj->SetProp(PropID, FNVariant(Value));
 			}
 		}
+	}
+
+	if (ScrollPanel)
+	{
+		ScrollPanel->ContentSize = GetBounds().GetSize();
 	}
 }
 // ***************************** Parse Component end ******************************************

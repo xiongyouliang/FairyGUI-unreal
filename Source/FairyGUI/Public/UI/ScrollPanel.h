@@ -235,10 +235,11 @@ private:
     FVector2D PageSize;
 
 
-    FVector2D BeginTouchPos;
-    FVector2D ContainerPosAtBegin;
+    FVector2D BeginTouchPos; // cache touch position at begin event
+    FVector2D ContainerPosAtBegin; // cache position of scroll container at begin event
     FVector2D LastTouchPos;
     FVector2D LastTouchGlobalPos;
+
     FVector2D Velocity;
     float VelocityScale;
     float LastMoveTime;

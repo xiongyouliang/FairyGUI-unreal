@@ -1612,8 +1612,10 @@ void UScrollPanel::OnTouchBegin(UEventContext* Context)
 
 	BeginTouchPos = curTouchPos;
 	LastTouchPos = curTouchPos;
-	ContainerPosAtBegin = ContainerPos;
 	LastTouchGlobalPos = Context->GetPointerPosition();
+
+	ContainerPosAtBegin = ContainerPos;
+
 	bIsHoldAreaDone = false;
 	Velocity.Set(0, 0);
 	VelocityScale = 1;
@@ -1769,17 +1771,14 @@ void UScrollPanel::OnTouchEnd(UEventContext* Context)
 			if (max == 0)
 			{
 				max = FMath::Max(ContentSize.Component(RefreshBarAxis) + FooterLockedSize - ViewSize.Component(RefreshBarAxis), 0.f);
-
 			}
 			else
 			{
 				max += FooterLockedSize;
-
 			}
 			endPos.Component(RefreshBarAxis) = -max;
 			TweenChange = endPos - TweenStart;
 		}
-
 		TweenDuration.Set(TWEEN_TIME_DEFAULT, TWEEN_TIME_DEFAULT);
 	}
 	else
@@ -1792,7 +1791,6 @@ void UScrollPanel::OnTouchEnd(UEventContext* Context)
 			{
 				Velocity *= FMath::Pow(0.833f, elapsed);
 			}
-
 			endPos = UpdateTargetAndDuration(TweenStart);
 		}
 		else
@@ -1852,20 +1850,19 @@ void UScrollPanel::OnMouseWheel(UEventContext* Context)
 
 void UScrollPanel::OnRollOver(UEventContext* Context)
 {
-	UE_LOG(LogTemp, Warning, TEXT("UScrollPanel::OnRollOver(...)"));
 	bHover = true;
 	UpdateScrollBarVisible();
 }
 
 void UScrollPanel::OnRollOut(UEventContext* Context)
 {
-	UE_LOG(LogTemp, Warning, TEXT("UScrollPanel::OnRollOut(...)"));
 	bHover = false;
 	UpdateScrollBarVisible();
 }
 
 void UScrollPanel::LimitContainerPos()
 {
+	// todo: here not add bounce effect to limit the move position, this will add sometime.
 	const FVector2D OwnerPos = Owner->GetPosition();
 	const FSlateRect bounds = Owner->GetBounds();
 	const FVector2D maskSize = Owner->GetScrollMaskSize();

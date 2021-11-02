@@ -125,7 +125,7 @@ public:
     uint8 bBouncebackEffect : 1;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
-    uint8 bTouchEffect : 1;
+    uint8 bTouchScrollable : 1;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
     uint8 bInertiaDisabled : 1;
@@ -220,8 +220,8 @@ private:
     uint8 bHScrollNone : 1;
     uint8 bNeedRefresh : 1;
     int32 RefreshBarAxis;
-    uint8 bDisplayOnLeft : 1; // show scroll bar on left;
-    uint8 bDisplayInDemand : 1; // show scroll bar just when content size bigger then view size;
+    uint8 bScrollBarOnLeft : 1; // show scroll bar on left;
+    uint8 bScrollBarDisplayInDemand : 1; // show scroll bar just when content size bigger then view size;
     uint8 bFloating : 1;
     uint8 bDontClipMargin : 1;
 

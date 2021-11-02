@@ -50,7 +50,7 @@ void UScrollPanel::Setup(FByteBuffer* Buffer)
 
 	ScrollStep = UFairyConfig::Config->DefaultScrollStep;
 	DecelerationRate = UFairyConfig::Config->DefaultScrollDecelerationRate;
-	bTouchEffect = UFairyConfig::Config->DefaultScrollTouchEffect;
+	bTouchScrollable = UFairyConfig::Config->DefaultScrollTouchEffect;
 	bBouncebackEffect = UFairyConfig::Config->DefaultScrollBounceEffect;
 	bMouseWheelEnabled = true;
 	PageSize.Set(0, 0);
@@ -86,17 +86,17 @@ void UScrollPanel::Setup(FByteBuffer* Buffer)
 	const FString& headerRes = Buffer->ReadS();
 	const FString& footerRes = Buffer->ReadS();
 
-	bDisplayOnLeft = (flags & 1) != 0; // 1 bit
+	bScrollBarOnLeft = (flags & 1) != 0; // 1 bit
 	bSnapToItem = (flags & (1 << 1)) != 0; // 2 bit
-	bDisplayInDemand = (flags & (1<<2)) != 0; // 3 bit
+	bScrollBarDisplayInDemand = (flags & (1<<2)) != 0; // 3 bit
 	bPageMode = (flags & (1<<3)) != 0;
 	if ((flags & (1<<4)) != 0)
 	{
-		bTouchEffect = true;
+		bTouchScrollable = true;
 	}
 	else if ((flags & (1<<5)) != 0)
 	{
-		bTouchEffect = false;
+		bTouchScrollable = false;
 	}
 
 	if ((flags & (1<<6)) != 0)
@@ -636,7 +636,7 @@ void UScrollPanel::SetSize(const FVector2D& InSize)
 		if (VScrollBar != nullptr)
 		{
 			HScrollBar->SetWidth(InSize.X - VScrollBar->GetWidth() - ScrollBarMargin.Left - ScrollBarMargin.Right);
-			if (bDisplayOnLeft)
+			if (bScrollBarOnLeft)
 			{
 				HScrollBar->SetPositionX(ScrollBarMargin.Left + VScrollBar->GetWidth());
 			}
@@ -654,7 +654,7 @@ void UScrollPanel::SetSize(const FVector2D& InSize)
 
 	if (VScrollBar != nullptr)
 	{
-		if (!bDisplayOnLeft)
+		if (!bScrollBarOnLeft)
 		{
 			VScrollBar->SetPositionX(InSize.X - VScrollBar->GetWidth());
 		}
@@ -776,7 +776,7 @@ void UScrollPanel::ChangeContentSizeOnScrolling(float DeltaWidth, float DeltaHei
 
 void UScrollPanel::HandleSizeChanged()
 {
-	if (bDisplayInDemand)
+	if (bScrollBarDisplayInDemand)
 	{
 		bVScrollNone = ContentSize.Y <= ViewSize.Y;
 		bHScrollNone = ContentSize.X <= ViewSize.X;
@@ -1590,7 +1590,7 @@ float UScrollPanel::RunTween(int32 Axis, float DeltaTime)
 void UScrollPanel::OnTouchBegin(UEventContext* Context)
 {
 	UE_LOG(LogTemp, Warning, TEXT("UScrollPanel::OnTouchBegin(...)"));
-	if (!bTouchEffect)
+	if (!bTouchScrollable)
 	{
 		return;
 	}
@@ -1624,7 +1624,7 @@ void UScrollPanel::OnTouchBegin(UEventContext* Context)
 
 void UScrollPanel::OnTouchMove(UEventContext* Context)
 {
-	if (!bTouchEffect)
+	if (!bTouchScrollable)
 	{
 		return;
 	}
@@ -1716,7 +1716,7 @@ void UScrollPanel::OnTouchEnd(UEventContext* Context)
 		DraggingPane.Reset();
 	}
 
-	if (!bDragged || !bTouchEffect)
+	if (!bDragged || !bTouchScrollable)
 	{
 		bDragged = false;
 		return;

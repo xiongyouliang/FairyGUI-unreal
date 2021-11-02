@@ -176,7 +176,7 @@ FSlateRect UFairyObject::GetBounds()
 	float Left = Position.X - Size.X * Anchor.X * GetScaleX();
 	float Top = Position.Y - Size.Y * Anchor.Y * GetScaleY();
 	float Right = Position.X + Size.X * (1 - Anchor.X) * GetScaleX();
-	float Bottom = Position.Y + Size.X * (1 - Anchor.Y) * GetScaleY();
+	float Bottom = Position.Y + Size.Y * (1 - Anchor.Y) * GetScaleY();
 
 	return FSlateRect(Left, Top, Right, Bottom);
 }

@@ -193,6 +193,8 @@ private:
     void OnRollOut(UEventContext* Context);
 
     inline void LimitContainerPos();
+    inline FVector2D GetContainerMinPos();
+    inline FVector2D GetContainerMaxPos();
 
     void OnBarTweenComplete(FGTweener* Tweener);
 

@@ -1860,32 +1860,41 @@ void UScrollPanel::OnRollOut(UEventContext* Context)
 	UpdateScrollBarVisible();
 }
 
-void UScrollPanel::LimitContainerPos()
+FVector2D UScrollPanel::GetContainerMinPos()
 {
-	// todo: here not add bounce effect to limit the move position, this will add sometime.
 	const FVector2D OwnerPos = Owner->GetPosition();
 	const FSlateRect bounds = Owner->GetBounds();
 	const FVector2D maskSize = Owner->GetScrollMaskSize();
 
-	float max_x = OwnerPos.X - bounds.Left;
-	float min_x = OwnerPos.X - bounds.Right + maskSize.X;
-	if (ContainerPos.X > max_x)
-	{
-		ContainerPos.X = max_x;
-	}
-	if (ContainerPos.X < min_x)
-	{
-		ContainerPos.X = min_x;
-	}
+	const float min_x = -(bounds.Right - OwnerPos.X - maskSize.X);
+	const float min_y = -(bounds.Bottom - OwnerPos.Y - maskSize.Y);
+	return FVector2D(min_x, min_y);
+}
 
-	float max_y = OwnerPos.Y - bounds.Top;
-	float min_y = OwnerPos.Y - bounds.Bottom + maskSize.Y;
-	if (ContainerPos.Y > max_y)
-	{
-		ContainerPos.Y = max_y;
-	}
-	if (ContainerPos.Y < min_y)
-	{
-		ContainerPos.Y = min_y;
-	}
+FVector2D UScrollPanel::GetContainerMaxPos()
+{
+	const FVector2D OwnerPos = Owner->GetPosition();
+	const FSlateRect bounds = Owner->GetBounds();
+	const FVector2D maskSize = Owner->GetScrollMaskSize();
+
+	const float max_x = OwnerPos.X - bounds.Left;
+	const float max_y = OwnerPos.Y - bounds.Top;
+	return FVector2D(max_x, max_y);
+}
+
+void UScrollPanel::LimitContainerPos()
+{
+	const FVector2D MinPos = GetContainerMinPos();
+	const FVector2D MaxPos = GetContainerMaxPos();
+
+	const float BounceRange = bBouncebackEffect ? 20 : 0;
+	float max_x = MaxPos.X + BounceRange;
+	float min_x = MinPos.X - BounceRange;
+	ContainerPos.X = FMath::Min(ContainerPos.X, max_x);
+	ContainerPos.X = FMath::Max(ContainerPos.X, min_x);
+	
+	float max_y = MaxPos.Y + BounceRange;
+	float min_y = MinPos.Y - BounceRange;
+	ContainerPos.Y = FMath::Min(ContainerPos.Y, max_y);
+	ContainerPos.Y = FMath::Max(ContainerPos.Y, min_y);
 }

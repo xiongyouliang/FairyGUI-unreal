@@ -709,7 +709,7 @@ void UScrollPanel::ChangeContentSizeOnScrolling(float DeltaWidth, float DeltaHei
 	//ContentSize.Y += DeltaHeight;
 	//HandleSizeChanged();
 
-	//if (Tweening == 1)
+	//if (TweenType == 1)
 	//{
 	//	if (DeltaWidth != 0 && isRightmost && TweenChange.X < 0)
 	//	{
@@ -723,7 +723,7 @@ void UScrollPanel::ChangeContentSizeOnScrolling(float DeltaWidth, float DeltaHei
 	//		TweenChange.Y = -YPos - TweenStart.Y;
 	//	}
 	//}
-	//else if (Tweening == 2)
+	//else if (TweenType == 2)
 	//{
 	//	if (DeltaPosX != 0)
 	//	{
@@ -961,14 +961,14 @@ void UScrollPanel::Refresh2()
 	//		TweenChange = pos - TweenStart;
 	//		StartTween(1);
 	//	}
-	//	else if (Tweening != 0)
+	//	else if (TweenType != 0)
 	//	{
 	//		KillTween();
 	//	}
 	//}
 	//else
 	//{
-	//	if (Tweening != 0)
+	//	if (TweenType != 0)
 	//	{
 	//		KillTween();
 	//	}
@@ -1034,7 +1034,7 @@ void UScrollPanel::UpdateScrollBarVisible2(UGScrollBar* Bar)
 		FGTween::Kill(Bar, false);
 	}
 
-	if (bScrollBarDisplayAuto && !bHover && Tweening == 0 && !bDragged && !Bar->bGripDragging)
+	if (bScrollBarDisplayAuto && !bHover && TweenType == 0 && !bDragged && !Bar->bGripDragging)
 	{
 		if (Bar->IsVisible())
 		{
@@ -1380,7 +1380,7 @@ void UScrollPanel::FixDuration(int32 Axis, float OldChange)
 void UScrollPanel::StartTween(int32 Type)
 {
 	TweenTime.Set(0, 0);
-	Tweening = Type;
+	TweenType = Type;
 	GWorld->GetTimerManager().SetTimer(TickTimerHandle,
 		FTimerDelegate::CreateUObject(this, &UScrollPanel::TweenUpdate),
 		0.016f,
@@ -1390,14 +1390,14 @@ void UScrollPanel::StartTween(int32 Type)
 
 void UScrollPanel::KillTween()
 {
-	if (Tweening == 1)
+	if (TweenType == 1)
 	{
 		FVector2D t = TweenStart + TweenChange;
 		//Container->SetPosition(t);
 		Owner->DispatchEvent(FFairyEventNames::Scroll);
 	}
 
-	Tweening = 0;
+	TweenType = 0;
 	GWorld->GetTimerManager().ClearTimer(TickTimerHandle);
 	Owner->DispatchEvent(FFairyEventNames::ScrollEnd);
 }
@@ -1474,7 +1474,7 @@ void UScrollPanel::TweenUpdate()
 
 	//Container->SetPosition(FVector2D(nx, ny));
 
-	if (Tweening == 2)
+	if (TweenType == 2)
 	{
 		if (OverlapSize.X > 0)
 		{
@@ -1493,7 +1493,7 @@ void UScrollPanel::TweenUpdate()
 
 	if (TweenChange.X == 0 && TweenChange.Y == 0)
 	{
-		Tweening = 0;
+		TweenType = 0;
 		GWorld->GetTimerManager().ClearTimer(TickTimerHandle);
 
 		LoopCheckingCurrent();
@@ -1548,7 +1548,7 @@ float UScrollPanel::RunTween(int32 Axis, float DeltaTime)
 			threshold2 = -max;
 		}
 
-		if (Tweening == 2 && bBouncebackEffect)
+		if (TweenType == 2 && bBouncebackEffect)
 		{
 			if ((newValue > 20 + threshold1 && TweenChange.Component(Axis) > 0) || (newValue > threshold1 && TweenChange.Component(Axis) == 0))
 			{
@@ -1598,7 +1598,7 @@ void UScrollPanel::OnTouchBegin(UEventContext* Context)
 	Context->CaptureTouch();
 	FVector2D curTouchPos = Owner->GlobalToLocal(Context->GetPointerPosition());
 
-	if (Tweening != 0)
+	if (TweenType != 0)
 	{
 		KillTween();
 		UFairyApplication::Get()->CancelClick(Context->GetUserIndex(), Context->GetPointerIndex());

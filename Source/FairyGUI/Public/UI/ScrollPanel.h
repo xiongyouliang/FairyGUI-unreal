@@ -254,7 +254,7 @@ private:
     uint8 bDispatchingPullDown : 1;
     uint8 bDispatchingPullUp : 1;
 
-    int32 Tweening;
+    int32 TweenType;
     FVector2D TweenStart;
     FVector2D TweenChange;
     FVector2D TweenTime;

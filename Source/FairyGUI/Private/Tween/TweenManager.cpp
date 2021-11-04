@@ -11,14 +11,18 @@ FTweenManager::FTweenManager()
 FTweenManager::~FTweenManager()
 {
     for (auto it : TweenerPool)
-        delete it;
+    {
+		delete it;
+    }
 
     int32 cnt = TotalActiveTweens;
     for (int32 i = 0; i < cnt; i++)
     {
         FGTweener* tweener = ActiveTweens[i];
         if (tweener != nullptr)
-            delete tweener;
+        {
+			delete tweener;
+        }
     }
     delete ActiveTweens;
 }
@@ -99,7 +103,9 @@ bool FTweenManager::KillTweens(UObject* Target, bool bCompleted)
 FGTweener* FTweenManager::GetTween(FTweenerHandle const& Handle)
 {
     if (!Handle.IsValid())
-        return nullptr;
+    {
+		return nullptr;
+    }
 
     int32 cnt = TotalActiveTweens;
     for (int32 i = 0; i < cnt; i++)
@@ -117,7 +123,9 @@ FGTweener* FTweenManager::GetTween(FTweenerHandle const& Handle)
 FGTweener* FTweenManager::GetTween(UObject* Target)
 {
     if (Target == nullptr)
-        return nullptr;
+    {
+		return nullptr;
+    }
 
     int32 cnt = TotalActiveTweens;
     for (int32 i = 0; i < cnt; i++)
@@ -142,7 +150,9 @@ void FTweenManager::Tick(float DeltaTime)
         if (tweener == nullptr)
         {
             if (freePosStart == -1)
-                freePosStart = i;
+            {
+				freePosStart = i;
+            }
         }
         else if (tweener->bKilled)
         {
@@ -151,14 +161,20 @@ void FTweenManager::Tick(float DeltaTime)
             ActiveTweens[i] = nullptr;
 
             if (freePosStart == -1)
-                freePosStart = i;
+            {
+				freePosStart = i;
+            }
         }
         else
         {
             if (tweener->Target.IsStale())
-                tweener->bKilled = true;
+            {
+				tweener->bKilled = true;
+            }
             else if (!tweener->bPaused)
-                tweener->Update(DeltaTime);
+            {
+				tweener->Update(DeltaTime);
+            }
 
             if (freePosStart != -1)
             {
@@ -176,7 +192,9 @@ void FTweenManager::Tick(float DeltaTime)
             int32 j = cnt;
             cnt = TotalActiveTweens - cnt;
             for (int32 i = 0; i < cnt; i++)
-                ActiveTweens[freePosStart++] = ActiveTweens[j++];
+            {
+				ActiveTweens[freePosStart++] = ActiveTweens[j++];
+            }
         }
         TotalActiveTweens = freePosStart;
     }

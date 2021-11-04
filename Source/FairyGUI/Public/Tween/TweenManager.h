@@ -7,6 +7,8 @@
 
 class UFairyObject;
 
+typedef FGTweener* FairyTweenerPointer;
+
 class FAIRYGUI_API FTweenManager : public FTickableGameObject
 {
 public:
@@ -31,9 +33,11 @@ public:
     }
 
 private:
-    FGTweener** ActiveTweenerPointers;
-    TArray<FGTweener*> TweenerPool;
+    FairyTweenerPointer* ActiveTweenerPointerArray;
     int32 ActiveTweenerPointerCapcity;
     int32 TotalActiveTweenerNum;
     uint32 TweenerInstanceCount;
+
+    TArray<FairyTweenerPointer> TweenerPool;
 };
+

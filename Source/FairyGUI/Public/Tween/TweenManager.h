@@ -25,7 +25,8 @@ public:
     FGTweener* GetTween(UObject* Target);
 
     void Tick(float DeltaTime);
-    TStatId GetStatId() const {
+    TStatId GetStatId() const 
+    {
         return TStatId();
     }
 

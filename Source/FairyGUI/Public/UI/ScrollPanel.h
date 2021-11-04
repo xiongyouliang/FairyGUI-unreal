@@ -196,6 +196,10 @@ private:
     inline FVector2D GetContainerMinPos();
     inline FVector2D GetContainerMaxPos();
 
+    inline bool ProcessBounceback();
+    inline void CalculateInertialInfo();
+    inline void ProcessInertial();
+
     void OnBarTweenComplete(FGTweener* Tweener);
 
 private:
@@ -244,7 +248,7 @@ private:
 
     FVector2D Velocity;
     float VelocityScale;
-    float LastMoveTime;
+    double LastTouchEventTime;
     uint8 bDragged : 1;
     uint8 bIsHoldAreaDone : 1;
     int32 AniFlag;
@@ -257,7 +261,7 @@ private:
     uint8 bDispatchingPullUp : 1;
 
     int32 TweenType;
-    FVector2D TweenStart;
+    FVector2D TweenStartPos;
     FVector2D TweenChange;
     FVector2D TweenTime;
     FVector2D TweenDuration;

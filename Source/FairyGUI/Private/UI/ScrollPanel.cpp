@@ -536,9 +536,9 @@ void UScrollPanel::LockHeader(int32 Size)
 	//HeaderLockedSize = Size;
 	//if (!bDispatchingPullDown && cpos.Component(RefreshBarAxis) >= 0)
 	//{
-	//	TweenStart = cpos;
+	//	TweenStartPos = cpos;
 	//	TweenChange.Set(0, 0);
-	//	TweenChange[RefreshBarAxis] = HeaderLockedSize - TweenStart.Component(RefreshBarAxis);
+	//	TweenChange[RefreshBarAxis] = HeaderLockedSize - TweenStartPos.Component(RefreshBarAxis);
 	//	TweenDuration.Set(TWEEN_TIME_DEFAULT, TWEEN_TIME_DEFAULT);
 	//	StartTween(2);
 	//}
@@ -556,7 +556,7 @@ void UScrollPanel::LockFooter(int32 Size)
 	//FooterLockedSize = Size;
 	//if (!bDispatchingPullUp && cpos.Component(RefreshBarAxis) >= 0)
 	//{
-	//	TweenStart = cpos;
+	//	TweenStartPos = cpos;
 	//	TweenChange.Set(0, 0);
 	//	float max = OverlapSize.Component(RefreshBarAxis);
 	//	if (max == 0)
@@ -567,7 +567,7 @@ void UScrollPanel::LockFooter(int32 Size)
 	//	{
 	//		max += FooterLockedSize;
 	//	}
-	//	TweenChange.Component(RefreshBarAxis) = -max - TweenStart.Component(RefreshBarAxis);
+	//	TweenChange.Component(RefreshBarAxis) = -max - TweenStartPos.Component(RefreshBarAxis);
 	//	TweenDuration.Set(TWEEN_TIME_DEFAULT, TWEEN_TIME_DEFAULT);
 	//	StartTween(2);
 	//}
@@ -714,13 +714,13 @@ void UScrollPanel::ChangeContentSizeOnScrolling(float DeltaWidth, float DeltaHei
 	//	if (DeltaWidth != 0 && isRightmost && TweenChange.X < 0)
 	//	{
 	//		XPos = OverlapSize.X;
-	//		TweenChange.X = -XPos - TweenStart.X;
+	//		TweenChange.X = -XPos - TweenStartPos.X;
 	//	}
 
 	//	if (DeltaHeight != 0 && isBottom && TweenChange.Y < 0)
 	//	{
 	//		YPos = OverlapSize.Y;
-	//		TweenChange.Y = -YPos - TweenStart.Y;
+	//		TweenChange.Y = -YPos - TweenStartPos.Y;
 	//	}
 	//}
 	//else if (TweenType == 2)
@@ -728,13 +728,13 @@ void UScrollPanel::ChangeContentSizeOnScrolling(float DeltaWidth, float DeltaHei
 	//	if (DeltaPosX != 0)
 	//	{
 	//		Container->SetX(Container->GetPosition().X - DeltaPosX);
-	//		TweenStart.X -= DeltaPosX;
+	//		TweenStartPos.X -= DeltaPosX;
 	//		XPos = -Container->GetPosition().X;
 	//	}
 	//	if (DeltaPosY != 0)
 	//	{
 	//		Container->SetY(Container->GetPosition().Y - DeltaPosY);
-	//		TweenStart.Y -= DeltaPosY;
+	//		TweenStartPos.Y -= DeltaPosY;
 	//		YPos = -Container->GetPosition().Y;
 	//	}
 	//}
@@ -957,8 +957,8 @@ void UScrollPanel::Refresh2()
 	//	if (pos != Container->GetPosition())
 	//	{
 	//		TweenDuration.Set(TWEEN_TIME_GO, TWEEN_TIME_GO);
-	//		TweenStart = Container->GetPosition();
-	//		TweenChange = pos - TweenStart;
+	//		TweenStartPos = Container->GetPosition();
+	//		TweenChange = pos - TweenStartPos;
 	//		StartTween(1);
 	//	}
 	//	else if (TweenType != 0)
@@ -1120,21 +1120,21 @@ void UScrollPanel::LoopCheckingTarget(FVector2D& EndPos, int32 Axis)
 	if (EndPos.Component(Axis) > 0)
 	{
 		float halfSize = GetLoopPartSize(2, Axis);
-		float tmp = TweenStart.Component(Axis) - halfSize;
+		float tmp = TweenStartPos.Component(Axis) - halfSize;
 		if (tmp <= 0 && tmp >= -OverlapSize.Component(Axis))
 		{
 			EndPos.Component(Axis) = -halfSize;
-			TweenStart.Component(Axis) = tmp;
+			TweenStartPos.Component(Axis) = tmp;
 		}
 	}
 	else if (EndPos.Component(Axis) < -OverlapSize.Component(Axis))
 	{
 		float halfSize = GetLoopPartSize(2, Axis);
-		float tmp = TweenStart.Component(Axis) + halfSize;
+		float tmp = TweenStartPos.Component(Axis) + halfSize;
 		if (tmp <= 0 && tmp >= -OverlapSize.Component(Axis))
 		{
 			EndPos.Component(Axis) += halfSize;
-			TweenStart.Component(Axis) += tmp;
+			TweenStartPos.Component(Axis) += tmp;
 		}
 	}
 }
@@ -1248,7 +1248,7 @@ float UScrollPanel::AlignByPage(float Pos, int32 Axis, bool bInertialScrolling)
 
 	if (bInertialScrolling)
 	{
-		float oldPos = TweenStart.Component(Axis);
+		float oldPos = TweenStartPos.Component(Axis);
 		int32 oldPage;
 		if (oldPos > 0)
 		{
@@ -1392,7 +1392,7 @@ void UScrollPanel::KillTween()
 {
 	if (TweenType == 1)
 	{
-		FVector2D t = TweenStart + TweenChange;
+		FVector2D t = TweenStartPos + TweenChange;
 		//Container->SetPosition(t);
 		Owner->DispatchEvent(FFairyEventNames::Scroll);
 	}
@@ -1519,13 +1519,13 @@ float UScrollPanel::RunTween(int32 Axis, float DeltaTime)
 		TweenTime.Component(Axis) += DeltaTime;
 		if (TweenTime.Component(Axis) >= TweenDuration.Component(Axis))
 		{
-			newValue = TweenStart.Component(Axis) + TweenChange.Component(Axis);
+			newValue = TweenStartPos.Component(Axis) + TweenChange.Component(Axis);
 			TweenChange.Component(Axis) = 0;
 		}
 		else
 		{
 			float ratio = sp_EaseFunc(TweenTime.Component(Axis), TweenDuration.Component(Axis));
-			newValue = TweenStart.Component(Axis) + (int32)(TweenChange.Component(Axis) * ratio);
+			newValue = TweenStartPos.Component(Axis) + (int32)(TweenChange.Component(Axis) * ratio);
 		}
 
 		float threshold1 = 0;
@@ -1555,14 +1555,14 @@ float UScrollPanel::RunTween(int32 Axis, float DeltaTime)
 				TweenTime.Component(Axis) = 0;
 				TweenDuration.Component(Axis) = TWEEN_TIME_DEFAULT;
 				TweenChange.Component(Axis) = -newValue + threshold1;
-				TweenStart.Component(Axis) = newValue;
+				TweenStartPos.Component(Axis) = newValue;
 			}
 			else if ((newValue < threshold2 - 20 && TweenChange.Component(Axis) < 0) || (newValue < threshold2 && TweenChange.Component(Axis) == 0))
 			{
 				TweenTime.Component(Axis) = 0;
 				TweenDuration.Component(Axis) = TWEEN_TIME_DEFAULT;
 				TweenChange.Component(Axis) = threshold2 - newValue;
-				TweenStart.Component(Axis) = newValue;
+				TweenStartPos.Component(Axis) = newValue;
 			}
 		}
 		else
@@ -1589,7 +1589,6 @@ float UScrollPanel::RunTween(int32 Axis, float DeltaTime)
 
 void UScrollPanel::OnTouchBegin(UEventContext* Context)
 {
-	UE_LOG(LogTemp, Warning, TEXT("UScrollPanel::OnTouchBegin(...)"));
 	if (!bTouchScrollable)
 	{
 		return;
@@ -1602,28 +1601,23 @@ void UScrollPanel::OnTouchBegin(UEventContext* Context)
 	{
 		KillTween();
 		UFairyApplication::Get()->CancelClick(Context->GetUserIndex(), Context->GetPointerIndex());
-
-		bDragged = true;
-	}
-	else
-	{
-		bDragged = false;
 	}
 
 	BeginTouchPos = curTouchPos;
+
+	LastTouchEventTime = FSlateApplication::Get().GetCurrentTime();
 	LastTouchPos = curTouchPos;
 	LastTouchGlobalPos = Context->GetPointerPosition();
-
-	ContainerPosAtBegin = ContainerPos;
-
 	bIsHoldAreaDone = false;
 	Velocity.Set(0, 0);
 	VelocityScale = 1;
-	LastMoveTime = GWorld->GetTimeSeconds();
+
+	ContainerPosAtBegin = ContainerPos;
 }
 
 void UScrollPanel::OnTouchMove(UEventContext* Context)
 {
+	// If ScrollPanel can't scroll with touch event, break all logic.
 	if (!bTouchScrollable)
 	{
 		return;
@@ -1634,65 +1628,28 @@ void UScrollPanel::OnTouchMove(UEventContext* Context)
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("UScrollPanel::OnTouchMove(...)"));
-
 	FVector2D curTouchPos = Owner->GlobalToLocal(Context->GetPointerPosition());
-	bool bScrollInVertical = false;
-	bool bScrollInHorizontal = false;
 
 	if (ScrollDirection == EFairyScrollDirection::Vertical)
 	{
-		bScrollInVertical = true;
-
 		ContainerPos.Y = ContainerPosAtBegin.Y + curTouchPos.Y - BeginTouchPos.Y;
 	}
 	else if (ScrollDirection == EFairyScrollDirection::Horizontal)
 	{
-		bScrollInHorizontal = true;
-
 		ContainerPos.X = ContainerPosAtBegin.X + curTouchPos.X - BeginTouchPos.X;
 	}
 	else
 	{
-		bScrollInVertical = true;
-		bScrollInHorizontal = true;
-
 		ContainerPos = ContainerPosAtBegin + curTouchPos - BeginTouchPos;
 	}
 	LimitContainerPos();
 	
-
-	float deltaTime = FSlateApplication::Get().GetDeltaTime();// GWorld->GetDeltaSeconds();
-	float elapsed = GWorld->GetTimeSeconds() - LastMoveTime;
-	elapsed = elapsed * 60 - 1;
-	if (elapsed > 1)
-	{
-		Velocity *= FMath::Pow(0.833f, elapsed);
-	}
-	FVector2D deltaPosition = curTouchPos - LastTouchPos;
-	if (!bScrollInHorizontal)
-	{
-		deltaPosition.X = 0;
-	}
-	if (!bScrollInVertical)
-	{
-		deltaPosition.Y = 0;
-	}
-	Velocity = FMath::Lerp(Velocity, deltaPosition / deltaTime, deltaTime * 10);
-
-	FVector2D deltaGlobalPosition = LastTouchGlobalPos - Context->GetPointerPosition();
-	if (deltaPosition.X != 0)
-	{
-		VelocityScale = FMath::Abs(deltaGlobalPosition.X / deltaPosition.X);
-	}
-	else if (deltaPosition.Y != 0)
-	{
-		VelocityScale = FMath::Abs(deltaGlobalPosition.Y / deltaPosition.Y);
-	}
+	double CurTouchEventTime = FSlateApplication::Get().GetCurrentTime();
+	CalculateInertialInfo();
 
 	LastTouchPos = curTouchPos;
 	LastTouchGlobalPos = Context->GetPointerPosition();
-	LastMoveTime = GWorld->GetTimeSeconds();
+	LastTouchEventTime = CurTouchEventTime;
 
 	DraggingPane = this;
 	bIsHoldAreaDone = true;
@@ -1710,116 +1667,24 @@ void UScrollPanel::OnTouchMove(UEventContext* Context)
 
 void UScrollPanel::OnTouchEnd(UEventContext* Context)
 {
-	UE_LOG(LogTemp, Warning, TEXT("UScrollPanel::OnTouchEnd(...)"));
+	if (!bTouchScrollable)
+	{
+		return;
+	}
+
 	if (DraggingPane.Get() == this)
 	{
 		DraggingPane.Reset();
 	}
 
-	if (!bDragged || !bTouchScrollable)
-	{
-		bDragged = false;
-		return;
-	}
-
+	FVector2D curTouchPos = Owner->GlobalToLocal(Context->GetPointerPosition());
 	bDragged = false;
-	//TweenStart = Container->GetPosition();
 
-	FVector2D endPos = TweenStart;
-	bool flag = false;
-	//if (Container->GetPosition().X > 0)
-	//{
-	//	endPos.X = 0;
-	//	flag = true;
-	//}
-	//else if (Container->GetPosition().X < -OverlapSize.X)
-	//{
-	//	endPos.X = -OverlapSize.X;
-	//	flag = true;
-	//}
-	//if (Container->GetPosition().Y > 0)
-	//{
-	//	endPos.Y = 0;
-	//	flag = true;
-	//}
-	//else if (Container->GetPosition().Y < -OverlapSize.Y)
-	//{
-	//	endPos.Y = -OverlapSize.Y;
-	//	flag = true;
-	//}
-
-	if (flag)
+	// if No bounce to process, try to process inertial.
+	if (ProcessBounceback() == false)
 	{
-		TweenChange = endPos - TweenStart;
-		if (TweenChange.X < -UFairyConfig::Config->TouchDragSensitivity || TweenChange.Y < -UFairyConfig::Config->TouchDragSensitivity)
-		{
-			Owner->DispatchEvent(FFairyEventNames::PullDownRelease);
-		}
-		else if (TweenChange.X > UFairyConfig::Config->TouchDragSensitivity || TweenChange.Y > UFairyConfig::Config->TouchDragSensitivity)
-		{
-			Owner->DispatchEvent(FFairyEventNames::PullUpRelease);
-		}
-
-		if (HeaderLockedSize > 0 && endPos.Component(RefreshBarAxis) == 0)
-		{
-			endPos.Component(RefreshBarAxis) = HeaderLockedSize;
-			TweenChange = endPos - TweenStart;
-		}
-		else if (FooterLockedSize > 0 && endPos.Component(RefreshBarAxis) == -OverlapSize.Component(RefreshBarAxis))
-		{
-			float max = OverlapSize.Component(RefreshBarAxis);
-			if (max == 0)
-			{
-				max = FMath::Max(ContentSize.Component(RefreshBarAxis) + FooterLockedSize - ViewSize.Component(RefreshBarAxis), 0.f);
-			}
-			else
-			{
-				max += FooterLockedSize;
-			}
-			endPos.Component(RefreshBarAxis) = -max;
-			TweenChange = endPos - TweenStart;
-		}
-		TweenDuration.Set(TWEEN_TIME_DEFAULT, TWEEN_TIME_DEFAULT);
+		ProcessInertial();
 	}
-	else
-	{
-		if (!bInertiaDisabled)
-		{
-			float elapsed = GWorld->GetTimeSeconds() - LastMoveTime;
-			elapsed = elapsed * 60 - 1;
-			if (elapsed > 1)
-			{
-				Velocity *= FMath::Pow(0.833f, elapsed);
-			}
-			endPos = UpdateTargetAndDuration(TweenStart);
-		}
-		else
-		{
-			TweenDuration.Set(TWEEN_TIME_DEFAULT, TWEEN_TIME_DEFAULT);
-		}
-		FVector2D oldChange = endPos - TweenStart;
-
-		LoopCheckingTarget(endPos);
-		if (bPageMode || bSnapToItem)
-		{
-			AlignPosition(endPos, true);
-		}
-
-		TweenChange = endPos - TweenStart;
-		if (TweenChange.X == 0 && TweenChange.Y == 0)
-		{
-			UpdateScrollBarVisible();
-			return;
-		}
-
-		if (bPageMode || bSnapToItem)
-		{
-			FixDuration(0, oldChange.X);
-			FixDuration(1, oldChange.Y);
-		}
-	}
-
-	StartTween(2);
 }
 
 void UScrollPanel::OnMouseWheel(UEventContext* Context)
@@ -1897,4 +1762,57 @@ void UScrollPanel::LimitContainerPos()
 	float min_y = MinPos.Y - BounceRange;
 	ContainerPos.Y = FMath::Min(ContainerPos.Y, max_y);
 	ContainerPos.Y = FMath::Max(ContainerPos.Y, min_y);
+}
+
+bool UScrollPanel::ProcessBounceback()
+{
+	if (bBouncebackEffect == false)
+	{
+		return false;
+	}
+
+	const FVector2D MinPos = GetContainerMinPos();
+	const FVector2D MaxPos = GetContainerMaxPos();
+
+	FVector2D &Pos = ContainerPos;
+
+	if (Pos.X < MinPos.X || Pos.X > MaxPos.X 
+		|| Pos.Y < MinPos.Y || Pos.Y > MaxPos.Y)
+	{
+		if (Pos.X > MaxPos.X)
+		{
+			// todo: bounce to left, simple process, this will use tween animate later, same as other case.
+			Pos.X = MaxPos.X;
+		}
+		if (Pos.X < MinPos.X)
+		{
+			// todo: bounce to right
+			Pos.X = MinPos.X;
+		}
+		if (Pos.Y > MaxPos.Y)
+		{
+			// todo: bounce to top
+			Pos.Y = MaxPos.Y;
+		}
+		if (Pos.Y < MinPos.Y)
+		{
+			// todo: bounce to bottom
+			Pos.Y = MinPos.Y;
+		}
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+void UScrollPanel::CalculateInertialInfo()
+{
+
+}
+
+void UScrollPanel::ProcessInertial()
+{
+
 }

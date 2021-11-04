@@ -31,9 +31,9 @@ public:
     }
 
 private:
-    FGTweener** ActiveTweens;
+    FGTweener** ActiveTweenerPointers;
     TArray<FGTweener*> TweenerPool;
-    int32 TotalActiveTweens;
-    int32 ArrayLength;
+    int32 ActiveTweenerPointerCapcity;
+    int32 TotalActiveTweenerNum;
     uint32 TweenerInstanceCount;
 };

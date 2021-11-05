@@ -12,6 +12,8 @@ struct FAIRYGUI_API FFairyEventNames
     static const FName TouchEnd;
     static const FName RollOver;
     static const FName RollOut;
+    static const FName MouseEnter;
+    static const FName MouseLeave;
     static const FName MouseWheel;
 
     static const FName DragStart;

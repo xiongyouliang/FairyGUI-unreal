@@ -8,6 +8,8 @@ const FName FFairyEventNames::TouchMove("TouchMove");
 const FName FFairyEventNames::TouchEnd("TouchEnd");
 const FName FFairyEventNames::RollOver("RollOver");
 const FName FFairyEventNames::RollOut("RollOut");
+const FName FFairyEventNames::MouseEnter(TEXT("MouseEnter"));
+const FName FFairyEventNames::MouseLeave(TEXT("MouseLeave"));
 const FName FFairyEventNames::MouseWheel("MouseWheel");
 
 const FName FFairyEventNames::DragStart("DragStart");

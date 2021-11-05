@@ -130,20 +130,24 @@ private:
 
     UFairyComponent* Owner;
     TArray<FTransitionItem*> Items;
-    int32 TotalTimes;
-    int32 TotalTasks;
+
     bool bPlaying;
     bool bPaused;
-    FVector2D OwnerBasePos;
-    FSimpleDelegate CompleteCallback;
-    int32 Options;
-    bool bReversed;
-    float TotalDuration;
     bool bAutoPlay;
+    bool bReversed;
+
+	int32 TotalTimes;
+	int32 TotalTasks;
+    int32 Options;
     int32 AutoPlayTimes;
+    
+    float TotalDuration;
     float AutoPlayDelay;
     float TimeScale;
     float StartTime;
     float EndTime;
+
+	FVector2D OwnerBasePos;
+	FSimpleDelegate CompleteCallback;
     FTweenerHandle DelayHandle;
 };

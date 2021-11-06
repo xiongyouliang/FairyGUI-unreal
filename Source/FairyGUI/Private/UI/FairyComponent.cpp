@@ -1396,6 +1396,7 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 
 	Buffer->Seek(0, 5);
 
+	// *** parse transitions start ***
 	int32 transitionCount = Buffer->ReadShort();
 	for (int32 i = 0; i < transitionCount; i++)
 	{
@@ -1414,6 +1415,7 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 		On(FFairyEventNames::AddedToStage).AddUObject(this, &UFairyComponent::OnAddedToStageHandler);
 		On(FFairyEventNames::RemovedFromStage).AddUObject(this, &UFairyComponent::OnRemovedFromStageHandler);
 	}
+	// *** parse transitions end ***
 
 	ApplyAllControllers();
 

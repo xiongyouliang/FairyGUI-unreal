@@ -1,4 +1,4 @@
-#include "UI/TranslationHelper.h"
+#include "UI/Transition/TranslationHelper.h"
 
 TMap<FString, TMap<FString, FString>> FTranslationHelper::Strings;
 

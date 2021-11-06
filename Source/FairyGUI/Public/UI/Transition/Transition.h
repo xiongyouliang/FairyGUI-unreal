@@ -3,6 +3,9 @@
 #include "CoreMinimal.h"
 #include "Tween/GTween.h"
 #include "Event/EventContext.h"
+#include "UI/Transition/TransitionItem.h"
+#include "UI/Transition/TransitionItemData.h"
+#include "UI/Transition/TweenConfig.h"
 #include "Transition.generated.h"
 
 class UFairyObject;
@@ -10,7 +13,6 @@ class UFairyComponent;
 class UGController;
 class FByteBuffer;
 class FGTweener;
-struct FTransitionItem;
 
 UCLASS(BlueprintType)
 class FAIRYGUI_API UTransition : public UObject

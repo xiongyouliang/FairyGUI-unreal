@@ -4,6 +4,7 @@
 #include "UI/Controller/GController.h"
 #include "Utils/ByteBuffer.h"
 #include "Tween/GPath.h"
+#include "FairyApplication.h"
 
 const int32 OPTION_IGNORE_DISPLAY_CONTROLLER = 1;
 const int32 OPTION_AUTO_STOP_DISABLED = 2;

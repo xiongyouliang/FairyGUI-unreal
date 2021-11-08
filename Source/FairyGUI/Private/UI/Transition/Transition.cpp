@@ -1361,6 +1361,11 @@ void UTransition::Setup(FByteBuffer* Buffer)
 
 void UTransition::DecodeValue(FTransitionItem* item, FByteBuffer* Buffer, FTransitionItemData* Value)
 {
+	if (Value == nullptr)
+	{
+		return;
+	}
+
 	switch (item->Type)
 	{
 	case ETransitionActionType::XY:

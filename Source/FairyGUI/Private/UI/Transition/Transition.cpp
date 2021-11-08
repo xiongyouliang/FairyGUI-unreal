@@ -1284,7 +1284,6 @@ void UTransition::Setup(FByteBuffer* Buffer)
 		if (Buffer->ReadBool())
 		{
 			Buffer->Seek(curPos, 1);
-
 			item->TweenConfig.Emplace();
 			item->TweenConfig->Duration = Buffer->ReadFloat();
 			if (item->Time + item->TweenConfig->Duration > TotalDuration)
@@ -1297,11 +1296,9 @@ void UTransition::Setup(FByteBuffer* Buffer)
 			item->TweenConfig->EndLabel = Buffer->ReadS();
 
 			Buffer->Seek(curPos, 2);
-
 			DecodeValue(item, Buffer, &item->TweenConfig->StartData);
 
 			Buffer->Seek(curPos, 3);
-
 			DecodeValue(item, Buffer, &item->TweenConfig->EndData);
 
 			if (Buffer->Version >= 2)
@@ -1355,7 +1352,6 @@ void UTransition::Setup(FByteBuffer* Buffer)
 			}
 
 			Buffer->Seek(curPos, 2);
-
 			DecodeValue(item, Buffer, item->Data.IsSet() ? &item->Data.GetValue() : nullptr);
 		}
 

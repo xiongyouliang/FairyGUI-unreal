@@ -7,17 +7,17 @@
 #include "UI/Transition/TransitionItemData.h"
 
 struct FTweenConfig {
-  float Duration;
-  EEaseType EaseType;
-  int32 Repeat;
-  bool bYoyo;
+	float Duration;
+	EEaseType EaseType;
+	int32 Repeat;
+	bool bYoyo;
 
-  FTransitionItemData StartData;
-  FTransitionItemData EndData;
-  TSharedPtr<FGPath> Path;
+	FTransitionItemData StartData;
+	FTransitionItemData EndData;
+	TSharedPtr<FGPath> Path;
 
-  FString EndLabel;
-  FSimpleDelegate EndHook;
+	FString EndLabel;
+	FSimpleDelegate EndHook;
 
-  FTweenConfig();
+	FTweenConfig();
 };

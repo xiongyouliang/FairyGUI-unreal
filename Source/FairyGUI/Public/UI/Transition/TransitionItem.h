@@ -8,28 +8,28 @@
 #include "UI/Transition/TransitionItemData.h"
 
 struct FAniData {
-  int32 Frame;
-  bool bPlaying;
-  bool bFlag;
+	int32 Frame;
+	bool bPlaying;
+	bool bFlag;
 };
 
 struct FSoundData {
-  FString URL;
-  float Volume;
+	FString URL;
+	float Volume;
 };
 
 struct FInnerTransData {
-  FString Name;
-  int32 PlayTimes;
-  UTransition *Instance;
-  float StopTime;
+	FString Name;
+	int32 PlayTimes;
+	UTransition *Instance;
+	float StopTime;
 };
 
 struct FShakeData {
-  float Amplitude;
-  float Duration;
-  FVector2D LastOffset;
-  FVector2D Offset;
+	float Amplitude;
+	float Duration;
+	FVector2D LastOffset;
+	FVector2D Offset;
 };
 
 struct FTransitionItem

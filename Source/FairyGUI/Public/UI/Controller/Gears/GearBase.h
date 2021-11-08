@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Tween/GTween.h"
+#include "Tween/FairyTweenHelper.h"
 
 class UFairyObject;
 class UGController;

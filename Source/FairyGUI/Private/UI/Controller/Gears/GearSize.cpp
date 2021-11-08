@@ -2,7 +2,7 @@
 #include "UI/FairyObject.h"
 #include "Package/FairyPackage.h"
 #include "UI/Controller/GController.h"
-#include "Tween/GTween.h"
+#include "Tween/FairyTweenHelper.h"
 #include "Utils/ByteBuffer.h"
 
 FGearSize::FGearSize(UFairyObject* InOwner) : FGearBase(InOwner)
@@ -48,7 +48,7 @@ void FGearSize::Apply()
 
     if (TweenConfig.IsSet() && TweenConfig->bTween && UFairyPackage::Constructing == 0 && !bDisableAllTweenEffect)
     {
-        FGTweener* tweener = FGTween::GetTween(TweenConfig->Handle);
+        FGTweener* tweener = FFairyTweenHelper::GetTween(TweenConfig->Handle);
         if (tweener != nullptr)
         {
             if (tweener->EndValue.GetVec4() != *Value)
@@ -70,7 +70,7 @@ void FGearSize::Apply()
                 TweenConfig->DisplayLockToken = Owner->AddDisplayLock();
             }
 
-            TweenConfig->Handle = FGTween::To(FVector4(Owner->GetWidth(), Owner->GetHeight(), Owner->GetScaleX(), Owner->GetScaleY()), *Value, TweenConfig->Duration)
+            TweenConfig->Handle = FFairyTweenHelper::To(FVector4(Owner->GetWidth(), Owner->GetHeight(), Owner->GetScaleX(), Owner->GetScaleY()), *Value, TweenConfig->Duration)
                 ->SetDelay(TweenConfig->Delay)
                 ->SetEase(TweenConfig->EaseType)
                 ->SetTarget(Owner.Get())

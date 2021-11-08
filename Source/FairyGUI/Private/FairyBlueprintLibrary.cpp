@@ -88,7 +88,7 @@ FTweenerHandle UFairyBlueprintLibrary::TweenFloat(float StartValue, float EndVal
 	if (Target == nullptr)
 		return FTweenerHandle();
 
-	FGTweener* Tweener = FGTween::To(StartValue, EndValue, Duration)
+	FGTweener* Tweener = FFairyTweenHelper::To(StartValue, EndValue, Duration)
 		->SetEase(EaseType)
 		->SetTarget(const_cast<UObject*>(Target));
 	if (OnUpdate.IsBound())
@@ -119,7 +119,7 @@ FTweenerHandle UFairyBlueprintLibrary::TweenVector2(const FVector2D& StartValue,
 	if (Target == nullptr)
 		return FTweenerHandle();
 
-	FGTweener* Tweener = FGTween::To(StartValue, EndValue, Duration)
+	FGTweener* Tweener = FFairyTweenHelper::To(StartValue, EndValue, Duration)
 		->SetEase(EaseType)
 		->SetTarget(const_cast<UObject*>(Target));
 
@@ -142,7 +142,7 @@ FTweenerHandle UFairyBlueprintLibrary::TweenVector2(const FVector2D& StartValue,
 
 void UFairyBlueprintLibrary::KillTween(UPARAM(ref) FTweenerHandle& Handle, bool bSetComplete)
 {
-	FGTween::Kill(Handle, bSetComplete);
+	FFairyTweenHelper::Kill(Handle, bSetComplete);
 }
 
 void UFairyBlueprintLibrary::SetPackageItemExtension(const FString& URL, TSubclassOf<UFairyComponent> ClassType)

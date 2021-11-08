@@ -2,7 +2,7 @@
 #include "UI/FairyObject.h"
 #include "Package/FairyPackage.h"
 #include "UI/Controller/GController.h"
-#include "Tween/GTween.h"
+#include "Tween/FairyTweenHelper.h"
 #include "Utils/ByteBuffer.h"
 
 FGearLook::FValue::FValue() :
@@ -64,7 +64,7 @@ void FGearLook::Apply()
         Owner->SetTouchable(Value->bTouchable);
         Owner->bGearLocked = false;
 
-        FGTweener* tweener = FGTween::GetTween(TweenConfig->Handle);
+        FGTweener* tweener = FFairyTweenHelper::GetTween(TweenConfig->Handle);
         if (tweener != nullptr)
         {
             if (tweener->EndValue.X != Value->Alpha || tweener->EndValue.Y != Value->Rotation)
@@ -86,7 +86,7 @@ void FGearLook::Apply()
 				TweenConfig->DisplayLockToken = Owner->AddDisplayLock();
             }
 
-            TweenConfig->Handle = FGTween::To(FVector2D(Owner->GetAlpha(), Owner->GetRotation()), FVector2D(Value->Alpha, Value->Rotation), TweenConfig->Duration)
+            TweenConfig->Handle = FFairyTweenHelper::To(FVector2D(Owner->GetAlpha(), Owner->GetRotation()), FVector2D(Value->Alpha, Value->Rotation), TweenConfig->Duration)
                 ->SetDelay(TweenConfig->Delay)
                 ->SetEase(TweenConfig->EaseType)
                 ->SetTarget(Owner.Get())

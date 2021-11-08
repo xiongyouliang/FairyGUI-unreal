@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Tween/GTween.h"
+#include "Tween/FairyTweenHelper.h"
 #include "Event/EventContext.h"
 #include "UI/Transition/TransitionItem.h"
 #include "UI/Transition/TransitionItemData.h"

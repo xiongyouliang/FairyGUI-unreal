@@ -1,7 +1,7 @@
 #include "UI/GProgressBar.h"
 #include "UI/GImage.h"
 #include "UI/GLoader.h"
-#include "Tween/GTween.h"
+#include "Tween/FairyTweenHelper.h"
 #include "Utils/ByteBuffer.h"
 
 UGProgressBar::UGProgressBar() :
@@ -44,7 +44,7 @@ void UGProgressBar::SetValue(float InValue)
 {
     if (Value != InValue)
     {
-        FGTween::Kill(TweenHandle, false);
+        FFairyTweenHelper::Kill(TweenHandle, false);
 
         Value = InValue;
         Update(Value);
@@ -55,7 +55,7 @@ void UGProgressBar::TweenValue(float InValue, float Duration)
 {
     float oldValule;
 
-    FGTweener* tweener = FGTween::GetTween(TweenHandle);
+    FGTweener* tweener = FFairyTweenHelper::GetTween(TweenHandle);
     if (tweener != nullptr)
     {
         oldValule = tweener->Value.D;
@@ -65,7 +65,7 @@ void UGProgressBar::TweenValue(float InValue, float Duration)
         oldValule = Value;
 
     Value = InValue;
-    TweenHandle = FGTween::To(oldValule, Value, Duration)
+    TweenHandle = FFairyTweenHelper::To(oldValule, Value, Duration)
         ->SetEase(EEaseType::Linear)
         ->SetTarget(this)
         ->GetHandle();

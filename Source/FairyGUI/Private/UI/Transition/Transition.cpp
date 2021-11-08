@@ -32,7 +32,7 @@ UTransition::~UTransition()
 {
 	if (DelayHandle.IsValid())
 	{
-		FGTween::Kill(DelayHandle);
+		FFairyTweenHelper::Kill(DelayHandle);
 	}
 
 	for (auto& it : Items)
@@ -122,7 +122,7 @@ void UTransition::Play(int32 InTimes, float InDelay, float InStartTime, float In
 	}
 	else
 	{
-		DelayHandle = FGTween::DelayedCall(InDelay)->OnComplete(FSimpleDelegate::CreateUObject(this, &UTransition::OnDelayedPlay))->GetHandle();
+		DelayHandle = FFairyTweenHelper::DelayedCall(InDelay)->OnComplete(FSimpleDelegate::CreateUObject(this, &UTransition::OnDelayedPlay))->GetHandle();
 	}
 }
 
@@ -231,7 +231,7 @@ void UTransition::SetPaused(bool bInPaused)
 	}
 
 	bPaused = bInPaused;
-	FGTweener* tweener = FGTween::GetTween(DelayHandle);
+	FGTweener* tweener = FFairyTweenHelper::GetTween(DelayHandle);
 	if (tweener != nullptr)
 	{
 		tweener->SetPaused(bPaused);
@@ -653,20 +653,20 @@ void UTransition::PlayItem(FTransitionItem* item)
 			case ETransitionActionType::Size:
 			case ETransitionActionType::Scale:
 			case ETransitionActionType::Skew:
-				item->Tweener = FGTween::To(startValue->GetVec2(), endValue->GetVec2(), item->TweenConfig->Duration);
+				item->Tweener = FFairyTweenHelper::To(startValue->GetVec2(), endValue->GetVec2(), item->TweenConfig->Duration);
 				break;
 
 			case ETransitionActionType::Alpha:
 			case ETransitionActionType::Rotation:
-				item->Tweener = FGTween::To(startValue->f1, endValue->f1, item->TweenConfig->Duration);
+				item->Tweener = FFairyTweenHelper::To(startValue->f1, endValue->f1, item->TweenConfig->Duration);
 				break;
 
 			case ETransitionActionType::Color:
-				item->Tweener = FGTween::To(startValue->GetColor(), endValue->GetColor(), item->TweenConfig->Duration);
+				item->Tweener = FFairyTweenHelper::To(startValue->GetColor(), endValue->GetColor(), item->TweenConfig->Duration);
 				break;
 
 			case ETransitionActionType::ColorFilter:
-				item->Tweener = FGTween::To(startValue->GetVec4(), endValue->GetVec4(), item->TweenConfig->Duration);
+				item->Tweener = FFairyTweenHelper::To(startValue->GetVec4(), endValue->GetVec4(), item->TweenConfig->Duration);
 				break;
 			default:
 				break;
@@ -704,7 +704,7 @@ void UTransition::PlayItem(FTransitionItem* item)
 		{
 			item->ShakeData->LastOffset.Set(0, 0);
 			item->ShakeData->Offset.Set(0, 0);
-			item->Tweener = FGTween::Shake(FVector2D::ZeroVector, item->ShakeData->Amplitude, item->ShakeData->Duration)
+			item->Tweener = FFairyTweenHelper::Shake(FVector2D::ZeroVector, item->ShakeData->Amplitude, item->ShakeData->Duration)
 				->SetDelay(time)
 				->SetTimeScale(TimeScale)
 				->SetUserData(FNVariant(item))
@@ -739,7 +739,7 @@ void UTransition::PlayItem(FTransitionItem* item)
 		else if (EndTime == -1 || time <= EndTime)
 		{
 			TotalTasks++;
-			item->Tweener = FGTween::DelayedCall(time)
+			item->Tweener = FFairyTweenHelper::DelayedCall(time)
 				->SetTimeScale(TimeScale)
 				->SetUserData(FNVariant(item))
 				->OnComplete(FTweenDelegate::CreateUObject(this, &UTransition::OnDelayedPlayItem));

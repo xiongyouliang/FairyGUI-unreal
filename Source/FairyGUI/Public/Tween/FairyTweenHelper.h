@@ -5,7 +5,7 @@
 #include "EaseType.h"
 #include "TweenValue.h"
 
-class FAIRYGUI_API FGTween
+class FAIRYGUI_API FFairyTweenHelper
 {
 public:
     static FGTweener* To(float StartValue, float EndValue, float Duration);

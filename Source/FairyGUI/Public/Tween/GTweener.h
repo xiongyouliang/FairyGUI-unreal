@@ -99,6 +99,6 @@ private:
     float ElapsedTime;
     float NormalizedTime;
 
-    friend class FGTween;
+    friend class FFairyTweenHelper;
     friend class FTweenManager;
 };

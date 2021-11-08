@@ -2,7 +2,7 @@
 #include "UI/FairyComponent.h"
 #include "Package/FairyPackage.h"
 #include "UI/Controller/GController.h"
-#include "Tween/GTween.h"
+#include "Tween/FairyTweenHelper.h"
 #include "Utils/ByteBuffer.h"
 
 FGearXY::FGearXY(UFairyObject* InOwner) :
@@ -71,7 +71,7 @@ void FGearXY::Apply()
 
     if (TweenConfig.IsSet() && TweenConfig->bTween && UFairyPackage::Constructing == 0 && !bDisableAllTweenEffect)
     {
-        FGTweener* tweener = FGTween::GetTween(TweenConfig->Handle);
+        FGTweener* tweener = FFairyTweenHelper::GetTween(TweenConfig->Handle);
         if (tweener != nullptr)
         {
             if (tweener->EndValue.GetVec2() != EndPt)
@@ -95,7 +95,7 @@ void FGearXY::Apply()
                 TweenConfig->DisplayLockToken = Owner->AddDisplayLock();
             }
 
-            TweenConfig->Handle = FGTween::To(OriginPt, EndPt, TweenConfig->Duration)
+            TweenConfig->Handle = FFairyTweenHelper::To(OriginPt, EndPt, TweenConfig->Duration)
                 ->SetDelay(TweenConfig->Delay)
                 ->SetEase(TweenConfig->EaseType)
                 ->SetTarget(Owner.Get())

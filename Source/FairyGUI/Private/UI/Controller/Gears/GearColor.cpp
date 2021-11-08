@@ -2,7 +2,7 @@
 #include "UI/FairyObject.h"
 #include "Package/FairyPackage.h"
 #include "UI/Controller/GController.h"
-#include "Tween/GTween.h"
+#include "Tween/FairyTweenHelper.h"
 #include "Utils/ByteBuffer.h"
 
 FGearColor::FValue::FValue()
@@ -60,7 +60,7 @@ void FGearColor::Apply()
             Owner->bGearLocked = false;
         }
 
-        FGTweener* tweener = FGTween::GetTween(TweenConfig->Handle);
+        FGTweener* tweener = FFairyTweenHelper::GetTween(TweenConfig->Handle);
         if (tweener != nullptr)
         {
             if (tweener->EndValue.GetColor() != Value->Color)
@@ -80,7 +80,7 @@ void FGearColor::Apply()
 				TweenConfig->DisplayLockToken = Owner->AddDisplayLock();
             }
 
-            TweenConfig->Handle = FGTween::To(curColor, Value->Color, TweenConfig->Duration)
+            TweenConfig->Handle = FFairyTweenHelper::To(curColor, Value->Color, TweenConfig->Duration)
                 ->SetDelay(TweenConfig->Delay)
                 ->SetEase(TweenConfig->EaseType)
                 ->SetTarget(Owner.Get())

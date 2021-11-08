@@ -1265,10 +1265,8 @@ void UTransition::Setup(FByteBuffer* Buffer)
 		int32 curPos = Buffer->GetPos();
 
 		Buffer->Seek(curPos, 0);
-
-		Items.Add(new FTransitionItem((ETransitionActionType)Buffer->ReadByte()));
-		FTransitionItem* item = Items.Last();
-
+		ETransitionActionType ActionType = (ETransitionActionType)Buffer->ReadByte();
+		FTransitionItem* item = new FTransitionItem(ActionType);
 		item->Time = Buffer->ReadFloat();
 		int32 TargetID = Buffer->ReadShort();
 		if (TargetID < 0)
@@ -1280,6 +1278,7 @@ void UTransition::Setup(FByteBuffer* Buffer)
 			item->TargetID = Owner->GetChildAt(TargetID)->GetID();
 		}
 		item->Label = Buffer->ReadS();
+		Items.Add(item);
 
 		if (Buffer->ReadBool())
 		{

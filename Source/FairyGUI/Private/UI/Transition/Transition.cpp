@@ -1326,7 +1326,6 @@ void UTransition::Setup(FByteBuffer* Buffer)
 							v1.Y = Buffer->ReadFloat();
 							pts.Add(FGPathPoint(v0, v1));
 							break;
-
 						case FGPathPoint::ECurveType::CubicBezier:
 							v0.X = Buffer->ReadFloat();
 							v0.Y = Buffer->ReadFloat();
@@ -1336,7 +1335,6 @@ void UTransition::Setup(FByteBuffer* Buffer)
 							v2.Y = Buffer->ReadFloat();
 							pts.Add(FGPathPoint(v0, v1, v2));
 							break;
-
 						default:
 							v0.X = Buffer->ReadFloat();
 							v0.Y = Buffer->ReadFloat();

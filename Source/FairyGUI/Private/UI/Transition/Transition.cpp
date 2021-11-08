@@ -1266,7 +1266,7 @@ void UTransition::Setup(FByteBuffer* Buffer)
 
 		Buffer->Seek(curPos, 0);
 		ETransitionActionType ActionType = (ETransitionActionType)Buffer->ReadByte();
-		FTransitionItem* item = new FTransitionItem(ActionType);
+		FTransitionItem* item = new FTransitionItem(ActionType); // todo: create right item object by type.
 		item->Time = Buffer->ReadFloat();
 		int32 TargetID = Buffer->ReadShort();
 		if (TargetID < 0)
@@ -1280,6 +1280,7 @@ void UTransition::Setup(FByteBuffer* Buffer)
 		item->Label = Buffer->ReadS();
 		Items.Add(item);
 
+		// check this transition item has a tween.
 		if (Buffer->ReadBool())
 		{
 			Buffer->Seek(curPos, 1);

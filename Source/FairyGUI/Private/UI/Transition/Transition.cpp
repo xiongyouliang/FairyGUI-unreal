@@ -1373,79 +1373,56 @@ void UTransition::DecodeValue(FTransitionItem* item, FByteBuffer* Buffer, FTrans
 	case ETransitionActionType::Size:
 	case ETransitionActionType::Pivot:
 	case ETransitionActionType::Skew:
-	{
 		Value->b1 = Buffer->ReadBool();
 		Value->b2 = Buffer->ReadBool();
 		Value->f1 = Buffer->ReadFloat();
 		Value->f2 = Buffer->ReadFloat();
 
 		if (Buffer->Version >= 2 && item->Type == ETransitionActionType::XY)
+		{
 			Value->b3 = Buffer->ReadBool(); //percent
+		}
 		break;
-	}
-
 	case ETransitionActionType::Alpha:
 	case ETransitionActionType::Rotation:
 		Value->f1 = Buffer->ReadFloat();
 		break;
-
 	case ETransitionActionType::Scale:
-	{
 		Value->f1 = Buffer->ReadFloat();
 		Value->f2 = Buffer->ReadFloat();
 		break;
-	}
-
 	case ETransitionActionType::Color:
 		Value->SetColor(Buffer->ReadColor());
 		break;
-
 	case ETransitionActionType::Animation:
-	{
 		item->AniData->bPlaying = Buffer->ReadBool();
 		item->AniData->Frame = Buffer->ReadInt();
 		break;
-	}
-
 	case ETransitionActionType::Visible:
 		item->VisibleData = Buffer->ReadBool();
 		break;
-
 	case ETransitionActionType::Sound:
-	{
 		item->SoundData->URL = Buffer->ReadS();
 		item->SoundData->Volume = Buffer->ReadFloat();
 		break;
-	}
-
 	case ETransitionActionType::Transition:
-	{
 		item->TransData->Name = Buffer->ReadS();
 		item->TransData->PlayTimes = Buffer->ReadInt();
 		break;
-	}
-
 	case ETransitionActionType::Shake:
-	{
 		item->ShakeData->Amplitude = Buffer->ReadFloat();
 		item->ShakeData->Duration = Buffer->ReadFloat();
 		break;
-	}
-
 	case ETransitionActionType::ColorFilter:
-	{
 		Value->f1 = Buffer->ReadFloat();
 		Value->f2 = Buffer->ReadFloat();
 		Value->f3 = Buffer->ReadFloat();
 		Value->f4 = Buffer->ReadFloat();
 		break;
-	}
-
 	case ETransitionActionType::Text:
 	case ETransitionActionType::Icon:
 		item->TextData = Buffer->ReadS();
 		break;
-
 	default:
 		break;
 	}

@@ -43,87 +43,87 @@ UTransition::~UTransition()
 
 void UTransition::Play(int32 InTimes, float InDelay, float InStartTime, float InEndTime, bool bInReverse, FSimpleDelegate InCompleteCallback)
 {
-	Stop(true, true);
+	//Stop(true, true);
 
-	TotalTimes = InTimes;
-	bReversed = bInReverse;
-	StartTime = InStartTime;
-	EndTime = InEndTime;
-	bPlaying = true;
-	bPaused = false;
-	CompleteCallback = InCompleteCallback;
+	//TotalTimes = InTimes;
+	//bReversed = bInReverse;
+	//StartTime = InStartTime;
+	//EndTime = InEndTime;
+	//bPlaying = true;
+	//bPaused = false;
+	//CompleteCallback = InCompleteCallback;
 
-	int32 cnt = Items.Num();
-	for (int32 i = 0; i < cnt; i++)
-	{
-		FTransitionItem* item = Items[i];
-		if (item->Target == nullptr)
-		{
-			if (!item->TargetID.IsEmpty())
-			{
-				item->Target = Owner->GetChildByID(item->TargetID);
-			}
-			else
-			{
-				item->Target = Owner;
-			}
-		}
-		else if (item->Target != Owner && item->Target->GetParent() != Owner) //maybe removed
-		{
-			item->Target = nullptr;
-		}
+	//int32 cnt = Items.Num();
+	//for (int32 i = 0; i < cnt; i++)
+	//{
+	//	FTransitionItemBase* item = Items[i];
+	//	if (item->Target == nullptr)
+	//	{
+	//		if (!item->TargetID.IsEmpty())
+	//		{
+	//			item->Target = Owner->GetChildByID(item->TargetID);
+	//		}
+	//		else
+	//		{
+	//			item->Target = Owner;
+	//		}
+	//	}
+	//	else if (item->Target != Owner && item->Target->GetParent() != Owner) //maybe removed
+	//	{
+	//		item->Target = nullptr;
+	//	}
 
-		if (item->Target != nullptr && item->Type == ETransitionActionType::Transition)
-		{
-			UTransition* trans = Cast<UFairyComponent>(item->Target)->GetTransition(item->TransData->Name);
-			if (trans == this)
-			{
-				trans = nullptr;
-			}
+	//	if (item->Target != nullptr && item->Type == ETransitionActionType::Transition)
+	//	{
+	//		UTransition* trans = Cast<UFairyComponent>(item->Target)->GetTransition(item->TransData->Name);
+	//		if (trans == this)
+	//		{
+	//			trans = nullptr;
+	//		}
 
-			if (trans != nullptr)
-			{
-				if (item->TransData->PlayTimes == 0) //stop
-				{
-					int32 j;
-					for (j = i - 1; j >= 0; j--)
-					{
-						FTransitionItem* item2 = Items[j];
-						if (item2->Type == ETransitionActionType::Transition)
-						{
-							if (item2->TransData->Instance == trans)
-							{
-								item2->TransData->StopTime = item->Time - item2->Time;
-								break;
-							}
-						}
-					}
-					if (j < 0)
-					{
-						item->TransData->StopTime = 0;
-					}
-					else
-					{
-						trans = nullptr; //no need to handle stop anymore
-					}
-				}
-				else
-				{
-					item->TransData->StopTime = -1;
-				}
-			}
-			item->TransData->Instance = trans;
-		}
-	}
+	//		if (trans != nullptr)
+	//		{
+	//			if (item->TransData->PlayTimes == 0) //stop
+	//			{
+	//				int32 j;
+	//				for (j = i - 1; j >= 0; j--)
+	//				{
+	//					FTransitionItemBase* item2 = Items[j];
+	//					if (item2->Type == ETransitionActionType::Transition)
+	//					{
+	//						if (item2->TransData->Instance == trans)
+	//						{
+	//							item2->TransData->StopTime = item->Time - item2->Time;
+	//							break;
+	//						}
+	//					}
+	//				}
+	//				if (j < 0)
+	//				{
+	//					item->TransData->StopTime = 0;
+	//				}
+	//				else
+	//				{
+	//					trans = nullptr; //no need to handle stop anymore
+	//				}
+	//			}
+	//			else
+	//			{
+	//				item->TransData->StopTime = -1;
+	//			}
+	//		}
+	//		item->TransData->Instance = trans;
+	//	}
+	//}
 
-	if (InDelay == 0)
-	{
-		OnDelayedPlay();
-	}
-	else
-	{
-		DelayHandle = FFairyTweenHelper::DelayedCall(InDelay)->OnComplete(FSimpleDelegate::CreateUObject(this, &UTransition::OnDelayedPlay))->GetHandle();
-	}
+	//if (InDelay == 0)
+	//{
+	//	OnDelayedPlay();
+	//}
+	//else
+	//{
+	//	DelayHandle = FFairyTweenHelper::DelayedCall(InDelay)->OnComplete(FSimpleDelegate::CreateUObject(this, &UTransition::OnDelayedPlay))->GetHandle();
+	//}
 }
 
 void UTransition::ChangePlayTimes(int32 InTimes)
@@ -173,8 +173,8 @@ void UTransition::Stop(bool bSetToComplete, bool bProcessCallback)
 	{
 		for (int32 i = cnt - 1; i >= 0; i--)
 		{
-			FTransitionItem* item = Items[i];
-			if (item->Target == nullptr)
+			FTransitionItemBase* item = Items[i];
+			if (!item->IsTargetValid())
 			{
 				continue;
 			}
@@ -186,8 +186,8 @@ void UTransition::Stop(bool bSetToComplete, bool bProcessCallback)
 	{
 		for (int32 i = 0; i < cnt; i++)
 		{
-			FTransitionItem* item = Items[i];
-			if (item->Target == nullptr)
+			FTransitionItemBase* item = Items[i];
+			if (!item->IsTargetValid())
 			{
 				continue;
 			}
@@ -201,326 +201,327 @@ void UTransition::Stop(bool bSetToComplete, bool bProcessCallback)
 	}
 }
 
-void UTransition::StopItem(FTransitionItem* item, bool bSetToComplete)
+void UTransition::StopItem(FTransitionItemBase* item, bool bSetToComplete)
 {
-	if (item->DisplayLockToken != 0)
-	{
-		item->Target->ReleaseDisplayLock(item->DisplayLockToken);
-		item->DisplayLockToken = 0;
-	}
+	//if (item->DisplayLockToken != 0)
+	//{
+	//	item->Target->ReleaseDisplayLock(item->DisplayLockToken);
+	//	item->DisplayLockToken = 0;
+	//}
 
-	if (item->Tweener != nullptr)
-	{
-		item->Tweener->Kill(bSetToComplete);
-		item->Tweener = nullptr;
+	//if (item->Tweener != nullptr)
+	//{
+	//	item->Tweener->Kill(bSetToComplete);
+	//	item->Tweener = nullptr;
 
-		if (item->Type == ETransitionActionType::Shake && !bSetToComplete)
-		{
-			item->Target->bGearLocked = true;
-			item->Target->SetPosition(item->Target->GetPosition() - item->ShakeData->LastOffset);
-			item->Target->bGearLocked = false;
-		}
-	}
+	//	if (item->Type == ETransitionActionType::Shake && !bSetToComplete)
+	//	{
+	//		item->Target->bGearLocked = true;
+	//		item->Target->SetPosition(item->Target->GetPosition() - item->ShakeData->LastOffset);
+	//		item->Target->bGearLocked = false;
+	//	}
+	//}
 }
 
 void UTransition::SetPaused(bool bInPaused)
 {
-	if (!bPlaying || bPaused == bInPaused)
-	{
-		return;
-	}
+	//if (!bPlaying || bPaused == bInPaused)
+	//{
+	//	return;
+	//}
 
-	bPaused = bInPaused;
-	FGTweener* tweener = FFairyTweenHelper::GetTween(DelayHandle);
-	if (tweener != nullptr)
-	{
-		tweener->SetPaused(bPaused);
-	}
+	//bPaused = bInPaused;
+	//FGTweener* tweener = FFairyTweenHelper::GetTween(DelayHandle);
+	//if (tweener != nullptr)
+	//{
+	//	tweener->SetPaused(bPaused);
+	//}
 
-	for (auto& item : Items)
-	{
-		if (item->Target == nullptr)
-		{
-			continue;
-		}
+	//for (auto& item : Items)
+	//{
+	//	if (item->Target == nullptr)
+	//	{
+	//		continue;
+	//	}
 
-		if (item->Type == ETransitionActionType::Transition)
-		{
-			if (item->TransData->Instance != nullptr)
-			{
-				item->TransData->Instance->SetPaused(bPaused);
-			}
-		}
-		else if (item->Type == ETransitionActionType::Animation)
-		{
-			if (bPaused)
-			{
-				item->AniData->bFlag = item->Target->GetProp<bool>(EObjectPropID::Playing);
-				item->Target->SetProp(EObjectPropID::Playing, FNVariant(false));
-			}
-			else
-			{
-				item->Target->SetProp(EObjectPropID::Playing, FNVariant(item->AniData->bFlag));
-			}
-		}
+	//	if (item->Type == ETransitionActionType::Transition)
+	//	{
+	//		if (item->TransData->Instance != nullptr)
+	//		{
+	//			item->TransData->Instance->SetPaused(bPaused);
+	//		}
+	//	}
+	//	else if (item->Type == ETransitionActionType::Animation)
+	//	{
+	//		if (bPaused)
+	//		{
+	//			item->AniData->bFlag = item->Target->GetProp<bool>(EObjectPropID::Playing);
+	//			item->Target->SetProp(EObjectPropID::Playing, FNVariant(false));
+	//		}
+	//		else
+	//		{
+	//			item->Target->SetProp(EObjectPropID::Playing, FNVariant(item->AniData->bFlag));
+	//		}
+	//	}
 
-		if (item->Tweener != nullptr)
-		{
-			item->Tweener->SetPaused(bPaused);
-		}
-	}
+	//	if (item->Tweener != nullptr)
+	//	{
+	//		item->Tweener->SetPaused(bPaused);
+	//	}
+	//}
 }
 
 void UTransition::SetValue(const FString& InLabel, const TArray<FNVariant>& InValues)
 {
-	FTransitionItemData* Value = nullptr;
+	//FTransitionItemData* Value = nullptr;
 
-	for (auto& item : Items)
-	{
-		if (item->Label == InLabel)
-		{
-			if (item->TweenConfig.IsSet())
-			{
-				Value = &item->TweenConfig->StartData;
-			}
-			else if (item->Data.IsSet())
-			{
-				Value = &item->Data.GetValue();
-			}
-		}
-		else if (item->TweenConfig.IsSet() && item->TweenConfig->EndLabel == InLabel)
-		{
-			Value = &item->TweenConfig->EndData;
-		}
-		else
-		{
-			continue;
-		}
+	//for (auto& item : Items)
+	//{
+	//	if (item->Label == InLabel)
+	//	{
+	//		if (item->TweenConfig.IsSet())
+	//		{
+	//			Value = &item->TweenConfig->StartData;
+	//		}
+	//		else if (item->Data.IsSet())
+	//		{
+	//			Value = &item->Data.GetValue();
+	//		}
+	//	}
+	//	else if (item->TweenConfig.IsSet() && item->TweenConfig->EndLabel == InLabel)
+	//	{
+	//		Value = &item->TweenConfig->EndData;
+	//	}
+	//	else
+	//	{
+	//		continue;
+	//	}
 
-		switch (item->Type)
-		{
-		case ETransitionActionType::XY:
-		case ETransitionActionType::Size:
-		case ETransitionActionType::Pivot:
-		case ETransitionActionType::Scale:
-		case ETransitionActionType::Skew:
-		{
-			Value->b1 = true;
-			Value->b2 = true;
-			Value->f1 = InValues[0].AsFloat();
-			Value->f2 = InValues[1].AsFloat();
-			break;
-		}
+	//	switch (item->Type)
+	//	{
+	//	case ETransitionActionType::XY:
+	//	case ETransitionActionType::Size:
+	//	case ETransitionActionType::Pivot:
+	//	case ETransitionActionType::Scale:
+	//	case ETransitionActionType::Skew:
+	//	{
+	//		Value->b1 = true;
+	//		Value->b2 = true;
+	//		Value->f1 = InValues[0].AsFloat();
+	//		Value->f2 = InValues[1].AsFloat();
+	//		break;
+	//	}
 
-		case ETransitionActionType::Alpha:
-		case ETransitionActionType::Rotation:
-			Value->f1 = InValues[0].AsFloat();
-			break;
+	//	case ETransitionActionType::Alpha:
+	//	case ETransitionActionType::Rotation:
+	//		Value->f1 = InValues[0].AsFloat();
+	//		break;
 
-		case ETransitionActionType::Color:
-		{
-			Value->SetColor(InValues[0].AsColor());
-			break;
-		}
+	//	case ETransitionActionType::Color:
+	//	{
+	//		Value->SetColor(InValues[0].AsColor());
+	//		break;
+	//	}
 
-		case ETransitionActionType::Animation:
-		{
-			item->AniData->Frame = InValues[0].AsInt();
-			if (InValues.Num() > 1)
-			{
-				item->AniData->bPlaying = InValues[0].AsBool();
-			}
-			break;
-		}
+	//	case ETransitionActionType::Animation:
+	//	{
+	//		item->AniData->Frame = InValues[0].AsInt();
+	//		if (InValues.Num() > 1)
+	//		{
+	//			item->AniData->bPlaying = InValues[0].AsBool();
+	//		}
+	//		break;
+	//	}
 
-		case ETransitionActionType::Visible:
-			item->VisibleData = InValues[0].AsBool();
-			break;
+	//	case ETransitionActionType::Visible:
+	//		item->VisibleData = InValues[0].AsBool();
+	//		break;
 
-		case ETransitionActionType::Sound:
-		{
-			item->SoundData->URL = InValues[0].AsString();
-			if (InValues.Num() > 1)
-			{
-				item->SoundData->Volume = InValues[1].AsFloat();
-			}
-			break;
-		}
+	//	case ETransitionActionType::Sound:
+	//	{
+	//		item->SoundData->URL = InValues[0].AsString();
+	//		if (InValues.Num() > 1)
+	//		{
+	//			item->SoundData->Volume = InValues[1].AsFloat();
+	//		}
+	//		break;
+	//	}
 
-		case ETransitionActionType::Transition:
-		{
-			item->TransData->Name = InValues[0].AsString();
-			if (InValues.Num() > 1)
-			{
-				item->TransData->PlayTimes = InValues[1].AsInt();
-			}
-			break;
-		}
+	//	case ETransitionActionType::Transition:
+	//	{
+	//		item->TransData->Name = InValues[0].AsString();
+	//		if (InValues.Num() > 1)
+	//		{
+	//			item->TransData->PlayTimes = InValues[1].AsInt();
+	//		}
+	//		break;
+	//	}
 
-		case ETransitionActionType::Shake:
-		{
-			item->ShakeData->Amplitude = InValues[0].AsFloat();
-			if (InValues.Num() > 1)
-			{
-				item->ShakeData->Duration = InValues[1].AsFloat();
-			}
-			break;
-		}
+	//	case ETransitionActionType::Shake:
+	//	{
+	//		item->ShakeData->Amplitude = InValues[0].AsFloat();
+	//		if (InValues.Num() > 1)
+	//		{
+	//			item->ShakeData->Duration = InValues[1].AsFloat();
+	//		}
+	//		break;
+	//	}
 
-		case ETransitionActionType::ColorFilter:
-		{
-			Value->f1 = InValues[0].AsFloat();
-			Value->f2 = InValues[1].AsFloat();
-			Value->f3 = InValues[2].AsFloat();
-			Value->f4 = InValues[3].AsFloat();
-			break;
-		}
+	//	case ETransitionActionType::ColorFilter:
+	//	{
+	//		Value->f1 = InValues[0].AsFloat();
+	//		Value->f2 = InValues[1].AsFloat();
+	//		Value->f3 = InValues[2].AsFloat();
+	//		Value->f4 = InValues[3].AsFloat();
+	//		break;
+	//	}
 
-		case ETransitionActionType::Text:
-		case ETransitionActionType::Icon:
-			item->TextData = InValues[0].AsString();
-			break;
-		default:
-			break;
-		}
-	}
+	//	case ETransitionActionType::Text:
+	//	case ETransitionActionType::Icon:
+	//		item->TextData = InValues[0].AsString();
+	//		break;
+	//	default:
+	//		break;
+	//	}
+	//}
 }
 
 void UTransition::SetHook(const FString& InLabel, FSimpleDelegate Callback)
 {
-	for (auto& item : Items)
-	{
-		if (item->Label == InLabel)
-		{
-			item->Hook = Callback;
-			break;
-		}
-		else if (item->TweenConfig.IsSet() && item->TweenConfig->EndLabel == InLabel)
-		{
-			item->TweenConfig->EndHook = Callback;
-			break;
-		}
-	}
+	//for (auto& item : Items)
+	//{
+	//	if (item->Label == InLabel)
+	//	{
+	//		item->Hook = Callback;
+	//		break;
+	//	}
+	//	else if (item->TweenConfig.IsSet() && item->TweenConfig->EndLabel == InLabel)
+	//	{
+	//		item->TweenConfig->EndHook = Callback;
+	//		break;
+	//	}
+	//}
 }
 
 void UTransition::ClearHooks()
 {
-	for (auto& item : Items)
-	{
-		item->Hook.Unbind();
-		if (item->TweenConfig.IsSet())
-		{
-			item->TweenConfig->EndHook.Unbind();
-		}
-	}
+	//for (auto& item : Items)
+	//{
+	//	item->Hook.Unbind();
+	//	if (item->TweenConfig.IsSet())
+	//	{
+	//		item->TweenConfig->EndHook.Unbind();
+	//	}
+	//}
 }
 
 void UTransition::SetTarget(const FString& InLabel, UFairyObject* InTarget)
 {
-	for (auto& item : Items)
-	{
-		if (item->Label == InLabel)
-		{
+	//for (auto& item : Items)
+	//{
+	//	if (item->Label == InLabel)
+	//	{
 
-			item->TargetID = InTarget->GetID();
-			item->Target = nullptr;
-		}
-	}
+	//		item->TargetID = InTarget->GetID();
+	//		item->Target = nullptr;
+	//	}
+	//}
 }
 
 void UTransition::SetDuration(const FString& InLabel, float InDuration)
 {
-	for (auto& item : Items)
-	{
-		if (item->TweenConfig.IsSet() && item->Label == InLabel)
-		{
-			item->TweenConfig->Duration = InDuration;
-		}
-	}
+	//for (auto& item : Items)
+	//{
+	//	if (item->TweenConfig.IsSet() && item->Label == InLabel)
+	//	{
+	//		item->TweenConfig->Duration = InDuration;
+	//	}
+	//}
 }
 
 float UTransition::GetLabelTime(const FString& InLabel) const
 {
-	for (auto& item : Items)
-	{
-		if (item->Label == InLabel)
-		{
-			if (item->TweenConfig.IsSet())
-			{
-				return item->Time + item->TweenConfig->Duration;
-			}
-			else
-			{
-				return item->Time;
-			}
-		}
-	}
+	//for (auto& item : Items)
+	//{
+	//	if (item->Label == InLabel)
+	//	{
+	//		if (item->TweenConfig.IsSet())
+	//		{
+	//			return item->Time + item->TweenConfig->Duration;
+	//		}
+	//		else
+	//		{
+	//			return item->Time;
+	//		}
+	//	}
+	//}
 
-	return NAN;
+	//return NAN;
+	return 0.0f;
 }
 
 void UTransition::SetTimeScale(float InTimeScale)
 {
-	if (TimeScale != InTimeScale)
-	{
-		TimeScale = InTimeScale;
+	//if (TimeScale != InTimeScale)
+	//{
+	//	TimeScale = InTimeScale;
 
-		for (auto& item : Items)
-		{
-			if (item->Tweener != nullptr)
-			{
-				item->Tweener->SetTimeScale(InTimeScale);
-			}
-			else if (item->Type == ETransitionActionType::Transition)
-			{
-				if (item->TransData->Instance != nullptr)
-				{
-					item->TransData->Instance->SetTimeScale(InTimeScale);
-				}
-			}
-			else if (item->Type == ETransitionActionType::Animation)
-			{
-				if (item->Target != nullptr)
-				{
-					item->Target->SetProp(EObjectPropID::TimeScale, FNVariant(InTimeScale));
-				}
-			}
-		}
-	}
+	//	for (auto& item : Items)
+	//	{
+	//		if (item->Tweener != nullptr)
+	//		{
+	//			item->Tweener->SetTimeScale(InTimeScale);
+	//		}
+	//		else if (item->Type == ETransitionActionType::Transition)
+	//		{
+	//			if (item->TransData->Instance != nullptr)
+	//			{
+	//				item->TransData->Instance->SetTimeScale(InTimeScale);
+	//			}
+	//		}
+	//		else if (item->Type == ETransitionActionType::Animation)
+	//		{
+	//			if (item->Target != nullptr)
+	//			{
+	//				item->Target->SetProp(EObjectPropID::TimeScale, FNVariant(InTimeScale));
+	//			}
+	//		}
+	//	}
+	//}
 }
 
 void UTransition::UpdateFromRelations(const FString& TargetID, const FVector2D& Delta)
 {
-	int32 cnt = Items.Num();
-	if (cnt == 0)
-	{
-		return;
-	}
+	//int32 cnt = Items.Num();
+	//if (cnt == 0)
+	//{
+	//	return;
+	//}
 
-	for (auto& item : Items)
-	{
-		if (item->Type == ETransitionActionType::XY && item->TargetID == TargetID)
-		{
-			if (item->TweenConfig.IsSet())
-			{
-				if (!item->TweenConfig->StartData.b3)
-				{
-					item->TweenConfig->StartData.f1 += Delta.X;
-					item->TweenConfig->StartData.f2 += Delta.Y;
-					item->TweenConfig->EndData.f1 += Delta.X;
-					item->TweenConfig->EndData.f2 += Delta.Y;
-				}
-			}
-			else
-			{
-				if (!item->Data->b3)
-				{
-					item->Data->f1 += Delta.X;
-					item->Data->f2 += Delta.Y;
-				}
-			}
-		}
-	}
+	//for (auto& item : Items)
+	//{
+	//	if (item->Type == ETransitionActionType::XY && item->TargetID == TargetID)
+	//	{
+	//		if (item->TweenConfig.IsSet())
+	//		{
+	//			if (!item->TweenConfig->StartData.b3)
+	//			{
+	//				item->TweenConfig->StartData.f1 += Delta.X;
+	//				item->TweenConfig->StartData.f2 += Delta.Y;
+	//				item->TweenConfig->EndData.f1 += Delta.X;
+	//				item->TweenConfig->EndData.f2 += Delta.Y;
+	//			}
+	//		}
+	//		else
+	//		{
+	//			if (!item->Data->b3)
+	//			{
+	//				item->Data->f1 += Delta.X;
+	//				item->Data->f2 += Delta.Y;
+	//			}
+	//		}
+	//	}
+	//}
 }
 
 void UTransition::OnOwnerAddedToStage()
@@ -541,711 +542,711 @@ void UTransition::OnOwnerRemovedFromStage()
 
 void UTransition::OnDelayedPlay()
 {
-	InternalPlay();
+	//InternalPlay();
 
-	bPlaying = TotalTasks > 0;
-	if (bPlaying)
-	{
-		if ((Options & OPTION_IGNORE_DISPLAY_CONTROLLER) != 0)
-		{
-			for (auto& item : Items)
-			{
-				if (item->Target != nullptr && item->Target != Owner)
-				{
-					item->DisplayLockToken = item->Target->AddDisplayLock();
-				}
-			}
-		}
-	}
-	else if (CompleteCallback.IsBound())
-	{
-		FSimpleDelegate func = CompleteCallback;
-		CompleteCallback.Unbind();
-		func.Execute();
-	}
+	//bPlaying = TotalTasks > 0;
+	//if (bPlaying)
+	//{
+	//	if ((Options & OPTION_IGNORE_DISPLAY_CONTROLLER) != 0)
+	//	{
+	//		for (auto& item : Items)
+	//		{
+	//			if (item->Target != nullptr && item->Target != Owner)
+	//			{
+	//				item->DisplayLockToken = item->Target->AddDisplayLock();
+	//			}
+	//		}
+	//	}
+	//}
+	//else if (CompleteCallback.IsBound())
+	//{
+	//	FSimpleDelegate func = CompleteCallback;
+	//	CompleteCallback.Unbind();
+	//	func.Execute();
+	//}
 }
 
 void UTransition::InternalPlay()
 {
-	OwnerBasePos = Owner->GetPosition();
+	//OwnerBasePos = Owner->GetPosition();
 
-	TotalTasks = 0;
+	//TotalTasks = 0;
 
-	bool bNeedSkipAnimations = false;
-	int32 cnt = Items.Num();
-	if (!bReversed)
-	{
-		for (int32 i = 0; i < cnt; i++)
-		{
-			FTransitionItem* item = Items[i];
-			if (item->Target == nullptr)
-			{
-				continue;
-			}
+	//bool bNeedSkipAnimations = false;
+	//int32 cnt = Items.Num();
+	//if (!bReversed)
+	//{
+	//	for (int32 i = 0; i < cnt; i++)
+	//	{
+	//		FTransitionItemBase* item = Items[i];
+	//		if (item->Target == nullptr)
+	//		{
+	//			continue;
+	//		}
 
-			if (item->Type == ETransitionActionType::Animation && StartTime != 0 && item->Time <= StartTime)
-			{
-				bNeedSkipAnimations = true;
-				item->AniData->bFlag = false;
-			}
-			else
-			{
-				PlayItem(item);
-			}
-		}
-	}
-	else
-	{
-		for (int32 i = cnt - 1; i >= 0; i--)
-		{
-			FTransitionItem* item = Items[i];
-			if (item->Target == nullptr)
-			{
-				continue;
-			}
+	//		if (item->Type == ETransitionActionType::Animation && StartTime != 0 && item->Time <= StartTime)
+	//		{
+	//			bNeedSkipAnimations = true;
+	//			item->AniData->bFlag = false;
+	//		}
+	//		else
+	//		{
+	//			PlayItem(item);
+	//		}
+	//	}
+	//}
+	//else
+	//{
+	//	for (int32 i = cnt - 1; i >= 0; i--)
+	//	{
+	//		FTransitionItemBase* item = Items[i];
+	//		if (item->Target == nullptr)
+	//		{
+	//			continue;
+	//		}
 
-			PlayItem(item);
-		}
-	}
+	//		PlayItem(item);
+	//	}
+	//}
 
-	if (bNeedSkipAnimations)
-	{
-		SkipAnimations();
-	}
+	//if (bNeedSkipAnimations)
+	//{
+	//	SkipAnimations();
+	//}
 }
 
-void UTransition::PlayItem(FTransitionItem* item)
+void UTransition::PlayItem(FTransitionItemBase* item)
 {
-	float time;
-	if (item->TweenConfig.IsSet())
-	{
-		if (bReversed)
-		{
-			time = (TotalDuration - item->Time - item->TweenConfig->Duration);
-		}
-		else
-		{
-			time = item->Time;
-		}
+	//float time;
+	//if (item->TweenConfig.IsSet())
+	//{
+	//	if (bReversed)
+	//	{
+	//		time = (TotalDuration - item->Time - item->TweenConfig->Duration);
+	//	}
+	//	else
+	//	{
+	//		time = item->Time;
+	//	}
 
-		if (EndTime == -1 || time <= EndTime)
-		{
-			FTransitionItemData* startValue;
-			FTransitionItemData* endValue;
+	//	if (EndTime == -1 || time <= EndTime)
+	//	{
+	//		FTransitionItemData* startValue;
+	//		FTransitionItemData* endValue;
 
-			if (bReversed)
-			{
-				startValue = &item->TweenConfig->EndData;
-				endValue = &item->TweenConfig->StartData;
-			}
-			else
-			{
-				startValue = &item->TweenConfig->StartData;
-				endValue = &item->TweenConfig->EndData;
-			}
+	//		if (bReversed)
+	//		{
+	//			startValue = &item->TweenConfig->EndData;
+	//			endValue = &item->TweenConfig->StartData;
+	//		}
+	//		else
+	//		{
+	//			startValue = &item->TweenConfig->StartData;
+	//			endValue = &item->TweenConfig->EndData;
+	//		}
 
-			item->Data->b1 = startValue->b1 || endValue->b1;
-			item->Data->b2 = startValue->b2 || endValue->b2;
+	//		item->Data->b1 = startValue->b1 || endValue->b1;
+	//		item->Data->b2 = startValue->b2 || endValue->b2;
 
-			switch (item->Type)
-			{
-			case ETransitionActionType::XY:
-			case ETransitionActionType::Size:
-			case ETransitionActionType::Scale:
-			case ETransitionActionType::Skew:
-				item->Tweener = FFairyTweenHelper::To(startValue->GetVec2(), endValue->GetVec2(), item->TweenConfig->Duration);
-				break;
+	//		switch (item->Type)
+	//		{
+	//		case ETransitionActionType::XY:
+	//		case ETransitionActionType::Size:
+	//		case ETransitionActionType::Scale:
+	//		case ETransitionActionType::Skew:
+	//			item->Tweener = FFairyTweenHelper::To(startValue->GetVec2(), endValue->GetVec2(), item->TweenConfig->Duration);
+	//			break;
 
-			case ETransitionActionType::Alpha:
-			case ETransitionActionType::Rotation:
-				item->Tweener = FFairyTweenHelper::To(startValue->f1, endValue->f1, item->TweenConfig->Duration);
-				break;
+	//		case ETransitionActionType::Alpha:
+	//		case ETransitionActionType::Rotation:
+	//			item->Tweener = FFairyTweenHelper::To(startValue->f1, endValue->f1, item->TweenConfig->Duration);
+	//			break;
 
-			case ETransitionActionType::Color:
-				item->Tweener = FFairyTweenHelper::To(startValue->GetColor(), endValue->GetColor(), item->TweenConfig->Duration);
-				break;
+	//		case ETransitionActionType::Color:
+	//			item->Tweener = FFairyTweenHelper::To(startValue->GetColor(), endValue->GetColor(), item->TweenConfig->Duration);
+	//			break;
 
-			case ETransitionActionType::ColorFilter:
-				item->Tweener = FFairyTweenHelper::To(startValue->GetVec4(), endValue->GetVec4(), item->TweenConfig->Duration);
-				break;
-			default:
-				break;
-			}
+	//		case ETransitionActionType::ColorFilter:
+	//			item->Tweener = FFairyTweenHelper::To(startValue->GetVec4(), endValue->GetVec4(), item->TweenConfig->Duration);
+	//			break;
+	//		default:
+	//			break;
+	//		}
 
-			item->Tweener->SetDelay(time)
-				->SetEase(item->TweenConfig->EaseType)
-				->SetRepeat(item->TweenConfig->Repeat, item->TweenConfig->bYoyo)
-				->SetTimeScale(TimeScale)
-				->SetUserData(FNVariant(item))
-				->OnStart(FTweenDelegate::CreateUObject(this, &UTransition::OnTweenStart))
-				->OnUpdate(FTweenDelegate::CreateUObject(this, &UTransition::OnTweenUpdate))
-				->OnComplete(FTweenDelegate::CreateUObject(this, &UTransition::OnTweenComplete));
+	//		item->Tweener->SetDelay(time)
+	//			->SetEase(item->TweenConfig->EaseType)
+	//			->SetRepeat(item->TweenConfig->Repeat, item->TweenConfig->bYoyo)
+	//			->SetTimeScale(TimeScale)
+	//			->SetUserData(FNVariant(item))
+	//			->OnStart(FTweenDelegate::CreateUObject(this, &UTransition::OnTweenStart))
+	//			->OnUpdate(FTweenDelegate::CreateUObject(this, &UTransition::OnTweenUpdate))
+	//			->OnComplete(FTweenDelegate::CreateUObject(this, &UTransition::OnTweenComplete));
 
-			if (EndTime >= 0)
-			{
-				item->Tweener->SetBreakpoint(EndTime - time);
-			}
+	//		if (EndTime >= 0)
+	//		{
+	//			item->Tweener->SetBreakpoint(EndTime - time);
+	//		}
 
-			TotalTasks++;
-		}
-	}
-	else if (item->Type == ETransitionActionType::Shake)
-	{
-		if (bReversed)
-		{
-			time = (TotalDuration - item->Time - item->ShakeData->Duration);
-		}
-		else
-		{
-			time = item->Time;
-		}
+	//		TotalTasks++;
+	//	}
+	//}
+	//else if (item->Type == ETransitionActionType::Shake)
+	//{
+	//	if (bReversed)
+	//	{
+	//		time = (TotalDuration - item->Time - item->ShakeData->Duration);
+	//	}
+	//	else
+	//	{
+	//		time = item->Time;
+	//	}
 
-		if (EndTime == -1 || time <= EndTime)
-		{
-			item->ShakeData->LastOffset.Set(0, 0);
-			item->ShakeData->Offset.Set(0, 0);
-			item->Tweener = FFairyTweenHelper::Shake(FVector2D::ZeroVector, item->ShakeData->Amplitude, item->ShakeData->Duration)
-				->SetDelay(time)
-				->SetTimeScale(TimeScale)
-				->SetUserData(FNVariant(item))
-				->OnStart(FTweenDelegate::CreateUObject(this, &UTransition::OnTweenStart))
-				->OnUpdate(FTweenDelegate::CreateUObject(this, &UTransition::OnTweenUpdate))
-				->OnComplete(FTweenDelegate::CreateUObject(this, &UTransition::OnTweenComplete));
+	//	if (EndTime == -1 || time <= EndTime)
+	//	{
+	//		item->ShakeData->LastOffset.Set(0, 0);
+	//		item->ShakeData->Offset.Set(0, 0);
+	//		item->Tweener = FFairyTweenHelper::Shake(FVector2D::ZeroVector, item->ShakeData->Amplitude, item->ShakeData->Duration)
+	//			->SetDelay(time)
+	//			->SetTimeScale(TimeScale)
+	//			->SetUserData(FNVariant(item))
+	//			->OnStart(FTweenDelegate::CreateUObject(this, &UTransition::OnTweenStart))
+	//			->OnUpdate(FTweenDelegate::CreateUObject(this, &UTransition::OnTweenUpdate))
+	//			->OnComplete(FTweenDelegate::CreateUObject(this, &UTransition::OnTweenComplete));
 
-			if (EndTime >= 0)
-			{
-				item->Tweener->SetBreakpoint(EndTime - item->Time);
-			}
+	//		if (EndTime >= 0)
+	//		{
+	//			item->Tweener->SetBreakpoint(EndTime - item->Time);
+	//		}
 
-			TotalTasks++;
-		}
-	}
-	else
-	{
-		if (bReversed)
-		{
-			time = (TotalDuration - item->Time);
-		}
-		else
-		{
-			time = item->Time;
-		}
+	//		TotalTasks++;
+	//	}
+	//}
+	//else
+	//{
+	//	if (bReversed)
+	//	{
+	//		time = (TotalDuration - item->Time);
+	//	}
+	//	else
+	//	{
+	//		time = item->Time;
+	//	}
 
-		if (time <= StartTime)
-		{
-			ApplyValue(item);
-			CallHook(item, false);
-		}
-		else if (EndTime == -1 || time <= EndTime)
-		{
-			TotalTasks++;
-			item->Tweener = FFairyTweenHelper::DelayedCall(time)
-				->SetTimeScale(TimeScale)
-				->SetUserData(FNVariant(item))
-				->OnComplete(FTweenDelegate::CreateUObject(this, &UTransition::OnDelayedPlayItem));
-		}
-	}
+	//	if (time <= StartTime)
+	//	{
+	//		ApplyValue(item);
+	//		CallHook(item, false);
+	//	}
+	//	else if (EndTime == -1 || time <= EndTime)
+	//	{
+	//		TotalTasks++;
+	//		item->Tweener = FFairyTweenHelper::DelayedCall(time)
+	//			->SetTimeScale(TimeScale)
+	//			->SetUserData(FNVariant(item))
+	//			->OnComplete(FTweenDelegate::CreateUObject(this, &UTransition::OnDelayedPlayItem));
+	//	}
+	//}
 
-	if (item->Tweener != nullptr)
-	{
-		item->Tweener->Seek(StartTime);
-	}
+	//if (item->Tweener != nullptr)
+	//{
+	//	item->Tweener->Seek(StartTime);
+	//}
 }
 
 void UTransition::SkipAnimations()
 {
-	int32 frame;
-	float playStartTime;
-	float playTotalTime;
-	UFairyObject* target;
+	//int32 frame;
+	//float playStartTime;
+	//float playTotalTime;
+	//UFairyObject* target;
 
-	int32 cnt = Items.Num();
-	for (int32 i = 0; i < cnt; i++)
-	{
-		FTransitionItem* item = Items[i];
-		if (item->Type != ETransitionActionType::Animation || item->Time > StartTime)
-		{
-			continue;
-		}
+	//int32 cnt = Items.Num();
+	//for (int32 i = 0; i < cnt; i++)
+	//{
+	//	FTransitionItemBase* item = Items[i];
+	//	if (item->Type != ETransitionActionType::Animation || item->Time > StartTime)
+	//	{
+	//		continue;
+	//	}
 
-		if (item->AniData->bFlag)
-		{
-			continue;
-		}
+	//	if (item->AniData->bFlag)
+	//	{
+	//		continue;
+	//	}
 
-		target = item->Target;
-		frame = target->GetProp<int32>(EObjectPropID::Frame);
-		playStartTime = target->GetProp<bool>(EObjectPropID::Playing) ? 0 : -1;
-		playTotalTime = 0;
+	//	target = item->Target;
+	//	frame = target->GetProp<int32>(EObjectPropID::Frame);
+	//	playStartTime = target->GetProp<bool>(EObjectPropID::Playing) ? 0 : -1;
+	//	playTotalTime = 0;
 
-		for (int32 j = i; j < cnt; j++)
-		{
-			item = Items[j];
-			if (item->Type != ETransitionActionType::Animation || item->Target != target || item->Time > StartTime)
-			{
-				continue;
-			}
+	//	for (int32 j = i; j < cnt; j++)
+	//	{
+	//		item = Items[j];
+	//		if (item->Type != ETransitionActionType::Animation || item->Target != target || item->Time > StartTime)
+	//		{
+	//			continue;
+	//		}
 
-			item->AniData->bFlag = true;
+	//		item->AniData->bFlag = true;
 
-			if (item->AniData->Frame != -1)
-			{
-				frame = item->AniData->Frame;
-				if (item->AniData->bPlaying)
-				{
-					playStartTime = item->Time;
-				}
-				else
-				{
-					playStartTime = -1;
-				}
-				playTotalTime = 0;
-			}
-			else
-			{
-				if (item->AniData->bPlaying)
-				{
-					if (playStartTime < 0)
-					{
-						playStartTime = item->Time;
-					}
-				}
-				else
-				{
-					if (playStartTime >= 0)
-					{
-						playTotalTime += (item->Time - playStartTime);
-					}
-					playStartTime = -1;
-				}
-			}
+	//		if (item->AniData->Frame != -1)
+	//		{
+	//			frame = item->AniData->Frame;
+	//			if (item->AniData->bPlaying)
+	//			{
+	//				playStartTime = item->Time;
+	//			}
+	//			else
+	//			{
+	//				playStartTime = -1;
+	//			}
+	//			playTotalTime = 0;
+	//		}
+	//		else
+	//		{
+	//			if (item->AniData->bPlaying)
+	//			{
+	//				if (playStartTime < 0)
+	//				{
+	//					playStartTime = item->Time;
+	//				}
+	//			}
+	//			else
+	//			{
+	//				if (playStartTime >= 0)
+	//				{
+	//					playTotalTime += (item->Time - playStartTime);
+	//				}
+	//				playStartTime = -1;
+	//			}
+	//		}
 
-			CallHook(item, false);
-		}
+	//		CallHook(item, false);
+	//	}
 
-		if (playStartTime >= 0)
-		{
-			playTotalTime += (StartTime - playStartTime);
-		}
+	//	if (playStartTime >= 0)
+	//	{
+	//		playTotalTime += (StartTime - playStartTime);
+	//	}
 
-		target->SetProp(EObjectPropID::Playing, FNVariant(playStartTime >= 0));
-		target->SetProp(EObjectPropID::Frame, FNVariant(frame));
-		if (playTotalTime > 0)
-		{
-			target->SetProp(EObjectPropID::DeltaTime, FNVariant(playTotalTime));
-		}
-	}
+	//	target->SetProp(EObjectPropID::Playing, FNVariant(playStartTime >= 0));
+	//	target->SetProp(EObjectPropID::Frame, FNVariant(frame));
+	//	if (playTotalTime > 0)
+	//	{
+	//		target->SetProp(EObjectPropID::DeltaTime, FNVariant(playTotalTime));
+	//	}
+	//}
 }
 
 void UTransition::OnDelayedPlayItem(FGTweener* Tweener)
 {
-	FTransitionItem* item = (FTransitionItem*)Tweener->GetUserData().As<void*>();
-	item->Tweener = nullptr;
-	TotalTasks--;
+	//FTransitionItemBase* item = (FTransitionItemBase*)Tweener->GetUserData().As<void*>();
+	//item->Tweener = nullptr;
+	//TotalTasks--;
 
-	ApplyValue(item);
-	CallHook(item, false);
+	//ApplyValue(item);
+	//CallHook(item, false);
 
-	CheckAllComplete();
+	//CheckAllComplete();
 }
 
 void UTransition::OnTweenStart(FGTweener* Tweener)
 {
-	FTransitionItem* item = (FTransitionItem*)Tweener->GetUserData().As<void*>();
+	//FTransitionItemBase* item = (FTransitionItemBase*)Tweener->GetUserData().As<void*>();
 
-	if (item->Type == ETransitionActionType::XY || item->Type == ETransitionActionType::Size)
-	{
-		FTransitionItemData* startValue;
-		FTransitionItemData* endValue;
+	//if (item->Type == ETransitionActionType::XY || item->Type == ETransitionActionType::Size)
+	//{
+	//	FTransitionItemData* startValue;
+	//	FTransitionItemData* endValue;
 
-		if (bReversed)
-		{
-			startValue = &item->TweenConfig->EndData;
-			endValue = &item->TweenConfig->StartData;
-		}
-		else
-		{
-			startValue = &item->TweenConfig->StartData;
-			endValue = &item->TweenConfig->EndData;
-		}
+	//	if (bReversed)
+	//	{
+	//		startValue = &item->TweenConfig->EndData;
+	//		endValue = &item->TweenConfig->StartData;
+	//	}
+	//	else
+	//	{
+	//		startValue = &item->TweenConfig->StartData;
+	//		endValue = &item->TweenConfig->EndData;
+	//	}
 
-		if (item->Type == ETransitionActionType::XY)
-		{
-			if (item->Target != Owner)
-			{
-				if (!startValue->b1)
-				{
-					Tweener->StartValue.X = item->Target->GetPosition().X;
-				}
-				else if (startValue->b3) //percent
-				{
-					Tweener->StartValue.X = startValue->f1 * Owner->GetWidth();
-				}
+	//	if (item->Type == ETransitionActionType::XY)
+	//	{
+	//		if (item->Target != Owner)
+	//		{
+	//			if (!startValue->b1)
+	//			{
+	//				Tweener->StartValue.X = item->Target->GetPosition().X;
+	//			}
+	//			else if (startValue->b3) //percent
+	//			{
+	//				Tweener->StartValue.X = startValue->f1 * Owner->GetWidth();
+	//			}
 
-				if (!startValue->b2)
-				{
-					Tweener->StartValue.Y = item->Target->GetPosition().Y;
-				}
-				else if (startValue->b3) //percent
-				{
-					Tweener->StartValue.Y = startValue->f2 * Owner->GetHeight();
-				}
+	//			if (!startValue->b2)
+	//			{
+	//				Tweener->StartValue.Y = item->Target->GetPosition().Y;
+	//			}
+	//			else if (startValue->b3) //percent
+	//			{
+	//				Tweener->StartValue.Y = startValue->f2 * Owner->GetHeight();
+	//			}
 
-				if (!endValue->b1)
-				{
-					Tweener->EndValue.X = Tweener->StartValue.X;
-				}
-				else if (endValue->b3)
-				{
-					Tweener->EndValue.X = endValue->f1 * Owner->GetWidth();
-				}
+	//			if (!endValue->b1)
+	//			{
+	//				Tweener->EndValue.X = Tweener->StartValue.X;
+	//			}
+	//			else if (endValue->b3)
+	//			{
+	//				Tweener->EndValue.X = endValue->f1 * Owner->GetWidth();
+	//			}
 
-				if (!endValue->b2)
-				{
-					Tweener->EndValue.Y = Tweener->StartValue.Y;
-				}
-				else if (endValue->b3)
-				{
-					Tweener->EndValue.Y = endValue->f2 * Owner->GetHeight();
-				}
-			}
-			else
-			{
-				if (!startValue->b1)
-				{
-					Tweener->StartValue.X = item->Target->GetPosition().X - OwnerBasePos.X;
-				}
-				if (!startValue->b2)
-				{
-					Tweener->StartValue.Y = item->Target->GetPosition().Y - OwnerBasePos.Y;
-				}
+	//			if (!endValue->b2)
+	//			{
+	//				Tweener->EndValue.Y = Tweener->StartValue.Y;
+	//			}
+	//			else if (endValue->b3)
+	//			{
+	//				Tweener->EndValue.Y = endValue->f2 * Owner->GetHeight();
+	//			}
+	//		}
+	//		else
+	//		{
+	//			if (!startValue->b1)
+	//			{
+	//				Tweener->StartValue.X = item->Target->GetPosition().X - OwnerBasePos.X;
+	//			}
+	//			if (!startValue->b2)
+	//			{
+	//				Tweener->StartValue.Y = item->Target->GetPosition().Y - OwnerBasePos.Y;
+	//			}
 
-				if (!endValue->b1)
-				{
-					Tweener->EndValue.X = Tweener->StartValue.X;
-				}
-				if (!endValue->b2)
-				{
-					Tweener->EndValue.Y = Tweener->StartValue.Y;
-				}
-			}
-		}
-		else
-		{
-			if (!startValue->b1)
-			{
-				Tweener->StartValue.X = item->Target->GetWidth();
-			}
-			if (!startValue->b2)
-			{
-				Tweener->StartValue.Y = item->Target->GetHeight();
-			}
+	//			if (!endValue->b1)
+	//			{
+	//				Tweener->EndValue.X = Tweener->StartValue.X;
+	//			}
+	//			if (!endValue->b2)
+	//			{
+	//				Tweener->EndValue.Y = Tweener->StartValue.Y;
+	//			}
+	//		}
+	//	}
+	//	else
+	//	{
+	//		if (!startValue->b1)
+	//		{
+	//			Tweener->StartValue.X = item->Target->GetWidth();
+	//		}
+	//		if (!startValue->b2)
+	//		{
+	//			Tweener->StartValue.Y = item->Target->GetHeight();
+	//		}
 
-			if (!endValue->b1)
-			{
-				Tweener->EndValue.X = Tweener->StartValue.X;
-			}
-			if (!endValue->b2)
-			{
-				Tweener->EndValue.Y = Tweener->StartValue.Y;
-			}
-		}
+	//		if (!endValue->b1)
+	//		{
+	//			Tweener->EndValue.X = Tweener->StartValue.X;
+	//		}
+	//		if (!endValue->b2)
+	//		{
+	//			Tweener->EndValue.Y = Tweener->StartValue.Y;
+	//		}
+	//	}
 
-		if (item->TweenConfig->Path.IsValid())
-		{
-			item->Data->b1 = item->Data->b2 = true;
-			Tweener->SetPath(item->TweenConfig->Path);
-		}
-	}
+	//	if (item->TweenConfig->Path.IsValid())
+	//	{
+	//		item->Data->b1 = item->Data->b2 = true;
+	//		Tweener->SetPath(item->TweenConfig->Path);
+	//	}
+	//}
 
-	CallHook(item, false);
+	//CallHook(item, false);
 }
 
 void UTransition::OnTweenUpdate(FGTweener* Tweener)
 {
-	FTransitionItem* item = (FTransitionItem*)Tweener->GetUserData().As<void*>();
+	//FTransitionItemBase* item = (FTransitionItemBase*)Tweener->GetUserData().As<void*>();
 
-	switch (item->Type)
-	{
-	case ETransitionActionType::XY:
-	case ETransitionActionType::Size:
-	case ETransitionActionType::Scale:
-	case ETransitionActionType::Skew:
-		if (item->TweenConfig->Path.IsValid())
-		{
-			item->Data->SetVec2(Tweener->Value.GetVec2() + Tweener->StartValue.GetVec2());
-		}
-		else
-		{
-			item->Data->SetVec2(Tweener->Value.GetVec2());
-		}
-		break;
+	//switch (item->Type)
+	//{
+	//case ETransitionActionType::XY:
+	//case ETransitionActionType::Size:
+	//case ETransitionActionType::Scale:
+	//case ETransitionActionType::Skew:
+	//	if (item->TweenConfig->Path.IsValid())
+	//	{
+	//		item->Data->SetVec2(Tweener->Value.GetVec2() + Tweener->StartValue.GetVec2());
+	//	}
+	//	else
+	//	{
+	//		item->Data->SetVec2(Tweener->Value.GetVec2());
+	//	}
+	//	break;
 
-	case ETransitionActionType::Alpha:
-	case ETransitionActionType::Rotation:
-		item->Data->f1 = Tweener->Value.X;
-		break;
+	//case ETransitionActionType::Alpha:
+	//case ETransitionActionType::Rotation:
+	//	item->Data->f1 = Tweener->Value.X;
+	//	break;
 
-	case ETransitionActionType::Color:
-		item->Data->SetColor(Tweener->Value.GetColor());
-		break;
+	//case ETransitionActionType::Color:
+	//	item->Data->SetColor(Tweener->Value.GetColor());
+	//	break;
 
-	case ETransitionActionType::ColorFilter:
-		item->Data->SetVec4(Tweener->Value.GetVec4());
-		break;
+	//case ETransitionActionType::ColorFilter:
+	//	item->Data->SetVec4(Tweener->Value.GetVec4());
+	//	break;
 
-	case ETransitionActionType::Shake:
-		item->ShakeData->Offset = Tweener->DeltaValue.GetVec2();
-		break;
-	default:
-		break;
-	}
-	ApplyValue(item);
+	//case ETransitionActionType::Shake:
+	//	item->ShakeData->Offset = Tweener->DeltaValue.GetVec2();
+	//	break;
+	//default:
+	//	break;
+	//}
+	//ApplyValue(item);
 }
 
 void UTransition::OnTweenComplete(FGTweener* Tweener)
 {
-	FTransitionItem* item = (FTransitionItem*)Tweener->GetUserData().As<void*>();
-	item->Tweener = nullptr;
-	TotalTasks--;
+	//FTransitionItemBase* item = (FTransitionItemBase*)Tweener->GetUserData().As<void*>();
+	//item->Tweener = nullptr;
+	//TotalTasks--;
 
-	if (Tweener->AllCompleted())
-	{
-		CallHook(item, true);
-	}
+	//if (Tweener->AllCompleted())
+	//{
+	//	CallHook(item, true);
+	//}
 
-	CheckAllComplete();
+	//CheckAllComplete();
 }
 
-void UTransition::OnPlayTransCompleted(FTransitionItem* item)
+void UTransition::OnPlayTransCompleted(FTransitionItemBase* item)
 {
 	TotalTasks--;
 
 	CheckAllComplete();
 }
 
-void UTransition::CallHook(FTransitionItem* item, bool bTweenEnd)
+void UTransition::CallHook(FTransitionItemBase* item, bool bTweenEnd)
 {
-	if (bTweenEnd)
-	{
-		if (item->TweenConfig.IsSet() && item->TweenConfig->EndHook.IsBound())
-		{
-			item->TweenConfig->EndHook.Execute();
-		}
-	}
-	else
-	{
-		if (item->Time >= StartTime && item->Hook.IsBound())
-		{
-			item->Hook.Execute();
-		}
-	}
+	//if (bTweenEnd)
+	//{
+	//	if (item->TweenConfig.IsSet() && item->TweenConfig->EndHook.IsBound())
+	//	{
+	//		item->TweenConfig->EndHook.Execute();
+	//	}
+	//}
+	//else
+	//{
+	//	if (item->Time >= StartTime && item->Hook.IsBound())
+	//	{
+	//		item->Hook.Execute();
+	//	}
+	//}
 }
 
 void UTransition::CheckAllComplete()
 {
-	if (bPlaying && TotalTasks == 0)
-	{
-		if (TotalTimes < 0)
-		{
-			InternalPlay();
-		}
-		else
-		{
-			TotalTimes--;
-			if (TotalTimes > 0)
-			{
-				InternalPlay();
-			}
-			else
-			{
-				bPlaying = false;
+	//if (bPlaying && TotalTasks == 0)
+	//{
+	//	if (TotalTimes < 0)
+	//	{
+	//		InternalPlay();
+	//	}
+	//	else
+	//	{
+	//		TotalTimes--;
+	//		if (TotalTimes > 0)
+	//		{
+	//			InternalPlay();
+	//		}
+	//		else
+	//		{
+	//			bPlaying = false;
 
-				for (auto& item : Items)
-				{
-					if (item->Target != nullptr && item->DisplayLockToken != 0)
-					{
-						item->Target->ReleaseDisplayLock(item->DisplayLockToken);
-						item->DisplayLockToken = 0;
-					}
-				}
+	//			for (auto& item : Items)
+	//			{
+	//				if (item->Target != nullptr && item->DisplayLockToken != 0)
+	//				{
+	//					item->Target->ReleaseDisplayLock(item->DisplayLockToken);
+	//					item->DisplayLockToken = 0;
+	//				}
+	//			}
 
-				if (CompleteCallback.IsBound())
-				{
-					FSimpleDelegate func = CompleteCallback;
-					CompleteCallback.Unbind();
-					func.Execute();
-				}
-			}
-		}
-	}
+	//			if (CompleteCallback.IsBound())
+	//			{
+	//				FSimpleDelegate func = CompleteCallback;
+	//				CompleteCallback.Unbind();
+	//				func.Execute();
+	//			}
+	//		}
+	//	}
+	//}
 }
 
-void UTransition::ApplyValue(FTransitionItem* item)
+void UTransition::ApplyValue(FTransitionItemBase* item)
 {
-	item->Target->bGearLocked = true;
+	//item->Target->bGearLocked = true;
 
-	switch (item->Type)
-	{
-	case ETransitionActionType::XY:
-	{
-		if (item->Target == Owner)
-		{
-			if (item->Data->b1 && item->Data->b2)
-			{
-				item->Target->SetPosition(item->Data->GetVec2() + OwnerBasePos);
-			}
-			else if (item->Data->b1)
-			{
-				item->Target->SetPositionX(item->Data->f1 + OwnerBasePos.X);
-			}
-			else
-			{
-				item->Target->SetPositionY(item->Data->f2 + OwnerBasePos.Y);
-			}
-		}
-		else
-		{
-			if (item->Data->b3) //position in percent
-			{
-				if (item->Data->b1 && item->Data->b2)
-				{
-					item->Target->SetPosition(item->Data->GetVec2() * Owner->GetSize());
-				}
-				else if (item->Data->b1)
-				{
-					item->Target->SetPositionX(item->Data->f1 * Owner->GetWidth());
-				}
-				else if (item->Data->b2)
-				{
-					item->Target->SetPositionY(item->Data->f2 * Owner->GetHeight());
-				}
-			}
-			else
-			{
-				if (item->Data->b1 && item->Data->b2)
-				{
-					item->Target->SetPosition(item->Data->GetVec2());
-				}
-				else if (item->Data->b1)
-				{
-					item->Target->SetPositionX(item->Data->f1);
-				}
-				else if (item->Data->b2)
-				{
-					item->Target->SetPositionY(item->Data->f2);
-				}
-			}
-		}
-	}
-	break;
+	//switch (item->Type)
+	//{
+	//case ETransitionActionType::XY:
+	//{
+	//	if (item->Target == Owner)
+	//	{
+	//		if (item->Data->b1 && item->Data->b2)
+	//		{
+	//			item->Target->SetPosition(item->Data->GetVec2() + OwnerBasePos);
+	//		}
+	//		else if (item->Data->b1)
+	//		{
+	//			item->Target->SetPositionX(item->Data->f1 + OwnerBasePos.X);
+	//		}
+	//		else
+	//		{
+	//			item->Target->SetPositionY(item->Data->f2 + OwnerBasePos.Y);
+	//		}
+	//	}
+	//	else
+	//	{
+	//		if (item->Data->b3) //position in percent
+	//		{
+	//			if (item->Data->b1 && item->Data->b2)
+	//			{
+	//				item->Target->SetPosition(item->Data->GetVec2() * Owner->GetSize());
+	//			}
+	//			else if (item->Data->b1)
+	//			{
+	//				item->Target->SetPositionX(item->Data->f1 * Owner->GetWidth());
+	//			}
+	//			else if (item->Data->b2)
+	//			{
+	//				item->Target->SetPositionY(item->Data->f2 * Owner->GetHeight());
+	//			}
+	//		}
+	//		else
+	//		{
+	//			if (item->Data->b1 && item->Data->b2)
+	//			{
+	//				item->Target->SetPosition(item->Data->GetVec2());
+	//			}
+	//			else if (item->Data->b1)
+	//			{
+	//				item->Target->SetPositionX(item->Data->f1);
+	//			}
+	//			else if (item->Data->b2)
+	//			{
+	//				item->Target->SetPositionY(item->Data->f2);
+	//			}
+	//		}
+	//	}
+	//}
+	//break;
 
-	case ETransitionActionType::Size:
-	{
-		if (!item->Data->b1)
-		{
-			item->Data->f1 = item->Target->GetWidth();
-		}
+	//case ETransitionActionType::Size:
+	//{
+	//	if (!item->Data->b1)
+	//	{
+	//		item->Data->f1 = item->Target->GetWidth();
+	//	}
 
-		if (!item->Data->b2)
-		{
-			item->Data->f2 = item->Target->GetHeight();
-		}
-		item->Target->SetSize(item->Data->GetVec2());
-	}
-	break;
+	//	if (!item->Data->b2)
+	//	{
+	//		item->Data->f2 = item->Target->GetHeight();
+	//	}
+	//	item->Target->SetSize(item->Data->GetVec2());
+	//}
+	//break;
 
-	case ETransitionActionType::Pivot:
-		item->Target->SetPivot(item->Data->GetVec2(), item->Target->IsPivotAsAnchor());
-		break;
+	//case ETransitionActionType::Pivot:
+	//	item->Target->SetPivot(item->Data->GetVec2(), item->Target->IsPivotAsAnchor());
+	//	break;
 
-	case ETransitionActionType::Alpha:
-		item->Target->SetAlpha(item->Data->f1);
-		break;
+	//case ETransitionActionType::Alpha:
+	//	item->Target->SetAlpha(item->Data->f1);
+	//	break;
 
-	case ETransitionActionType::Rotation:
-		item->Target->SetRotation(item->Data->f1);
-		break;
+	//case ETransitionActionType::Rotation:
+	//	item->Target->SetRotation(item->Data->f1);
+	//	break;
 
-	case ETransitionActionType::Scale:
-		item->Target->SetScale(item->Data->GetVec2());
-		break;
+	//case ETransitionActionType::Scale:
+	//	item->Target->SetScale(item->Data->GetVec2());
+	//	break;
 
-	case ETransitionActionType::Skew:
-		item->Target->SetSkew(item->Data->GetVec2());
-		break;
+	//case ETransitionActionType::Skew:
+	//	item->Target->SetSkew(item->Data->GetVec2());
+	//	break;
 
-	case ETransitionActionType::Color:
-		item->Target->SetProp(EObjectPropID::Color, FNVariant(item->Data->GetColor()));
-		break;
+	//case ETransitionActionType::Color:
+	//	item->Target->SetProp(EObjectPropID::Color, FNVariant(item->Data->GetColor()));
+	//	break;
 
-	case ETransitionActionType::Animation:
-	{
-		if (item->AniData->Frame >= 0)
-		{
-			item->Target->SetProp(EObjectPropID::Frame, FNVariant(item->AniData->Frame));
-		}
-		item->Target->SetProp(EObjectPropID::Playing, FNVariant(item->AniData->bPlaying));
-		item->Target->SetProp(EObjectPropID::TimeScale, FNVariant(TimeScale));
-		break;
-	}
+	//case ETransitionActionType::Animation:
+	//{
+	//	if (item->AniData->Frame >= 0)
+	//	{
+	//		item->Target->SetProp(EObjectPropID::Frame, FNVariant(item->AniData->Frame));
+	//	}
+	//	item->Target->SetProp(EObjectPropID::Playing, FNVariant(item->AniData->bPlaying));
+	//	item->Target->SetProp(EObjectPropID::TimeScale, FNVariant(TimeScale));
+	//	break;
+	//}
 
-	case ETransitionActionType::Visible:
-		item->Target->SetVisible(item->VisibleData.GetValue());
-		break;
+	//case ETransitionActionType::Visible:
+	//	item->Target->SetVisible(item->VisibleData.GetValue());
+	//	break;
 
-	case ETransitionActionType::Shake:
-	{
-		item->Target->SetPosition(item->Target->GetPosition() - item->ShakeData->LastOffset + item->ShakeData->Offset);
-		item->ShakeData->LastOffset = item->ShakeData->Offset;
-		break;
-	}
+	//case ETransitionActionType::Shake:
+	//{
+	//	item->Target->SetPosition(item->Target->GetPosition() - item->ShakeData->LastOffset + item->ShakeData->Offset);
+	//	item->ShakeData->LastOffset = item->ShakeData->Offset;
+	//	break;
+	//}
 
-	case ETransitionActionType::Transition:
-		if (bPlaying)
-		{
-			if (item->TransData->Instance != nullptr)
-			{
-				TotalTasks++;
+	//case ETransitionActionType::Transition:
+	//	if (bPlaying)
+	//	{
+	//		if (item->TransData->Instance != nullptr)
+	//		{
+	//			TotalTasks++;
 
-				float playStartTime = StartTime > item->Time ? (StartTime - item->Time) : 0;
-				float playEndTime = EndTime >= 0 ? (EndTime - item->Time) : -1;
-				if (item->TransData->StopTime >= 0 && (playEndTime < 0 || playEndTime > item->TransData->StopTime))
-				{
-					playEndTime = item->TransData->StopTime;
-				}
-				item->TransData->Instance->SetTimeScale(TimeScale);
-				item->TransData->Instance->Play(item->TransData->PlayTimes, 0, playStartTime, playEndTime, bReversed,
-					FSimpleDelegate::CreateUObject(this, &UTransition::OnPlayTransCompleted, item));
-			}
-		}
-		break;
+	//			float playStartTime = StartTime > item->Time ? (StartTime - item->Time) : 0;
+	//			float playEndTime = EndTime >= 0 ? (EndTime - item->Time) : -1;
+	//			if (item->TransData->StopTime >= 0 && (playEndTime < 0 || playEndTime > item->TransData->StopTime))
+	//			{
+	//				playEndTime = item->TransData->StopTime;
+	//			}
+	//			item->TransData->Instance->SetTimeScale(TimeScale);
+	//			item->TransData->Instance->Play(item->TransData->PlayTimes, 0, playStartTime, playEndTime, bReversed,
+	//				FSimpleDelegate::CreateUObject(this, &UTransition::OnPlayTransCompleted, item));
+	//		}
+	//	}
+	//	break;
 
-	case ETransitionActionType::Sound:
-		if (bPlaying && item->Time >= StartTime)
-		{
-			if (!item->SoundData->URL.IsEmpty())
-			{
-				UFairyApplication::Get()->PlaySound(item->SoundData->URL, item->SoundData->Volume);
-			}
-			break;
-		}
+	//case ETransitionActionType::Sound:
+	//	if (bPlaying && item->Time >= StartTime)
+	//	{
+	//		if (!item->SoundData->URL.IsEmpty())
+	//		{
+	//			UFairyApplication::Get()->PlaySound(item->SoundData->URL, item->SoundData->Volume);
+	//		}
+	//		break;
+	//	}
 
-	case ETransitionActionType::ColorFilter:
-		break;
+	//case ETransitionActionType::ColorFilter:
+	//	break;
 
-	case ETransitionActionType::Text:
-		item->Target->SetText(item->TextData.GetValue());
-		break;
+	//case ETransitionActionType::Text:
+	//	item->Target->SetText(item->TextData.GetValue());
+	//	break;
 
-	case ETransitionActionType::Icon:
-		item->Target->SetIcon(item->TextData.GetValue());
-		break;
-	default:
-		break;
-	}
+	//case ETransitionActionType::Icon:
+	//	item->Target->SetIcon(item->TextData.GetValue());
+	//	break;
+	//default:
+	//	break;
+	//}
 
-	item->Target->bGearLocked = false;
+	//item->Target->bGearLocked = false;
 }
 
 void UTransition::Setup(FByteBuffer* Buffer)
@@ -1266,163 +1267,78 @@ void UTransition::Setup(FByteBuffer* Buffer)
 
 		Buffer->Seek(curPos, 0);
 		ETransitionActionType ActionType = (ETransitionActionType)Buffer->ReadByte();
-		FTransitionItem* item = new FTransitionItem(ActionType); // todo: create right item object by type.
-		item->Time = Buffer->ReadFloat();
-		int32 TargetID = Buffer->ReadShort();
-		if (TargetID < 0)
-		{
-			item->TargetID = G_EMPTY_STRING;
-		}
-		else
-		{
-			item->TargetID = Owner->GetChildAt(TargetID)->GetID();
-		}
-		item->Label = Buffer->ReadS();
+		FTransitionItemBase* item = CreateTransitionItemWithType(ActionType); // todo: create right item object by type.
+		item->Setup(Buffer, curPos);
 		Items.Add(item);
-
-		// check this transition item has a tween.
-		if (Buffer->ReadBool())
-		{
-			Buffer->Seek(curPos, 1);
-			item->TweenConfig.Emplace();
-			item->TweenConfig->Duration = Buffer->ReadFloat();
-			if (item->Time + item->TweenConfig->Duration > TotalDuration)
-			{
-				TotalDuration = item->Time + item->TweenConfig->Duration;
-			}
-			item->TweenConfig->EaseType = (EEaseType)Buffer->ReadByte();
-			item->TweenConfig->Repeat = Buffer->ReadInt();
-			item->TweenConfig->bYoyo = Buffer->ReadBool();
-			item->TweenConfig->EndLabel = Buffer->ReadS();
-
-			Buffer->Seek(curPos, 2);
-			DecodeValue(item, Buffer, &item->TweenConfig->StartData);
-
-			Buffer->Seek(curPos, 3);
-			DecodeValue(item, Buffer, &item->TweenConfig->EndData);
-
-			if (Buffer->Version >= 2)
-			{
-				int32 pathLen = Buffer->ReadInt();
-				if (pathLen > 0)
-				{
-					item->TweenConfig->Path = MakeShareable(new FGPath());
-					TArray<FGPathPoint> pts;
-
-					FVector v0(ForceInit), v1(ForceInit), v2(ForceInit);
-
-					for (int32 j = 0; j < pathLen; j++)
-					{
-						FGPathPoint::ECurveType curveType = (FGPathPoint::ECurveType)Buffer->ReadByte();
-						switch (curveType)
-						{
-						case FGPathPoint::ECurveType::Bezier:
-							v0.X = Buffer->ReadFloat();
-							v0.Y = Buffer->ReadFloat();
-							v1.X = Buffer->ReadFloat();
-							v1.Y = Buffer->ReadFloat();
-							pts.Add(FGPathPoint(v0, v1));
-							break;
-						case FGPathPoint::ECurveType::CubicBezier:
-							v0.X = Buffer->ReadFloat();
-							v0.Y = Buffer->ReadFloat();
-							v1.X = Buffer->ReadFloat();
-							v1.Y = Buffer->ReadFloat();
-							v2.X = Buffer->ReadFloat();
-							v2.Y = Buffer->ReadFloat();
-							pts.Add(FGPathPoint(v0, v1, v2));
-							break;
-						default:
-							v0.X = Buffer->ReadFloat();
-							v0.Y = Buffer->ReadFloat();
-							pts.Add(FGPathPoint(v0, curveType));
-							break;
-						}
-					}
-
-					item->TweenConfig->Path->Create(pts.GetData(), pts.Num());
-				}
-			}
-		}
-		else
-		{
-			if (item->Time > TotalDuration)
-			{
-				TotalDuration = item->Time;
-			}
-
-			Buffer->Seek(curPos, 2);
-			DecodeValue(item, Buffer, item->Data.IsSet() ? &item->Data.GetValue() : nullptr);
-		}
 
 		Buffer->SetPos(curPos + dataLen);
 	}
 }
 
-void UTransition::DecodeValue(FTransitionItem* item, FByteBuffer* Buffer, FTransitionItemData* Value)
+void UTransition::DecodeValue(FTransitionItemBase* item, FByteBuffer* Buffer, FTransitionItemData* Value)
 {
-	if (Value == nullptr)
-	{
-		return;
-	}
+	//if (Value == nullptr)
+	//{
+	//	return;
+	//}
 
-	switch (item->Type)
-	{
-	case ETransitionActionType::XY:
-	case ETransitionActionType::Size:
-	case ETransitionActionType::Pivot:
-	case ETransitionActionType::Skew:
-		Value->b1 = Buffer->ReadBool();
-		Value->b2 = Buffer->ReadBool();
-		Value->f1 = Buffer->ReadFloat();
-		Value->f2 = Buffer->ReadFloat();
+	//switch (item->Type)
+	//{
+	//case ETransitionActionType::XY:
+	//case ETransitionActionType::Size:
+	//case ETransitionActionType::Pivot:
+	//case ETransitionActionType::Skew:
+	//	Value->b1 = Buffer->ReadBool();
+	//	Value->b2 = Buffer->ReadBool();
+	//	Value->f1 = Buffer->ReadFloat();
+	//	Value->f2 = Buffer->ReadFloat();
 
-		if (Buffer->Version >= 2 && item->Type == ETransitionActionType::XY)
-		{
-			Value->b3 = Buffer->ReadBool(); //percent
-		}
-		break;
-	case ETransitionActionType::Alpha:
-	case ETransitionActionType::Rotation:
-		Value->f1 = Buffer->ReadFloat();
-		break;
-	case ETransitionActionType::Scale:
-		Value->f1 = Buffer->ReadFloat();
-		Value->f2 = Buffer->ReadFloat();
-		break;
-	case ETransitionActionType::Color:
-		Value->SetColor(Buffer->ReadColor());
-		break;
-	case ETransitionActionType::Animation:
-		item->AniData->bPlaying = Buffer->ReadBool();
-		item->AniData->Frame = Buffer->ReadInt();
-		break;
-	case ETransitionActionType::Visible:
-		item->VisibleData = Buffer->ReadBool();
-		break;
-	case ETransitionActionType::Sound:
-		item->SoundData->URL = Buffer->ReadS();
-		item->SoundData->Volume = Buffer->ReadFloat();
-		break;
-	case ETransitionActionType::Transition:
-		item->TransData->Name = Buffer->ReadS();
-		item->TransData->PlayTimes = Buffer->ReadInt();
-		break;
-	case ETransitionActionType::Shake:
-		item->ShakeData->Amplitude = Buffer->ReadFloat();
-		item->ShakeData->Duration = Buffer->ReadFloat();
-		break;
-	case ETransitionActionType::ColorFilter:
-		Value->f1 = Buffer->ReadFloat();
-		Value->f2 = Buffer->ReadFloat();
-		Value->f3 = Buffer->ReadFloat();
-		Value->f4 = Buffer->ReadFloat();
-		break;
-	case ETransitionActionType::Text:
-	case ETransitionActionType::Icon:
-		item->TextData = Buffer->ReadS();
-		break;
-	default:
-		break;
-	}
+	//	if (Buffer->Version >= 2 && item->Type == ETransitionActionType::XY)
+	//	{
+	//		Value->b3 = Buffer->ReadBool(); //percent
+	//	}
+	//	break;
+	//case ETransitionActionType::Alpha:
+	//case ETransitionActionType::Rotation:
+	//	Value->f1 = Buffer->ReadFloat();
+	//	break;
+	//case ETransitionActionType::Scale:
+	//	Value->f1 = Buffer->ReadFloat();
+	//	Value->f2 = Buffer->ReadFloat();
+	//	break;
+	//case ETransitionActionType::Color:
+	//	Value->SetColor(Buffer->ReadColor());
+	//	break;
+	//case ETransitionActionType::Animation:
+	//	item->AniData->bPlaying = Buffer->ReadBool();
+	//	item->AniData->Frame = Buffer->ReadInt();
+	//	break;
+	//case ETransitionActionType::Visible:
+	//	item->VisibleData = Buffer->ReadBool();
+	//	break;
+	//case ETransitionActionType::Sound:
+	//	item->SoundData->URL = Buffer->ReadS();
+	//	item->SoundData->Volume = Buffer->ReadFloat();
+	//	break;
+	//case ETransitionActionType::Transition:
+	//	item->TransData->Name = Buffer->ReadS();
+	//	item->TransData->PlayTimes = Buffer->ReadInt();
+	//	break;
+	//case ETransitionActionType::Shake:
+	//	item->ShakeData->Amplitude = Buffer->ReadFloat();
+	//	item->ShakeData->Duration = Buffer->ReadFloat();
+	//	break;
+	//case ETransitionActionType::ColorFilter:
+	//	Value->f1 = Buffer->ReadFloat();
+	//	Value->f2 = Buffer->ReadFloat();
+	//	Value->f3 = Buffer->ReadFloat();
+	//	Value->f4 = Buffer->ReadFloat();
+	//	break;
+	//case ETransitionActionType::Text:
+	//case ETransitionActionType::Icon:
+	//	item->TextData = Buffer->ReadS();
+	//	break;
+	//default:
+	//	break;
+	//}
 }

@@ -115,23 +115,23 @@ public:
 
 private:
     void Play(int32 InTimes, float InDelay, float InStartTime, float InEndTime, bool bInReverse, FSimpleDelegate InCompleteCallback);
-    void StopItem(FTransitionItem* Item, bool bSetToComplete);
+    void StopItem(FTransitionItemBase* Item, bool bSetToComplete);
     void OnDelayedPlay();
     void InternalPlay();
-    void PlayItem(FTransitionItem* Item);
+    void PlayItem(FTransitionItemBase* Item);
     void SkipAnimations();
     void OnDelayedPlayItem(FGTweener* Tweener);
     void OnTweenStart(FGTweener* Tweener);
     void OnTweenUpdate(FGTweener* Tweener);
     void OnTweenComplete(FGTweener* Tweener);
-    void OnPlayTransCompleted(FTransitionItem* item);
-    void CallHook(FTransitionItem* Item, bool bTweenEnd);
+    void OnPlayTransCompleted(FTransitionItemBase* item);
+    void CallHook(FTransitionItemBase* Item, bool bTweenEnd);
     void CheckAllComplete();
-    void ApplyValue(FTransitionItem* Item);
-    void DecodeValue(FTransitionItem* Item, FByteBuffer* Buffer, struct FTransitionItemData* Value);
+    void ApplyValue(FTransitionItemBase* Item);
+    void DecodeValue(FTransitionItemBase* Item, FByteBuffer* Buffer, struct FTransitionItemData* Value);
 
     UFairyComponent* Owner;
-    TArray<FTransitionItem*> Items;
+    TArray<FTransitionItemBase*> Items;
 
     bool bPlaying;
     bool bPaused;

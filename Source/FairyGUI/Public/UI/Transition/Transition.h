@@ -128,7 +128,6 @@ private:
     void CallHook(FTransitionItemBase* Item, bool bTweenEnd);
     void CheckAllComplete();
     void ApplyValue(FTransitionItemBase* Item);
-    void DecodeValue(FTransitionItemBase* Item, FByteBuffer* Buffer, struct FTransitionItemData* Value);
 
     UFairyComponent* Owner;
     TArray<FTransitionItemBase*> Items;

@@ -1268,77 +1268,11 @@ void UTransition::Setup(FByteBuffer* Buffer)
 		Buffer->Seek(curPos, 0);
 		ETransitionActionType ActionType = (ETransitionActionType)Buffer->ReadByte();
 		FTransitionItemBase* item = CreateTransitionItemWithType(ActionType); // todo: create right item object by type.
-		item->Setup(Buffer, curPos);
 		Items.Add(item);
+		
+		item->Setup(Buffer, curPos);
 
 		Buffer->SetPos(curPos + dataLen);
 	}
 }
 
-void UTransition::DecodeValue(FTransitionItemBase* item, FByteBuffer* Buffer, FTransitionItemData* Value)
-{
-	//if (Value == nullptr)
-	//{
-	//	return;
-	//}
-
-	//switch (item->Type)
-	//{
-	//case ETransitionActionType::XY:
-	//case ETransitionActionType::Size:
-	//case ETransitionActionType::Pivot:
-	//case ETransitionActionType::Skew:
-	//	Value->b1 = Buffer->ReadBool();
-	//	Value->b2 = Buffer->ReadBool();
-	//	Value->f1 = Buffer->ReadFloat();
-	//	Value->f2 = Buffer->ReadFloat();
-
-	//	if (Buffer->Version >= 2 && item->Type == ETransitionActionType::XY)
-	//	{
-	//		Value->b3 = Buffer->ReadBool(); //percent
-	//	}
-	//	break;
-	//case ETransitionActionType::Alpha:
-	//case ETransitionActionType::Rotation:
-	//	Value->f1 = Buffer->ReadFloat();
-	//	break;
-	//case ETransitionActionType::Scale:
-	//	Value->f1 = Buffer->ReadFloat();
-	//	Value->f2 = Buffer->ReadFloat();
-	//	break;
-	//case ETransitionActionType::Color:
-	//	Value->SetColor(Buffer->ReadColor());
-	//	break;
-	//case ETransitionActionType::Animation:
-	//	item->AniData->bPlaying = Buffer->ReadBool();
-	//	item->AniData->Frame = Buffer->ReadInt();
-	//	break;
-	//case ETransitionActionType::Visible:
-	//	item->VisibleData = Buffer->ReadBool();
-	//	break;
-	//case ETransitionActionType::Sound:
-	//	item->SoundData->URL = Buffer->ReadS();
-	//	item->SoundData->Volume = Buffer->ReadFloat();
-	//	break;
-	//case ETransitionActionType::Transition:
-	//	item->TransData->Name = Buffer->ReadS();
-	//	item->TransData->PlayTimes = Buffer->ReadInt();
-	//	break;
-	//case ETransitionActionType::Shake:
-	//	item->ShakeData->Amplitude = Buffer->ReadFloat();
-	//	item->ShakeData->Duration = Buffer->ReadFloat();
-	//	break;
-	//case ETransitionActionType::ColorFilter:
-	//	Value->f1 = Buffer->ReadFloat();
-	//	Value->f2 = Buffer->ReadFloat();
-	//	Value->f3 = Buffer->ReadFloat();
-	//	Value->f4 = Buffer->ReadFloat();
-	//	break;
-	//case ETransitionActionType::Text:
-	//case ETransitionActionType::Icon:
-	//	item->TextData = Buffer->ReadS();
-	//	break;
-	//default:
-	//	break;
-	//}
-}

@@ -77,18 +77,18 @@ void FTweenConfigPos::SetupEndData(FByteBuffer* InBuffer)
 
 void FTweenConfigSize::SetupStartData(FByteBuffer* InBuffer)
 {
-	bChangeWidth = InBuffer->ReadBool();
-	bChangeHeight = InBuffer->ReadBool();
+	StartData.bChangeWidth = InBuffer->ReadBool();
+	StartData.bChangeHeight = InBuffer->ReadBool();
 
-	StartSize.X = InBuffer->ReadFloat();
-	StartSize.Y = InBuffer->ReadFloat();
+	StartData.Size.X = InBuffer->ReadFloat();
+	StartData.Size.Y = InBuffer->ReadFloat();
 }
 
 void FTweenConfigSize::SetupEndData(FByteBuffer* InBuffer)
 {
-	bChangeWidth = InBuffer->ReadBool();
-	bChangeHeight = InBuffer->ReadBool();
+	EndData.bChangeWidth = InBuffer->ReadBool();
+	EndData.bChangeHeight = InBuffer->ReadBool();
 
-	EndSize.X = InBuffer->ReadFloat();
-	EndSize.Y = InBuffer->ReadFloat();
+	EndData.Size.X = InBuffer->ReadFloat();
+	EndData.Size.Y = InBuffer->ReadFloat();
 }

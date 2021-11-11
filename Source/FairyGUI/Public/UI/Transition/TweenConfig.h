@@ -13,8 +13,6 @@ struct FTweenConfig {
 	int32 Repeat;
 	bool bYoyo;
 
-	FTransitionItemData StartData;
-	FTransitionItemData EndData;
 	TSharedPtr<FGPath> Path;
 
 	FString EndLabel;
@@ -29,31 +27,34 @@ struct FTweenConfig {
 
 FTweenConfig* CreateTwencConfigWithType(const ETransitionActionType InActionType);
 
+struct KeyFrameDataPos
+{
+	bool bUsePercent = false;
+	bool bChangeAxisX = true;
+	bool bChangeAxisY = true;
+	FVector2D Pos = FVector2D::ZeroVector;
+};
+
 struct FTweenConfigPos : public FTweenConfig
 {
-	struct Property 
-	{
-		bool bUsePercent;
-		bool bChangeAxisX;
-		bool bChangeAxisY;
-
-		FVector2D Pos;
-	};
-
-	Property StartData;
-	Property EndData;
+	KeyFrameDataPos StartData;
+	KeyFrameDataPos EndData;
 
 	virtual void SetupStartData(FByteBuffer* InBuffer) override;
 	virtual void SetupEndData(FByteBuffer* InBuffer) override;
 };
 
+struct KeyFrameDataSize 
+{
+	bool bChangeWidth = true;
+	bool bChangeHeight = true;
+	FVector2D Size = FVector2D::ZeroVector;
+};
+
 struct FTweenConfigSize : public FTweenConfig
 {
-	bool bChangeWidth;
-	bool bChangeHeight;
-
-	FVector2D StartSize;
-	FVector2D EndSize;
+	KeyFrameDataSize StartData;
+	KeyFrameDataSize EndData;
 
 	virtual void SetupStartData(FByteBuffer* InBuffer) override;
 	virtual void SetupEndData(FByteBuffer* InBuffer) override;

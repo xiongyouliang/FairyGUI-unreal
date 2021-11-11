@@ -6,7 +6,6 @@
 #include "UI/FieldTypes.h"
 #include "UI/Transition/Transition.h"
 #include "UI/Transition/TweenConfig.h"
-#include "UI/Transition/TransitionItemData.h"
 
 struct FAniData {
 	int32 Frame;
@@ -31,32 +30,6 @@ struct FShakeData {
 	float Duration;
 	FVector2D LastOffset;
 	FVector2D Offset;
-};
-
-struct FTransitionItem
-{
-	float Time;
-	FString TargetID;
-	ETransitionActionType Type;
-	TOptional<FTweenConfig> TweenConfig;
-	FString Label;
-	FSimpleDelegate Hook;
-
-	TOptional<FTransitionItemData> Data;
-	TOptional<bool> VisibleData;
-	TOptional<FAniData> AniData;
-	TOptional<FSoundData> SoundData;
-	TOptional<FInnerTransData> TransData;
-	TOptional<FShakeData> ShakeData;
-	TOptional<FString> TextData;
-
-	//running properties
-	FGTweener* Tweener;
-	UFairyObject* Target;
-	uint32 DisplayLockToken;
-
-	FTransitionItem(ETransitionActionType aType);
-	~FTransitionItem();
 };
 
 class FTransitionItemBase
@@ -96,8 +69,7 @@ public:
 	FTransitionItemPos();
 
 	float duration;
-	FVector2D StartPos;
-	FVector2D EndPos;
+	KeyFrameDataPos frameData;
 
 	virtual void ParseKeyFrameData(FByteBuffer* InBuffer, int32 curPos) override;
 	virtual void RunItem() override;

@@ -15,7 +15,7 @@ public:
     FTweenManager();
     ~FTweenManager();
 
-    FGTweener* CreateTween();
+    FGTweener* CreateTweener();
 
     bool IsTweening(FTweenerHandle const& Handle) { return GetTween(Handle) != nullptr; }
     bool IsTweening(UObject* Target) { return GetTween(Target) != nullptr; }

@@ -5,42 +5,42 @@
 
 FGTweener* FFairyTweenHelper::To(float StartValue, float EndValue, float Duration)
 {
-    return UFairyApplication::Get()->TweenManager.CreateTween()->To(StartValue, EndValue, Duration);
+    return UFairyApplication::Get()->TweenManager.CreateTweener()->To(StartValue, EndValue, Duration);
 }
 
 FGTweener* FFairyTweenHelper::To(const FVector2D& StartValue, const FVector2D & EndValue, float Duration)
 {
-    return UFairyApplication::Get()->TweenManager.CreateTween()->To(StartValue, EndValue, Duration);
+    return UFairyApplication::Get()->TweenManager.CreateTweener()->To(StartValue, EndValue, Duration);
 }
 
 FGTweener* FFairyTweenHelper::To(const FVector& StartValue, const FVector & EndValue, float Duration)
 {
-    return UFairyApplication::Get()->TweenManager.CreateTween()->To(StartValue, EndValue, Duration);
+    return UFairyApplication::Get()->TweenManager.CreateTweener()->To(StartValue, EndValue, Duration);
 }
 
 FGTweener* FFairyTweenHelper::To(const FVector4& StartValue, const FVector4 & EndValue, float Duration)
 {
-    return UFairyApplication::Get()->TweenManager.CreateTween()->To(StartValue, EndValue, Duration);
+    return UFairyApplication::Get()->TweenManager.CreateTweener()->To(StartValue, EndValue, Duration);
 }
 
 FGTweener* FFairyTweenHelper::To(const FColor& StartValue, const FColor & EndValue, float Duration)
 {
-    return UFairyApplication::Get()->TweenManager.CreateTween()->To(StartValue, EndValue, Duration);
+    return UFairyApplication::Get()->TweenManager.CreateTweener()->To(StartValue, EndValue, Duration);
 }
 
 FGTweener* FFairyTweenHelper::ToDouble(double StartValue, double EndValue, float Duration)
 {
-    return UFairyApplication::Get()->TweenManager.CreateTween()->To(StartValue, EndValue, Duration);
+    return UFairyApplication::Get()->TweenManager.CreateTweener()->To(StartValue, EndValue, Duration);
 }
 
 FGTweener* FFairyTweenHelper::DelayedCall(float Delay)
 {
-    return UFairyApplication::Get()->TweenManager.CreateTween()->SetDelay(Delay);
+    return UFairyApplication::Get()->TweenManager.CreateTweener()->SetDelay(Delay);
 }
 
 FGTweener* FFairyTweenHelper::Shake(const FVector2D& StartValue, float Amplitude, float Duration)
 {
-    return UFairyApplication::Get()->TweenManager.CreateTween()->Shake(StartValue, Amplitude, Duration);
+    return UFairyApplication::Get()->TweenManager.CreateTweener()->Shake(StartValue, Amplitude, Duration);
 }
 
 bool FFairyTweenHelper::IsTweening(const FTweenerHandle& Handle)

@@ -27,7 +27,7 @@ FTweenManager::~FTweenManager()
     delete []ActiveTweenerPointerArray;
 }
 
-FGTweener* FTweenManager::CreateTween()
+FGTweener* FTweenManager::CreateTweener()
 {
     FGTweener* tweener = nullptr;
     int32 cnt = TweenerPool.Num();

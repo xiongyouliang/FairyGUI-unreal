@@ -12,16 +12,17 @@ const int32 OPTION_AUTO_STOP_AT_END = 4;
 
 
 UTransition::UTransition() :
-	TotalTimes(0),
-	TotalTasks(0),
 	bPlaying(false),
 	bPaused(false),
-	Options(0),
-	bReversed(false),
-	TotalDuration(0),
 	bAutoPlay(false),
-	AutoPlayDelay(0),
-	TimeScale(1),
+	bReversed(false),
+	TotalTimes(0),
+	TotalTasks(0),
+	Options(0),
+	AutoPlayTimes(0),
+	TotalDuration(0.0f),
+	AutoPlayDelay(0.0f),
+	TimeScale(1.0f),
 	StartTime(0),
 	EndTime(0)
 {
@@ -39,91 +40,6 @@ UTransition::~UTransition()
 	{
 		delete it;
 	}
-}
-
-void UTransition::Play(int32 InTimes, float InDelay, float InStartTime, float InEndTime, bool bInReverse, FSimpleDelegate InCompleteCallback)
-{
-	//Stop(true, true);
-
-	//TotalTimes = InTimes;
-	//bReversed = bInReverse;
-	//StartTime = InStartTime;
-	//EndTime = InEndTime;
-	//bPlaying = true;
-	//bPaused = false;
-	//CompleteCallback = InCompleteCallback;
-
-	//int32 cnt = Items.Num();
-	//for (int32 i = 0; i < cnt; i++)
-	//{
-	//	FTransitionItemBase* item = Items[i];
-	//	if (item->Target == nullptr)
-	//	{
-	//		if (!item->TargetID.IsEmpty())
-	//		{
-	//			item->Target = Owner->GetChildByID(item->TargetID);
-	//		}
-	//		else
-	//		{
-	//			item->Target = Owner;
-	//		}
-	//	}
-	//	else if (item->Target != Owner && item->Target->GetParent() != Owner) //maybe removed
-	//	{
-	//		item->Target = nullptr;
-	//	}
-
-	//	if (item->Target != nullptr && item->Type == ETransitionActionType::Transition)
-	//	{
-	//		UTransition* trans = Cast<UFairyComponent>(item->Target)->GetTransition(item->TransData->Name);
-	//		if (trans == this)
-	//		{
-	//			trans = nullptr;
-	//		}
-
-	//		if (trans != nullptr)
-	//		{
-	//			if (item->TransData->PlayTimes == 0) //stop
-	//			{
-	//				int32 j;
-	//				for (j = i - 1; j >= 0; j--)
-	//				{
-	//					FTransitionItemBase* item2 = Items[j];
-	//					if (item2->Type == ETransitionActionType::Transition)
-	//					{
-	//						if (item2->TransData->Instance == trans)
-	//						{
-	//							item2->TransData->StopTime = item->Time - item2->Time;
-	//							break;
-	//						}
-	//					}
-	//				}
-	//				if (j < 0)
-	//				{
-	//					item->TransData->StopTime = 0;
-	//				}
-	//				else
-	//				{
-	//					trans = nullptr; //no need to handle stop anymore
-	//				}
-	//			}
-	//			else
-	//			{
-	//				item->TransData->StopTime = -1;
-	//			}
-	//		}
-	//		item->TransData->Instance = trans;
-	//	}
-	//}
-
-	//if (InDelay == 0)
-	//{
-	//	OnDelayedPlay();
-	//}
-	//else
-	//{
-	//	DelayHandle = FFairyTweenHelper::DelayedCall(InDelay)->OnComplete(FSimpleDelegate::CreateUObject(this, &UTransition::OnDelayedPlay))->GetHandle();
-	//}
 }
 
 void UTransition::ChangePlayTimes(int32 InTimes)
@@ -537,6 +453,29 @@ void UTransition::OnOwnerRemovedFromStage()
 	if ((Options & OPTION_AUTO_STOP_DISABLED) == 0)
 	{
 		Stop((Options & OPTION_AUTO_STOP_AT_END) != 0 ? true : false, false);
+	}
+}
+
+void UTransition::Play(int32 InTimes, float InDelay, float InStartTime, float InEndTime, bool bInReverse, FSimpleDelegate InCompleteCallback)
+{
+	Stop(true, true);
+
+	TotalTimes = InTimes;
+	StartTime = InStartTime;
+	EndTime = InEndTime;
+
+	bReversed = bInReverse;
+	bPlaying = true;
+	bPaused = false;
+	CompleteCallback = InCompleteCallback;
+
+	if (InDelay == 0)
+	{
+		OnDelayedPlay();
+	}
+	else
+	{
+		DelayHandle = FFairyTweenHelper::DelayedCall(InDelay)->OnComplete(FSimpleDelegate::CreateUObject(this, &UTransition::OnDelayedPlay))->GetHandle();
 	}
 }
 

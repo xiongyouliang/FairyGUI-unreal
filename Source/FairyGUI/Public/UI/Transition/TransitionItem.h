@@ -38,7 +38,7 @@ public:
 	ETransitionActionType ActionType;
 
 	float startTime;
-	int32 targetID;
+	int16 targetID;
 	FString label;
 
 	bool bHasTween;

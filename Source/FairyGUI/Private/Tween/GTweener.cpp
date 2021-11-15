@@ -312,7 +312,9 @@ void FGTweener::Update()
     if (ValueSize == 0) //DelayedCall
     {
         if (ElapsedTime >= Delay + Duration)
-            Ended = 1;
+        {
+			Ended = 1;
+        }
 
         return;
     }
@@ -320,12 +322,16 @@ void FGTweener::Update()
     if (!bStarted)
     {
         if (ElapsedTime < Delay)
-            return;
+        {
+			return;
+        }
 
         bStarted = true;
         OnStartCallback.ExecuteIfBound(this);
         if (bKilled)
-            return;
+        {
+			return;
+        }
     }
 
     bool reversed = false;
@@ -341,12 +347,16 @@ void FGTweener::Update()
         int32 round = FMath::FloorToInt(tt / Duration);
         tt -= Duration * round;
         if (bYoyo)
-            reversed = round % 2 == 1;
+        {
+			reversed = round % 2 == 1;
+        }
 
         if (Repeat > 0 && Repeat - round < 0)
         {
             if (bYoyo)
-                reversed = Repeat % 2 == 1;
+            {
+				reversed = Repeat % 2 == 1;
+            }
             tt = Duration;
             Ended = 1;
         }
@@ -367,7 +377,9 @@ void FGTweener::Update()
     {
         double d = StartValue.D + (EndValue.D - StartValue.D) * NormalizedTime;
         if (bSnapping)
-            d = round(d);
+        {
+			d = round(d);
+        }
         DeltaValue.D = d - Value.D;
         Value.D = d;
         Value.X = (float)d;
@@ -388,7 +400,9 @@ void FGTweener::Update()
             Value.Y = StartValue.Y + ry;
         }
         else
-            Value.SetVec3(StartValue.GetVec3());
+        {
+			Value.SetVec3(StartValue.GetVec3());
+        }
     }
     else if (Path.IsValid())
     {
@@ -410,7 +424,9 @@ void FGTweener::Update()
             float n2 = EndValue[i];
             float f = n1 + (n2 - n1) * NormalizedTime;
             if (bSnapping)
-                f = FMath::RoundToFloat(f);
+            {
+				f = FMath::RoundToFloat(f);
+            }
             DeltaValue[i] = f - Value[i];
             Value[i] = f;
         }

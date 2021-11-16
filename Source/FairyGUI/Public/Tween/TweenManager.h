@@ -41,8 +41,8 @@ public:
 	[[deprecated("Mark to remove in next refactor.")]]
 	FFairyTweener* GetTween(UObject* Target);
 
-	void Tick(float DeltaTime);
-	TStatId GetStatId() const 
+	virtual void Tick(float DeltaTime) override;
+	virtual TStatId GetStatId() const override
 	{
 		return TStatId();
 	}

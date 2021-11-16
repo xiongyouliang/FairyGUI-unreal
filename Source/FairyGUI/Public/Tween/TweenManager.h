@@ -18,6 +18,7 @@ public:
 	FTweenManager();
 	~FTweenManager();
 
+	[[deprecated("Mark to remove in next refactor.")]]
 	FFairyTweener* CreateTweener();
 
 	void AddTweener(TSharedPtr<FFairyTweener> &InTweener, UFairyObject* InTarget, bool InPaused);
@@ -25,13 +26,19 @@ public:
 	void RemoveTweenerWithTarget(TSharedPtr<FFairyTweener> &InTweener, UFairyObject* InTarget);
 	void RemoveAllTweenerWithTarget(UFairyObject* InTarget);
 
+	[[deprecated("Mark to remove in next refactor.")]]
 	bool IsTweening(FTweenerHandle const& Handle) { return GetTween(Handle) != nullptr; }
+	[[deprecated("Mark to remove in next refactor.")]]
 	bool IsTweening(UObject* Target) { return GetTween(Target) != nullptr; }
 
+	[[deprecated("Mark to remove in next refactor.")]]
 	bool KillTween(FTweenerHandle & Handle, bool bCompleted);
+	[[deprecated("Mark to remove in next refactor.")]]
 	bool KillTweens(UObject* Target, bool bCompleted);
 
+	[[deprecated("Mark to remove in next refactor.")]]
 	FFairyTweener* GetTween(FTweenerHandle const& Handle);
+	[[deprecated("Mark to remove in next refactor.")]]
 	FFairyTweener* GetTween(UObject* Target);
 
 	void Tick(float DeltaTime);

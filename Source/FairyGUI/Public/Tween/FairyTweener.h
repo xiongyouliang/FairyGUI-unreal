@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "UI/FairyObject.h"
 #include "EaseType.h"
 #include "TweenValue.h"
 #include "TweenerHandle.h"
@@ -42,6 +43,10 @@ public:
     FFairyTweener* SetTarget(UObject* InTarget);
     UObject* GetTarget() const { return Target.Get(); }
 
+    void SetTarget2(UFairyObject* InTarget);
+    UFairyObject* GetTarget2();
+    bool IsTargetValid();
+
     const FNVariant& GetUserData() const { return UserData; }
     FFairyTweener* SetUserData(const FNVariant& InData);
 
@@ -55,9 +60,14 @@ public:
     FFairyTweener* OnComplete(FSimpleDelegate Callback);
 
     float GetNormalizedTime() const { return NormalizedTime; }
+
     bool IsCompleted() const { return Ended != 0; }
     bool AllCompleted() const { return Ended == 1; }
+    
+    
     FFairyTweener* SetPaused(bool bInPaused);
+    bool IsPaused();
+
     void Seek(float Time);
     void Kill(bool bSetComplete = false);
 
@@ -77,10 +87,14 @@ public:
     void Init();
     void Reset();
     virtual void Update(float DeltaTime);
-    virtual void Update();
+
+protected:
+    virtual void DoUpdate();
 
 protected:
     TWeakObjectPtr<UObject> Target;
+    TWeakObjectPtr<UFairyObject> _Target;
+
     bool bKilled;
     bool bPaused;
 

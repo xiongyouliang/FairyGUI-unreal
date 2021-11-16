@@ -72,6 +72,25 @@ FFairyTweener* FFairyTweener::SetTarget(UObject* InTarget)
 	return this;
 }
 
+void FFairyTweener::SetTarget2(UFairyObject* InTarget)
+{
+	_Target = TWeakObjectPtr<UFairyObject>(InTarget);
+}
+
+UFairyObject* FFairyTweener::GetTarget2()
+{
+	if (_Target.IsValid())
+	{
+		return _Target.Get();
+	}
+	return nullptr;
+}
+
+bool FFairyTweener::IsTargetValid()
+{
+	return _Target.IsValid();
+}
+
 FFairyTweener* FFairyTweener::SetUserData(const FNVariant& InData)
 {
 	UserData = InData;
@@ -132,6 +151,11 @@ FFairyTweener* FFairyTweener::SetPaused(bool bInPaused)
 	return this;
 }
 
+bool FFairyTweener::IsPaused()
+{
+	return bPaused;
+}
+
 void FFairyTweener::Seek(float Time)
 {
 	if (bKilled)
@@ -152,7 +176,7 @@ void FFairyTweener::Seek(float Time)
 		}
 	}
 
-	Update();
+	DoUpdate();
 }
 
 void FFairyTweener::Kill(bool bSetComplete)
@@ -178,7 +202,7 @@ void FFairyTweener::Kill(bool bSetComplete)
 			{
 				ElapsedTime = Delay + Duration * 2;
 			}
-			Update();
+			DoUpdate();
 		}
 
 		OnCompleteCallback.ExecuteIfBound(this);
@@ -312,7 +336,7 @@ void FFairyTweener::Update(float DeltaTime)
 	}
 
 	ElapsedTime += DeltaTime;
-	Update();
+	DoUpdate();
 
 	if (Ended != 0)
 	{
@@ -324,7 +348,7 @@ void FFairyTweener::Update(float DeltaTime)
 	}
 }
 
-void FFairyTweener::Update()
+void FFairyTweener::DoUpdate()
 {
 	Ended = 0;
 

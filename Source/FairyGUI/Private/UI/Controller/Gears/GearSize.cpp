@@ -48,7 +48,7 @@ void FGearSize::Apply()
 
     if (TweenConfig.IsSet() && TweenConfig->bTween && UFairyPackage::Constructing == 0 && !bDisableAllTweenEffect)
     {
-        FGTweener* tweener = FFairyTweenHelper::GetTween(TweenConfig->Handle);
+        FFairyTweener* tweener = FFairyTweenHelper::GetTween(TweenConfig->Handle);
         if (tweener != nullptr)
         {
             if (tweener->EndValue.GetVec4() != *Value)
@@ -90,7 +90,7 @@ void FGearSize::Apply()
     }
 }
 
-void FGearSize::OnTweenUpdate(FGTweener* Tweener)
+void FGearSize::OnTweenUpdate(FFairyTweener* Tweener)
 {
     int32 flag = Tweener->GetUserData().AsInt();
     Owner->bGearLocked = true;

@@ -16,7 +16,7 @@ protected:
     virtual void Init() override;
 
 private:
-    void OnTweenUpdate(FGTweener* Tweener);
+    void OnTweenUpdate(FFairyTweener* Tweener);
     void OnTweenComplete();
 
     struct FValue

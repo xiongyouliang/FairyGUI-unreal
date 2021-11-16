@@ -7,7 +7,7 @@
 
 class UFairyObject;
 
-typedef FGTweener* FairyTweenerPointer;
+typedef FFairyTweener* FairyTweenerPointer;
 
 class FAIRYGUI_API FTweenManager : public FTickableGameObject
 {
@@ -15,7 +15,7 @@ public:
     FTweenManager();
     ~FTweenManager();
 
-    FGTweener* CreateTweener();
+    FFairyTweener* CreateTweener();
 
     bool IsTweening(FTweenerHandle const& Handle) { return GetTween(Handle) != nullptr; }
     bool IsTweening(UObject* Target) { return GetTween(Target) != nullptr; }
@@ -23,8 +23,8 @@ public:
     bool KillTween(FTweenerHandle & Handle, bool bCompleted);
     bool KillTweens(UObject* Target, bool bCompleted);
 
-    FGTweener* GetTween(FTweenerHandle const& Handle);
-    FGTweener* GetTween(UObject* Target);
+    FFairyTweener* GetTween(FTweenerHandle const& Handle);
+    FFairyTweener* GetTween(UObject* Target);
 
     void Tick(float DeltaTime);
     TStatId GetStatId() const 

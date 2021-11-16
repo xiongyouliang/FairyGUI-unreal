@@ -3,42 +3,42 @@
 #include "FairyApplication.h"
 #include "UI/GProgressBar.h"
 
-FGTweener* FFairyTweenHelper::To(float StartValue, float EndValue, float Duration)
+FFairyTweener* FFairyTweenHelper::To(float StartValue, float EndValue, float Duration)
 {
     return UFairyApplication::Get()->TweenManager.CreateTweener()->To(StartValue, EndValue, Duration);
 }
 
-FGTweener* FFairyTweenHelper::To(const FVector2D& StartValue, const FVector2D & EndValue, float Duration)
+FFairyTweener* FFairyTweenHelper::To(const FVector2D& StartValue, const FVector2D & EndValue, float Duration)
 {
     return UFairyApplication::Get()->TweenManager.CreateTweener()->To(StartValue, EndValue, Duration);
 }
 
-FGTweener* FFairyTweenHelper::To(const FVector& StartValue, const FVector & EndValue, float Duration)
+FFairyTweener* FFairyTweenHelper::To(const FVector& StartValue, const FVector & EndValue, float Duration)
 {
     return UFairyApplication::Get()->TweenManager.CreateTweener()->To(StartValue, EndValue, Duration);
 }
 
-FGTweener* FFairyTweenHelper::To(const FVector4& StartValue, const FVector4 & EndValue, float Duration)
+FFairyTweener* FFairyTweenHelper::To(const FVector4& StartValue, const FVector4 & EndValue, float Duration)
 {
     return UFairyApplication::Get()->TweenManager.CreateTweener()->To(StartValue, EndValue, Duration);
 }
 
-FGTweener* FFairyTweenHelper::To(const FColor& StartValue, const FColor & EndValue, float Duration)
+FFairyTweener* FFairyTweenHelper::To(const FColor& StartValue, const FColor & EndValue, float Duration)
 {
     return UFairyApplication::Get()->TweenManager.CreateTweener()->To(StartValue, EndValue, Duration);
 }
 
-FGTweener* FFairyTweenHelper::ToDouble(double StartValue, double EndValue, float Duration)
+FFairyTweener* FFairyTweenHelper::ToDouble(double StartValue, double EndValue, float Duration)
 {
     return UFairyApplication::Get()->TweenManager.CreateTweener()->To(StartValue, EndValue, Duration);
 }
 
-FGTweener* FFairyTweenHelper::DelayedCall(float Delay)
+FFairyTweener* FFairyTweenHelper::DelayedCall(float Delay)
 {
     return UFairyApplication::Get()->TweenManager.CreateTweener()->SetDelay(Delay);
 }
 
-FGTweener* FFairyTweenHelper::Shake(const FVector2D& StartValue, float Amplitude, float Duration)
+FFairyTweener* FFairyTweenHelper::Shake(const FVector2D& StartValue, float Amplitude, float Duration)
 {
     return UFairyApplication::Get()->TweenManager.CreateTweener()->Shake(StartValue, Amplitude, Duration);
 }
@@ -75,7 +75,7 @@ void FFairyTweenHelper::Kill(UObject* Target, bool bSetComplete)
     UFairyApplication::Get()->TweenManager.KillTweens(Target, bSetComplete);
 }
 
-FGTweener* FFairyTweenHelper::GetTween(const FTweenerHandle& Handle)
+FFairyTweener* FFairyTweenHelper::GetTween(const FTweenerHandle& Handle)
 {
     if (!UFairyApplication::IsStarted())
         return nullptr;
@@ -83,7 +83,7 @@ FGTweener* FFairyTweenHelper::GetTween(const FTweenerHandle& Handle)
     return UFairyApplication::Get()->TweenManager.GetTween(Handle);
 }
 
-FGTweener* FFairyTweenHelper::GetTween(UObject * Target)
+FFairyTweener* FFairyTweenHelper::GetTween(UObject * Target)
 {
     if (!UFairyApplication::IsStarted())
         return nullptr;
@@ -91,7 +91,7 @@ FGTweener* FFairyTweenHelper::GetTween(UObject * Target)
     return UFairyApplication::Get()->TweenManager.GetTween(Target);
 }
 
-void FFairyTweenHelper::Action::MoveX(FGTweener* Tweener)
+void FFairyTweenHelper::Action::MoveX(FFairyTweener* Tweener)
 {
     UFairyObject * target = Cast<UFairyObject>(Tweener->GetTarget());
     //target->SetX(Tweener->Value.X);
@@ -99,67 +99,67 @@ void FFairyTweenHelper::Action::MoveX(FGTweener* Tweener)
     target->SetPosition(FVector2D(Tweener->Value.X, Pos.Y));
 }
 
-void FFairyTweenHelper::Action::MoveY(FGTweener* Tweener)
+void FFairyTweenHelper::Action::MoveY(FFairyTweener* Tweener)
 {
     UFairyObject * target = Cast<UFairyObject>(Tweener->GetTarget());
     //target->SetY(Tweener->Value.X);
 }
 
-void FFairyTweenHelper::Action::Move(FGTweener* Tweener)
+void FFairyTweenHelper::Action::Move(FFairyTweener* Tweener)
 {
     UFairyObject * target = Cast<UFairyObject>(Tweener->GetTarget());
     //target->SetPosition(Tweener->Value.GetVec2());
 }
 
-void FFairyTweenHelper::Action::SetWidth(FGTweener* Tweener)
+void FFairyTweenHelper::Action::SetWidth(FFairyTweener* Tweener)
 {
     UFairyObject * target = Cast<UFairyObject>(Tweener->GetTarget());
     //target->SetWidth(Tweener->Value.X);
 }
 
-void FFairyTweenHelper::Action::SetHeight(FGTweener* Tweener)
+void FFairyTweenHelper::Action::SetHeight(FFairyTweener* Tweener)
 {
     UFairyObject * target = Cast<UFairyObject>(Tweener->GetTarget());
     //target->SetHeight(Tweener->Value.X);
 }
 
-void FFairyTweenHelper::Action::SetSize(FGTweener* Tweener)
+void FFairyTweenHelper::Action::SetSize(FFairyTweener* Tweener)
 {
     UFairyObject * target = Cast<UFairyObject>(Tweener->GetTarget());
     //target->SetSize(Tweener->Value.GetVec2());
 }
 
-void FFairyTweenHelper::Action::ScaleX(FGTweener* Tweener)
+void FFairyTweenHelper::Action::ScaleX(FFairyTweener* Tweener)
 {
     UFairyObject * target = Cast<UFairyObject>(Tweener->GetTarget());
     //target->SetScaleX(Tweener->Value.X);
 }
 
-void FFairyTweenHelper::Action::ScaleY(FGTweener* Tweener)
+void FFairyTweenHelper::Action::ScaleY(FFairyTweener* Tweener)
 {
     UFairyObject * target = Cast<UFairyObject>(Tweener->GetTarget());
     //target->SetScaleY(Tweener->Value.X);
 }
 
-void FFairyTweenHelper::Action::ScaleXY(FGTweener* Tweener)
+void FFairyTweenHelper::Action::ScaleXY(FFairyTweener* Tweener)
 {
     UFairyObject * target = Cast<UFairyObject>(Tweener->GetTarget());
     //target->SetScale(Tweener->Value.GetVec2());
 }
 
-void FFairyTweenHelper::Action::Rotate(FGTweener* Tweener)
+void FFairyTweenHelper::Action::Rotate(FFairyTweener* Tweener)
 {
     UFairyObject * target = Cast<UFairyObject>(Tweener->GetTarget());
     //target->SetRotation(Tweener->Value.X);
 }
 
-void FFairyTweenHelper::Action::SetAlpha(FGTweener* Tweener)
+void FFairyTweenHelper::Action::SetAlpha(FFairyTweener* Tweener)
 {
     UFairyObject * target = Cast<UFairyObject>(Tweener->GetTarget());
     target->SetAlpha(Tweener->Value.X);
 }
 
-void FFairyTweenHelper::Action::SetProgress(FGTweener* Tweener)
+void FFairyTweenHelper::Action::SetProgress(FFairyTweener* Tweener)
 {
     UGProgressBar * target = Cast<UGProgressBar>(Tweener->GetTarget());
     target->Update(Tweener->Value.D);

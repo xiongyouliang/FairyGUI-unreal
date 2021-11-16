@@ -18,7 +18,7 @@ FTweenManager::~FTweenManager()
     int32 cnt = TotalActiveTweenerNum;
     for (int32 i = 0; i < cnt; i++)
     {
-        FGTweener* tweener = ActiveTweenerPointerArray[i];
+        FFairyTweener* tweener = ActiveTweenerPointerArray[i];
         if (tweener != nullptr)
         {
 			delete tweener;
@@ -27,9 +27,9 @@ FTweenManager::~FTweenManager()
     delete []ActiveTweenerPointerArray;
 }
 
-FGTweener* FTweenManager::CreateTweener()
+FFairyTweener* FTweenManager::CreateTweener()
 {
-    FGTweener* tweener = nullptr;
+    FFairyTweener* tweener = nullptr;
     int32 cnt = TweenerPool.Num();
     if (cnt > 0)
     {
@@ -43,7 +43,7 @@ FGTweener* FTweenManager::CreateTweener()
         {
             TweenerInstanceCount = 0;
         }
-        tweener = new FGTweener();
+        tweener = new FFairyTweener();
         tweener->Handle.SetIndex(TweenerInstanceCount);
     }
     tweener->Init();
@@ -52,8 +52,8 @@ FGTweener* FTweenManager::CreateTweener()
     if (TotalActiveTweenerNum == ActiveTweenerPointerCapcity)
     {
         int32 newCapcity = ActiveTweenerPointerCapcity + FMath::CeilToInt(ActiveTweenerPointerCapcity * 0.5f);
-		FGTweener** newArray = new FairyTweenerPointer[newCapcity];
-        FMemory::Memcpy(newArray, ActiveTweenerPointerArray, ActiveTweenerPointerCapcity * sizeof(FGTweener*));
+		FFairyTweener** newArray = new FairyTweenerPointer[newCapcity];
+        FMemory::Memcpy(newArray, ActiveTweenerPointerArray, ActiveTweenerPointerCapcity * sizeof(FFairyTweener*));
         delete []ActiveTweenerPointerArray;
         ActiveTweenerPointerArray = newArray;
         ActiveTweenerPointerCapcity = newCapcity;
@@ -67,7 +67,7 @@ bool FTweenManager::KillTween(FTweenerHandle & Handle, bool bCompleted)
     int32 cnt = TotalActiveTweenerNum;
     for (int32 i = 0; i < cnt; i++)
     {
-        FGTweener* tweener = ActiveTweenerPointerArray[i];
+        FFairyTweener* tweener = ActiveTweenerPointerArray[i];
         if (tweener != nullptr && tweener->Handle == Handle && !tweener->bKilled)
         {
             Handle.Invalidate();
@@ -91,7 +91,7 @@ bool FTweenManager::KillTweens(UObject* Target, bool bCompleted)
     int32 cnt = TotalActiveTweenerNum;
     for (int32 i = 0; i < cnt; i++)
     {
-        FGTweener* tweener = ActiveTweenerPointerArray[i];
+        FFairyTweener* tweener = ActiveTweenerPointerArray[i];
         if (tweener != nullptr && tweener->Target.Get() == Target && !tweener->bKilled)
         {
             tweener->Kill(bCompleted);
@@ -102,7 +102,7 @@ bool FTweenManager::KillTweens(UObject* Target, bool bCompleted)
 	return result;
 }
 
-FGTweener* FTweenManager::GetTween(FTweenerHandle const& Handle)
+FFairyTweener* FTweenManager::GetTween(FTweenerHandle const& Handle)
 {
     if (!Handle.IsValid())
     {
@@ -112,7 +112,7 @@ FGTweener* FTweenManager::GetTween(FTweenerHandle const& Handle)
     int32 cnt = TotalActiveTweenerNum;
     for (int32 i = 0; i < cnt; i++)
     {
-        FGTweener* tweener = ActiveTweenerPointerArray[i];
+        FFairyTweener* tweener = ActiveTweenerPointerArray[i];
         if (tweener != nullptr && tweener->Handle == Handle && !tweener->bKilled)
         {
             return tweener;
@@ -122,7 +122,7 @@ FGTweener* FTweenManager::GetTween(FTweenerHandle const& Handle)
     return nullptr;
 }
 
-FGTweener* FTweenManager::GetTween(UObject* Target)
+FFairyTweener* FTweenManager::GetTween(UObject* Target)
 {
     if (Target == nullptr)
     {
@@ -132,7 +132,7 @@ FGTweener* FTweenManager::GetTween(UObject* Target)
     int32 cnt = TotalActiveTweenerNum;
     for (int32 i = 0; i < cnt; i++)
     {
-        FGTweener* tweener = ActiveTweenerPointerArray[i];
+        FFairyTweener* tweener = ActiveTweenerPointerArray[i];
         if (tweener != nullptr && tweener->Target.Get() == Target && !tweener->bKilled)
         {
             return tweener;
@@ -148,7 +148,7 @@ void FTweenManager::Tick(float DeltaTime)
     int32 freePosStart = -1;
     for (int32 i = 0; i < cnt; i++)
     {
-        FGTweener* tweener = ActiveTweenerPointerArray[i];
+        FFairyTweener* tweener = ActiveTweenerPointerArray[i];
         if (tweener == nullptr)
         {
             if (freePosStart == -1)

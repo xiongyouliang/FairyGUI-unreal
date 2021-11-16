@@ -55,7 +55,7 @@ void UGProgressBar::TweenValue(float InValue, float Duration)
 {
     float oldValule;
 
-    FGTweener* tweener = FFairyTweenHelper::GetTween(TweenHandle);
+    FFairyTweener* tweener = FFairyTweenHelper::GetTween(TweenHandle);
     if (tweener != nullptr)
     {
         oldValule = tweener->Value.D;

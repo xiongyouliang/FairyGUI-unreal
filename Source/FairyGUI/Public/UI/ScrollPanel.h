@@ -12,7 +12,7 @@ class UFairyComponent;
 class UGScrollBar;
 class UGController;
 class FByteBuffer;
-class FGTweener;
+class FFairyTweener;
 class SContainer;
 
 UCLASS(BlueprintType)
@@ -200,7 +200,7 @@ private:
     inline void CalculateInertialInfo();
     inline void ProcessInertial();
 
-    void OnBarTweenComplete(FGTweener* Tweener);
+    void OnBarTweenComplete(FFairyTweener* Tweener);
 
 private:
     UFairyComponent* Owner;

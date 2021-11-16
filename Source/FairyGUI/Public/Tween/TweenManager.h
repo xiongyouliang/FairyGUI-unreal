@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 #include "Engine/Engine.h"
 #include "Tickable.h"
-#include "GTweener.h"
+#include "Tween/FairyTweener.h"
 
 class UFairyObject;
 

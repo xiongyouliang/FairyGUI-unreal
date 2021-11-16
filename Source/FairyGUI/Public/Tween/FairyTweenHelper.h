@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GTweener.h"
+#include "Tween/FairyTweener.h"
 #include "EaseType.h"
 #include "TweenValue.h"
 

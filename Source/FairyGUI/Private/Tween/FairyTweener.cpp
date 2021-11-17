@@ -3,6 +3,8 @@
 #include "Tween/GPath.h"
 #include "UI/FairyObject.h"
 
+const float K_MATH_EPSILON = 0.000001f;
+
 FFairyTweener::FFairyTweener()
 {
 }
@@ -72,6 +74,11 @@ FFairyTweener* FFairyTweener::SetTarget(UObject* InTarget)
 	return this;
 }
 
+void FFairyTweener::StartWithTarget(UFairyObject* InTarget)
+{
+	_Target = TWeakObjectPtr<UFairyObject>(InTarget);
+}
+
 void FFairyTweener::SetTarget2(UFairyObject* InTarget)
 {
 	_Target = TWeakObjectPtr<UFairyObject>(InTarget);
@@ -95,6 +102,11 @@ FFairyTweener* FFairyTweener::SetUserData(const FNVariant& InData)
 {
 	UserData = InData;
 	return this;
+}
+
+bool FFairyTweener::IsDone() const
+{
+	return true;
 }
 
 FFairyTweener* FFairyTweener::SetPath(TSharedPtr<FGPath> InPath)
@@ -314,6 +326,11 @@ void FFairyTweener::Reset()
 	OnStartCallback.Unbind();
 	OnUpdateCallback.Unbind();
 	OnCompleteCallback.Unbind();
+}
+
+void FFairyTweener::Step(float DeltaTime)
+{
+
 }
 
 void FFairyTweener::Update(float DeltaTime)

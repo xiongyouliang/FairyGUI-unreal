@@ -1,5 +1,7 @@
 #include "Tween/FairyTweenHelper.h"
 #include "Tween/TweenManager.h"
+#include "Tween/FairyTweener.h"
+
 #include "FairyApplication.h"
 #include "UI/GProgressBar.h"
 

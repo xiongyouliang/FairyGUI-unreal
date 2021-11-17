@@ -1,9 +1,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Tween/EaseType.h"
+#include "Tween/TweenValue.h"
+#include "Tween/TweenerHandle.h"
 #include "Tween/FairyTweener.h"
-#include "EaseType.h"
-#include "TweenValue.h"
+
+class FFairyTweener;
 
 class FAIRYGUI_API FFairyTweenHelper
 {
@@ -16,16 +19,12 @@ public:
     static FFairyTweener* ToDouble(double StartValue, double EndValue, float Duration);
     static FFairyTweener* DelayedCall(float Delay);
     static FFairyTweener* Shake(const FVector2D& StartValue, float Amplitude, float Duration);
-
     static bool IsTweening(const FTweenerHandle& Handle);
     static bool IsTweening(UObject* Target);
-
     static FFairyTweener* GetTween(const FTweenerHandle& Handle);
     static FFairyTweener* GetTween(UObject* Target);
-
     static void Kill(FTweenerHandle& Handle, bool bSetComplete = false);
     static void Kill(UObject* Target, bool bSetComplete = false);
-
     struct Action
     {
         static void MoveX(FFairyTweener* Tweener);

@@ -224,4 +224,5 @@ void FTweenManager::Tick(float DeltaTime)
 		TweenerArrayElement element = CompletedArray[i];
 		RemoveTweener(element);
 	}
+	CompletedArray.Reset();
 }

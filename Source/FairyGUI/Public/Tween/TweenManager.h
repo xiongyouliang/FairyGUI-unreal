@@ -54,6 +54,7 @@ private:
 	uint32 TweenerInstanceCount;
 
 	TArray<FFairyTweener*> TweenerPool;
+
 	TMap<TweenerTableKey, TweenerArray> TweenerTable;
 	TweenerArray CompletedArray;
 };

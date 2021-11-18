@@ -64,8 +64,7 @@ bool UFairyTweenerPos::Init(float InDuration, FVector2D InStartPos, FVector2D In
 
 void UFairyTweenerPos::Update(float InTime)
 {
-	UE_LOG(LogTemp, Warning, TEXT("---------> UFairyTweenerPos::Update(), %f"), InTime);
-	if (_Target.IsValid())
+	if (_Target)
 	{
 		FVector2D newPos = startPos + (dstPos - startPos) * InTime;
 		_Target->SetPosition(newPos);

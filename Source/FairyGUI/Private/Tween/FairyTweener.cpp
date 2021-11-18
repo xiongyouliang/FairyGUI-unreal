@@ -76,26 +76,22 @@ UFairyTweener* UFairyTweener::SetTarget(UObject* InTarget)
 
 void UFairyTweener::StartWithTarget(UFairyObject* InTarget)
 {
-	_Target = TWeakObjectPtr<UFairyObject>(InTarget);
+	_Target = InTarget;
 }
 
 void UFairyTweener::SetTarget2(UFairyObject* InTarget)
 {
-	_Target = TWeakObjectPtr<UFairyObject>(InTarget);
+	_Target = InTarget;
 }
 
 UFairyObject* UFairyTweener::GetTarget2()
 {
-	if (_Target.IsValid())
-	{
-		return _Target.Get();
-	}
-	return nullptr;
+	return _Target;
 }
 
 bool UFairyTweener::IsTargetValid()
 {
-	return _Target.IsValid();
+	return _Target != nullptr;
 }
 
 UFairyTweener* UFairyTweener::SetUserData(const FNVariant& InData)

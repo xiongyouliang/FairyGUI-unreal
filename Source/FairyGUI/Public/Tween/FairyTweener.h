@@ -105,8 +105,12 @@ protected:
 	virtual void DoUpdate();
 
 protected:
+	UPROPERTY()
+	UFairyObject* _Target;
+	int _tag;
+
 	TWeakObjectPtr<UObject> Target;
-	TWeakObjectPtr<UFairyObject> _Target;
+	
 
 	bool bKilled;
 	bool bPaused;

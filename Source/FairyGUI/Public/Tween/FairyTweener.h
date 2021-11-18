@@ -142,6 +142,4 @@ protected:
 	int32 Ended;
 	float ElapsedTime;
 	float NormalizedTime;
-
-	friend class FFairyTweenHelper;
 };

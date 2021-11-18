@@ -18,63 +18,10 @@ UTweenManager* UTweenManager::Get()
 UTweenManager::UTweenManager()
 	:bTicking(false)
 {
-	TotalActiveTweenerNum = 0;
-	ActiveTweenerPointerCapcity = 30;
-	ActiveTweenerPointerArray = new FairyTweenerPointer[ActiveTweenerPointerCapcity]();
 }
 
 UTweenManager::~UTweenManager()
 {
-	for (auto it : TweenerPool)
-	{
-		delete it;
-	}
-
-	int32 cnt = TotalActiveTweenerNum;
-	for (int32 i = 0; i < cnt; i++)
-	{
-		UFairyTweener* tweener = ActiveTweenerPointerArray[i];
-		if (tweener != nullptr)
-		{
-			delete tweener;
-		}
-	}
-	delete []ActiveTweenerPointerArray;
-}
-
-UFairyTweener* UTweenManager::CreateTweener()
-{
-	UFairyTweener* tweener = nullptr;
-	int32 cnt = TweenerPool.Num();
-	if (cnt > 0)
-	{
-		tweener = TweenerPool.Pop();
-		tweener->Handle.IncreaseSerialNumber();
-	}
-	else
-	{
-		TweenerInstanceCount++;
-		if (!ensureMsgf(TweenerInstanceCount != FTweenerHandle::MaxIndex, TEXT("Tweener index number has wrapped around!")))
-		{
-			TweenerInstanceCount = 0;
-		}
-		tweener = NewObject<UFairyTweener>(this);
-		tweener->Handle.SetIndex(TweenerInstanceCount);
-	}
-	tweener->Init();
-	ActiveTweenerPointerArray[TotalActiveTweenerNum++] = tweener;
-
-	if (TotalActiveTweenerNum == ActiveTweenerPointerCapcity)
-	{
-		int32 newCapcity = ActiveTweenerPointerCapcity + FMath::CeilToInt(ActiveTweenerPointerCapcity * 0.5f);
-		UFairyTweener** newArray = new FairyTweenerPointer[newCapcity];
-		FMemory::Memcpy(newArray, ActiveTweenerPointerArray, ActiveTweenerPointerCapcity * sizeof(UFairyTweener*));
-		delete []ActiveTweenerPointerArray;
-		ActiveTweenerPointerArray = newArray;
-		ActiveTweenerPointerCapcity = newCapcity;
-	}
-
-	return tweener;
 }
 
 UFairyTweenerPos* UTweenManager::CreateTweenerPos(float InDuration, FVector2D InStartPos, FVector2D InDstPos)
@@ -89,7 +36,7 @@ void UTweenManager::AddTweener(UFairyTweener* InTweener, UFairyObject* InTarget,
 	if (InTweener)
 	{
 		TArray<UFairyTweener*>& Array = TweenerTable.FindOrAdd(InTarget);
-		InTweener->bPaused = InPaused;
+		InTweener->SetPaused(InPaused);
 		InTweener->StartWithTarget(InTarget);
 		Array.Add(InTweener);
 	}
@@ -197,86 +144,6 @@ void UTweenManager::DoRemoveTweener(UFairyTweener* InTweener)
 	}
 }
 
-bool UTweenManager::KillTween(FTweenerHandle & Handle, bool bCompleted)
-{
-	int32 cnt = TotalActiveTweenerNum;
-	for (int32 i = 0; i < cnt; i++)
-	{
-		UFairyTweener* tweener = ActiveTweenerPointerArray[i];
-		if (tweener != nullptr && tweener->Handle == Handle && !tweener->bKilled)
-		{
-			Handle.Invalidate();
-			tweener->Kill(bCompleted);
-			return true;
-		}
-	}
-
-	Handle.Invalidate();
-	return false;
-}
-
-bool UTweenManager::KillTweens(UObject* Target, bool bCompleted)
-{
-	if (Target == nullptr)
-	{
-		return false;
-	}
-
-	bool result = false;
-	int32 cnt = TotalActiveTweenerNum;
-	for (int32 i = 0; i < cnt; i++)
-	{
-		UFairyTweener* tweener = ActiveTweenerPointerArray[i];
-		if (tweener != nullptr && tweener->Target.Get() == Target && !tweener->bKilled)
-		{
-			tweener->Kill(bCompleted);
-			result = true;
-		}
-	}
-
-	return result;
-}
-
-UFairyTweener* UTweenManager::GetTween(FTweenerHandle const& Handle)
-{
-	if (!Handle.IsValid())
-	{
-		return nullptr;
-	}
-
-	int32 cnt = TotalActiveTweenerNum;
-	for (int32 i = 0; i < cnt; i++)
-	{
-		UFairyTweener* tweener = ActiveTweenerPointerArray[i];
-		if (tweener != nullptr && tweener->Handle == Handle && !tweener->bKilled)
-		{
-			return tweener;
-		}
-	}
-
-	return nullptr;
-}
-
-UFairyTweener* UTweenManager::GetTween(UObject* Target)
-{
-	if (Target == nullptr)
-	{
-		return nullptr;
-	}
-
-	int32 cnt = TotalActiveTweenerNum;
-	for (int32 i = 0; i < cnt; i++)
-	{
-		UFairyTweener* tweener = ActiveTweenerPointerArray[i];
-		if (tweener != nullptr && tweener->Target.Get() == Target && !tweener->bKilled)
-		{
-			return tweener;
-		}
-	}
-
-	return nullptr;
-}
-
 void UTweenManager::Tick(float DeltaTime)
 {
 	bTicking = true;
@@ -319,3 +186,30 @@ void UTweenManager::Tick(float DeltaTime)
 
 	bTicking = false;
 }
+
+// ------------- there function will remove when finish refactor ------------
+UFairyTweener* UTweenManager::CreateTweener()
+{
+	return nullptr;
+}
+
+bool UTweenManager::KillTween(FTweenerHandle& Handle, bool bCompleted)
+{
+	return true;
+}
+
+bool UTweenManager::KillTweens(UObject* Target, bool bCompleted)
+{
+	return true;
+}
+
+UFairyTweener* UTweenManager::GetTween(FTweenerHandle const& Handle)
+{
+	return nullptr;
+}
+
+UFairyTweener* UTweenManager::GetTween(UObject* Target)
+{
+	return nullptr;
+}
+// ------------- there function will remove when finish refactor ------------

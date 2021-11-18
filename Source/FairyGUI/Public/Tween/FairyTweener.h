@@ -144,5 +144,4 @@ protected:
 	float NormalizedTime;
 
 	friend class FFairyTweenHelper;
-	friend class UTweenManager;
 };

@@ -73,5 +73,5 @@ private:
     }
 
     uint64 Handle;
-    friend class FTweenManager;
+    friend class UTweenManager;
 };

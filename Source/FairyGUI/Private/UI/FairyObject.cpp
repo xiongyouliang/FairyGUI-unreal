@@ -1,12 +1,13 @@
 #include "UI/FairyObject.h"
+#include "Package/FairyPackage.h"
 #include "UI/GList.h"
 #include "UI/GGroup.h"
 #include "UI/Controller/GController.h"
-#include "Package/FairyPackage.h"
 #include "UI/FairyRoot.h"
 #include "UI/Controller/Gears/GearBase.h"
 #include "UI/Controller/Gears/GearDisplay.h"
 #include "UI/Controller/Gears/GearDisplay2.h"
+#include "Tween/TweenManager.h"
 #include "Widgets/SDisplayObject.h"
 #include "Utils/ByteBuffer.h"
 #include "FairyApplication.h"
@@ -660,6 +661,12 @@ void UFairyObject::ApplyController(UGController* Controller)
 	CheckGearDisplay();
 }
 // ********************* Controller end *******************
+
+void UFairyObject::RunAction(UFairyTweener* InAction)
+{
+	bool bOnStage = OnStage();
+	UTweenManager::Get()->AddTweener(InAction, this, !bOnStage);
+}
 
 void UFairyObject::RemoveFromParent()
 {

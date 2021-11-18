@@ -360,6 +360,10 @@ public:
 
 	void UpdateGear(int32 Index);
 	void CheckGearDisplay();
+
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+	virtual void RunAction(UFairyTweener* InAction);
+
 protected:
 	FString ID;
 	FString Name;

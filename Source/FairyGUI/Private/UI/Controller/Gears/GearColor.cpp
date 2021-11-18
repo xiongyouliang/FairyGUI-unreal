@@ -60,7 +60,7 @@ void FGearColor::Apply()
             Owner->bGearLocked = false;
         }
 
-        FFairyTweener* tweener = FFairyTweenHelper::GetTween(TweenConfig->Handle);
+        UFairyTweener* tweener = FFairyTweenHelper::GetTween(TweenConfig->Handle);
         if (tweener != nullptr)
         {
             if (tweener->EndValue.GetColor() != Value->Color)
@@ -98,7 +98,7 @@ void FGearColor::Apply()
     }
 }
 
-void FGearColor::OnTweenUpdate(FFairyTweener* Tweener)
+void FGearColor::OnTweenUpdate(UFairyTweener* Tweener)
 {
     Owner->bGearLocked = true;
     Owner->SetProp(EObjectPropID::Color, FNVariant(Tweener->Value.GetColor()));

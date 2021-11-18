@@ -64,7 +64,7 @@ void FGearLook::Apply()
         Owner->SetTouchable(Value->bTouchable);
         Owner->bGearLocked = false;
 
-        FFairyTweener* tweener = FFairyTweenHelper::GetTween(TweenConfig->Handle);
+        UFairyTweener* tweener = FFairyTweenHelper::GetTween(TweenConfig->Handle);
         if (tweener != nullptr)
         {
             if (tweener->EndValue.X != Value->Alpha || tweener->EndValue.Y != Value->Rotation)
@@ -107,7 +107,7 @@ void FGearLook::Apply()
     }
 }
 
-void FGearLook::OnTweenUpdate(FFairyTweener* Tweener)
+void FGearLook::OnTweenUpdate(UFairyTweener* Tweener)
 {
     int32 flag = Tweener->GetUserData().AsInt();
     Owner->bGearLocked = true;

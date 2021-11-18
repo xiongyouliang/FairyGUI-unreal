@@ -1,14 +1,28 @@
 #include "Tween/TweenManager.h"
 #include "Tween/FairyTweener.h"
+#include "Tween/FairyTweenerInterval.h"
 
-FTweenManager::FTweenManager()
+#include "FairyApplication.h"
+
+UTweenManager* UTweenManager::Instance = nullptr;
+
+UTweenManager* UTweenManager::Get()
+{
+	if (UTweenManager::Instance == nullptr)
+	{
+		UTweenManager::Instance = NewObject<UTweenManager>(UFairyApplication::Get());
+	}
+	return UTweenManager::Instance;
+}
+
+UTweenManager::UTweenManager()
 {
 	TotalActiveTweenerNum = 0;
 	ActiveTweenerPointerCapcity = 30;
 	ActiveTweenerPointerArray = new FairyTweenerPointer[ActiveTweenerPointerCapcity]();
 }
 
-FTweenManager::~FTweenManager()
+UTweenManager::~UTweenManager()
 {
 	for (auto it : TweenerPool)
 	{
@@ -18,7 +32,7 @@ FTweenManager::~FTweenManager()
 	int32 cnt = TotalActiveTweenerNum;
 	for (int32 i = 0; i < cnt; i++)
 	{
-		FFairyTweener* tweener = ActiveTweenerPointerArray[i];
+		UFairyTweener* tweener = ActiveTweenerPointerArray[i];
 		if (tweener != nullptr)
 		{
 			delete tweener;
@@ -27,9 +41,9 @@ FTweenManager::~FTweenManager()
 	delete []ActiveTweenerPointerArray;
 }
 
-FFairyTweener* FTweenManager::CreateTweener()
+UFairyTweener* UTweenManager::CreateTweener()
 {
-	FFairyTweener* tweener = nullptr;
+	UFairyTweener* tweener = nullptr;
 	int32 cnt = TweenerPool.Num();
 	if (cnt > 0)
 	{
@@ -43,7 +57,7 @@ FFairyTweener* FTweenManager::CreateTweener()
 		{
 			TweenerInstanceCount = 0;
 		}
-		tweener = new FFairyTweener();
+		tweener = NewObject<UFairyTweener>(this);
 		tweener->Handle.SetIndex(TweenerInstanceCount);
 	}
 	tweener->Init();
@@ -52,8 +66,8 @@ FFairyTweener* FTweenManager::CreateTweener()
 	if (TotalActiveTweenerNum == ActiveTweenerPointerCapcity)
 	{
 		int32 newCapcity = ActiveTweenerPointerCapcity + FMath::CeilToInt(ActiveTweenerPointerCapcity * 0.5f);
-		FFairyTweener** newArray = new FairyTweenerPointer[newCapcity];
-		FMemory::Memcpy(newArray, ActiveTweenerPointerArray, ActiveTweenerPointerCapcity * sizeof(FFairyTweener*));
+		UFairyTweener** newArray = new FairyTweenerPointer[newCapcity];
+		FMemory::Memcpy(newArray, ActiveTweenerPointerArray, ActiveTweenerPointerCapcity * sizeof(UFairyTweener*));
 		delete []ActiveTweenerPointerArray;
 		ActiveTweenerPointerArray = newArray;
 		ActiveTweenerPointerCapcity = newCapcity;
@@ -62,43 +76,61 @@ FFairyTweener* FTweenManager::CreateTweener()
 	return tweener;
 }
 
-void FTweenManager::AddTweener(TSharedPtr<FFairyTweener> &InTweener, UFairyObject* InTarget, bool InPaused)
+UFairyTweenerPos* UTweenManager::CreateTweenerPos(float InDuration, FVector2D InStartPos, FVector2D InDstPos)
 {
-	if (InTweener.IsValid())
+	UFairyTweenerPos* Tweener = NewObject<UFairyTweenerPos>(this);
+	Tweener->Init(InDuration, InStartPos, InDstPos);
+	return Tweener;
+}
+
+void UTweenManager::AddTweener(UFairyTweener* InTweener, UFairyObject* InTarget, bool InPaused)
+{
+	if (InTweener)
 	{
-		TweenerArray& Array = TweenerTable.FindOrAdd(TweenerTableKey(InTarget));
+		TArray<UFairyTweener*>& Array = TweenerTable.FindOrAdd(InTarget);
 		InTweener->bPaused = InPaused;
+		InTweener->StartWithTarget(InTarget);
 		Array.Add(InTweener);
 	}
 }
 
-void FTweenManager::RemoveTweener(TSharedPtr<FFairyTweener> &InTweener)
+void UTweenManager::RemoveTweener(UFairyTweener* InTweener)
 {
+	TArray<UFairyObject*> DeleteArray;
 	for (auto& Pair : TweenerTable)
 	{
-		TweenerArray& Array = Pair.Value;
+		TArray<UFairyTweener*>& Array = Pair.Value;
 		for (int i = 0; i < Array.Num(); i++)
 		{
-			TSharedPtr<FFairyTweener>& Element = Array[i];
-			if (Element.Get() == InTweener.Get())
+			UFairyTweener* Element = Array[i];
+			if (Element == InTweener)
 			{
 				Array.RemoveAt(i);
 				break;
 			}
 		}
+		// If tweener is empty, remove target in TweenerTable
+		if (Array.Num() == 0)
+		{
+			DeleteArray.Add(Pair.Key);
+		}
+	}
+
+	for (size_t i = 0; i < DeleteArray.Num(); i++)
+	{
+		RemoveAllTweenerWithTarget(DeleteArray[i]);
 	}
 }
 
-void FTweenManager::RemoveTweenerWithTarget(TSharedPtr<FFairyTweener> &InTweener, UFairyObject* InTarget)
+void UTweenManager::RemoveTweenerWithTarget(UFairyTweener* InTweener, UFairyObject* InTarget)
 {
-	TweenerTableKey TargetKey = TweenerTableKey(InTarget);
-	if ( TweenerTable.Contains(TargetKey) )
+	if ( TweenerTable.Contains(InTarget) )
 	{
-		TweenerArray* Array = TweenerTable.Find(TargetKey);
+		TArray<UFairyTweener*>* Array = TweenerTable.Find(InTarget);
 		for (int i = 0; i < Array->Num(); i++)
 		{
-			TweenerArrayElement element = (*Array)[i];
-			if (element.Get() == InTweener.Get())
+			UFairyTweener* element = (*Array)[i];
+			if (element == InTweener)
 			{
 				Array->RemoveAt(i);
 				break;
@@ -107,21 +139,20 @@ void FTweenManager::RemoveTweenerWithTarget(TSharedPtr<FFairyTweener> &InTweener
 	}
 }
 
-void FTweenManager::RemoveAllTweenerWithTarget(UFairyObject* InTarget)
+void UTweenManager::RemoveAllTweenerWithTarget(UFairyObject* InTarget)
 {
-	TweenerTableKey TargetKey = TweenerTableKey(InTarget);
-	if ( TweenerTable.Contains(TargetKey) )
+	if ( TweenerTable.Contains(InTarget) )
 	{
-		TweenerTable.Remove(TargetKey);
+		TweenerTable.Remove(InTarget);
 	}
 }
 
-bool FTweenManager::KillTween(FTweenerHandle & Handle, bool bCompleted)
+bool UTweenManager::KillTween(FTweenerHandle & Handle, bool bCompleted)
 {
 	int32 cnt = TotalActiveTweenerNum;
 	for (int32 i = 0; i < cnt; i++)
 	{
-		FFairyTweener* tweener = ActiveTweenerPointerArray[i];
+		UFairyTweener* tweener = ActiveTweenerPointerArray[i];
 		if (tweener != nullptr && tweener->Handle == Handle && !tweener->bKilled)
 		{
 			Handle.Invalidate();
@@ -134,7 +165,7 @@ bool FTweenManager::KillTween(FTweenerHandle & Handle, bool bCompleted)
 	return false;
 }
 
-bool FTweenManager::KillTweens(UObject* Target, bool bCompleted)
+bool UTweenManager::KillTweens(UObject* Target, bool bCompleted)
 {
 	if (Target == nullptr)
 	{
@@ -145,7 +176,7 @@ bool FTweenManager::KillTweens(UObject* Target, bool bCompleted)
 	int32 cnt = TotalActiveTweenerNum;
 	for (int32 i = 0; i < cnt; i++)
 	{
-		FFairyTweener* tweener = ActiveTweenerPointerArray[i];
+		UFairyTweener* tweener = ActiveTweenerPointerArray[i];
 		if (tweener != nullptr && tweener->Target.Get() == Target && !tweener->bKilled)
 		{
 			tweener->Kill(bCompleted);
@@ -156,7 +187,7 @@ bool FTweenManager::KillTweens(UObject* Target, bool bCompleted)
 	return result;
 }
 
-FFairyTweener* FTweenManager::GetTween(FTweenerHandle const& Handle)
+UFairyTweener* UTweenManager::GetTween(FTweenerHandle const& Handle)
 {
 	if (!Handle.IsValid())
 	{
@@ -166,7 +197,7 @@ FFairyTweener* FTweenManager::GetTween(FTweenerHandle const& Handle)
 	int32 cnt = TotalActiveTweenerNum;
 	for (int32 i = 0; i < cnt; i++)
 	{
-		FFairyTweener* tweener = ActiveTweenerPointerArray[i];
+		UFairyTweener* tweener = ActiveTweenerPointerArray[i];
 		if (tweener != nullptr && tweener->Handle == Handle && !tweener->bKilled)
 		{
 			return tweener;
@@ -176,7 +207,7 @@ FFairyTweener* FTweenManager::GetTween(FTweenerHandle const& Handle)
 	return nullptr;
 }
 
-FFairyTweener* FTweenManager::GetTween(UObject* Target)
+UFairyTweener* UTweenManager::GetTween(UObject* Target)
 {
 	if (Target == nullptr)
 	{
@@ -186,7 +217,7 @@ FFairyTweener* FTweenManager::GetTween(UObject* Target)
 	int32 cnt = TotalActiveTweenerNum;
 	for (int32 i = 0; i < cnt; i++)
 	{
-		FFairyTweener* tweener = ActiveTweenerPointerArray[i];
+		UFairyTweener* tweener = ActiveTweenerPointerArray[i];
 		if (tweener != nullptr && tweener->Target.Get() == Target && !tweener->bKilled)
 		{
 			return tweener;
@@ -196,24 +227,24 @@ FFairyTweener* FTweenManager::GetTween(UObject* Target)
 	return nullptr;
 }
 
-void FTweenManager::Tick(float DeltaTime)
+void UTweenManager::Tick(float DeltaTime)
 {
 	for (auto& Pair : TweenerTable)
 	{
-		TweenerArray& Array = Pair.Value;
+		TArray<UFairyTweener*>& Array = Pair.Value;
 		for (size_t i = 0; i < Array.Num(); i++)
 		{
-			TweenerArrayElement element = Array[i];
+			UFairyTweener* element = Array[i];
 			if (!element->IsPaused())
 			{
-				if (element->IsCompleted() || !element->IsTargetValid())
+				if (element->IsDone() || !element->IsTargetValid())
 				{
 					CompletedArray.Add(element);
 					continue;
 				}
 				else
 				{
-					element->Update(DeltaTime);
+					element->Step(DeltaTime);
 				}
 			}
 		}
@@ -221,7 +252,7 @@ void FTweenManager::Tick(float DeltaTime)
 
 	for (size_t i = 0; i < CompletedArray.Num(); i++)
 	{
-		TweenerArrayElement element = CompletedArray[i];
+		UFairyTweener* element = CompletedArray[i];
 		RemoveTweener(element);
 	}
 	CompletedArray.Reset();

@@ -1,26 +1,26 @@
 #include "Tween/FairyTweenerInterval.h"
 
-float FFairyTweenerInterval::GetElapsedTime()
+float UFairyTweenerInterval::GetElapsedTime()
 {
 	return elapsedTime;
 }
 
-void FFairyTweenerInterval::SetAmplitudeRate(float InAmplitudeRate)
+void UFairyTweenerInterval::SetAmplitudeRate(float InAmplitudeRate)
 {
 
 }
 
-float FFairyTweenerInterval::GetAmplitudeRate()
+float UFairyTweenerInterval::GetAmplitudeRate()
 {
 	return 0.0f;
 }
 
-bool FFairyTweenerInterval::IsDone() const
+bool UFairyTweenerInterval::IsDone() const
 {
 	return bDone;
 }
 
-void FFairyTweenerInterval::Step(float InDeltaTime)
+void UFairyTweenerInterval::Step(float InDeltaTime)
 {
 	if (bFirstTick)
 	{
@@ -38,14 +38,14 @@ void FFairyTweenerInterval::Step(float InDeltaTime)
 	bDone = elapsedTime >= GetDuration();
 }
 
-void FFairyTweenerInterval::StartWithTarget(UFairyObject* InTarget)
+void UFairyTweenerInterval::StartWithTarget(UFairyObject* InTarget)
 {
-	FFairyTweenerFiniteTime::StartWithTarget(InTarget);
+	UFairyTweenerFiniteTime::StartWithTarget(InTarget);
 }
 
-void FFairyTweenerInterval::Init(float InDuration)
+void UFairyTweenerInterval::Init(float InDuration)
 {
-	FFairyTweenerFiniteTime::Init(InDuration);
+	UFairyTweenerFiniteTime::Init(InDuration);
 
 	elapsedTime = 0.0f;
 	bFirstTick = true;
@@ -53,38 +53,21 @@ void FFairyTweenerInterval::Init(float InDuration)
 }
 
 // Position tweener
-FFairyTweenerPos* FFairyTweenerPos::Create(float InDuration, FVector2D InStartPos, FVector2D InDstPos)
+bool UFairyTweenerPos::Init(float InDuration, FVector2D InStartPos, FVector2D InDstPos)
 {
-	FFairyTweenerPos* tweener = new FFairyTweenerPos();
-	if (tweener)
-	{
-		if (tweener->Init(InDuration, InStartPos, InDstPos))
-		{
-			return tweener;
-		}
-		else
-		{
-			delete tweener;
-		}
-	}
-	
-	return nullptr;
-}
-
-bool FFairyTweenerPos::Init(float InDuration, FVector2D InStartPos, FVector2D InDstPos)
-{
-	FFairyTweenerInterval::Init(InDuration);
+	UFairyTweenerInterval::Init(InDuration);
 
 	startPos = InStartPos;
 	dstPos = InDstPos;
 	return true;
 }
 
-void FFairyTweenerPos::Update(float InTime)
+void UFairyTweenerPos::Update(float InTime)
 {
+	UE_LOG(LogTemp, Warning, TEXT("---------> UFairyTweenerPos::Update(), %f"), InTime);
 	if (_Target.IsValid())
 	{
-		FVector2D curPos = (dstPos - startPos) * InTime;
-		_Target->SetPosition(curPos);
+		FVector2D newPos = startPos + (dstPos - startPos) * InTime;
+		_Target->SetPosition(newPos);
 	}
 }

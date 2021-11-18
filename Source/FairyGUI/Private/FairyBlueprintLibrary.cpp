@@ -88,12 +88,12 @@ FTweenerHandle UFairyBlueprintLibrary::TweenFloat(float StartValue, float EndVal
 	if (Target == nullptr)
 		return FTweenerHandle();
 
-	FFairyTweener* Tweener = FFairyTweenHelper::To(StartValue, EndValue, Duration)
+	UFairyTweener* Tweener = FFairyTweenHelper::To(StartValue, EndValue, Duration)
 		->SetEase(EaseType)
 		->SetTarget(const_cast<UObject*>(Target));
 	if (OnUpdate.IsBound())
 	{
-		Tweener->OnUpdate(FTweenDelegate::CreateLambda([OnUpdate](FFairyTweener* Tweener) {
+		Tweener->OnUpdate(FTweenDelegate::CreateLambda([OnUpdate](UFairyTweener* Tweener) {
 			OnUpdate.ExecuteIfBound(Tweener->Value, Tweener->DeltaValue);
 		}));
 	}
@@ -119,13 +119,13 @@ FTweenerHandle UFairyBlueprintLibrary::TweenVector2(const FVector2D& StartValue,
 	if (Target == nullptr)
 		return FTweenerHandle();
 
-	FFairyTweener* Tweener = FFairyTweenHelper::To(StartValue, EndValue, Duration)
+	UFairyTweener* Tweener = FFairyTweenHelper::To(StartValue, EndValue, Duration)
 		->SetEase(EaseType)
 		->SetTarget(const_cast<UObject*>(Target));
 
 	if (OnUpdate.IsBound())
 	{
-		Tweener->OnUpdate(FTweenDelegate::CreateLambda([&OnUpdate](FFairyTweener* Tweener) {
+		Tweener->OnUpdate(FTweenDelegate::CreateLambda([&OnUpdate](UFairyTweener* Tweener) {
 			OnUpdate.ExecuteIfBound(Tweener->Value, Tweener->DeltaValue);
 		}));
 	}

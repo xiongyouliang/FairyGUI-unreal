@@ -1,27 +1,27 @@
 #include "Tween/FairyTweenerFiniteTime.h"
 
-FFairyTweenerFiniteTime::FFairyTweenerFiniteTime()
+UFairyTweenerFiniteTime::UFairyTweenerFiniteTime()
 	:duration(0)
 {
 
 }
 
-FFairyTweenerFiniteTime::~FFairyTweenerFiniteTime()
+UFairyTweenerFiniteTime::~UFairyTweenerFiniteTime()
 {
 
 }
 
-float FFairyTweenerFiniteTime::GetDuration() const
+float UFairyTweenerFiniteTime::GetDuration() const
 {
 	return duration;
 }
 
-void FFairyTweenerFiniteTime::SetDuration(float InDuration)
+void UFairyTweenerFiniteTime::SetDuration(float InDuration)
 {
 	duration = InDuration;
 }
 
-void FFairyTweenerFiniteTime::Init(float InDuration)
+void UFairyTweenerFiniteTime::Init(float InDuration)
 {
 	duration = InDuration;
 }

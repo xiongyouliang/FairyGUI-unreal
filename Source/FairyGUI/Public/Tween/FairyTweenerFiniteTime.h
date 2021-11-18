@@ -4,11 +4,15 @@
 
 #include "Tween/FairyTweener.h"
 
-class FAIRYGUI_API FFairyTweenerFiniteTime : public FFairyTweener
+#include "FairyTweenerFiniteTime.generated.h"
+
+UCLASS(BlueprintType)
+class FAIRYGUI_API UFairyTweenerFiniteTime : public UFairyTweener
 {
+	GENERATED_BODY()
 public:
-	FFairyTweenerFiniteTime();
-	virtual ~FFairyTweenerFiniteTime();
+	UFairyTweenerFiniteTime();
+	virtual ~UFairyTweenerFiniteTime();
 
 	float GetDuration() const;
 	void SetDuration(float InDuration);
@@ -17,8 +21,4 @@ public:
 
 protected:
 	float duration;
-
-private:
-	FFairyTweenerFiniteTime(const FFairyTweenerFiniteTime&) = delete;
-	FFairyTweenerFiniteTime& operator=(const FFairyTweenerFiniteTime&) = delete;
 };

@@ -5,25 +5,34 @@
 #include "Tickable.h"
 #include "Tween/FairyTweener.h"
 
+#include "TweenManager.generated.h"
+
 class UFairyObject;
+class UFairyTweener;
+class UFairyTweenerPos;
 
-typedef FFairyTweener* FairyTweenerPointer;
-typedef TWeakObjectPtr<UFairyObject> TweenerTableKey;
-typedef TSharedPtr<FFairyTweener> TweenerArrayElement;
-typedef TArray<TweenerArrayElement> TweenerArray;
+typedef UFairyTweener* FairyTweenerPointer;
 
-class FAIRYGUI_API FTweenManager : public FTickableGameObject
+UCLASS(BlueprintType)
+class FAIRYGUI_API UTweenManager : public UObject, public FTickableGameObject
 {
+	GENERATED_BODY()
 public:
-	FTweenManager();
-	~FTweenManager();
+	UTweenManager();
+	~UTweenManager();
+
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+	static UTweenManager* Get();
+
+	UFUNCTION(BlueprintCallable)
+	UFairyTweenerPos* CreateTweenerPos(float InDuration, FVector2D InStartPos, FVector2D InDstPos);
 
 	[[deprecated("Mark to remove in next refactor.")]]
-	FFairyTweener* CreateTweener();
+	UFairyTweener* CreateTweener();
 
-	void AddTweener(TSharedPtr<FFairyTweener> &InTweener, UFairyObject* InTarget, bool InPaused);
-	void RemoveTweener(TSharedPtr<FFairyTweener> &InTweener);
-	void RemoveTweenerWithTarget(TSharedPtr<FFairyTweener> &InTweener, UFairyObject* InTarget);
+	void AddTweener(UFairyTweener* InTweener, UFairyObject* InTarget, bool InPaused);
+	void RemoveTweener(UFairyTweener* InTweener);
+	void RemoveTweenerWithTarget(UFairyTweener* InTweener, UFairyObject* InTarget);
 	void RemoveAllTweenerWithTarget(UFairyObject* InTarget);
 
 	[[deprecated("Mark to remove in next refactor.")]]
@@ -37,9 +46,9 @@ public:
 	bool KillTweens(UObject* Target, bool bCompleted);
 
 	[[deprecated("Mark to remove in next refactor.")]]
-	FFairyTweener* GetTween(FTweenerHandle const& Handle);
+	UFairyTweener* GetTween(FTweenerHandle const& Handle);
 	[[deprecated("Mark to remove in next refactor.")]]
-	FFairyTweener* GetTween(UObject* Target);
+	UFairyTweener* GetTween(UObject* Target);
 
 	virtual void Tick(float DeltaTime) override;
 	virtual TStatId GetStatId() const override
@@ -48,14 +57,15 @@ public:
 	}
 
 private:
+	static UTweenManager* Instance;
 	FairyTweenerPointer* ActiveTweenerPointerArray;
 	int32 ActiveTweenerPointerCapcity;
 	int32 TotalActiveTweenerNum;
 	uint32 TweenerInstanceCount;
 
-	TArray<FFairyTweener*> TweenerPool;
+	TArray<UFairyTweener*> TweenerPool;
 
-	TMap<TweenerTableKey, TweenerArray> TweenerTable;
-	TweenerArray CompletedArray;
+	TMap<UFairyObject*, TArray<UFairyTweener*>> TweenerTable;	
+	TArray<UFairyTweener*> CompletedArray;
 };
 

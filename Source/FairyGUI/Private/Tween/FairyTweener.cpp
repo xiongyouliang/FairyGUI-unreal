@@ -5,86 +5,86 @@
 
 const float K_MATH_EPSILON = 0.000001f;
 
-FFairyTweener::FFairyTweener()
+UFairyTweener::UFairyTweener()
 {
 }
 
-FFairyTweener::~FFairyTweener()
+UFairyTweener::~UFairyTweener()
 {
 }
 
-FFairyTweener* FFairyTweener::SetDelay(float InValue)
+UFairyTweener* UFairyTweener::SetDelay(float InValue)
 {
 	Delay = InValue;
 	return this;
 }
 
-FFairyTweener* FFairyTweener::SetDuration(float InValue)
+UFairyTweener* UFairyTweener::SetDuration(float InValue)
 {
 	Duration = InValue;
 	return this;
 }
 
-FFairyTweener* FFairyTweener::SetBreakpoint(float InValue)
+UFairyTweener* UFairyTweener::SetBreakpoint(float InValue)
 {
 	Breakpoint = InValue;
 	return this;
 }
 
-FFairyTweener* FFairyTweener::SetEase(EEaseType InValue)
+UFairyTweener* UFairyTweener::SetEase(EEaseType InValue)
 {
 	EaseType = InValue;
 	return this;
 }
 
-FFairyTweener* FFairyTweener::SetEasePeriod(float InValue)
+UFairyTweener* UFairyTweener::SetEasePeriod(float InValue)
 {
 	EasePeriod = InValue;
 	return this;
 }
 
-FFairyTweener* FFairyTweener::SetEaseOvershootOrAmplitude(float InValue)
+UFairyTweener* UFairyTweener::SetEaseOvershootOrAmplitude(float InValue)
 {
 	EaseOvershootOrAmplitude = InValue;
 	return this;
 }
 
-FFairyTweener* FFairyTweener::SetRepeat(int32 InRepeat, bool bInYoyo)
+UFairyTweener* UFairyTweener::SetRepeat(int32 InRepeat, bool bInYoyo)
 {
 	Repeat = InRepeat;
 	bYoyo = bInYoyo;
 	return this;
 }
 
-FFairyTweener* FFairyTweener::SetTimeScale(float InValue)
+UFairyTweener* UFairyTweener::SetTimeScale(float InValue)
 {
 	TimeScale = InValue;
 	return this;
 }
 
-FFairyTweener* FFairyTweener::SetSnapping(bool bInValue)
+UFairyTweener* UFairyTweener::SetSnapping(bool bInValue)
 {
 	bSnapping = bInValue;
 	return this;
 }
 
-FFairyTweener* FFairyTweener::SetTarget(UObject* InTarget)
+UFairyTweener* UFairyTweener::SetTarget(UObject* InTarget)
 {
 	Target = InTarget;
 	return this;
 }
 
-void FFairyTweener::StartWithTarget(UFairyObject* InTarget)
+void UFairyTweener::StartWithTarget(UFairyObject* InTarget)
 {
 	_Target = TWeakObjectPtr<UFairyObject>(InTarget);
 }
 
-void FFairyTweener::SetTarget2(UFairyObject* InTarget)
+void UFairyTweener::SetTarget2(UFairyObject* InTarget)
 {
 	_Target = TWeakObjectPtr<UFairyObject>(InTarget);
 }
 
-UFairyObject* FFairyTweener::GetTarget2()
+UFairyObject* UFairyTweener::GetTarget2()
 {
 	if (_Target.IsValid())
 	{
@@ -93,82 +93,82 @@ UFairyObject* FFairyTweener::GetTarget2()
 	return nullptr;
 }
 
-bool FFairyTweener::IsTargetValid()
+bool UFairyTweener::IsTargetValid()
 {
 	return _Target.IsValid();
 }
 
-FFairyTweener* FFairyTweener::SetUserData(const FNVariant& InData)
+UFairyTweener* UFairyTweener::SetUserData(const FNVariant& InData)
 {
 	UserData = InData;
 	return this;
 }
 
-bool FFairyTweener::IsDone() const
+bool UFairyTweener::IsDone() const
 {
 	return true;
 }
 
-FFairyTweener* FFairyTweener::SetPath(TSharedPtr<FGPath> InPath)
+UFairyTweener* UFairyTweener::SetPath(TSharedPtr<FGPath> InPath)
 {
 	Path = InPath;
 	return this;
 }
 
-FFairyTweener* FFairyTweener::OnUpdate(FTweenDelegate Callback)
+UFairyTweener* UFairyTweener::OnUpdate(FTweenDelegate Callback)
 {
 	OnUpdateCallback = Callback;
 	return this;
 }
 
-FFairyTweener* FFairyTweener::OnStart(FTweenDelegate Callback)
+UFairyTweener* UFairyTweener::OnStart(FTweenDelegate Callback)
 {
 	OnStartCallback = Callback;
 	return this;
 }
 
-FFairyTweener* FFairyTweener::OnComplete(FTweenDelegate Callback)
+UFairyTweener* UFairyTweener::OnComplete(FTweenDelegate Callback)
 {
 	OnCompleteCallback = Callback;
 	return this;
 }
 
-FFairyTweener* FFairyTweener::OnUpdate(FSimpleDelegate Callback)
+UFairyTweener* UFairyTweener::OnUpdate(FSimpleDelegate Callback)
 {
-	OnUpdateCallback.BindLambda([Callback](FFairyTweener*) {
+	OnUpdateCallback.BindLambda([Callback](UFairyTweener*) {
 		Callback.ExecuteIfBound();
 	});
 	return this;
 }
 
-FFairyTweener* FFairyTweener::OnStart(FSimpleDelegate Callback)
+UFairyTweener* UFairyTweener::OnStart(FSimpleDelegate Callback)
 {
-	OnStartCallback.BindLambda([Callback](FFairyTweener*) {
+	OnStartCallback.BindLambda([Callback](UFairyTweener*) {
 		Callback.ExecuteIfBound();
 	});
 	return this;
 }
 
-FFairyTweener* FFairyTweener::OnComplete(FSimpleDelegate Callback)
+UFairyTweener* UFairyTweener::OnComplete(FSimpleDelegate Callback)
 {
-	OnCompleteCallback.BindLambda([Callback](FFairyTweener*) {
+	OnCompleteCallback.BindLambda([Callback](UFairyTweener*) {
 		Callback.ExecuteIfBound();
 	});
 	return this;
 }
 
-FFairyTweener* FFairyTweener::SetPaused(bool bInPaused)
+UFairyTweener* UFairyTweener::SetPaused(bool bInPaused)
 {
 	bPaused = bInPaused;
 	return this;
 }
 
-bool FFairyTweener::IsPaused()
+bool UFairyTweener::IsPaused()
 {
 	return bPaused;
 }
 
-void FFairyTweener::Seek(float Time)
+void UFairyTweener::Seek(float Time)
 {
 	if (bKilled)
 	{
@@ -191,7 +191,7 @@ void FFairyTweener::Seek(float Time)
 	DoUpdate();
 }
 
-void FFairyTweener::Kill(bool bSetComplete)
+void UFairyTweener::Kill(bool bSetComplete)
 {
 	if (bKilled)
 	{
@@ -223,7 +223,7 @@ void FFairyTweener::Kill(bool bSetComplete)
 	bKilled = true;
 }
 
-FFairyTweener* FFairyTweener::To(float InStart, float InEnd, float InDuration)
+UFairyTweener* UFairyTweener::To(float InStart, float InEnd, float InDuration)
 {
 	ValueSize = 1;
 	StartValue.X = InStart;
@@ -233,7 +233,7 @@ FFairyTweener* FFairyTweener::To(float InStart, float InEnd, float InDuration)
 	return this;
 }
 
-FFairyTweener* FFairyTweener::To(const FVector2D& InStart, const FVector2D& InEnd, float InDuration)
+UFairyTweener* UFairyTweener::To(const FVector2D& InStart, const FVector2D& InEnd, float InDuration)
 {
 	ValueSize = 2;
 	StartValue.SetVec2(InStart);
@@ -243,7 +243,7 @@ FFairyTweener* FFairyTweener::To(const FVector2D& InStart, const FVector2D& InEn
 	return this;
 }
 
-FFairyTweener* FFairyTweener::To(const FVector& InStart, const FVector& InEnd, float InDuration)
+UFairyTweener* UFairyTweener::To(const FVector& InStart, const FVector& InEnd, float InDuration)
 {
 	ValueSize = 3;
 	StartValue.SetVec3(InStart);
@@ -253,7 +253,7 @@ FFairyTweener* FFairyTweener::To(const FVector& InStart, const FVector& InEnd, f
 	return this;
 }
 
-FFairyTweener* FFairyTweener::To(const FVector4& InStart, const FVector4& InEnd, float InDuration)
+UFairyTweener* UFairyTweener::To(const FVector4& InStart, const FVector4& InEnd, float InDuration)
 {
 	ValueSize = 4;
 	StartValue.SetVec4(InStart);
@@ -263,7 +263,7 @@ FFairyTweener* FFairyTweener::To(const FVector4& InStart, const FVector4& InEnd,
 	return this;
 }
 
-FFairyTweener* FFairyTweener::To(const FColor& InStart, const FColor& InEnd, float InDuration)
+UFairyTweener* UFairyTweener::To(const FColor& InStart, const FColor& InEnd, float InDuration)
 {
 	ValueSize = 4;
 	StartValue.SetColor(InStart);
@@ -273,7 +273,7 @@ FFairyTweener* FFairyTweener::To(const FColor& InStart, const FColor& InEnd, flo
 	return this;
 }
 
-FFairyTweener* FFairyTweener::To(double InStart, double InEnd, float InDuration)
+UFairyTweener* UFairyTweener::To(double InStart, double InEnd, float InDuration)
 {
 	ValueSize = 5;
 	StartValue.D = InStart;
@@ -283,7 +283,7 @@ FFairyTweener* FFairyTweener::To(double InStart, double InEnd, float InDuration)
 	return this;
 }
 
-FFairyTweener* FFairyTweener::Shake(const FVector2D& InStart, float InAmplitude, float InDuration)
+UFairyTweener* UFairyTweener::Shake(const FVector2D& InStart, float InAmplitude, float InDuration)
 {
 	ValueSize = 6;
 	StartValue.SetVec2(InStart);
@@ -293,7 +293,7 @@ FFairyTweener* FFairyTweener::Shake(const FVector2D& InStart, float InAmplitude,
 	return this;
 }
 
-void FFairyTweener::Init()
+void UFairyTweener::Init()
 {
 	Delay = 0;
 	Duration = 0;
@@ -318,7 +318,7 @@ void FFairyTweener::Init()
 	DeltaValue.Reset();
 }
 
-void FFairyTweener::Reset()
+void UFairyTweener::Reset()
 {
 	Target.Reset();
 	UserData.Reset();
@@ -328,12 +328,12 @@ void FFairyTweener::Reset()
 	OnCompleteCallback.Unbind();
 }
 
-void FFairyTweener::Step(float DeltaTime)
+void UFairyTweener::Step(float DeltaTime)
 {
 
 }
 
-void FFairyTweener::Update(float DeltaTime)
+void UFairyTweener::Update(float DeltaTime)
 {
 	if (Ended != 0) //Maybe completed by seek
 	{
@@ -365,7 +365,7 @@ void FFairyTweener::Update(float DeltaTime)
 	}
 }
 
-void FFairyTweener::DoUpdate()
+void UFairyTweener::DoUpdate()
 {
 	Ended = 0;
 

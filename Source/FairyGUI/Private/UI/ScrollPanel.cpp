@@ -1052,7 +1052,7 @@ void UScrollPanel::UpdateScrollBarVisible2(UGScrollBar* Bar)
 	}
 }
 
-void UScrollPanel::OnBarTweenComplete(FFairyTweener* Tweener)
+void UScrollPanel::OnBarTweenComplete(UFairyTweener* Tweener)
 {
 	UFairyObject* bar = (UFairyObject*)Tweener->GetTarget();
 	bar->SetAlpha(1);

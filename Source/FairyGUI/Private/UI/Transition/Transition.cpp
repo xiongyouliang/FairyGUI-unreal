@@ -147,7 +147,7 @@ void UTransition::SetPaused(bool bInPaused)
 	//}
 
 	//bPaused = bInPaused;
-	//FFairyTweener* tweener = FFairyTweenHelper::GetTween(DelayHandle);
+	//UFairyTweener* tweener = FFairyTweenHelper::GetTween(DelayHandle);
 	//if (tweener != nullptr)
 	//{
 	//	tweener->SetPaused(bPaused);
@@ -777,7 +777,7 @@ void UTransition::SkipAnimations()
 	//}
 }
 
-void UTransition::OnDelayedPlayItem(FFairyTweener* Tweener)
+void UTransition::OnDelayedPlayItem(UFairyTweener* Tweener)
 {
 	//FTransitionItemBase* item = (FTransitionItemBase*)Tweener->GetUserData().As<void*>();
 	//item->Tweener = nullptr;
@@ -789,7 +789,7 @@ void UTransition::OnDelayedPlayItem(FFairyTweener* Tweener)
 	//CheckAllComplete();
 }
 
-void UTransition::OnTweenStart(FFairyTweener* Tweener)
+void UTransition::OnTweenStart(UFairyTweener* Tweener)
 {
 	//FTransitionItemBase* item = (FTransitionItemBase*)Tweener->GetUserData().As<void*>();
 
@@ -901,7 +901,7 @@ void UTransition::OnTweenStart(FFairyTweener* Tweener)
 	//CallHook(item, false);
 }
 
-void UTransition::OnTweenUpdate(FFairyTweener* Tweener)
+void UTransition::OnTweenUpdate(UFairyTweener* Tweener)
 {
 	//FTransitionItemBase* item = (FTransitionItemBase*)Tweener->GetUserData().As<void*>();
 
@@ -943,7 +943,7 @@ void UTransition::OnTweenUpdate(FFairyTweener* Tweener)
 	//ApplyValue(item);
 }
 
-void UTransition::OnTweenComplete(FFairyTweener* Tweener)
+void UTransition::OnTweenComplete(UFairyTweener* Tweener)
 {
 	//FTransitionItemBase* item = (FTransitionItemBase*)Tweener->GetUserData().As<void*>();
 	//item->Tweener = nullptr;

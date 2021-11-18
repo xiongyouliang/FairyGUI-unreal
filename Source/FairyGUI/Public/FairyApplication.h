@@ -6,7 +6,6 @@
 #include "Framework/Application/IInputProcessor.h"
 #include "FairyCommons.h"
 #include "Event/EventContext.h"
-#include "Tween/TweenManager.h"
 #include "UI/FairyConfig.h"
 #include "FairyApplication.generated.h"
 
@@ -120,7 +119,6 @@ public:
 
 	float GetDPIScale() { return DPIScale; }
 	void SetDPIScale(float NewDPIScale) { DPIScale = NewDPIScale; }
-
 private:
 	void OnCreate();
 	void OnDestroy();
@@ -151,7 +149,6 @@ private:
 	UPROPERTY(Transient)
 	TArray<UEventContext*> EventContextPool;
 
-	FTweenManager TweenManager;
 	TSharedPtr<IInputProcessor> InputProcessor;
 	TIndirectArray<FTouchInfo> Touches;
 	FTouchInfo* LastTouch;

@@ -12,7 +12,7 @@ class UFairyObject;
 class UFairyComponent;
 class UGController;
 class FByteBuffer;
-class FFairyTweener;
+class UFairyTweener;
 
 UCLASS(BlueprintType)
 class FAIRYGUI_API UTransition : public UObject
@@ -120,10 +120,10 @@ private:
     void InternalPlay();
     void PlayItem(FTransitionItemBase* Item);
     void SkipAnimations();
-    void OnDelayedPlayItem(FFairyTweener* Tweener);
-    void OnTweenStart(FFairyTweener* Tweener);
-    void OnTweenUpdate(FFairyTweener* Tweener);
-    void OnTweenComplete(FFairyTweener* Tweener);
+    void OnDelayedPlayItem(UFairyTweener* Tweener);
+    void OnTweenStart(UFairyTweener* Tweener);
+    void OnTweenUpdate(UFairyTweener* Tweener);
+    void OnTweenComplete(UFairyTweener* Tweener);
     void OnPlayTransCompleted(FTransitionItemBase* item);
     void CallHook(FTransitionItemBase* Item, bool bTweenEnd);
     void CheckAllComplete();

@@ -9,44 +9,48 @@
 #include "Tween/TweenerHandle.h"
 #include "Utils/NVariant.h"
 
+#include "FairyTweener.generated.h"
+
 class FGPath;
-class FFairyTweener;
+class UFairyTweener;
 
 extern const float K_MATH_EPSILON;
 
-DECLARE_DELEGATE_OneParam(FTweenDelegate, FFairyTweener*);
+DECLARE_DELEGATE_OneParam(FTweenDelegate, UFairyTweener*);
 
-class FAIRYGUI_API FFairyTweener
+UCLASS(BlueprintType)
+class FAIRYGUI_API UFairyTweener : public UObject
 {
+	GENERATED_BODY()
 public:
-	FFairyTweener();
-	virtual ~FFairyTweener();
+	UFairyTweener();
+	virtual ~UFairyTweener();
 
 	const FTweenerHandle& GetHandle() {
 		return Handle;
 	}
 
-	FFairyTweener* SetDelay(float InValue);
+	UFairyTweener* SetDelay(float InValue);
 	float GetDelay() const { return Delay; }
 
 	[[deprecated("Mark to remove in next refactor.")]]
-	FFairyTweener* SetDuration(float InValue);
+	UFairyTweener* SetDuration(float InValue);
 	[[deprecated("Mark to remove in next refactor.")]]
 	float GetDuration() const { return Duration; }
 
-	FFairyTweener* SetBreakpoint(float InValue);
+	UFairyTweener* SetBreakpoint(float InValue);
 
-	FFairyTweener* SetEase(EEaseType InValue);
-	FFairyTweener* SetEasePeriod(float InValue);
-	FFairyTweener* SetEaseOvershootOrAmplitude(float InValue);
+	UFairyTweener* SetEase(EEaseType InValue);
+	UFairyTweener* SetEasePeriod(float InValue);
+	UFairyTweener* SetEaseOvershootOrAmplitude(float InValue);
 
-	FFairyTweener* SetRepeat(int32 InRepeat, bool bInYoyo = false);
+	UFairyTweener* SetRepeat(int32 InRepeat, bool bInYoyo = false);
 	int32 GetRepeat() const { return Repeat; }
 
-	FFairyTweener* SetTimeScale(float InValue);
-	FFairyTweener* SetSnapping(bool InValue);
+	UFairyTweener* SetTimeScale(float InValue);
+	UFairyTweener* SetSnapping(bool InValue);
 
-	FFairyTweener* SetTarget(UObject* InTarget);
+	UFairyTweener* SetTarget(UObject* InTarget);
 	UObject* GetTarget() const { return Target.Get(); }
 
 	virtual void StartWithTarget(UFairyObject* InTarget);
@@ -55,16 +59,16 @@ public:
 	bool IsTargetValid();
 
 	const FNVariant& GetUserData() const { return UserData; }
-	FFairyTweener* SetUserData(const FNVariant& InData);
+	UFairyTweener* SetUserData(const FNVariant& InData);
 
-	FFairyTweener* SetPath(TSharedPtr<FGPath> InPath);
+	UFairyTweener* SetPath(TSharedPtr<FGPath> InPath);
 
-	FFairyTweener* OnUpdate(FTweenDelegate Callback);
-	FFairyTweener* OnStart(FTweenDelegate Callback);
-	FFairyTweener* OnComplete(FTweenDelegate Callback);
-	FFairyTweener* OnUpdate(FSimpleDelegate Callback);
-	FFairyTweener* OnStart(FSimpleDelegate Callback);
-	FFairyTweener* OnComplete(FSimpleDelegate Callback);
+	UFairyTweener* OnUpdate(FTweenDelegate Callback);
+	UFairyTweener* OnStart(FTweenDelegate Callback);
+	UFairyTweener* OnComplete(FTweenDelegate Callback);
+	UFairyTweener* OnUpdate(FSimpleDelegate Callback);
+	UFairyTweener* OnStart(FSimpleDelegate Callback);
+	UFairyTweener* OnComplete(FSimpleDelegate Callback);
 
 	float GetNormalizedTime() const { return NormalizedTime; }
 
@@ -73,7 +77,7 @@ public:
 	bool AllCompleted() const { return Ended == 1; }
 	
 	
-	FFairyTweener* SetPaused(bool bInPaused);
+	UFairyTweener* SetPaused(bool bInPaused);
 	virtual bool IsPaused();
 
 	void Seek(float Time);
@@ -84,13 +88,13 @@ public:
 	FTweenValue Value;
 	FTweenValue DeltaValue;
 
-	FFairyTweener* To(float InStart, float InEnd, float InDuration);
-	FFairyTweener* To(const FVector2D& InStart, const FVector2D& InEnd, float InDuration);
-	FFairyTweener* To(const FVector& InStart, const FVector& InEnd, float InDuration);
-	FFairyTweener* To(const FVector4& InStart, const FVector4& InEnd, float InDuration);
-	FFairyTweener* To(const FColor& InStart, const FColor& InEnd, float InDuration);
-	FFairyTweener* To(double InStart, double InEnd, float InDuration);
-	FFairyTweener* Shake(const FVector2D& InStart, float InAmplitude, float InDuration);
+	UFairyTweener* To(float InStart, float InEnd, float InDuration);
+	UFairyTweener* To(const FVector2D& InStart, const FVector2D& InEnd, float InDuration);
+	UFairyTweener* To(const FVector& InStart, const FVector& InEnd, float InDuration);
+	UFairyTweener* To(const FVector4& InStart, const FVector4& InEnd, float InDuration);
+	UFairyTweener* To(const FColor& InStart, const FColor& InEnd, float InDuration);
+	UFairyTweener* To(double InStart, double InEnd, float InDuration);
+	UFairyTweener* Shake(const FVector2D& InStart, float InAmplitude, float InDuration);
 	
 	void Init();
 	void Reset();
@@ -136,10 +140,5 @@ protected:
 	float NormalizedTime;
 
 	friend class FFairyTweenHelper;
-	friend class FTweenManager;
-
-private:
-	FFairyTweener(const FFairyTweener&) = delete;
-	FFairyTweener& operator=(const FFairyTweener&) = delete;
-
+	friend class UTweenManager;
 };

@@ -5,7 +5,6 @@
 #include "Package/FairyPackage.h"
 #include "Package/FairyPackageMgr.h"
 #include "UI/UIObjectFactory.h"
-#include "Tween/TweenManager.h"
 #include "Widgets/NTexture.h"
 #if WITH_EDITOR
 #include "Editor.h"

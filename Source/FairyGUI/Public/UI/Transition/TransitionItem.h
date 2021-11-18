@@ -45,7 +45,7 @@ public:
 
 	TSharedPtr<FTweenConfig> TweenConfigPtr; // maybe invalid.
 
-	TSharedPtr<FFairyTweener> TweenerPtr;
+	TSharedPtr<UFairyTweener> TweenerPtr;
 	TWeakObjectPtr<UFairyObject> TargetPtr;
 
 	FTransitionItemBase(ETransitionActionType ActionType);

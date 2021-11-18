@@ -3,8 +3,12 @@
 #include "CoreMinimal.h"
 #include "Tween/FairyTweenerFiniteTime.h"
 
-class FAIRYGUI_API FFairyTweenerInterval : public FFairyTweenerFiniteTime
+#include "FairyTweenerInterval.generated.h"
+
+UCLASS(BlueprintType)
+class FAIRYGUI_API UFairyTweenerInterval : public UFairyTweenerFiniteTime
 {
+	GENERATED_BODY()
 public:
 	float GetElapsedTime();
 
@@ -23,10 +27,11 @@ protected:
 	bool bDone;
 };
 
-class FAIRYGUI_API FFairyTweenerPos : public FFairyTweenerInterval
+UCLASS(BlueprintType)
+class FAIRYGUI_API UFairyTweenerPos : public UFairyTweenerInterval
 {
+	GENERATED_BODY()
 public:
-	static FFairyTweenerPos* Create(float InDuration, FVector2D InStartPos, FVector2D InDstPos);
 	bool Init(float InDuration, FVector2D InStartPos, FVector2D InDstPos);
 
 	virtual void Update(float InTime) override;

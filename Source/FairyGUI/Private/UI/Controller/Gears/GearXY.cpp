@@ -71,7 +71,7 @@ void FGearXY::Apply()
 
     if (TweenConfig.IsSet() && TweenConfig->bTween && UFairyPackage::Constructing == 0 && !bDisableAllTweenEffect)
     {
-        FFairyTweener* tweener = FFairyTweenHelper::GetTween(TweenConfig->Handle);
+        UFairyTweener* tweener = FFairyTweenHelper::GetTween(TweenConfig->Handle);
         if (tweener != nullptr)
         {
             if (tweener->EndValue.GetVec2() != EndPt)
@@ -112,7 +112,7 @@ void FGearXY::Apply()
     }
 }
 
-void FGearXY::OnTweenUpdate(FFairyTweener* Tweener)
+void FGearXY::OnTweenUpdate(UFairyTweener* Tweener)
 {
     Owner->bGearLocked = true;
     Owner->SetPosition(Tweener->Value.GetVec2());

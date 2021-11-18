@@ -662,10 +662,30 @@ void UFairyObject::ApplyController(UGController* Controller)
 }
 // ********************* Controller end *******************
 
-void UFairyObject::RunAction(UFairyTweener* InAction)
+void UFairyObject::RunTween(UFairyTweener* InAction)
 {
 	bool bOnStage = OnStage();
 	UTweenManager::Get()->AddTweener(InAction, this, !bOnStage);
+}
+
+UFairyTweener* UFairyObject::GetTweenerByTag(int InTag)
+{
+	return UTweenManager::Get()->GetTweenerByTag(InTag, this);
+}
+
+void UFairyObject::StopTween(UFairyTweener* InAction)
+{
+	UTweenManager::Get()->RemoveTweener(InAction);
+}
+
+void UFairyObject::StopTweenByTag(int InTag)
+{
+	UTweenManager::Get()->RemoveTweenerByTag(InTag, this);
+}
+
+void UFairyObject::StopAllTweens()
+{
+	UTweenManager::Get()->RemoveAllTweenerWithTarget(this);
 }
 
 void UFairyObject::RemoveFromParent()

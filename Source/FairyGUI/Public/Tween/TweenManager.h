@@ -18,7 +18,7 @@ class FAIRYGUI_API UTweenManager : public UObject, public FTickableGameObject
 {
 	GENERATED_BODY()
 public:
-	UTweenManager();
+	
 	~UTweenManager();
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
@@ -31,8 +31,9 @@ public:
 	UFairyTweener* CreateTweener();
 
 	void AddTweener(UFairyTweener* InTweener, UFairyObject* InTarget, bool InPaused);
+	UFairyTweener* GetTweenerByTag(int InTag, UFairyObject* InTarget);
 	void RemoveTweener(UFairyTweener* InTweener);
-	void RemoveTweenerWithTarget(UFairyTweener* InTweener, UFairyObject* InTarget);
+	void RemoveTweenerByTag(int InTag, UFairyObject* InTarget);
 	void RemoveAllTweenerWithTarget(UFairyObject* InTarget);
 
 	[[deprecated("Mark to remove in next refactor.")]]
@@ -57,7 +58,9 @@ public:
 	}
 
 private:
+	UTweenManager(); // hide outside allocate object.
 	static UTweenManager* Instance;
+	bool bTicking;
 	FairyTweenerPointer* ActiveTweenerPointerArray;
 	int32 ActiveTweenerPointerCapcity;
 	int32 TotalActiveTweenerNum;
@@ -66,6 +69,9 @@ private:
 	TArray<UFairyTweener*> TweenerPool;
 
 	TMap<UFairyObject*, TArray<UFairyTweener*>> TweenerTable;	
-	TArray<UFairyTweener*> CompletedArray;
+	TArray<UFairyTweener*> PreTickRemoveArray;
+	TArray<UFairyTweener*> PostTickRemoveArray;
+
+	inline void DoRemoveTweener(UFairyTweener* InTweener);
 };
 

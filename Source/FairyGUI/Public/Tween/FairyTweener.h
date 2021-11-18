@@ -101,8 +101,8 @@ public:
 	virtual void Step(float InDeltaTime);
 	virtual void Update(float InTime);
 
-protected:
-	virtual void DoUpdate();
+	int GetTag();
+	void SetTag(int InTag);
 
 protected:
 	UPROPERTY()

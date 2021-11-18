@@ -362,7 +362,17 @@ public:
 	void CheckGearDisplay();
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	virtual void RunAction(UFairyTweener* InAction);
+	virtual void RunTween(UFairyTweener* InAction);
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+	virtual UFairyTweener* GetTweenerByTag(int InTag);
+
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+	virtual void StopTween(UFairyTweener* InAction);
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+	virtual void StopTweenByTag(int InTag);
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+	virtual void StopAllTweens();
+	
 
 protected:
 	FString ID;

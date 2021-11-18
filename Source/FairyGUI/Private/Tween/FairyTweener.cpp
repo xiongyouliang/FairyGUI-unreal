@@ -6,6 +6,8 @@
 const float K_MATH_EPSILON = 0.000001f;
 
 UFairyTweener::UFairyTweener()
+	:_Target(nullptr)
+	,_tag(0)
 {
 }
 
@@ -183,8 +185,6 @@ void UFairyTweener::Seek(float Time)
 			return;
 		}
 	}
-
-	DoUpdate();
 }
 
 void UFairyTweener::Kill(bool bSetComplete)
@@ -210,7 +210,6 @@ void UFairyTweener::Kill(bool bSetComplete)
 			{
 				ElapsedTime = Delay + Duration * 2;
 			}
-			DoUpdate();
 		}
 
 		OnCompleteCallback.ExecuteIfBound(this);
@@ -331,162 +330,14 @@ void UFairyTweener::Step(float DeltaTime)
 
 void UFairyTweener::Update(float DeltaTime)
 {
-	if (Ended != 0) //Maybe completed by seek
-	{
-		OnCompleteCallback.ExecuteIfBound(this);
-		bKilled = true;
-		return;
-	}
-
-	if (TimeScale != 1)
-	{
-		DeltaTime *= TimeScale;
-	}
-
-	if (DeltaTime == 0)
-	{
-		return;
-	}
-
-	ElapsedTime += DeltaTime;
-	DoUpdate();
-
-	if (Ended != 0)
-	{
-		if (!bKilled)
-		{
-			OnCompleteCallback.ExecuteIfBound(this);
-			bKilled = true;
-		}
-	}
 }
 
-void UFairyTweener::DoUpdate()
+void UFairyTweener::SetTag(int InTag)
 {
-	Ended = 0;
+	_tag = InTag;
+}
 
-	if (ValueSize == 0) //DelayedCall
-	{
-		if (ElapsedTime >= Delay + Duration)
-		{
-			Ended = 1;
-		}
-
-		return;
-	}
-
-	if (!bStarted)
-	{
-		if (ElapsedTime < Delay)
-		{
-			return;
-		}
-
-		bStarted = true;
-		OnStartCallback.ExecuteIfBound(this);
-		if (bKilled)
-		{
-			return;
-		}
-	}
-
-	bool reversed = false;
-	float tt = ElapsedTime - Delay;
-	if (Breakpoint >= 0 && tt >= Breakpoint)
-	{
-		tt = Breakpoint;
-		Ended = 2;
-	}
-
-	if (Repeat != 0)
-	{
-		int32 round = FMath::FloorToInt(tt / Duration);
-		tt -= Duration * round;
-		if (bYoyo)
-		{
-			reversed = round % 2 == 1;
-		}
-
-		if (Repeat > 0 && Repeat - round < 0)
-		{
-			if (bYoyo)
-			{
-				reversed = Repeat % 2 == 1;
-			}
-			tt = Duration;
-			Ended = 1;
-		}
-	}
-	else if (tt >= Duration)
-	{
-		tt = Duration;
-		Ended = 1;
-	}
-
-	NormalizedTime = EaseManager::Evaluate(EaseType, reversed ? (Duration - tt) : tt, Duration, EaseOvershootOrAmplitude, EasePeriod);
-
-	Value.Reset();
-	DeltaValue.Reset();
-
-	if (ValueSize == 5)
-	{
-		double d = StartValue.D + (EndValue.D - StartValue.D) * NormalizedTime;
-		if (bSnapping)
-		{
-			d = round(d);
-		}
-		DeltaValue.D = d - Value.D;
-		Value.D = d;
-		Value.X = (float)d;
-	}
-	else if (ValueSize == 6)
-	{
-		if (Ended == 0)
-		{
-			float r = StartValue.W * (1 - NormalizedTime);
-			float rx = (FMath::RandRange(0, 1) * 2 - 1) * r;
-			float ry = (FMath::RandRange(0, 1) * 2 - 1) * r;
-			rx = rx > 0 ? FMath::CeilToFloat(rx) : FMath::FloorToFloat(rx);
-			ry = ry > 0 ? FMath::CeilToFloat(ry) : FMath::FloorToFloat(ry);
-
-			DeltaValue.X = rx;
-			DeltaValue.Y = ry;
-			Value.X = StartValue.X + rx;
-			Value.Y = StartValue.Y + ry;
-		}
-		else
-		{
-			Value.SetVec3(StartValue.GetVec3());
-		}
-	}
-	else if (Path.IsValid())
-	{
-		FVector vec3 = Path->GetPointAt(NormalizedTime);
-		if (bSnapping)
-		{
-			vec3.X = FMath::RoundToFloat(vec3.X);
-			vec3.Y = FMath::RoundToFloat(vec3.Y);
-			vec3.Z = FMath::RoundToFloat(vec3.Z);
-		}
-		DeltaValue.SetVec3(vec3 - Value.GetVec3());
-		Value.SetVec3(vec3);
-	}
-	else
-	{
-		for (int32 i = 0; i < ValueSize; i++)
-		{
-			float n1 = StartValue[i];
-			float n2 = EndValue[i];
-			float f = n1 + (n2 - n1) * NormalizedTime;
-			if (bSnapping)
-			{
-				f = FMath::RoundToFloat(f);
-			}
-			DeltaValue[i] = f - Value[i];
-			Value[i] = f;
-		}
-		Value.D = Value.X;
-	}
-
-	OnUpdateCallback.ExecuteIfBound(this);
+int UFairyTweener::GetTag()
+{
+	return _tag;
 }

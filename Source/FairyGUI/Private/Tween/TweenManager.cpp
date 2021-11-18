@@ -16,6 +16,7 @@ UTweenManager* UTweenManager::Get()
 }
 
 UTweenManager::UTweenManager()
+	:bTicking(false)
 {
 	TotalActiveTweenerNum = 0;
 	ActiveTweenerPointerCapcity = 30;
@@ -94,7 +95,81 @@ void UTweenManager::AddTweener(UFairyTweener* InTweener, UFairyObject* InTarget,
 	}
 }
 
+UFairyTweener* UTweenManager::GetTweenerByTag(int InTag, UFairyObject* InTarget)
+{
+	UFairyTweener* target = nullptr;
+	if (TweenerTable.Contains(InTarget))
+	{
+		TArray<UFairyTweener*>* Array = TweenerTable.Find(InTarget);
+		for (size_t i = 0; i < Array->Num(); i++)
+		{
+			UFairyTweener* element = (*Array)[i];
+			if (element->GetTag() == InTag)
+			{
+				target = element;
+				break;
+			}
+		}
+	}
+	return target;
+}
+
 void UTweenManager::RemoveTweener(UFairyTweener* InTweener)
+{
+	if (!InTweener)
+	{
+		return;
+	}
+
+	if (bTicking)
+	{
+		PostTickRemoveArray.Add(InTweener);
+	}
+	else
+	{
+		PreTickRemoveArray.Add(InTweener);
+	}
+}
+
+void UTweenManager::RemoveTweenerByTag(int InTag, UFairyObject* InTarget)
+{
+	if (TweenerTable.Contains(InTarget))
+	{
+		TArray<UFairyTweener*>* Array = TweenerTable.Find(InTarget);
+		for (size_t i = 0; i < Array->Num(); i++)
+		{
+			UFairyTweener* element = (*Array)[i];
+			if (element->GetTag() == InTag)
+			{
+				RemoveTweener(element);
+				break;
+			}
+		}
+	}
+}
+
+void UTweenManager::RemoveAllTweenerWithTarget(UFairyObject* InTarget)
+{
+	if (TweenerTable.Contains(InTarget))
+	{
+		if (bTicking == false)
+		{
+			// quick remove
+			TweenerTable.Remove(InTarget);
+		}
+		else
+		{
+			TArray<UFairyTweener*>* Array = TweenerTable.Find(InTarget);
+			for (size_t i = 0; i < Array->Num(); i++)
+			{
+				UFairyTweener* element = (*Array)[i];
+				PostTickRemoveArray.Add(element);
+			}
+		}
+	}
+}
+
+void UTweenManager::DoRemoveTweener(UFairyTweener* InTweener)
 {
 	TArray<UFairyObject*> DeleteArray;
 	for (auto& Pair : TweenerTable)
@@ -102,14 +177,14 @@ void UTweenManager::RemoveTweener(UFairyTweener* InTweener)
 		TArray<UFairyTweener*>& Array = Pair.Value;
 		for (int i = 0; i < Array.Num(); i++)
 		{
-			UFairyTweener* Element = Array[i];
-			if (Element == InTweener)
+			UFairyTweener* element = Array[i];
+			if (element == InTweener)
 			{
 				Array.RemoveAt(i);
 				break;
 			}
 		}
-		// If tweener is empty, remove target in TweenerTable
+		// If tweener array is empty, remove it from TweenerTable
 		if (Array.Num() == 0)
 		{
 			DeleteArray.Add(Pair.Key);
@@ -119,31 +194,6 @@ void UTweenManager::RemoveTweener(UFairyTweener* InTweener)
 	for (size_t i = 0; i < DeleteArray.Num(); i++)
 	{
 		RemoveAllTweenerWithTarget(DeleteArray[i]);
-	}
-}
-
-void UTweenManager::RemoveTweenerWithTarget(UFairyTweener* InTweener, UFairyObject* InTarget)
-{
-	if ( TweenerTable.Contains(InTarget) )
-	{
-		TArray<UFairyTweener*>* Array = TweenerTable.Find(InTarget);
-		for (int i = 0; i < Array->Num(); i++)
-		{
-			UFairyTweener* element = (*Array)[i];
-			if (element == InTweener)
-			{
-				Array->RemoveAt(i);
-				break;
-			}
-		}
-	}
-}
-
-void UTweenManager::RemoveAllTweenerWithTarget(UFairyObject* InTarget)
-{
-	if ( TweenerTable.Contains(InTarget) )
-	{
-		TweenerTable.Remove(InTarget);
 	}
 }
 
@@ -229,6 +279,16 @@ UFairyTweener* UTweenManager::GetTween(UObject* Target)
 
 void UTweenManager::Tick(float DeltaTime)
 {
+	bTicking = true;
+
+	for (size_t i = 0; i < PreTickRemoveArray.Num(); i++)
+	{
+		UFairyTweener* element = PreTickRemoveArray[i];
+		DoRemoveTweener(element);
+	}
+	PreTickRemoveArray.Reset();
+
+
 	for (auto& Pair : TweenerTable)
 	{
 		TArray<UFairyTweener*>& Array = Pair.Value;
@@ -239,7 +299,7 @@ void UTweenManager::Tick(float DeltaTime)
 			{
 				if (element->IsDone() || !element->IsTargetValid())
 				{
-					CompletedArray.Add(element);
+					RemoveTweener(element);
 					continue;
 				}
 				else
@@ -250,10 +310,12 @@ void UTweenManager::Tick(float DeltaTime)
 		}
 	}
 
-	for (size_t i = 0; i < CompletedArray.Num(); i++)
+	for (size_t i = 0; i < PostTickRemoveArray.Num(); i++)
 	{
-		UFairyTweener* element = CompletedArray[i];
-		RemoveTweener(element);
+		UFairyTweener* element = PostTickRemoveArray[i];
+		DoRemoveTweener(element);
 	}
-	CompletedArray.Reset();
+	PostTickRemoveArray.Reset();
+
+	bTicking = false;
 }

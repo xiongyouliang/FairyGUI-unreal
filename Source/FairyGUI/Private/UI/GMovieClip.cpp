@@ -67,12 +67,12 @@ void UGMovieClip::SetFlip(EFlipType InFlip)
     Content->Graphics->SetFlip(InFlip);
 }
 
-FColor UGMovieClip::GetColor() const
+FColor UGMovieClip::NativeGetColor() const
 {
     return Content->Graphics->GetColor();
 }
 
-void UGMovieClip::SetColor(const FColor& InColor)
+void UGMovieClip::NativeSetColor(const FColor& InColor)
 {
     Content->Graphics->SetColor(InColor);
 }

@@ -50,10 +50,8 @@ public:
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     void SetFlip(EFlipType InFlip);
 
-    UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    FColor GetColor() const;
-    UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    void SetColor(const FColor& InColor);
+    virtual FColor NativeGetColor() const override;
+    virtual void NativeSetColor(const FColor& InColor) override;
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     EFillMethod GetFillMethod() const;

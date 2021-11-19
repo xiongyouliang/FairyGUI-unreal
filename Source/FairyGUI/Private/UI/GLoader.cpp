@@ -88,12 +88,12 @@ void UGLoader::SetFlip(EFlipType InFlip)
     Content->Graphics->SetFlip(InFlip);
 }
 
-FColor UGLoader::GetColor() const
+FColor UGLoader::NativeGetColor() const
 {
     return Content->Graphics->GetColor();
 }
 
-void UGLoader::SetColor(const FColor& InColor)
+void UGLoader::NativeSetColor(const FColor& InColor)
 {
     Content->Graphics->SetColor(InColor);
 }

@@ -134,6 +134,13 @@ public:
 	virtual void SetIcon(const FString& InIcon);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+	FColor GetColor() const { return NativeGetColor(); }
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+	void SetColor(const FColor& InColor) { NativeSetColor(InColor); }
+	virtual FColor NativeGetColor() const { return FColor(); };
+	virtual void NativeSetColor(const FColor& IColor) {};
+
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	const FString& GetTooltips() const { return Tooltips; }
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	void SetTooltips(const FString& InTooltips);

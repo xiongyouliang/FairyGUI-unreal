@@ -19,12 +19,12 @@ UGGraph::~UGGraph()
 
 }
 
-FColor UGGraph::GetColor() const
+FColor UGGraph::NativeGetColor() const
 {
     return Content->Graphics.GetColor();
 }
 
-void UGGraph::SetColor(const FColor& InColor)
+void UGGraph::NativeSetColor(const FColor& InColor)
 {
     Content->Graphics.SetColor(InColor);
 }

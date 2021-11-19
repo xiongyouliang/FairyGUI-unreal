@@ -35,12 +35,12 @@ void UGImage::SetFlip(EFlipType InFlip)
 	Content->Graphics->SetFlip(InFlip);
 }
 
-FColor UGImage::GetColor() const
+FColor UGImage::NativeGetColor() const
 {
 	return Content->Graphics->GetColor();
 }
 
-void UGImage::SetColor(const FColor& InColor)
+void UGImage::NativeSetColor(const FColor& InColor)
 {
 	Content->Graphics->SetColor(InColor);
 }

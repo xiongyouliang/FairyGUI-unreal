@@ -12,11 +12,8 @@ public:
     UGGraph();
     virtual ~UGGraph();
 
-    UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    FColor GetColor() const;
-
-    UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    void SetColor(const FColor& InColor);
+    virtual FColor NativeGetColor() const override;
+    virtual void NativeSetColor(const FColor& InColor) override;
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI", meta = (AutoCreateRefTerm = "LineColor,FillColor"))
     void DrawRect(float LineWidth, const FColor& LineColor, const FColor& FillColor);

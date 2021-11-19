@@ -20,10 +20,8 @@ public:
     virtual const FString& GetIcon() const override { return URL; }
     virtual void SetIcon(const FString& InIcon) override { SetURL(InIcon); }
 
-    UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    FColor GetColor() const;
-    UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    void SetColor(const FColor& InColor);
+    virtual FColor NativeGetColor() const override;
+    virtual void NativeSetColor(const FColor& InColor) override;
 
     virtual FNVariant GetProp(EObjectPropID PropID) const;
     virtual void SetProp(EObjectPropID PropID, const FNVariant& InValue);

@@ -36,10 +36,8 @@ public:
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     void SetFlip(EFlipType InFlip);
 
-    UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    FColor GetColor() const;
-    UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    void SetColor(const FColor& InColor);
+    virtual FColor NativeGetColor() const override;
+    virtual void NativeSetColor(const FColor& InColor) override;
 
     //from start to end(-1 means ending) repeat times(0 means infinite loop) when all is over, stopping at endAt(-1 means same value of end)
     void SetPlaySettings(int32 InStart = 0, int32 InEnd = -1, int32 InTimes = 0, int32 InEndAt = -1, const FSimpleDelegate& InCompleteCallback = FSimpleDelegate());

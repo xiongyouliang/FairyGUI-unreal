@@ -28,12 +28,12 @@ void UGLoader3D::SetURL(const FString& InURL)
 	UpdateGear(7);
 }
 
-FColor UGLoader3D::GetColor() const
+FColor UGLoader3D::NativeGetColor() const
 {
 	return FColor();// Content->getColor();
 }
 
-void UGLoader3D::SetColor(const FColor& InColor)
+void UGLoader3D::NativeSetColor(const FColor& InColor)
 {
 	//Content->setColor(value);
 }

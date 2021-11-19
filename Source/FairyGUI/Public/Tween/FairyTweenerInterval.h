@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "Tween/FairyTweenerFiniteTime.h"
-
 #include "FairyTweenerInterval.generated.h"
 
 UCLASS(BlueprintType)

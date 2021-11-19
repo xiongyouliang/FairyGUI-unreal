@@ -41,6 +41,7 @@ void UFairyTweenerInterval::Step(float InDeltaTime)
 void UFairyTweenerInterval::StartWithTarget(UFairyObject* InTarget)
 {
 	UFairyTweenerFiniteTime::StartWithTarget(InTarget);
+	bDone = false;
 }
 
 void UFairyTweenerInterval::Init(float InDuration)

@@ -58,6 +58,8 @@ public:
 	UFairyObject* GetTarget2();
 	bool IsTargetValid();
 
+	virtual bool IsDone() const;
+
 	const FNVariant& GetUserData() const { return UserData; }
 	UFairyTweener* SetUserData(const FNVariant& InData);
 
@@ -72,8 +74,9 @@ public:
 
 	float GetNormalizedTime() const { return NormalizedTime; }
 
-	virtual bool IsDone() const;
+	[[deprecated("Mark to remove in next refactor.")]]
 	bool IsCompleted() const { return Ended != 0; }
+	[[deprecated("Mark to remove in next refactor.")]]
 	bool AllCompleted() const { return Ended == 1; }
 	
 	

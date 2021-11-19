@@ -40,3 +40,86 @@ protected:
 	FVector2D startPos;
 	FVector2D dstPos;
 };
+
+UCLASS(BlueprintType)
+class FAIRYGUI_API UFairyTweenerSize : public UFairyTweenerInterval
+{
+	GENERATED_BODY()
+public:
+	bool Init(float InDuration, FVector2D InStartSize, FVector2D InDstSize);
+
+	virtual void Update(float InTime) override;
+
+protected:
+	FVector2D startSize;
+	FVector2D dstSize;
+};
+
+UCLASS(BlueprintType)
+class FAIRYGUI_API UFairyTweenerOpacity : public UFairyTweenerInterval
+{
+	GENERATED_BODY()
+public:
+	bool Init(float InDuration, float InStartOpacity, float InDstOpacity);
+
+	virtual void Update(float InTime) override;
+
+protected:
+	float startOpacity;
+	float dstOpacity;
+};
+
+UCLASS(BlueprintType)
+class FAIRYGUI_API UFairyTweenerRotate : public UFairyTweenerInterval
+{
+	GENERATED_BODY()
+public:
+	bool Init(float InDuration, float InStartRotate, float InDstRotate);
+	virtual void Update(float InTime) override;
+
+protected:
+	float startRotate;
+	float dstRotate;
+};
+
+UCLASS(BlueprintType)
+class FAIRYGUI_API UFairyTweenerScale : public UFairyTweenerInterval
+{
+	GENERATED_BODY()
+public:
+	bool Init(float InDuration, FVector2D InStartScale, FVector2D InDstScale);
+	virtual void Update(float InTime) override;
+
+protected:
+	FVector2D startScale;
+	FVector2D dstScale;
+};
+
+UCLASS(BlueprintType)
+class FAIRYGUI_API UFairyTweenerSkew : public UFairyTweenerInterval
+{
+	GENERATED_BODY()
+public:
+	bool Init(float InDuration, FVector2D InStartSkew, FVector2D InDstSkey);
+	virtual void Update(float InTime) override;
+
+protected:
+	FVector2D startSkew;
+	FVector2D dstSkew;
+};
+
+UCLASS(BlueprintType)
+class FAIRYGUI_API UFairyTweenerColor : public UFairyTweenerInterval
+{
+	GENERATED_BODY()
+public:
+	bool Init(float InDuration, FColor InStartColor, FColor InDstColor);
+	virtual void Update(float InTime) override;
+
+protected:
+	FColor startColor;
+	FColor dstColor;
+};
+
+
+

@@ -4,8 +4,9 @@
 #include "CoreMinimal.h"
 #include "UI/FairyObject.h"
 #include "UI/FieldTypes.h"
-#include "UI/Transition/Transition.h"
 #include "UI/Transition/TweenConfig.h"
+
+class UTransition;
 
 struct FAniData {
 	int32 Frame;
@@ -21,7 +22,7 @@ struct FSoundData {
 struct FInnerTransData {
 	FString Name;
 	int32 PlayTimes;
-	UTransition *Instance;
+	UTransition* Instance;
 	float StopTime;
 };
 

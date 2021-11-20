@@ -20,7 +20,6 @@ protected:
     virtual void Init() override;
 
 private:
-    void OnTweenUpdate(UFairyTweener* Tweener);
     void OnTweenComplete();
 
     TMap<FString, FVector4> Storage;

@@ -7,7 +7,6 @@
 #include "UI/Controller/GController.h"
 #include "UI/GScrollBar.h"
 #include "Utils/ByteBuffer.h"
-#include "Tween/FairyTweenHelper.h"
 #include "Widgets/SContainer.h"
 #include "FairyApplication.h"
 
@@ -1031,18 +1030,18 @@ void UScrollPanel::UpdateScrollBarVisible2(UGScrollBar* Bar)
 {
 	if (bScrollBarDisplayAuto)
 	{
-		FFairyTweenHelper::Kill(Bar, false);
+		//FFairyTweenHelper::Kill(Bar, false);
 	}
 
 	if (bScrollBarDisplayAuto && !bHover && TweenType == 0 && !bDragged && !Bar->bGripDragging)
 	{
 		if (Bar->IsVisible())
 		{
-			FFairyTweenHelper::To(1, 0, 0.5f)
-				->SetDelay(0.5f)
-				->OnUpdate(FTweenDelegate::CreateStatic(&FFairyTweenHelper::Action::SetAlpha))
-				->OnComplete(FTweenDelegate::CreateUObject(this, &UScrollPanel::OnBarTweenComplete))
-				->SetTarget(Bar);
+			//FFairyTweenHelper::To(1, 0, 0.5f)
+			//	->SetDelay(0.5f)
+			//	->OnUpdate(FTweenDelegate::CreateStatic(&FFairyTweenHelper::Action::SetAlpha))
+			//	->OnComplete(FTweenDelegate::CreateUObject(this, &UScrollPanel::OnBarTweenComplete))
+			//	->SetTarget(Bar);
 		}
 	}
 	else

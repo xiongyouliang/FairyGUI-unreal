@@ -1,7 +1,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Tween/FairyTweenHelper.h"
+#include "Tween/EaseType.h"
+#include "Tween/TweenValue.h"
+#include "Tween/TweenerHandle.h"
+#include "Tween/FairyTweener.h"
 
 class UFairyObject;
 class UGController;

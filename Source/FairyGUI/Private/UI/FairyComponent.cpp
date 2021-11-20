@@ -11,7 +11,6 @@
 #include "UI/FairyRoot.h"
 #include "Utils/ByteBuffer.h"
 #include "Widgets/SContainer.h"
-#include "Tween/FairyTweenHelper.h"
 
 static FThreadSafeCounter FairyComponentCount;
 

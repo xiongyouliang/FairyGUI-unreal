@@ -2,7 +2,6 @@
 #include "UI/FairyObject.h"
 #include "Package/FairyPackage.h"
 #include "UI/Controller/GController.h"
-#include "Tween/FairyTweenHelper.h"
 #include "Utils/ByteBuffer.h"
 
 FGearLook::FValue::FValue() :
@@ -59,42 +58,7 @@ void FGearLook::Apply()
 
     if (TweenConfig.IsSet() && TweenConfig->bTween && UFairyPackage::Constructing == 0 && !bDisableAllTweenEffect)
     {
-        Owner->bGearLocked = true;
-        Owner->SetGrayed(Value->bGrayed);
-        Owner->SetTouchable(Value->bTouchable);
-        Owner->bGearLocked = false;
-
-        UFairyTweener* tweener = FFairyTweenHelper::GetTween(TweenConfig->Handle);
-        if (tweener != nullptr)
-        {
-            if (tweener->EndValue.X != Value->Alpha || tweener->EndValue.Y != Value->Rotation)
-            {
-				tweener->Kill(true);
-            }
-            else
-            {
-				return;
-            }
-        }
-
-        bool a = Value->Alpha != Owner->GetAlpha();
-        bool b = Value->Rotation != Owner->GetRotation();
-        if (a || b)
-        {
-            if (Owner->CheckGearController(0, Controller.Get()))
-            {
-				TweenConfig->DisplayLockToken = Owner->AddDisplayLock();
-            }
-
-            TweenConfig->Handle = FFairyTweenHelper::To(FVector2D(Owner->GetAlpha(), Owner->GetRotation()), FVector2D(Value->Alpha, Value->Rotation), TweenConfig->Duration)
-                ->SetDelay(TweenConfig->Delay)
-                ->SetEase(TweenConfig->EaseType)
-                ->SetTarget(Owner.Get())
-                ->SetUserData(FNVariant((a ? 1 : 0) + (b ? 2 : 0)))
-                ->OnUpdate(FTweenDelegate::CreateRaw(this, &FGearLook::OnTweenUpdate))
-                ->OnComplete(FSimpleDelegate::CreateRaw(this, &FGearLook::OnTweenComplete))
-                ->GetHandle();
-        }
+        // todo: use new tween system
     }
     else
     {

@@ -24,7 +24,5 @@
 #include "UI/PopupMenu.h"
 #include "UI/GWindow.h"
 
-#include "Tween/FairyTweenHelper.h"
-
 #include "Utils/NVariant.h"
 #include "Utils/ByteBuffer.h"

@@ -1,7 +1,6 @@
 #include "UI/GProgressBar.h"
 #include "UI/GImage.h"
 #include "UI/GLoader.h"
-#include "Tween/FairyTweenHelper.h"
 #include "Utils/ByteBuffer.h"
 
 UGProgressBar::UGProgressBar() :
@@ -44,8 +43,6 @@ void UGProgressBar::SetValue(float InValue)
 {
     if (Value != InValue)
     {
-        FFairyTweenHelper::Kill(TweenHandle, false);
-
         Value = InValue;
         Update(Value);
     }

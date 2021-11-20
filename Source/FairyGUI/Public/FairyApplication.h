@@ -165,6 +165,5 @@ private:
 	friend class UFairyPackageMgr;
 	friend class UFairyPackage;
 	friend class UFairyRoot;
-	friend class FFairyTweenHelper;
 	friend class UDragDropManager;
 };

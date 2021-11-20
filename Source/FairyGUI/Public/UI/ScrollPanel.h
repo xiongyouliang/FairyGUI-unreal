@@ -3,7 +3,6 @@
 #include "CoreMinimal.h"
 #include "Styling/SlateTypes.h"
 #include "FieldTypes.h"
-#include "Tween/FairyTweenHelper.h"
 #include "Event/EventContext.h"
 #include "ScrollPanel.generated.h"
 

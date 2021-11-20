@@ -2,7 +2,6 @@
 #include "UI/FairyComponent.h"
 #include "Package/FairyPackage.h"
 #include "UI/Controller/GController.h"
-#include "Tween/FairyTweenHelper.h"
 #include "Utils/ByteBuffer.h"
 
 FGearXY::FGearXY(UFairyObject* InOwner) :
@@ -71,38 +70,7 @@ void FGearXY::Apply()
 
     if (TweenConfig.IsSet() && TweenConfig->bTween && UFairyPackage::Constructing == 0 && !bDisableAllTweenEffect)
     {
-        UFairyTweener* tweener = FFairyTweenHelper::GetTween(TweenConfig->Handle);
-        if (tweener != nullptr)
-        {
-            if (tweener->EndValue.GetVec2() != EndPt)
-            {
-                tweener->Kill(true);
-
-            }
-            else
-            {
-                return;
-
-            }
-        }
-
-        FVector2D OriginPt = Owner->GetPosition();
-
-        if (OriginPt != EndPt)
-        {
-            if (Owner->CheckGearController(0, Controller.Get()))
-            {
-                TweenConfig->DisplayLockToken = Owner->AddDisplayLock();
-            }
-
-            TweenConfig->Handle = FFairyTweenHelper::To(OriginPt, EndPt, TweenConfig->Duration)
-                ->SetDelay(TweenConfig->Delay)
-                ->SetEase(TweenConfig->EaseType)
-                ->SetTarget(Owner.Get())
-                ->OnUpdate(FTweenDelegate::CreateRaw(this, &FGearXY::OnTweenUpdate))
-                ->OnComplete(FSimpleDelegate::CreateRaw(this, &FGearXY::OnTweenComplete))
-                ->GetHandle();
-        }
+        // todo: use new tween system.
     }
     else
     {
@@ -110,13 +78,6 @@ void FGearXY::Apply()
         Owner->SetPosition(EndPt);
         Owner->bGearLocked = false;
     }
-}
-
-void FGearXY::OnTweenUpdate(UFairyTweener* Tweener)
-{
-    Owner->bGearLocked = true;
-    Owner->SetPosition(Tweener->Value.GetVec2());
-    Owner->bGearLocked = false;
 }
 
 void FGearXY::OnTweenComplete()

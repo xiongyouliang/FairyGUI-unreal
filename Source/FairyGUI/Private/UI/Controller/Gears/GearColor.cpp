@@ -2,7 +2,6 @@
 #include "UI/FairyObject.h"
 #include "Package/FairyPackage.h"
 #include "UI/Controller/GController.h"
-#include "Tween/FairyTweenHelper.h"
 #include "Utils/ByteBuffer.h"
 
 FGearColor::FValue::FValue()
@@ -50,44 +49,7 @@ void FGearColor::Apply()
 
     if (TweenConfig.IsSet() && TweenConfig->bTween && UFairyPackage::Constructing == 0 && !bDisableAllTweenEffect)
     {
-        FColor curColor = Owner->GetProp<FColor>(EObjectPropID::Color);
-        FColor curOutlineColor = Owner->GetProp<FColor>(EObjectPropID::OutlineColor);
-
-        if (Value->OutlineColor != curOutlineColor)
-        {
-            Owner->bGearLocked = true;
-            Owner->SetProp(EObjectPropID::OutlineColor, FNVariant(Value->OutlineColor));
-            Owner->bGearLocked = false;
-        }
-
-        UFairyTweener* tweener = FFairyTweenHelper::GetTween(TweenConfig->Handle);
-        if (tweener != nullptr)
-        {
-            if (tweener->EndValue.GetColor() != Value->Color)
-            {
-				tweener->Kill(true);
-            }
-            else
-            {
-				return;
-            }
-        }
-
-        if (Value->Color != curColor)
-        {
-            if ( Owner->CheckGearController(0, Controller.Get()) )
-            {
-				TweenConfig->DisplayLockToken = Owner->AddDisplayLock();
-            }
-
-            TweenConfig->Handle = FFairyTweenHelper::To(curColor, Value->Color, TweenConfig->Duration)
-                ->SetDelay(TweenConfig->Delay)
-                ->SetEase(TweenConfig->EaseType)
-                ->SetTarget(Owner.Get())
-                ->OnUpdate(FTweenDelegate::CreateRaw(this, &FGearColor::OnTweenUpdate))
-                ->OnComplete(FSimpleDelegate::CreateRaw(this, &FGearColor::OnTweenComplete))
-                ->GetHandle();
-        }
+        // todo: use new tween system
     }
     else
     {

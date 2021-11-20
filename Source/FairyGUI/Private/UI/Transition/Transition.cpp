@@ -33,7 +33,7 @@ UTransition::~UTransition()
 {
 	if (DelayHandle.IsValid())
 	{
-		FFairyTweenHelper::Kill(DelayHandle);
+		//FFairyTweenHelper::Kill(DelayHandle);
 	}
 
 	for (auto& it : Items)
@@ -475,7 +475,7 @@ void UTransition::Play(int32 InTimes, float InDelay, float InStartTime, float In
 	}
 	else
 	{
-		DelayHandle = FFairyTweenHelper::DelayedCall(InDelay)->OnComplete(FSimpleDelegate::CreateUObject(this, &UTransition::OnDelayedPlay))->GetHandle();
+		//DelayHandle = FFairyTweenHelper::DelayedCall(InDelay)->OnComplete(FSimpleDelegate::CreateUObject(this, &UTransition::OnDelayedPlay))->GetHandle();
 	}
 }
 

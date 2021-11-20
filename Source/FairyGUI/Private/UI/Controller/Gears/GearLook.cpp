@@ -73,19 +73,19 @@ void FGearLook::Apply()
 
 void FGearLook::OnTweenUpdate(UFairyTweener* Tweener)
 {
-    int32 flag = Tweener->GetUserData().AsInt();
-    Owner->bGearLocked = true;
+  //  int32 flag = Tweener->GetUserData().AsInt();
+  //  Owner->bGearLocked = true;
 
-    if ((flag & 1) != 0)
-    {
-		Owner->SetAlpha(Tweener->Value.X);
-    }
+  //  if ((flag & 1) != 0)
+  //  {
+		//Owner->SetAlpha(Tweener->Value.X);
+  //  }
 
-    if ((flag & 2) != 0)
-    {
-		Owner->SetRotation(Tweener->Value.Y);
-    }
-    Owner->bGearLocked = false;
+  //  if ((flag & 2) != 0)
+  //  {
+		//Owner->SetRotation(Tweener->Value.Y);
+  //  }
+  //  Owner->bGearLocked = false;
 }
 
 void FGearLook::OnTweenComplete()

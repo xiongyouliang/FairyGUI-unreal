@@ -112,7 +112,7 @@ void UFairyTweenerSequence::StartWithTarget(UFairyObject* InTarget)
 	for (size_t i = 0; i < tweenerList.Num(); i++)
 	{
 		UFairyTweenerFiniteTime* element = tweenerList[i];
-		element->SetTarget2(InTarget);
+		element->SetTarget(InTarget);
 	}
 }
 

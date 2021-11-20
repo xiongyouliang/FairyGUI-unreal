@@ -25,74 +25,27 @@ class FAIRYGUI_API UFairyTweener : public UObject
 public:
 	UFairyTweener();
 	virtual ~UFairyTweener();
-
-	const FTweenerHandle& GetHandle() {
-		return Handle;
-	}
-
-	UFairyTweener* SetDelay(float InValue);
-	float GetDelay() const { return Delay; }
-
-	UFairyTweener* SetBreakpoint(float InValue);
-
+	
+	[[deprecated("Will remove in next refactor.")]]
 	UFairyTweener* SetEase(EEaseType InValue);
+	[[deprecated("Will remove in next refactor.")]]
 	UFairyTweener* SetEasePeriod(float InValue);
+	[[deprecated("Will remove in next refactor.")]]
 	UFairyTweener* SetEaseOvershootOrAmplitude(float InValue);
-
-	UFairyTweener* SetRepeat(int32 InRepeat, bool bInYoyo = false);
-	int32 GetRepeat() const { return Repeat; }
-
-	UFairyTweener* SetTimeScale(float InValue);
-	UFairyTweener* SetSnapping(bool InValue);
-
-	UFairyTweener* SetTarget(UObject* InTarget);
-	UObject* GetTarget() const { return Target.Get(); }
-
-	virtual void StartWithTarget(UFairyObject* InTarget);
-	void SetTarget2(UFairyObject* InTarget);
-	UFairyObject* GetTarget2();
-	bool IsTargetValid();
-
-	virtual bool IsDone() const;
-
-	const FNVariant& GetUserData() const { return UserData; }
-	UFairyTweener* SetUserData(const FNVariant& InData);
-
+	[[deprecated("Will remove in next refactor.")]]
 	UFairyTweener* SetPath(TSharedPtr<FGPath> InPath);
 
-	UFairyTweener* OnUpdate(FTweenDelegate Callback);
-	UFairyTweener* OnStart(FTweenDelegate Callback);
-	UFairyTweener* OnComplete(FTweenDelegate Callback);
-	UFairyTweener* OnUpdate(FSimpleDelegate Callback);
-	UFairyTweener* OnStart(FSimpleDelegate Callback);
-	UFairyTweener* OnComplete(FSimpleDelegate Callback);
+	virtual void StartWithTarget(UFairyObject* InTarget);
+	void SetTarget(UFairyObject* InTarget);
+	UFairyObject* GetTarget();
+	bool IsTargetValid();
 
-	float GetNormalizedTime() const { return NormalizedTime; }
-	
-	
-	UFairyTweener* SetPaused(bool bInPaused);
-	virtual bool IsPaused();
-
-	void Seek(float Time);
-	void Kill(bool bSetComplete = false);
-
-	FTweenValue StartValue;
-	FTweenValue EndValue;
-	FTweenValue Value;
-	FTweenValue DeltaValue;
-
-	UFairyTweener* To(float InStart, float InEnd, float InDuration);
-	UFairyTweener* To(const FVector2D& InStart, const FVector2D& InEnd, float InDuration);
-	UFairyTweener* To(const FVector& InStart, const FVector& InEnd, float InDuration);
-	UFairyTweener* To(const FVector4& InStart, const FVector4& InEnd, float InDuration);
-	UFairyTweener* To(const FColor& InStart, const FColor& InEnd, float InDuration);
-	UFairyTweener* To(double InStart, double InEnd, float InDuration);
-	UFairyTweener* Shake(const FVector2D& InStart, float InAmplitude, float InDuration);
-	
-	void Init();
-	void Reset();
 	virtual void Step(float InDeltaTime);
 	virtual void Update(float InTime);
+	virtual bool IsDone() const;
+
+	UFairyTweener* SetPaused(bool bInPaused);
+	virtual bool IsPaused();
 
 	int GetTag();
 	void SetTag(int InTag);
@@ -101,38 +54,13 @@ protected:
 	UPROPERTY()
 	UFairyObject* _Target;
 	int _tag;
-
-	TWeakObjectPtr<UObject> Target;
 	
-
-	bool bKilled;
 	bool bPaused;
-
-	float Delay;
-	float Duration;
-	float Breakpoint;
 
 	EEaseType EaseType;
 	float EaseOvershootOrAmplitude;
 	float EasePeriod;
 
-	int32 Repeat;
 	bool bYoyo;
-	float TimeScale;
-	bool bSnapping;
-
-	FNVariant UserData;
-	int32 ValueSize;
 	TSharedPtr<FGPath> Path;
-	
-	FTweenerHandle Handle;
-
-	FTweenDelegate OnStartCallback;
-	FTweenDelegate OnUpdateCallback;
-	FTweenDelegate OnCompleteCallback;
-
-	bool bStarted;
-	int32 Ended;
-	float ElapsedTime;
-	float NormalizedTime;
 };

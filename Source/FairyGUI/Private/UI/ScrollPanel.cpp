@@ -1053,9 +1053,9 @@ void UScrollPanel::UpdateScrollBarVisible2(UGScrollBar* Bar)
 
 void UScrollPanel::OnBarTweenComplete(UFairyTweener* Tweener)
 {
-	UFairyObject* bar = (UFairyObject*)Tweener->GetTarget();
-	bar->SetAlpha(1);
-	bar->SetVisible(false);
+	//UFairyObject* bar = (UFairyObject*)Tweener->GetTarget();
+	//bar->SetAlpha(1);
+	//bar->SetVisible(false);
 }
 
 float UScrollPanel::GetLoopPartSize(float Division, int32 Axis)

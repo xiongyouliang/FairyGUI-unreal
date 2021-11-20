@@ -62,9 +62,9 @@ void FGearColor::Apply()
 
 void FGearColor::OnTweenUpdate(UFairyTweener* Tweener)
 {
-    Owner->bGearLocked = true;
-    Owner->SetProp(EObjectPropID::Color, FNVariant(Tweener->Value.GetColor()));
-    Owner->bGearLocked = false;
+	//Owner->bGearLocked = true;
+	//Owner->SetProp(EObjectPropID::Color, FNVariant(Tweener->Value.GetColor()));
+	//Owner->bGearLocked = false;
 }
 
 void FGearColor::OnTweenComplete()

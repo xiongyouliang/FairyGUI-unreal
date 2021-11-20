@@ -61,19 +61,19 @@ void FGearSize::Apply()
 
 void FGearSize::OnTweenUpdate(UFairyTweener* Tweener)
 {
-    int32 flag = Tweener->GetUserData().AsInt();
-    Owner->bGearLocked = true;
-    if ((flag & 1) != 0)
-    {
-        Owner->SetSize(Tweener->Value.GetVec2());
-        Owner->SetPivot(Owner->GetPivot(), Owner->CheckGearController(1, Controller.Get()));
-    }
-        
-    if ((flag & 2) != 0)
-    {
-        Owner->SetScale(FVector2D(Tweener->Value.Z, Tweener->Value.W));
-    }
-    Owner->bGearLocked = false;
+    //int32 flag = Tweener->GetUserData().AsInt();
+    //Owner->bGearLocked = true;
+    //if ((flag & 1) != 0)
+    //{
+    //    Owner->SetSize(Tweener->Value.GetVec2());
+    //    Owner->SetPivot(Owner->GetPivot(), Owner->CheckGearController(1, Controller.Get()));
+    //}
+    //    
+    //if ((flag & 2) != 0)
+    //{
+    //    Owner->SetScale(FVector2D(Tweener->Value.Z, Tweener->Value.W));
+    //}
+    //Owner->bGearLocked = false;
 }
 
 void FGearSize::OnTweenComplete()

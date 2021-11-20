@@ -201,30 +201,3 @@ void UTweenManager::Tick(float DeltaTime)
 
 	bTicking = false;
 }
-
-// ------------- there function will remove when finish refactor ------------
-UFairyTweener* UTweenManager::CreateTweener()
-{
-	return nullptr;
-}
-
-bool UTweenManager::KillTween(FTweenerHandle& Handle, bool bCompleted)
-{
-	return true;
-}
-
-bool UTweenManager::KillTweens(UObject* Target, bool bCompleted)
-{
-	return true;
-}
-
-UFairyTweener* UTweenManager::GetTween(FTweenerHandle const& Handle)
-{
-	return nullptr;
-}
-
-UFairyTweener* UTweenManager::GetTween(UObject* Target)
-{
-	return nullptr;
-}
-// ------------- there function will remove when finish refactor ------------

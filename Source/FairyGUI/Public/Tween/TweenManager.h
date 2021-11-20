@@ -26,23 +26,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	static UTweenManager* Get();
 
-	[[deprecated("Mark to remove in next refactor.")]]
-	UFairyTweener* CreateTweener();
-	[[deprecated("Mark to remove in next refactor.")]]
-	bool IsTweening(FTweenerHandle const& Handle) { return GetTween(Handle) != nullptr; }
-	[[deprecated("Mark to remove in next refactor.")]]
-	bool IsTweening(UObject* Target) { return GetTween(Target) != nullptr; }
-
-	[[deprecated("Mark to remove in next refactor.")]]
-	bool KillTween(FTweenerHandle& Handle, bool bCompleted);
-	[[deprecated("Mark to remove in next refactor.")]]
-	bool KillTweens(UObject* Target, bool bCompleted);
-
-	[[deprecated("Mark to remove in next refactor.")]]
-	UFairyTweener* GetTween(FTweenerHandle const& Handle);
-	[[deprecated("Mark to remove in next refactor.")]]
-	UFairyTweener* GetTween(UObject* Target);
-
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	UFairyTweenerPos* CreateTweenerPos(float InDuration, FVector2D InStartPos, FVector2D InDstPos);
 

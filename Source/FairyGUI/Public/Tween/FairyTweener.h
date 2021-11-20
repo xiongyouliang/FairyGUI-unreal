@@ -33,11 +33,6 @@ public:
 	UFairyTweener* SetDelay(float InValue);
 	float GetDelay() const { return Delay; }
 
-	[[deprecated("Mark to remove in next refactor.")]]
-	UFairyTweener* SetDuration(float InValue);
-	[[deprecated("Mark to remove in next refactor.")]]
-	float GetDuration() const { return Duration; }
-
 	UFairyTweener* SetBreakpoint(float InValue);
 
 	UFairyTweener* SetEase(EEaseType InValue);
@@ -73,11 +68,6 @@ public:
 	UFairyTweener* OnComplete(FSimpleDelegate Callback);
 
 	float GetNormalizedTime() const { return NormalizedTime; }
-
-	[[deprecated("Mark to remove in next refactor.")]]
-	bool IsCompleted() const { return Ended != 0; }
-	[[deprecated("Mark to remove in next refactor.")]]
-	bool AllCompleted() const { return Ended == 1; }
 	
 	
 	UFairyTweener* SetPaused(bool bInPaused);

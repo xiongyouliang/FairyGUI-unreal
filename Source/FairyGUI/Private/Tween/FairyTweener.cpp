@@ -21,12 +21,6 @@ UFairyTweener* UFairyTweener::SetDelay(float InValue)
 	return this;
 }
 
-UFairyTweener* UFairyTweener::SetDuration(float InValue)
-{
-	Duration = InValue;
-	return this;
-}
-
 UFairyTweener* UFairyTweener::SetBreakpoint(float InValue)
 {
 	Breakpoint = InValue;

@@ -32,9 +32,6 @@ public:
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     void SetValue(float InValue);
 
-    UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    void TweenValue(float InValue, float Duration);
-
     void Update(float NewValue);
 
 protected:

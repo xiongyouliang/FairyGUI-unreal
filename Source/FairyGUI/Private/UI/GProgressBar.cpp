@@ -51,26 +51,6 @@ void UGProgressBar::SetValue(float InValue)
     }
 }
 
-void UGProgressBar::TweenValue(float InValue, float Duration)
-{
-    float oldValule;
-
-    UFairyTweener* tweener = FFairyTweenHelper::GetTween(TweenHandle);
-    if (tweener != nullptr)
-    {
-        oldValule = tweener->Value.D;
-        tweener->Kill(false);
-    }
-    else
-        oldValule = Value;
-
-    Value = InValue;
-    TweenHandle = FFairyTweenHelper::To(oldValule, Value, Duration)
-        ->SetEase(EEaseType::Linear)
-        ->SetTarget(this)
-        ->GetHandle();
-}
-
 void UGProgressBar::Update(float InValue)
 {
     float percent;

@@ -31,6 +31,21 @@ UFairyTweenerPos* UTweenManager::CreateTweenerPos(float InDuration, FVector2D In
 	return Tweener;
 }
 
+UFairyTweenerSequence* UTweenManager::CreateTweenerSequence(const TArray<UFairyTweenerFiniteTime*>& InTweenerList)
+{
+	UFairyTweenerSequence* Tweener = NewObject<UFairyTweenerSequence>(this);
+	Tweener->Init(InTweenerList);
+
+	return Tweener;
+}
+
+UFairyTweenerDelay* UTweenManager::CreateTweenerDelay(float InDelayTime)
+{
+	UFairyTweenerDelay* Tweener = NewObject<UFairyTweenerDelay>(this);
+	Tweener->Init(InDelayTime);
+	return Tweener;
+}
+
 void UTweenManager::AddTweener(UFairyTweener* InTweener, UFairyObject* InTarget, bool InPaused)
 {
 	if (InTweener)

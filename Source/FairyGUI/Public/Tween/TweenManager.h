@@ -9,7 +9,9 @@
 
 class UFairyObject;
 class UFairyTweener;
+class UFairyTweenerFiniteTime;
 class UFairyTweenerPos;
+class UFairyTweenerSequence;
 
 typedef UFairyTweener* FairyTweenerPointer;
 
@@ -43,6 +45,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	UFairyTweenerPos* CreateTweenerPos(float InDuration, FVector2D InStartPos, FVector2D InDstPos);
+
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+	UFairyTweenerSequence* CreateTweenerSequence(const TArray<UFairyTweenerFiniteTime*>& InTweenerList);
+
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+	UFairyTweenerDelay* CreateTweenerDelay(float InDelayTime);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	void AddTweener(UFairyTweener* InTweener, UFairyObject* InTarget, bool InPaused);

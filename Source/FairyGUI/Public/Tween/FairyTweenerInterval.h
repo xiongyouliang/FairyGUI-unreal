@@ -27,6 +27,32 @@ protected:
 };
 
 UCLASS(BlueprintType)
+class FAIRYGUI_API UFairyTweenerDelay : public UFairyTweenerInterval
+{
+	GENERATED_BODY()
+public:
+	bool Init(float InDuration);
+
+	virtual void Update(float InTime) override;
+};
+
+UCLASS(BlueprintType)
+class FAIRYGUI_API UFairyTweenerSequence : public UFairyTweenerInterval
+{
+	GENERATED_BODY()
+public:
+	bool Init(const TArray<UFairyTweenerFiniteTime*>& InTweenerList);
+
+	virtual void Step(float InDeltaTime) override;
+	virtual void Update(float InTime) override;
+	virtual void StartWithTarget(UFairyObject* InTarget) override;
+protected:
+	UPROPERTY()
+	TArray<UFairyTweenerFiniteTime*> tweenerList;
+	size_t curIndex = 0;
+};
+
+UCLASS(BlueprintType)
 class FAIRYGUI_API UFairyTweenerPos : public UFairyTweenerInterval
 {
 	GENERATED_BODY()

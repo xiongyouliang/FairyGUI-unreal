@@ -53,6 +53,69 @@ void UFairyTweenerInterval::Init(float InDuration)
 	bDone = false;
 }
 
+// Delay Tweener
+bool UFairyTweenerDelay::Init(float InDuration)
+{
+	UFairyTweenerInterval::Init(InDuration);
+	return true;
+}
+
+void UFairyTweenerDelay::Update(float InTime)
+{
+	return;
+}
+
+// Sequence Tweener
+bool UFairyTweenerSequence::Init(const TArray<UFairyTweenerFiniteTime*>& InTweenerList)
+{
+	tweenerList = InTweenerList;
+	float totalDuration = 0.0f;
+	for (size_t i = 0; i < tweenerList.Num(); i++)
+	{
+		UFairyTweenerFiniteTime* element = tweenerList[i];
+		totalDuration += element->GetDuration();
+	}
+	UFairyTweenerInterval::Init(totalDuration);
+
+	curIndex = 0;
+
+	return true;
+}
+
+void UFairyTweenerSequence::Step(float InDeltaTime)
+{
+	// Sub-Tweener Step first
+	if (curIndex < tweenerList.Num())
+	{
+		UFairyTweenerFiniteTime* element = tweenerList[curIndex];
+		element->Step(InDeltaTime);
+	}
+
+	Super::Step(InDeltaTime);
+}
+
+void UFairyTweenerSequence::Update(float InTime)
+{
+	if (curIndex < tweenerList.Num())
+	{
+		UFairyTweenerFiniteTime* element = tweenerList[curIndex];
+		if (element->IsDone())
+		{
+			curIndex++;
+		}
+	}
+}
+
+void UFairyTweenerSequence::StartWithTarget(UFairyObject* InTarget)
+{
+	Super::StartWithTarget(InTarget);
+	for (size_t i = 0; i < tweenerList.Num(); i++)
+	{
+		UFairyTweenerFiniteTime* element = tweenerList[i];
+		element->SetTarget2(InTarget);
+	}
+}
+
 // Position tweener
 bool UFairyTweenerPos::Init(float InDuration, FVector2D InStartPos, FVector2D InDstPos)
 {

@@ -2,8 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "Tween/EaseType.h"
-#include "Tween/TweenValue.h"
-#include "Tween/TweenerHandle.h"
 #include "Tween/FairyTweener.h"
 
 class UFairyObject;
@@ -21,7 +19,6 @@ public:
     float Delay;
 
     uint32 DisplayLockToken;
-    FTweenerHandle Handle;
 };
 
 class FGearBase

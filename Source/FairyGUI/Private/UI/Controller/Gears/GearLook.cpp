@@ -90,13 +90,13 @@ void FGearLook::OnTweenUpdate(UFairyTweener* Tweener)
 
 void FGearLook::OnTweenComplete()
 {
-    if (TweenConfig->DisplayLockToken != 0)
-    {
-        Owner->ReleaseDisplayLock(TweenConfig->DisplayLockToken);
-        TweenConfig->DisplayLockToken = 0;
-    }
-    TweenConfig->Handle.Invalidate();
-    Owner->DispatchEvent(FFairyEventNames::GearStop);
+    //if (TweenConfig->DisplayLockToken != 0)
+    //{
+    //    Owner->ReleaseDisplayLock(TweenConfig->DisplayLockToken);
+    //    TweenConfig->DisplayLockToken = 0;
+    //}
+    //TweenConfig->Handle.Invalidate();
+    //Owner->DispatchEvent(FFairyEventNames::GearStop);
 }
 
 void FGearLook::UpdateState()

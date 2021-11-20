@@ -149,5 +149,4 @@ private:
 
 	FVector2D OwnerBasePos;
 	FSimpleDelegate CompleteCallback;
-    FTweenerHandle DelayHandle;
 };

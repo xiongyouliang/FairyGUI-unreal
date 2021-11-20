@@ -47,7 +47,6 @@ private:
     float Value;
     EProgressTitleType TitleType;
     bool bReverse;
-    FTweenerHandle TweenHandle;
 
     UFairyObject* TitleObject;
     UFairyObject* BarObjectH;

@@ -31,10 +31,10 @@ UTransition::UTransition() :
 
 UTransition::~UTransition()
 {
-	if (DelayHandle.IsValid())
-	{
-		//FFairyTweenHelper::Kill(DelayHandle);
-	}
+	//if (DelayHandle.IsValid())
+	//{
+	//	FFairyTweenHelper::Kill(DelayHandle);
+	//}
 
 	for (auto& it : Items)
 	{

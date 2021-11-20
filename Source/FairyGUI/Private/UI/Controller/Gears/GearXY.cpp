@@ -82,13 +82,13 @@ void FGearXY::Apply()
 
 void FGearXY::OnTweenComplete()
 {
-    if (TweenConfig->DisplayLockToken != 0)
-    {
-        Owner->ReleaseDisplayLock(TweenConfig->DisplayLockToken);
-        TweenConfig->DisplayLockToken = 0;
-    }
-    TweenConfig->Handle.Invalidate();
-    Owner->DispatchEvent(FFairyEventNames::GearStop);
+    //if (TweenConfig->DisplayLockToken != 0)
+    //{
+    //    Owner->ReleaseDisplayLock(TweenConfig->DisplayLockToken);
+    //    TweenConfig->DisplayLockToken = 0;
+    //}
+    //TweenConfig->Handle.Invalidate();
+    //Owner->DispatchEvent(FFairyEventNames::GearStop);
 }
 
 void FGearXY::UpdateState()

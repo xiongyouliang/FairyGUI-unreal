@@ -4,13 +4,9 @@
 #include "UObject/NoExportTypes.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Utils/NVariant.h"
-#include "Tween/TweenValue.h"
 #include "Tween/EaseType.h"
-#include "Tween/TweenerHandle.h"
 #include "UI/FairyConfig.h"
 #include "FairyBlueprintLibrary.generated.h"
-
-DECLARE_DYNAMIC_DELEGATE_TwoParams(FTweenUpdateDynDelegate, const FTweenValue&, Value, const FTweenValue&, DeltaValue);
 
 UCLASS()
 class FAIRYGUI_API UFairyBlueprintLibrary : public UBlueprintFunctionLibrary

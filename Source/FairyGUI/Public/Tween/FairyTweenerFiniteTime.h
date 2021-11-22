@@ -12,6 +12,8 @@ public:
 	UFairyTweenerFiniteTime();
 	virtual ~UFairyTweenerFiniteTime();
 
+	virtual bool IsInstant();
+
 	float GetDuration() const;
 	void SetDuration(float InDuration);
 

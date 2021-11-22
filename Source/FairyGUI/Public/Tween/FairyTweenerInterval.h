@@ -44,12 +44,12 @@ public:
 	bool Init(const TArray<UFairyTweenerFiniteTime*>& InTweenerList);
 
 	virtual void Step(float InDeltaTime) override;
-	virtual void Update(float InTime) override;
 	virtual void StartWithTarget(UFairyObject* InTarget) override;
 protected:
 	UPROPERTY()
 	TArray<UFairyTweenerFiniteTime*> tweenerList;
 	size_t curIndex = 0;
+	bool bFirstIntervalTweener = true;
 };
 
 UCLASS(BlueprintType)

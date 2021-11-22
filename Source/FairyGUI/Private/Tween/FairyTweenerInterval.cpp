@@ -84,24 +84,42 @@ bool UFairyTweenerSequence::Init(const TArray<UFairyTweenerFiniteTime*>& InTween
 
 void UFairyTweenerSequence::Step(float InDeltaTime)
 {
+	UFairyTweenerFiniteTime* curTweener = nullptr;
+	UFairyTweenerFiniteTime* nextTweener = nullptr;
 	// Sub-Tweener Step first
 	if (curIndex < tweenerList.Num())
 	{
-		UFairyTweenerFiniteTime* element = tweenerList[curIndex];
-		element->Step(InDeltaTime);
-	}
+		curTweener = tweenerList[curIndex];
+		curTweener->Step(InDeltaTime);
 
-	Super::Step(InDeltaTime);
-}
-
-void UFairyTweenerSequence::Update(float InTime)
-{
-	if (curIndex < tweenerList.Num())
-	{
-		UFairyTweenerFiniteTime* element = tweenerList[curIndex];
-		if (element->IsDone())
+		while (curTweener->IsDone())
 		{
 			curIndex++;
+
+			if (curIndex < tweenerList.Num())
+			{
+				nextTweener = tweenerList[curIndex];
+				// If next is a instant tweener, invoke it immediately in current tick.
+				if (nextTweener->IsInstant())
+				{
+					nextTweener->Step(InDeltaTime); // one step will make a instant tweener done.
+					curTweener = nextTweener;
+					continue;
+				}
+				else if (bFirstIntervalTweener && curTweener->IsInstant())
+				{
+					// If next is first interval tweener, invoke it in current tick once.
+					bFirstIntervalTweener = false;
+					nextTweener->Step(InDeltaTime);
+					curTweener = nextTweener;
+					break;
+				}
+			}
+			else
+			{
+				bDone = true;
+				break;
+			}
 		}
 	}
 }

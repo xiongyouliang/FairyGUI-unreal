@@ -11,6 +11,11 @@ UFairyTweenerFiniteTime::~UFairyTweenerFiniteTime()
 
 }
 
+bool UFairyTweenerFiniteTime::IsInstant()
+{
+	return false;
+}
+
 float UFairyTweenerFiniteTime::GetDuration() const
 {
 	return duration;

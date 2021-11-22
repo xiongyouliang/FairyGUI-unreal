@@ -1,6 +1,7 @@
 #include "Tween/TweenManager.h"
 #include "Tween/FairyTweener.h"
 #include "Tween/FairyTweenerInterval.h"
+#include "Tween/FairyTweenerInstant.h"
 
 #include "FairyApplication.h"
 
@@ -45,6 +46,21 @@ UFairyTweenerDelay* UTweenManager::CreateTweenerDelay(float InDelayTime)
 	Tweener->Init(InDelayTime);
 	return Tweener;
 }
+
+UFairyTweenerCallFunc* UTweenManager::CreateTweenerCallFunc(const FTweenDelegate& InDelegate)
+{
+	UFairyTweenerCallFunc* Tweener = NewObject<UFairyTweenerCallFunc>(this);
+	Tweener->Init(InDelegate);
+	return Tweener;
+}
+
+UFairyTweenerDynamicCallFunc* UTweenManager::CreateTweenerDynamicCallFunc(const FTweenDynamicDelegate& InDelegate)
+{
+	UFairyTweenerDynamicCallFunc* Tweener = NewObject<UFairyTweenerDynamicCallFunc>(this);
+	Tweener->Init(InDelegate);
+	return Tweener;
+}
+
 
 void UTweenManager::AddTweener(UFairyTweener* InTweener, UFairyObject* InTarget, bool InPaused)
 {

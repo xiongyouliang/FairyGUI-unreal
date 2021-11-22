@@ -1,5 +1,11 @@
 #include "Tween/FairyTweenerInstant.h"
 
+
+bool UFairyTweenerInstant::IsInstant()
+{
+	return true;
+}
+
 void UFairyTweenerInstant::StartWithTarget(UFairyObject* InTarget)
 {
 	UFairyTweenerFiniteTime::StartWithTarget(InTarget);
@@ -55,4 +61,37 @@ void UFairyTweenerPivot::Update(float InTime)
 void UFairyTweenerPivot::Init(FVector2D InNewPivot)
 {
 	newPivot = InNewPivot;
+}
+
+// CallFunc Tweener
+void UFairyTweenerCallFunc::Update(float InTime)
+{
+	Super::Update(InTime);
+	if (_Target)
+	{
+		_delegate.ExecuteIfBound(this);
+	}
+}
+
+bool UFairyTweenerCallFunc::Init(const FTweenDelegate& InDelegate)
+{
+	_delegate = InDelegate;
+
+	return true;
+}
+
+// Dynamic CallFunc Tweener;
+void UFairyTweenerDynamicCallFunc::Update(float InTime)
+{
+	Super::Update(InTime);
+	if (_Target)
+	{
+		_delegate.ExecuteIfBound(this);
+	}
+}
+
+bool UFairyTweenerDynamicCallFunc::Init(const FTweenDynamicDelegate& InDelegate)
+{
+	_delegate = InDelegate;
+	return true;
 }

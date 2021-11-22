@@ -9,6 +9,7 @@ class FAIRYGUI_API UFairyTweenerInstant : public UFairyTweenerFiniteTime
 {
 	GENERATED_BODY()
 public:
+	virtual bool IsInstant() override;
 	virtual void StartWithTarget(UFairyObject* InTarget) override;
 	virtual bool IsDone() const override;
 
@@ -46,4 +47,26 @@ public:
 
 protected:
 	FVector2D newPivot;
+};
+
+UCLASS(BlueprintType)
+class FAIRYGUI_API UFairyTweenerCallFunc : public UFairyTweenerInstant
+{
+	GENERATED_BODY()
+public:
+	virtual void Update(float InTime) override;
+	bool Init(const FTweenDelegate& InDelegate);
+protected:
+	FTweenDelegate _delegate;
+};
+
+UCLASS(BlueprintType)
+class FAIRYGUI_API UFairyTweenerDynamicCallFunc : public UFairyTweenerInstant
+{
+	GENERATED_BODY()
+public:
+	virtual void Update(float InTime) override;
+	bool Init(const FTweenDynamicDelegate& InDelegate);
+protected:
+	FTweenDynamicDelegate _delegate;
 };

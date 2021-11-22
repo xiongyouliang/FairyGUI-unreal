@@ -14,6 +14,7 @@ class UFairyTweener;
 extern const float K_MATH_EPSILON;
 
 DECLARE_DELEGATE_OneParam(FTweenDelegate, UFairyTweener*);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FTweenDynamicDelegate, UFairyTweener*, FairyTweener);
 
 UCLASS(BlueprintType)
 class FAIRYGUI_API UFairyTweener : public UObject

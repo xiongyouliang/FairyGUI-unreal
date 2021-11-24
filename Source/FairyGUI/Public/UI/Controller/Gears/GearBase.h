@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Tween/EaseType.h"
+#include "Tween/FairyEaseType.h"
 #include "Tween/FairyTweener.h"
 
 class UFairyObject;
@@ -14,7 +14,7 @@ public:
     FGearTweenConfig();
 
     bool bTween;
-    EEaseType EaseType;
+    EFairyEaseType EaseType;
     float Duration;
     float Delay;
 

@@ -47,7 +47,7 @@ FTweenConfig* CreateTwencConfigWithType(ETransitionActionType InActionType)
 	return tweenConfig;
 }
 
-FTweenConfig::FTweenConfig() : EaseType(EEaseType::QuadOut) {}
+FTweenConfig::FTweenConfig() : EaseType(EFairyEaseType::QuadOut) {}
 
 void FTweenConfigPos::SetupStartData(FByteBuffer* InBuffer)
 {

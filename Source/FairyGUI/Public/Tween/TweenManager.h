@@ -67,7 +67,7 @@ public:
 	UFairyTweenerDynamicCallFunc* CreateTweenerDynamicCallFunc(const FTweenDynamicDelegate& InDelegate);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	UFairyTweenerEase* CreateTweenerEase(UFairyTweenerInterval* InInnerTweener, EEaseType InEaseType, float InArgs);
+	UFairyTweenerEase* CreateTweenerEase(UFairyTweenerInterval* InInnerTweener, EFairyEaseType InEaseType, float InArgs);
 
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")

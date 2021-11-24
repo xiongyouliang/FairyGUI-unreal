@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Tween/FairyTweenerInterval.h"
-#include "Tween/EaseType.h"
+#include "Tween/FairyEaseType.h"
 #include "FairyTweenerEase.generated.h"
 
 

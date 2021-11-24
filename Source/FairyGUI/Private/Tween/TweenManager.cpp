@@ -117,155 +117,157 @@ UFairyTweenerDynamicCallFunc* UTweenManager::CreateTweenerDynamicCallFunc(const 
 	return Tweener;
 }
 
-UFairyTweenerEase* UTweenManager::CreateTweenerEase(UFairyTweenerInterval* InInnerTweener, EEaseType InEaseType, float InArgs)
+UFairyTweenerEase* UTweenManager::CreateTweenerEase(UFairyTweenerInterval* InInnerTweener, EFairyEaseType InEaseType, float InArgs)
 {
+	UFairyTweenerEaseElastic* ElasticTweener = nullptr;
+	UFairyTweenerEaseRate* RateTweeener = nullptr;
 	UFairyTweenerEase* Tweener = nullptr;
 	switch (InEaseType)
 	{
-	case EEaseType::Linear:
+	case EFairyEaseType::Linear:
 		Tweener = NewObject<UFairyTweenerEase>(this);
 		Tweener->Init(InInnerTweener);
 		break;
-	case EEaseType::SineIn:
+	case EFairyEaseType::SineIn:
 		Tweener = NewObject<UFairyTweenerEaseSineIn>(this);
 		Tweener->Init(InInnerTweener);
 		break;
-	case EEaseType::SineOut:
+	case EFairyEaseType::SineOut:
 		Tweener = NewObject<UFairyTweenerEaseSineOut>(this);
 		Tweener->Init(InInnerTweener);
 		break;
-	case EEaseType::SineInOut:
+	case EFairyEaseType::SineInOut:
 		Tweener = NewObject<UFairyTweenerEaseSineInOut>(this);
 		Tweener->Init(InInnerTweener);
 		break;
-	case EEaseType::QuadIn:
+	case EFairyEaseType::QuadIn:
 		Tweener = NewObject<UFairyTweenerEaseQuadIn>(this);
 		Tweener->Init(InInnerTweener);
 		break;
-	case EEaseType::QuadOut:
+	case EFairyEaseType::QuadOut:
 		Tweener = NewObject<UFairyTweenerEaseQuadOut>(this);
 		Tweener->Init(InInnerTweener);
 		break;
-	case EEaseType::QuadInOut:
+	case EFairyEaseType::QuadInOut:
 		Tweener = NewObject<UFairyTweenerEaseQuadInOut>(this);
 		Tweener->Init(InInnerTweener);
 		break;
-	case EEaseType::CubicIn:
+	case EFairyEaseType::CubicIn:
 		Tweener = NewObject<UFairyTweenerEaseCubicIn>(this);
 		Tweener->Init(InInnerTweener);
 		break;
-	case EEaseType::CubicOut:
+	case EFairyEaseType::CubicOut:
 		Tweener = NewObject<UFairyTweenerEaseCubicInOut>(this);
 		Tweener->Init(InInnerTweener);
 		break;
-	case EEaseType::CubicInOut:
+	case EFairyEaseType::CubicInOut:
 		Tweener = NewObject<UFairyTweenerEaseCubicInOut>(this);
 		Tweener->Init(InInnerTweener);
 		break;
-	case EEaseType::QuartIn:
+	case EFairyEaseType::QuartIn:
 		Tweener = NewObject<UFairyTweenerEaseQuartIn>(this);
 		Tweener->Init(InInnerTweener);
 		break;
-	case EEaseType::QuartOut:
+	case EFairyEaseType::QuartOut:
 		Tweener = NewObject<UFairyTweenerEaseQuartOut>(this);
 		Tweener->Init(InInnerTweener);
 		break;
-	case EEaseType::QuartInOut:
+	case EFairyEaseType::QuartInOut:
 		Tweener = NewObject<UFairyTweenerEaseQuadInOut>(this);
 		Tweener->Init(InInnerTweener);
 		break;
-	case EEaseType::QuintIn:
+	case EFairyEaseType::QuintIn:
 		Tweener = NewObject<UFairyTweenerEaseQuintIn>(this);
 		Tweener->Init(InInnerTweener);
 		break;
-	case EEaseType::QuintOut:
+	case EFairyEaseType::QuintOut:
 		Tweener = NewObject<UFairyTweenerEaseQuintOut>(this);
 		Tweener->Init(InInnerTweener);
 		break;
-	case EEaseType::QuintInOut:
+	case EFairyEaseType::QuintInOut:
 		Tweener = NewObject<UFairyTweenerEaseQuintInOut>(this);
 		Tweener->Init(InInnerTweener);
 		break;
-	case EEaseType::ExpoIn:
+	case EFairyEaseType::ExpoIn:
 		Tweener = NewObject<UFairyTweenerEaseExpoIn>(this);
 		Tweener->Init(InInnerTweener);
 		break;
-	case EEaseType::ExpoOut:
+	case EFairyEaseType::ExpoOut:
 		Tweener = NewObject<UFairyTweenerEaseExpoOut>(this);
 		Tweener->Init(InInnerTweener);
 		break;
-	case EEaseType::ExpoInOut:
+	case EFairyEaseType::ExpoInOut:
 		Tweener = NewObject<UFairyTweenerEaseExpoInOut>(this);
 		Tweener->Init(InInnerTweener);
 		break;
-	case EEaseType::CircIn:
+	case EFairyEaseType::CircIn:
 		Tweener = NewObject<UFairyTweenerEaseCircIn>(this);
 		Tweener->Init(InInnerTweener);
 		break;
-	case EEaseType::CircOut:
+	case EFairyEaseType::CircOut:
 		Tweener = NewObject<UFairyTweenerEaseCircOut>(this);
 		Tweener->Init(InInnerTweener);
 		break;
-	case EEaseType::CircInOut:
+	case EFairyEaseType::CircInOut:
 		Tweener = NewObject<UFairyTweenerEaseCircInOut>(this);
 		Tweener->Init(InInnerTweener);
 		break;
-	case EEaseType::ElasticIn:
-		UFairyTweenerEaseElastic* TempTweener = NewObject<UFairyTweenerEaseElasticIn>(this);
-		TempTweener->Init(InInnerTweener, InArgs);
-		Tweener = TempTweener;
+	case EFairyEaseType::ElasticIn:
+		ElasticTweener = NewObject<UFairyTweenerEaseElasticIn>(this);
+		ElasticTweener->Init(InInnerTweener, InArgs);
+		Tweener = ElasticTweener;
 		break;
-	case EEaseType::ElasticOut:
-		UFairyTweenerEaseElastic* TempTweener = NewObject<UFairyTweenerEaseElasticOut>(this);
-		TempTweener->Init(InInnerTweener, InArgs);
-		Tweener = TempTweener;
+	case EFairyEaseType::ElasticOut:
+		ElasticTweener = NewObject<UFairyTweenerEaseElasticOut>(this);
+		ElasticTweener->Init(InInnerTweener, InArgs);
+		Tweener = ElasticTweener;
 		break;
-	case EEaseType::ElasticInOut:
-		UFairyTweenerEaseElastic* TempTweener = NewObject<UFairyTweenerEaseElasticInOut>(this);
-		TempTweener->Init(InInnerTweener, InArgs);
-		Tweener = TempTweener;
+	case EFairyEaseType::ElasticInOut:
+		ElasticTweener = NewObject<UFairyTweenerEaseElasticInOut>(this);
+		ElasticTweener->Init(InInnerTweener, InArgs);
+		Tweener = ElasticTweener;
 		break;
-	case EEaseType::BackIn:
+	case EFairyEaseType::BackIn:
 		Tweener = NewObject<UFairyTweenerEaseBackIn>(this);
 		Tweener->Init(InInnerTweener);
 		break;
-	case EEaseType::BackOut:
+	case EFairyEaseType::BackOut:
 		Tweener = NewObject<UFairyTweenerEaseBackOut>(this);
 		Tweener->Init(InInnerTweener);
 		break;
-	case EEaseType::BackInOut:
+	case EFairyEaseType::BackInOut:
 		Tweener = NewObject<UFairyTweenerEaseBackInOut>(this);
 		Tweener->Init(InInnerTweener);
 		break;
-	case EEaseType::BounceIn:
+	case EFairyEaseType::BounceIn:
 		Tweener = NewObject<UFairyTweenerEaseBounceIn>(this);
 		Tweener->Init(InInnerTweener);
 		break;
-	case EEaseType::BounceOut:
+	case EFairyEaseType::BounceOut:
 		Tweener = NewObject<UFairyTweenerEaseBounceOut>(this);
 		Tweener->Init(InInnerTweener);
 		break;
-	case EEaseType::BounceInOut:
+	case EFairyEaseType::BounceInOut:
 		Tweener = NewObject<UFairyTweenerEaseBounceInOut>(this);
 		Tweener->Init(InInnerTweener);
 		break;
-	case EEaseType::Custom:
+	case EFairyEaseType::Custom:
 		// todo:
 		break;
-	case EEaseType::RateIn:
-		UFairyTweenerEaseRateIn* TempTweener = NewObject<UFairyTweenerEaseRateIn>(this);
-		TempTweener->Init(InInnerTweener, InArgs);
-		Tweener = TempTweener;
+	case EFairyEaseType::RateIn:
+		RateTweeener = NewObject<UFairyTweenerEaseRateIn>(this);
+		RateTweeener->Init(InInnerTweener, InArgs);
+		Tweener = RateTweeener;
 		break;
-	case EEaseType::RateOut:
-		UFairyTweenerEaseRateOut* TempTweener = NewObject<UFairyTweenerEaseRateOut>(this);
-		TempTweener->Init(InInnerTweener, InArgs);
-		Tweener = TempTweener;
+	case EFairyEaseType::RateOut:
+		RateTweeener = NewObject<UFairyTweenerEaseRateOut>(this);
+		RateTweeener->Init(InInnerTweener, InArgs);
+		Tweener = RateTweeener;
 		break;
-	case EEaseType::RateInOut:
-		UFairyTweenerEaseRateOut* TempTweener = NewObject<UFairyTweenerEaseRateOut>(this);
-		TempTweener->Init(InInnerTweener, InArgs);
-		Tweener = TempTweener;
+	case EFairyEaseType::RateInOut:
+		RateTweeener = NewObject<UFairyTweenerEaseRateOut>(this);
+		RateTweeener->Init(InInnerTweener, InArgs);
+		Tweener = RateTweeener;
 		break;
 	default:
 		Tweener = NewObject<UFairyTweenerEaseQuadIn>(this);

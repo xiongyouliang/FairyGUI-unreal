@@ -4,7 +4,7 @@
 #include "Delegates/DelegateCombinations.h"
 
 #include "UI/FairyObject.h"
-#include "Tween/EaseType.h"
+#include "Tween/FairyEaseType.h"
 
 #include "FairyTweener.generated.h"
 
@@ -48,7 +48,7 @@ protected:
 	
 	bool bPaused;
 
-	EEaseType EaseType;
+	EFairyEaseType EaseType;
 	float EaseOvershootOrAmplitude;
 	float EasePeriod;
 

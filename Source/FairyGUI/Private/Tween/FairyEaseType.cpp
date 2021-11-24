@@ -1,4 +1,4 @@
-#include "Tween/EaseType.h"
+#include "Tween/FairyEaseType.h"
 
 float FFairyEaseHelper::EaseRateIn(float InTime, float InRate)
 {
@@ -344,71 +344,71 @@ float FFairyEaseHelper::CustomEase(float InTime, float* InEasingParam)
 }
 
 
-float FFairyEaseHelper::EaseTime(EEaseType InEaseType, float InTime, float InPeriod)
+float FFairyEaseHelper::EaseTime(EFairyEaseType InEaseType, float InTime, float InPeriod)
 {
 	switch (InEaseType)
 	{
-	case EEaseType::Linear:
+	case EFairyEaseType::Linear:
 		return FFairyEaseHelper::EaseLinear(InTime);
-	case EEaseType::SineIn:
+	case EFairyEaseType::SineIn:
 		return FFairyEaseHelper::SineEaseIn(InTime);
-	case EEaseType::SineOut:
+	case EFairyEaseType::SineOut:
 		return FFairyEaseHelper::SineEaseOut(InTime);
-	case EEaseType::SineInOut:
+	case EFairyEaseType::SineInOut:
 		return FFairyEaseHelper::SineEaseInOut(InTime);
-	case EEaseType::QuadIn:
+	case EFairyEaseType::QuadIn:
 		return FFairyEaseHelper::QuadEaseIn(InTime);
-	case EEaseType::QuadOut:
+	case EFairyEaseType::QuadOut:
 		return FFairyEaseHelper::QuadEaseOut(InTime);
-	case EEaseType::QuadInOut:
+	case EFairyEaseType::QuadInOut:
 		return FFairyEaseHelper::QuadEaseInOut(InTime);
-	case EEaseType::CubicIn:
+	case EFairyEaseType::CubicIn:
 		return FFairyEaseHelper::CubicEaseIn(InTime);
-	case EEaseType::CubicOut:
+	case EFairyEaseType::CubicOut:
 		return FFairyEaseHelper::CubicEaseOut(InTime);
-	case EEaseType::CubicInOut:
+	case EFairyEaseType::CubicInOut:
 		return FFairyEaseHelper::CubicEaseInOut(InTime);
-	case EEaseType::QuartIn:
+	case EFairyEaseType::QuartIn:
 		return FFairyEaseHelper::QuartEaseIn(InTime);
-	case EEaseType::QuartOut:
+	case EFairyEaseType::QuartOut:
 		return FFairyEaseHelper::QuartEaseOut(InTime);
-	case EEaseType::QuartInOut:
+	case EFairyEaseType::QuartInOut:
 		return FFairyEaseHelper::QuartEaseInOut(InTime);
-	case EEaseType::QuintIn:
+	case EFairyEaseType::QuintIn:
 		return FFairyEaseHelper::QuintEaseIn(InTime);
-	case EEaseType::QuintOut:
+	case EFairyEaseType::QuintOut:
 		return FFairyEaseHelper::QuintEaseOut(InTime);
-	case EEaseType::QuintInOut:
+	case EFairyEaseType::QuintInOut:
 		return FFairyEaseHelper::QuintEaseInOut(InTime);
-	case EEaseType::ExpoIn:
+	case EFairyEaseType::ExpoIn:
 		return FFairyEaseHelper::ExpoEaseIn(InTime);
-	case EEaseType::ExpoOut:
+	case EFairyEaseType::ExpoOut:
 		return FFairyEaseHelper::ExpoEaseOut(InTime);
-	case EEaseType::ExpoInOut:
+	case EFairyEaseType::ExpoInOut:
 		return FFairyEaseHelper::ExpoEaseInOut(InTime);
-	case EEaseType::CircIn:
+	case EFairyEaseType::CircIn:
 		return FFairyEaseHelper::CircEaseIn(InTime);
-	case EEaseType::CircOut:
+	case EFairyEaseType::CircOut:
 		return FFairyEaseHelper::CircEaseOut(InTime);
-	case EEaseType::CircInOut:
+	case EFairyEaseType::CircInOut:
 		return FFairyEaseHelper::CircEaseInOut(InTime);
-	case EEaseType::ElasticIn:
+	case EFairyEaseType::ElasticIn:
 		return FFairyEaseHelper::ElasticEaseIn(InTime, InPeriod);
-	case EEaseType::ElasticOut:
+	case EFairyEaseType::ElasticOut:
 		return FFairyEaseHelper::ElasticEaseOut(InTime, InPeriod);
-	case EEaseType::ElasticInOut:
+	case EFairyEaseType::ElasticInOut:
 		return FFairyEaseHelper::ElasticEaseInOut(InTime, InPeriod);
-	case EEaseType::BackIn:
+	case EFairyEaseType::BackIn:
 		return FFairyEaseHelper::BackEaseIn(InTime);
-	case EEaseType::BackOut:
+	case EFairyEaseType::BackOut:
 		return FFairyEaseHelper::BackEaseOut(InTime);
-	case EEaseType::BackInOut:
+	case EFairyEaseType::BackInOut:
 		return FFairyEaseHelper::BackEaseInOut(InTime);
-	case EEaseType::BounceIn:
+	case EFairyEaseType::BounceIn:
 		return FFairyEaseHelper::BounceEaseIn(InTime);
-	case EEaseType::BounceOut:
+	case EFairyEaseType::BounceOut:
 		return FFairyEaseHelper::BounceEaseOut(InTime);
-	case EEaseType::BounceInOut:
+	case EFairyEaseType::BounceInOut:
 		return FFairyEaseHelper::BounceEaseInOut(InTime);
 	default:
 		return FFairyEaseHelper::QuadEaseIn(InTime);

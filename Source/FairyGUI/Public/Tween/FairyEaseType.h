@@ -1,9 +1,9 @@
 #pragma once
 
-#include "EaseType.generated.h"
+#include "FairyEaseType.generated.h"
 
 UENUM()
-enum class EEaseType : uint8
+enum class EFairyEaseType : uint8
 {
 	Linear = 0,
 
@@ -105,5 +105,5 @@ public:
 
 	static float CustomEase(float InTime, float* InEasingParam);
 
-	static float EaseTime(EEaseType InEaseType, float InTime, float InPeriod = 0.0f);
+	static float EaseTime(EFairyEaseType InEaseType, float InTime, float InPeriod = 0.0f);
 };

@@ -56,7 +56,7 @@ FGearBase* FGearBase::Create(UFairyObject* InOwner, EGearType InType)
 
 FGearTweenConfig::FGearTweenConfig():
 	bTween(true),
-	EaseType(EEaseType::QuadOut),
+	EaseType(EFairyEaseType::QuadOut),
 	Duration(0.3f),
 	Delay(0),
 	DisplayLockToken(0)
@@ -176,7 +176,7 @@ void FGearBase::Setup(FByteBuffer* Buffer)
 	{
 		TweenConfig.Emplace();
 		TweenConfig->bTween = true;
-		TweenConfig->EaseType = (EEaseType)Buffer->ReadByte();
+		TweenConfig->EaseType = (EFairyEaseType)Buffer->ReadByte();
 		TweenConfig->Duration = Buffer->ReadFloat();
 		TweenConfig->Delay = Buffer->ReadFloat();
 	}

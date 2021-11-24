@@ -4,12 +4,12 @@
 #include "Utils/ByteBuffer.h"
 #include "UI/FieldTypes.h"
 #include "Tween/GPath.h"
-#include "Tween/EaseType.h"
+#include "Tween/FairyEaseType.h"
 #include "UI/Transition/TransitionItemData.h"
 
 struct FTweenConfig {
 	float Duration;
-	EEaseType EaseType;
+	EFairyEaseType EaseType;
 	int32 Repeat;
 	bool bYoyo;
 

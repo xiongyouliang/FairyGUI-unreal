@@ -1,5 +1,4 @@
 #include "Tween/FairyTweener.h"
-#include "Tween/EaseManager.h"
 #include "Tween/GPath.h"
 #include "UI/FairyObject.h"
 
@@ -14,24 +13,6 @@ UFairyTweener::UFairyTweener()
 UFairyTweener::~UFairyTweener()
 {
 	UE_LOG(LogTemp, Warning, TEXT("UFairyTweener Destructed."));
-}
-
-UFairyTweener* UFairyTweener::SetEase(EEaseType InValue)
-{
-	EaseType = InValue;
-	return this;
-}
-
-UFairyTweener* UFairyTweener::SetEasePeriod(float InValue)
-{
-	EasePeriod = InValue;
-	return this;
-}
-
-UFairyTweener* UFairyTweener::SetEaseOvershootOrAmplitude(float InValue)
-{
-	EaseOvershootOrAmplitude = InValue;
-	return this;
 }
 
 void UFairyTweener::StartWithTarget(UFairyObject* InTarget)

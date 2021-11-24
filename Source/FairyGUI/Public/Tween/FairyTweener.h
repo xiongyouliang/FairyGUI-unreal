@@ -23,13 +23,6 @@ class FAIRYGUI_API UFairyTweener : public UObject
 public:
 	UFairyTweener();
 	virtual ~UFairyTweener();
-	
-	[[deprecated("Will remove in next refactor.")]]
-	UFairyTweener* SetEase(EEaseType InValue);
-	[[deprecated("Will remove in next refactor.")]]
-	UFairyTweener* SetEasePeriod(float InValue);
-	[[deprecated("Will remove in next refactor.")]]
-	UFairyTweener* SetEaseOvershootOrAmplitude(float InValue);
 	[[deprecated("Will remove in next refactor.")]]
 	UFairyTweener* SetPath(TSharedPtr<FGPath> InPath);
 

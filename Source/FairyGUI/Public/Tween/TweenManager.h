@@ -7,6 +7,7 @@
 #include "Tween/FairyTweener.h"
 #include "Tween/FairyTweenerInterval.h"
 #include "Tween/FairyTweenerInstant.h"
+#include "Tween/FairyTweenerEase.h"
 
 #include "TweenManager.generated.h"
 
@@ -64,6 +65,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	UFairyTweenerDynamicCallFunc* CreateTweenerDynamicCallFunc(const FTweenDynamicDelegate& InDelegate);
+
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+	UFairyTweenerEase* CreateTweenerEase(UFairyTweenerInterval* InInnerTweener, EEaseType InEaseType, float InArgs);
 
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")

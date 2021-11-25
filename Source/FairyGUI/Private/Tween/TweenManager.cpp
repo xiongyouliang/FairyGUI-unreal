@@ -20,6 +20,10 @@ UTweenManager::UTweenManager()
 
 UTweenManager::~UTweenManager()
 {
+	if (!HasAnyFlags(RF_ClassDefaultObject))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UTweenMananger Destructed!"));
+	}
 }
 
 UFairyTweenerPos* UTweenManager::CreateTweenerPos(float InDuration, FVector2D InStartPos, FVector2D InDstPos)
@@ -318,11 +322,11 @@ void UTweenManager::RemoveTweener(UFairyTweener* InTweener)
 
 	if (bTicking)
 	{
-		PostTickRemoveArray.Add(InTweener);
+		PrePendingRemoveArray.Add(InTweener);
 	}
 	else
 	{
-		PreTickRemoveArray.Add(InTweener);
+		DoRemoveTweener(InTweener);
 	}
 }
 
@@ -337,7 +341,6 @@ void UTweenManager::RemoveTweenerByTag(int InTag, UFairyObject* InTarget)
 			if (element->GetTag() == InTag)
 			{
 				RemoveTweener(element);
-				break;
 			}
 		}
 	}
@@ -347,32 +350,24 @@ void UTweenManager::RemoveAllTweenerWithTarget(UFairyObject* InTarget)
 {
 	if (TweenerTable.Contains(InTarget))
 	{
-		if (bTicking == false)
+		TArray<UFairyTweener*>* Array = TweenerTable.Find(InTarget);
+		for (size_t i = 0; i < Array->Num(); i++)
 		{
-			// quick remove
-			TweenerTable.Remove(InTarget);
-		}
-		else
-		{
-			TArray<UFairyTweener*>* Array = TweenerTable.Find(InTarget);
-			for (size_t i = 0; i < Array->Num(); i++)
-			{
-				UFairyTweener* element = (*Array)[i];
-				PostTickRemoveArray.Add(element);
-			}
+			UFairyTweener* element = (*Array)[i];
+			RemoveTweener(element);
 		}
 	}
 }
 
 void UTweenManager::DoRemoveTweener(UFairyTweener* InTweener)
 {
-	TArray<UFairyObject*> DeleteArray;
+	TArray<UFairyObject*> PendingDeleteArray;
 	for (auto& Pair : TweenerTable)
 	{
 		TArray<UFairyTweener*>& Array = Pair.Value;
 		for (int i = 0; i < Array.Num(); i++)
 		{
-			UFairyTweener* element = Array[i];
+			const UFairyTweener* element = Array[i];
 			if (element == InTweener)
 			{
 				Array.RemoveAt(i);
@@ -382,28 +377,33 @@ void UTweenManager::DoRemoveTweener(UFairyTweener* InTweener)
 		// If tweener array is empty, remove it from TweenerTable
 		if (Array.Num() == 0)
 		{
-			DeleteArray.Add(Pair.Key);
+			PendingDeleteArray.Add(Pair.Key);
 		}
 	}
 
-	for (size_t i = 0; i < DeleteArray.Num(); i++)
+	for (size_t i = 0; i < PendingDeleteArray.Num(); i++)
 	{
-		RemoveAllTweenerWithTarget(DeleteArray[i]);
+		const UFairyObject* Target = PendingDeleteArray[i];
+		if (TweenerTable.Contains(Target))
+		{
+			TweenerTable.Remove(Target);
+		}
 	}
+
+	InTweener->SetTarget(nullptr);
+	InTweener->MarkPendingKill();
 }
 
 void UTweenManager::Tick(float DeltaTime)
 {
-	bTicking = true;
-
-	for (size_t i = 0; i < PreTickRemoveArray.Num(); i++)
+	for (size_t i = 0; i < PrePendingRemoveArray.Num(); i++)
 	{
-		UFairyTweener* element = PreTickRemoveArray[i];
+		UFairyTweener* element = PrePendingRemoveArray[i];
 		DoRemoveTweener(element);
 	}
-	PreTickRemoveArray.Reset();
+	PrePendingRemoveArray.Reset();
 
-
+	bTicking = true;
 	for (auto& Pair : TweenerTable)
 	{
 		TArray<UFairyTweener*>& Array = Pair.Value;
@@ -424,13 +424,6 @@ void UTweenManager::Tick(float DeltaTime)
 			}
 		}
 	}
-
-	for (size_t i = 0; i < PostTickRemoveArray.Num(); i++)
-	{
-		UFairyTweener* element = PostTickRemoveArray[i];
-		DoRemoveTweener(element);
-	}
-	PostTickRemoveArray.Reset();
 
 	bTicking = false;
 }

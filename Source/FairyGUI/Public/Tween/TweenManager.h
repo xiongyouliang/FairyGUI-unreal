@@ -97,8 +97,7 @@ private:
 	bool bTicking;
 
 	TMap<UFairyObject*, TArray<UFairyTweener*>> TweenerTable;	
-	TArray<UFairyTweener*> PreTickRemoveArray;
-	TArray<UFairyTweener*> PostTickRemoveArray;
+	TArray<UFairyTweener*> PrePendingRemoveArray;
 
 	inline void DoRemoveTweener(UFairyTweener* InTweener);
 };

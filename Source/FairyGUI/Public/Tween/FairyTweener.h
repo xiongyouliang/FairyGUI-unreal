@@ -23,6 +23,7 @@ class FAIRYGUI_API UFairyTweener : public UObject
 public:
 	UFairyTweener();
 	virtual ~UFairyTweener();
+
 	[[deprecated("Will remove in next refactor.")]]
 	UFairyTweener* SetPath(TSharedPtr<FGPath> InPath);
 
@@ -45,12 +46,7 @@ protected:
 	UPROPERTY()
 	UFairyObject* _Target;
 	int _tag;
-	
 	bool bPaused;
-
-	EFairyEaseType EaseType;
-	float EaseOvershootOrAmplitude;
-	float EasePeriod;
 
 	bool bYoyo;
 	TSharedPtr<FGPath> Path;

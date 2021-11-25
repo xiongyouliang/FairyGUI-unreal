@@ -12,7 +12,10 @@ UFairyTweener::UFairyTweener()
 
 UFairyTweener::~UFairyTweener()
 {
-	UE_LOG(LogTemp, Warning, TEXT("UFairyTweener Destructed."));
+	if (!HasAnyFlags(RF_ClassDefaultObject))
+	{
+		UE_LOG(LogTemp, Log, TEXT("UFairyTweener Destructed."));
+	}
 }
 
 void UFairyTweener::StartWithTarget(UFairyObject* InTarget)

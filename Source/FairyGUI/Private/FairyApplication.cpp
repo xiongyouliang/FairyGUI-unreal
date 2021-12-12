@@ -63,14 +63,20 @@ UFairyApplication::UFairyApplication() :
 	bSoundEnabled(true),
 	SoundVolumeScale(1)
 {
-	//UE_LOG(LogTemp, Warning, TEXT("UIFairyApplicaiton::UFairyApplication(...)"));
-	LastTouch = new FTouchInfo();
-	Touches.Add(LastTouch);
+	if (!HasAnyFlags(RF_ClassDefaultObject))
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("UIFairyApplicaiton::UFairyApplication(...)"));
+		LastTouch = new FTouchInfo();
+		Touches.Add(LastTouch);
+	}
 }
 
 UFairyApplication::~UFairyApplication()
 {
-	//UE_LOG(LogTemp, Warning, TEXT("UIFairyApplicaiton::~UFairyApplication(...)"));
+	if (!HasAnyFlags(RF_ClassDefaultObject))
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("UIFairyApplicaiton::~UFairyApplication(...)"));
+	}
 }
 
 UFairyApplication* UFairyApplication::Get()

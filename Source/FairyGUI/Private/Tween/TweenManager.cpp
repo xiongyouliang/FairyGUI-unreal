@@ -394,7 +394,7 @@ void UTweenManager::DoRemoveTweener(UFairyTweener* InTweener)
 	}
 
 	InTweener->SetTarget(nullptr);
-	InTweener->MarkPendingKill();
+	//InTweener->MarkPendingKill();
 }
 
 void UTweenManager::Tick(float DeltaTime)

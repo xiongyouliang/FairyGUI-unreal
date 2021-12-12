@@ -9,6 +9,9 @@ UTweenManager* UTweenManager::Get()
 	if (UTweenManager::Instance == nullptr)
 	{
 		UTweenManager::Instance = NewObject<UTweenManager>(UFairyApplication::Get());
+		
+		// todo: maybe make this object as class UFairyApplication singletion object's property is better.
+		UTweenManager::Instance->AddToRoot(); 
 	}
 	return UTweenManager::Instance;
 }

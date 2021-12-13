@@ -281,7 +281,7 @@ UFairyObject* UFairyRoot::GetModalWaitingPane()
     {
         if (ModalWaitPane == nullptr)
         {
-            ModalWaitPane = UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), UFairyConfig::Config->GlobalModalWaiting);
+            ModalWaitPane = UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), FName(UFairyConfig::Config->GlobalModalWaiting));
             ModalWaitPane->SetSortingOrder(INT_MAX);
         }
 
@@ -492,7 +492,7 @@ void UFairyRoot::ShowTooltips(const FString& Text)
             return;
         }
 
-        DefaultTooltipWin = UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), resourceURL);
+        DefaultTooltipWin = UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), FName(resourceURL));
         DefaultTooltipWin->SetTouchable(false);
     }
 

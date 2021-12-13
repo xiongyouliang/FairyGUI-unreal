@@ -26,8 +26,8 @@ TSharedPtr<FFairyPackageItem> FFairyPackageItem::GetBranch()
 {
     if (Branches.IsSet() && OwnerPackage->BranchIndex != -1)
     {
-        const FString& ItemID = Branches.GetValue()[OwnerPackage->BranchIndex];
-        if (!ItemID.IsEmpty())
+        const FName& ItemID = Branches.GetValue()[OwnerPackage->BranchIndex];
+        if (!ItemID.IsNone())
         {
 			return OwnerPackage->GetItem(ItemID);
         }
@@ -40,8 +40,8 @@ TSharedPtr<FFairyPackageItem> FFairyPackageItem::GetHighResolution()
 {
     if (HighResolution.IsSet() && UFairyRoot::ContentScaleLevel > 0)
     {
-        FString ItemID = HighResolution.GetValue()[UFairyRoot::ContentScaleLevel - 1];
-        if (!ItemID.IsEmpty())
+        FName ItemID = HighResolution.GetValue()[UFairyRoot::ContentScaleLevel - 1];
+        if (!ItemID.IsNone())
         {
 			return OwnerPackage->GetItem(ItemID);
         }

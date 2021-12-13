@@ -307,7 +307,7 @@ void UGComboBox::ConstructExtension(FByteBuffer* Buffer)
     const FString& dropdownResource = Buffer->ReadS();
     if (!dropdownResource.IsEmpty())
     {
-        DropdownObject = Cast<UFairyComponent>(UFairyPackageMgr::Get()->CreateObjectFromURL(this, dropdownResource));
+        DropdownObject = Cast<UFairyComponent>(UFairyPackageMgr::Get()->CreateObjectFromURL(this, FName(dropdownResource)));
         verifyf(DropdownObject != nullptr, TEXT("should be a component."));
 
         ListObject = Cast<UFairyListView>(DropdownObject->GetChild("list"));

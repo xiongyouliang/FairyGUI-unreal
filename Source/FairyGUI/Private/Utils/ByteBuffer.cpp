@@ -135,6 +135,19 @@ const FString& FByteBuffer::ReadS()
 	}
 }
 
+FName FByteBuffer::ReadFName()
+{
+	uint16 index = ReadUshort();
+	if (index == 65534 || index == 65533)
+	{
+		return NAME_None;
+	}
+	else
+	{
+		return FName((*StringTable)[index]);
+	}
+}
+
 bool FByteBuffer::ReadS(FString& OutString)
 {
 	uint16 index = ReadUshort();
@@ -176,6 +189,14 @@ void FByteBuffer::ReadSArray(TArray<FString>& OutArray, int32 InCount)
 	for (int32 i = 0; i < InCount; i++)
 	{
 		OutArray.Push(ReadS());
+	}
+}
+
+void FByteBuffer::ReadFNameArray(TArray<FName>& OutArray, int32 InCount)
+{
+	for (int32 i = 0; i < InCount; i++)
+	{
+		OutArray.Push(FName(ReadS()));
 	}
 }
 

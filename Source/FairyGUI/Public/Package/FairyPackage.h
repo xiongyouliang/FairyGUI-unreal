@@ -22,15 +22,16 @@ public:
     virtual  ~UFairyPackage();
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    const FString& GetID() const { return ID; }
-    UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    const FString& GetName() const { return Name; }
+    const FName GetID() const { return ID; }
 
-    TSharedPtr<FFairyPackageItem> GetItem(const FString& ResourceID) const;
-    TSharedPtr<FFairyPackageItem> GetItemByName(const FString& ResourceName);
+    UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+    const FName GetName() const { return Name; }
+
+    TSharedPtr<FFairyPackageItem> GetItem(const FName& ResourceID) const;
+    TSharedPtr<FFairyPackageItem> GetItemByName(const FName& ResourceName);
     void* GetItemAsset(const TSharedPtr<FFairyPackageItem>& Item);
 
-    UFairyObject* CreateObject(UObject* Owner, const FString& ResourceName);
+    UFairyObject* CreateObject(UObject* Owner, const FName& ResourceName);
     UFairyObject* CreateObject(UObject* Owner, const TSharedPtr<FFairyPackageItem>& Item);
 
 private:
@@ -41,27 +42,27 @@ private:
     void LoadFont(const TSharedPtr<FFairyPackageItem>& Item);
     void LoadSound(const TSharedPtr<FFairyPackageItem>& Item);
 
-    UObject* LoadSoundObject(FString GameAssetFilePath);
+    UObject* LoadSoundObject(FName GameAssetFilePath);
 
 private:
-    FString ID;
-    FString Name;
-    FString AssetPath;
+    FName ID;
+    FName Name;
+    FName AssetPath;
 
     UPROPERTY(Transient)
     UFairyPackageAsset* Asset;
 
     TArray<TSharedPtr<FFairyPackageItem>> Items;
-    TMap<FString, TSharedPtr<FFairyPackageItem>> ItemsByID;
-    TMap<FString, TSharedPtr<FFairyPackageItem>> ItemsByName;
-    TMap<FString, struct FAtlasSprite*> Sprites;
+    TMap<FName, TSharedPtr<FFairyPackageItem>> ItemsByID;
+    TMap<FName, TSharedPtr<FFairyPackageItem>> ItemsByName;
+    TMap<FName, struct FAtlasSprite*> Sprites;
     
     UPROPERTY()
-    TMap<FString, UObject*> SoundsByName;
+    TMap<FName, UObject*> SoundsByName;
 
-    FString CustomID;
-    TArray<TMap<FString, FString>> Dependencies;
-    TArray<FString> Branches;
+    FName CustomID;
+    TArray<TMap<FName, FName>> Dependencies;
+    TArray<FName> Branches;
     int32 BranchIndex;
 
     friend class UFairyPackageMgr;

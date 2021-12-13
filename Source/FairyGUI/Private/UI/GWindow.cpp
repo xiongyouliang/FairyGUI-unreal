@@ -124,7 +124,7 @@ void UGWindow::ShowModalWait(int32 InRequestingCmd)
     if (!UFairyConfig::Config->WindowModalWaiting.IsEmpty())
     {
         if (ModalWaitPane == nullptr)
-            ModalWaitPane = UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), UFairyConfig::Config->WindowModalWaiting);
+            ModalWaitPane = UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), FName(UFairyConfig::Config->WindowModalWaiting));
 
         LayoutModalWaitPane();
 

@@ -50,7 +50,7 @@ UFairyPackage::~UFairyPackage()
     }
 }
 
-TSharedPtr<FFairyPackageItem> UFairyPackage::GetItem(const FString& ItemID) const
+TSharedPtr<FFairyPackageItem> UFairyPackage::GetItem(const FName& ItemID) const
 {
     auto it = ItemsByID.Find(ItemID);
     if (it != nullptr)
@@ -63,7 +63,7 @@ TSharedPtr<FFairyPackageItem> UFairyPackage::GetItem(const FString& ItemID) cons
     }
 }
 
-TSharedPtr<FFairyPackageItem> UFairyPackage::GetItemByName(const FString& ResourceName)
+TSharedPtr<FFairyPackageItem> UFairyPackage::GetItemByName(const FName& ResourceName)
 {
     auto it = ItemsByName.Find(ResourceName);
     if (it != nullptr)
@@ -76,7 +76,7 @@ TSharedPtr<FFairyPackageItem> UFairyPackage::GetItemByName(const FString& Resour
     }
 }
 
-UFairyObject* UFairyPackage::CreateObject(UObject* Owner, const FString& ResourceName)
+UFairyObject* UFairyPackage::CreateObject(UObject* Owner, const FName& ResourceName)
 {
     TSharedPtr<FFairyPackageItem> item = GetItemByName(ResourceName);
     //verifyf will break app, use a error log replace it in Dev/Test/Debug Build, include Editor;
@@ -85,7 +85,7 @@ UFairyObject* UFairyPackage::CreateObject(UObject* Owner, const FString& Resourc
 #else
     if (!item.IsValid())
     {
-        UE_LOG(LogTemp, Error, TEXT("FairyGUI: resource not found - %s in  %s"), *ResourceName, *Name);
+        UE_LOG(LogTemp, Error, TEXT("FairyGUI: resource not found - %s in  %s"), *ResourceName.ToString(), *Name.ToString());
         return nullptr;
     }
 #endif // UE_BUILD_SHIPPING
@@ -110,7 +110,7 @@ void UFairyPackage::Load(FByteBuffer* Buffer)
 {
     if (Buffer->ReadUint() != 0x46475549)
     {
-        UE_LOG(LogFairyGUI, Error, TEXT("not valid package format in %d '%s'"), Buffer->ReadUint(), *AssetPath);
+        UE_LOG(LogFairyGUI, Error, TEXT("not valid package format in %d '%s'"), Buffer->ReadUint(), *AssetPath.ToString());
         return;
     }
     uint32 CurVersion = Buffer->ReadInt();
@@ -118,8 +118,8 @@ void UFairyPackage::Load(FByteBuffer* Buffer)
 
     bool ver2 = Buffer->Version >= 2;
     Buffer->ReadBool(); //compressed
-    ID = Buffer->ReadString();
-    Name = Buffer->ReadString();
+    ID = FName(Buffer->ReadString());
+    Name = FName(Buffer->ReadString());
     Buffer->Skip(20);
     int32 indexTablePos = Buffer->GetPos();
     int32 cnt;
@@ -140,9 +140,9 @@ void UFairyPackage::Load(FByteBuffer* Buffer)
     cnt = Buffer->ReadShort();
     for (int32 i = 0; i < cnt; i++)
     {
-        TMap<FString, FString> info;
-        info.Add("id", Buffer->ReadS());
-        info.Add("name", Buffer->ReadS());
+        TMap<FName, FName> info;
+        info.Add(FName(TEXT("id")), FName(Buffer->ReadS()));
+        info.Add(FName(TEXT("name")), FName(Buffer->ReadS()));
 
         Dependencies.Push(info);
     }
@@ -153,9 +153,9 @@ void UFairyPackage::Load(FByteBuffer* Buffer)
         cnt = Buffer->ReadShort();
         if (cnt > 0)
         {
-            Buffer->ReadSArray(Branches, cnt);
-            FString CurBranch = UFairyPackageMgr::Get()->GetBranch();
-            if (!CurBranch.IsEmpty())
+            Buffer->ReadFNameArray(Branches, cnt);
+            FName CurBranch = UFairyPackageMgr::Get()->GetBranch();
+            if (!CurBranch.IsNone())
             {
                 BranchIndex = Branches.IndexOfByKey(CurBranch);
             }
@@ -166,8 +166,8 @@ void UFairyPackage::Load(FByteBuffer* Buffer)
 
     // all item info segument in this package: index = 1;
     Buffer->Seek(indexTablePos, 1);
-    FString path = FPaths::GetPath(AssetPath);
-    FString fileName = FPaths::GetBaseFilename(AssetPath);
+    FString path = FPaths::GetPath(AssetPath.ToString());
+    FString fileName = FPaths::GetBaseFilename(AssetPath.ToString());
 
     cnt = Buffer->ReadShort();
     for (int32 i = 0; i < cnt; i++)
@@ -178,10 +178,10 @@ void UFairyPackage::Load(FByteBuffer* Buffer)
         TSharedPtr<FFairyPackageItem> pi = MakeShared<FFairyPackageItem>();
         pi->OwnerPackage = this;
         pi->Type = (EPackageItemType)Buffer->ReadByte();
-        pi->ID = Buffer->ReadS();
-        pi->Name = Buffer->ReadS();
+        pi->ID = Buffer->ReadFName();
+        pi->Name = Buffer->ReadFName();
         Buffer->Skip(2); //path
-        pi->File = Buffer->ReadS();
+        pi->File = FName(Buffer->ReadS());
         Buffer->ReadBool(); //exported
         pi->Size.X = Buffer->ReadInt();
         pi->Size.Y = Buffer->ReadInt();
@@ -246,15 +246,15 @@ void UFairyPackage::Load(FByteBuffer* Buffer)
         case EPackageItemType::Sound:
         case EPackageItemType::Misc:
         {
-            FString file = fileName + "_" + FPaths::GetBaseFilename(pi->File);
-            pi->File = path + "/" + file + "." + file;
+            FString file = fileName + "_" + FPaths::GetBaseFilename(pi->File.ToString());
+            pi->File = FName(path + "/" + file + "." + file);
             break;
         }
 
         case EPackageItemType::Spine:
         case EPackageItemType::DragonBones:
         {
-            pi->File = path + pi->File;
+            pi->File = FName(path + pi->File.ToString());
             break;
         }
 
@@ -264,10 +264,11 @@ void UFairyPackage::Load(FByteBuffer* Buffer)
 
         if (ver2)
         {
-            FString str = Buffer->ReadS(); //branch
-            if (!str.IsEmpty())
+            FName BranchStr = Buffer->ReadFName(); //branch
+            if (!BranchStr.IsNone())
             {
-                pi->Name = str + "/" + pi->Name;
+                // construct a new FName;
+                pi->Name = FName(BranchStr.ToString() + "/" + pi->Name.ToString());
             }
 
             int32 branchCnt = Buffer->ReadUbyte();
@@ -276,11 +277,11 @@ void UFairyPackage::Load(FByteBuffer* Buffer)
                 if (branchIncluded)
                 {
                     pi->Branches.Emplace();
-                    Buffer->ReadSArray(pi->Branches.GetValue(), branchCnt);
+                    Buffer->ReadFNameArray(pi->Branches.GetValue(), branchCnt);
                 }
                 else
                 {
-                    ItemsByID.Add(Buffer->ReadS(), pi);
+                    ItemsByID.Add(FName(Buffer->ReadS()), pi);
                 }
             }
 
@@ -288,13 +289,13 @@ void UFairyPackage::Load(FByteBuffer* Buffer)
             if (highResCnt > 0)
             {
                 pi->HighResolution.Emplace();
-                Buffer->ReadSArray(pi->HighResolution.GetValue(), highResCnt);
+                Buffer->ReadFNameArray(pi->HighResolution.GetValue(), highResCnt);
             }
         }
 
         Items.Push(pi);
         ItemsByID.Add(pi->ID, pi);
-        if (!pi->Name.IsEmpty())
+        if (!pi->Name.IsNone())
         {
             ItemsByName.Add(pi->Name, pi);
         }
@@ -311,7 +312,7 @@ void UFairyPackage::Load(FByteBuffer* Buffer)
         nextPos += Buffer->GetPos();
 
         const FString& itemId = Buffer->ReadS();
-        const TSharedPtr<FFairyPackageItem>& pi = ItemsByID[Buffer->ReadS()];
+        const TSharedPtr<FFairyPackageItem>& pi = ItemsByID[FName(Buffer->ReadS())];
 
         FAtlasSprite* sprite = new FAtlasSprite();
         sprite->Atlas = pi;
@@ -338,7 +339,7 @@ void UFairyPackage::Load(FByteBuffer* Buffer)
             sprite->Offset.Set(0, 0);
             sprite->OriginalSize = sprite->Rect.GetSize();
         }
-        Sprites.Add(itemId, sprite);
+        Sprites.Add(FName(itemId), sprite);
 
         Buffer->SetPos(nextPos);
     }
@@ -409,14 +410,14 @@ void* UFairyPackage::GetItemAsset(const TSharedPtr<FFairyPackageItem>& Item)
 
 void UFairyPackage::LoadAtlas(const TSharedPtr<FFairyPackageItem>& Item)
 {
-    UObject* Texture = StaticLoadObject(UTexture2D::StaticClass(), this, *Item->File);
+    UObject* Texture = StaticLoadObject(UTexture2D::StaticClass(), this, *Item->File.ToString());
     Item->Texture = NewObject<UNTexture>(this);
     Item->Texture->Init(Cast<UTexture2D>(Texture));
 }
 
 void UFairyPackage::LoadImage(const TSharedPtr<FFairyPackageItem>& Item)
 {
-    FAtlasSprite* sprite = Sprites.FindRef(Item->ID);
+    FAtlasSprite* sprite = Sprites.FindRef(FName(Item->ID));
     if (sprite != nullptr)
     {
         UNTexture* atlas = (UNTexture*)GetItemAsset(sprite->Atlas);
@@ -466,7 +467,7 @@ void UFairyPackage::LoadMovieClip(const TSharedPtr<FFairyPackageItem>& Item)
         Frame.AddDelay = Buffer->ReadInt() / 1000.0f;
         const FString& spriteId = Buffer->ReadS();
 
-        if (!spriteId.IsEmpty() && (sprite = Sprites.FindRef(spriteId)) != nullptr)
+        if (!spriteId.IsEmpty() && (sprite = Sprites.FindRef(FName(spriteId))) != nullptr)
         {
             Frame.Texture = NewObject<UNTexture>(this);
             Frame.Texture->Init((UNTexture*)GetItemAsset(sprite->Atlas), sprite->Rect, sprite->bRotated, Item->Size, FrameRect.Min);
@@ -501,7 +502,7 @@ void UFairyPackage::LoadFont(const TSharedPtr<FFairyPackageItem>& Item)
     FVector2D GlyphSize(0, 0);
 
     const FAtlasSprite* MainSprite = nullptr;
-    if (bTTF && (MainSprite = Sprites.FindRef(Item->ID)) != nullptr)
+    if (bTTF && (MainSprite = Sprites.FindRef(FName(Item->ID))) != nullptr)
     {
         BitmapFont->Texture = (UNTexture*)GetItemAsset(MainSprite->Atlas);
     }
@@ -537,7 +538,7 @@ void UFairyPackage::LoadFont(const TSharedPtr<FFairyPackageItem>& Item)
         }
         else
         {
-            TSharedPtr<FFairyPackageItem> CharImg = GetItem(img);
+            TSharedPtr<FFairyPackageItem> CharImg = GetItem(FName(img));
             if (CharImg.IsValid())
             {
                 CharImg = CharImg->GetBranch();
@@ -601,13 +602,13 @@ void UFairyPackage::LoadSound(const TSharedPtr<FFairyPackageItem>& Item)
     Item->Sound = Sound;
 }
 
-UObject* UFairyPackage::LoadSoundObject(FString GameAssetFilePath)
+UObject* UFairyPackage::LoadSoundObject(FName GameAssetFilePath)
 {
     UObject* SoundBaseObject = nullptr;
-	UObject* ResourceObject = StaticFindObject(UObject::StaticClass(), this, *GameAssetFilePath);
+	UObject* ResourceObject = StaticFindObject(UObject::StaticClass(), this, *GameAssetFilePath.ToString());
 	if (!ResourceObject)
 	{
-		 SoundBaseObject = StaticLoadObject(USoundBase::StaticClass(), this, *GameAssetFilePath);
+		 SoundBaseObject = StaticLoadObject(USoundBase::StaticClass(), this, *GameAssetFilePath.ToString());
 	}
     return SoundBaseObject;
 }

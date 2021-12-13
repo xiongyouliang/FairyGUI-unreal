@@ -19,7 +19,7 @@ UFairyObject* FFairyObjectPool::GetOrCreateObject(UObject* Outer, const FString 
     }
     else
     {
-        ret = UFairyPackageMgr::Get()->CreateObjectFromURL(Outer, URL2);
+        ret = UFairyPackageMgr::Get()->CreateObjectFromURL(Outer, FName(URL2));
     }
     return ret;
 }

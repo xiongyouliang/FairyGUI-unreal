@@ -30,10 +30,10 @@ UFairyPackageMgr* UFairyPackageMgr::Get()
 	return Instance;
 }
 
-void UFairyPackageMgr::SetBranch(const FString& InBranch)
+void UFairyPackageMgr::SetBranch(const FName& InBranch)
 {
 	Branch = InBranch;
-	bool empty = Branch.IsEmpty();
+	bool empty = Branch.IsNone();
 	for (auto& it : PackageInstByID)
 	{
 		UFairyPackage*& Pkg = it.Value;
@@ -48,47 +48,49 @@ void UFairyPackageMgr::SetBranch(const FString& InBranch)
 	}
 }
 
-FString UFairyPackageMgr::GetVar(const FString& VarKey)
+FName UFairyPackageMgr::GetVar(const FName& VarKey)
 {
-	FString* Value = Vars.Find(VarKey);
+	FName* Value = Vars.Find(VarKey);
 	if (Value != nullptr)
 	{
 		return *Value;
 	}
 	else
 	{
-		return G_EMPTY_STRING;
+		return NAME_None;
 	}
 }
 
-void UFairyPackageMgr::SetVar(const FString& VarKey, const FString& VarValue)
+void UFairyPackageMgr::SetVar(const FName& VarKey, const FName& VarValue)
 {
 	Vars.Add(VarKey, VarValue);
 }
 
 UFairyPackage* UFairyPackageMgr::AddPackage(UFairyPackageAsset* InAsset)
 {
-	FString PathName = InAsset->GetPathName();
-	UFairyPackage* Pkg = PackageInstByID.FindRef(PathName);
+	FName AssetPathName(InAsset->GetPathName());
+	UFairyPackage* Pkg = PackageInstByAssetPath.FindRef(AssetPathName);
 	if (Pkg != nullptr)
 	{
 		UE_LOG(LogFairyGUI, Warning, TEXT("Package already addedd"));
 		return Pkg;
 	}
-	Pkg = NewObject<UFairyPackage>(this); // UFairyPackage outer is UFairyPackageMgr Singleton
+
+	Pkg = NewObject<UFairyPackage>(this);
 	Pkg->Asset = InAsset;
-	Pkg->AssetPath = PathName;
+	Pkg->AssetPath = AssetPathName;
+
 	FByteBuffer Buffer(InAsset->Data.GetData(), 0, InAsset->Data.Num(), false);
 	Pkg->Load(&Buffer);
 
 	//UFairyApplication::Get()->PackageList.Add(Pkg);
 	PackageInstByID.Add(Pkg->ID, Pkg);
-	PackageInstByID.Add(Pkg->AssetPath, Pkg);
+	PackageInstByAssetPath.Add(Pkg->AssetPath, Pkg);
 	PackageInstByName.Add(Pkg->Name, Pkg);
 	return Pkg;
 }
 
-UFairyPackage* UFairyPackageMgr::GetPackageByName(const FString& PackageName)
+UFairyPackage* UFairyPackageMgr::GetPackageByName(const FName& PackageName)
 {
 	auto it = PackageInstByName.Find(PackageName);
 	if (it != nullptr)
@@ -101,7 +103,7 @@ UFairyPackage* UFairyPackageMgr::GetPackageByName(const FString& PackageName)
 	}
 }
 
-UFairyPackage* UFairyPackageMgr::GetPackageByID(const FString& PackageID)
+UFairyPackage* UFairyPackageMgr::GetPackageByID(const FName& PackageID)
 {
 	auto it = PackageInstByID.Find(PackageID);
 	if (it != nullptr)
@@ -114,7 +116,7 @@ UFairyPackage* UFairyPackageMgr::GetPackageByID(const FString& PackageID)
 	}
 }
 
-FString UFairyPackageMgr::ConvertToItemURL(const FString& PackageName, const FString& ResourceName)
+FString UFairyPackageMgr::ConvertToItemURL(const FName& PackageName, const FName& ResourceName)
 {
 	UFairyPackage* pkg = GetPackageByName(PackageName);
 	if (pkg != nullptr)
@@ -122,10 +124,10 @@ FString UFairyPackageMgr::ConvertToItemURL(const FString& PackageName, const FSt
 		TSharedPtr<FFairyPackageItem> pi = pkg->GetItemByName(ResourceName);
 		if (pi.IsValid())
 		{
-			return "ui://" + pkg->GetID() + pi->ID;
+			return FString(TEXT("ui://")) + pkg->GetID().ToString() + pi->ID.ToString();
 		}
 	}
-	return "";
+	return TEXT("");
 }
 
 FString UFairyPackageMgr::NormalizeURL(const FString& URL)
@@ -150,7 +152,7 @@ FString UFairyPackageMgr::NormalizeURL(const FString& URL)
 	{
 		FString pkgName = URL.Mid(pos1 + 2, pos2 - pos1 - 2);
 		FString srcName = URL.Mid(pos2 + 1);
-		return ConvertToItemURL(pkgName, srcName);
+		return ConvertToItemURL(FName(pkgName), FName(srcName));
 	}
 }
 TSharedPtr<FFairyPackageItem> UFairyPackageMgr::GetPackageItemByURL(const FString& URL)
@@ -172,29 +174,29 @@ TSharedPtr<FFairyPackageItem> UFairyPackageMgr::GetPackageItemByURL(const FStrin
 		if (URL.Len() > 13)
 		{
 			FString pkgId = URL.Mid(5, 8);
-			UFairyPackage* pkg = GetPackageByID(pkgId);
+			UFairyPackage* pkg = GetPackageByID(FName(pkgId));
 			if (pkg != nullptr)
 			{
 				FString srcId = URL.Mid(13);
-				return pkg->GetItem(srcId);
+				return pkg->GetItem(FName(srcId));
 			}
 		}
 	}
 	else
 	{
 		FString pkgName = URL.Mid(pos1 + 2, pos2 - pos1 - 2);
-		UFairyPackage* pkg = GetPackageByName(pkgName);
+		UFairyPackage* pkg = GetPackageByName(FName(pkgName));
 		if (pkg != nullptr)
 		{
 			FString srcName = URL.Mid(pos2 + 1);
-			return pkg->GetItemByName(srcName);
+			return pkg->GetItemByName(FName(srcName));
 		}
 	}
 
 	return nullptr;
 }
 
-void UFairyPackageMgr::RemovePackage(const FString& IDOrName)
+void UFairyPackageMgr::RemovePackage(const FName& IDOrName)
 {
 	UFairyPackage* pkg = GetPackageByName(IDOrName);
 	if (pkg == nullptr)
@@ -213,7 +215,7 @@ void UFairyPackageMgr::RemovePackage(const FString& IDOrName)
 	}
 	else 
 	{
-		UE_LOG(LogFairyGUI, Error, TEXT("invalid package name or id: %s"), *IDOrName);
+		UE_LOG(LogFairyGUI, Error, TEXT("invalid package name or id: %s"), *IDOrName.ToString());
 	}
 }
 
@@ -226,7 +228,7 @@ void UFairyPackageMgr::RemoveAllPackages()
 	PackageInstByName.Reset();
 }
 
-UFairyObject* UFairyPackageMgr::CreateObject(UObject* Outer, const FString& PackageName, const FString& ResourceName)
+UFairyObject* UFairyPackageMgr::CreateObject(UObject* Outer, const FName& PackageName, const FName& ResourceName)
 {
 	UFairyPackage* pkg = GetPackageByName(PackageName);
 	if (pkg) {
@@ -238,9 +240,9 @@ UFairyObject* UFairyPackageMgr::CreateObject(UObject* Outer, const FString& Pack
 	}
 }
 
-UFairyObject* UFairyPackageMgr::CreateObjectFromURL(UObject* Outer, const FString& URL)
+UFairyObject* UFairyPackageMgr::CreateObjectFromURL(UObject* Outer, const FName& URL)
 {
-	TSharedPtr<FFairyPackageItem> PackageItem = GetPackageItemByURL(URL);
+	TSharedPtr<FFairyPackageItem> PackageItem = GetPackageItemByURL(URL.ToString());
 	if (PackageItem.IsValid()) 
 	{
 		return PackageItem->OwnerPackage->CreateObject(Outer, PackageItem);
@@ -251,7 +253,7 @@ UFairyObject* UFairyPackageMgr::CreateObjectFromURL(UObject* Outer, const FStrin
 	}
 }
 
-UGWindow* UFairyPackageMgr::CreateWindow(UObject* Outer, const FString& PackageName, const FString& ResourceName)
+UGWindow* UFairyPackageMgr::CreateWindow(UObject* Outer, const FName& PackageName, const FName& ResourceName)
 {
 	UFairyObject* ContentPane = CreateObject(Outer, PackageName, ResourceName);
 	verifyf(ContentPane->IsA<UFairyComponent>(), TEXT("Window content should be a component"));

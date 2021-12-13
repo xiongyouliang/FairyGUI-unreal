@@ -120,13 +120,13 @@ UFairyObject* FUIObjectFactory::NewObject(UObject* Outer, EObjectType Type)
 
 void FUIObjectFactory::ResolvePackageItemExtension(const TSharedPtr<FFairyPackageItem>& PackageItem)
 {
-    auto it = PackageItemExtensions.Find("ui://" + PackageItem->OwnerPackage->GetID() + PackageItem->ID);
+    auto it = PackageItemExtensions.Find(FString(TEXT("ui://") + PackageItem->OwnerPackage->GetID().ToString() + PackageItem->ID.ToString()));
     if (it != nullptr)
     {
         PackageItem->ExtensionCreator = *it;
         return;
     }
-    it = PackageItemExtensions.Find("ui://" + PackageItem->OwnerPackage->GetName() + "/" + PackageItem->Name);
+    it = PackageItemExtensions.Find(FString(TEXT("ui://") + PackageItem->OwnerPackage->GetName().ToString() + TEXT("/") + PackageItem->Name.ToString()));
     if (it != nullptr)
     {
         PackageItem->ExtensionCreator = *it;

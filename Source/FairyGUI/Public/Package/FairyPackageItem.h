@@ -29,13 +29,15 @@ public:
 
     EPackageItemType Type;
     EObjectType ObjectType;
-    FString ID;
-    FString Name;
+
+    FName ID;
+    FName Name;
+    FName File;
     FVector2D Size;
-    FString File;
+
     TSharedPtr<FByteBuffer> RawData;
-    TOptional<TArray<FString>> Branches;
-    TOptional<TArray<FString>> HighResolution;
+    TOptional<TArray<FName>> Branches;
+    TOptional<TArray<FName>> HighResolution;
 
     //atlas
     UNTexture* Texture;

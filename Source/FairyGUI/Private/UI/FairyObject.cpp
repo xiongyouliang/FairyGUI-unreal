@@ -427,7 +427,7 @@ FString UFairyObject::GetResourceURL() const
 {
 	if (PackageItem.IsValid())
 	{
-		return "ui://" + PackageItem->OwnerPackage->GetID() + PackageItem->ID;
+		return FString(TEXT("ui://")) + PackageItem->OwnerPackage->GetID().ToString() + PackageItem->ID.ToString();
 	}
 	else
 	{
@@ -439,7 +439,7 @@ FString UFairyObject::GetResourceName() const
 {
 	if (PackageItem.IsValid())
 	{
-		return PackageItem->Name;
+		return PackageItem->Name.ToString();
 	}
 	else
 	{
@@ -451,7 +451,7 @@ FString UFairyObject::GetPackageName() const
 {
 	if (PackageItem.IsValid())
 	{
-		return PackageItem->OwnerPackage->GetName();
+		return PackageItem->OwnerPackage->GetName().ToString();
 	}
 	else
 	{

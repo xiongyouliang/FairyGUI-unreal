@@ -204,7 +204,7 @@ void UGController::Setup(FByteBuffer* Buffer)
 			break;
 
 		case EHomePageType::MatchBranch:
-			HomePageIndex = PageNames.Find(UFairyPackageMgr::Get()->GetBranch());
+			HomePageIndex = PageNames.Find(UFairyPackageMgr::Get()->GetBranch().ToString());
 			if (HomePageIndex == INDEX_NONE)
 			{
 				HomePageIndex = 0;
@@ -212,7 +212,7 @@ void UGController::Setup(FByteBuffer* Buffer)
 			break;
 
 		case EHomePageType::MatchVariable:
-			HomePageIndex = PageNames.Find(UFairyPackageMgr::Get()->GetVar(Buffer->ReadS()));
+			HomePageIndex = PageNames.Find(UFairyPackageMgr::Get()->GetVar(Buffer->ReadFName()).ToString());
 			if (HomePageIndex == INDEX_NONE)
 			{
 				HomePageIndex = 0;

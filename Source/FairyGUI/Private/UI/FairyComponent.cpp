@@ -1068,7 +1068,6 @@ void UFairyComponent::SetupOverflow(EOverflowType InOverflow)
 
 void UFairyComponent::SetupScroll(FByteBuffer* Buffer)
 {
-	// As normal Scroll Component But not GList
 	if (!MaskWidget.IsValid() &&Container.IsValid())
 	{
 		const TSharedPtr<SContainer> RootContainer = SNew(SContainer).GObject(this);
@@ -1292,14 +1291,16 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 			Buffer->Seek(curPos, 0);
 
 			EObjectType ObjectType = (EObjectType)Buffer->ReadByte();
-			const FString& src = Buffer->ReadS();
-			const FString& PackageID = Buffer->ReadS();
+			//const FString& src = Buffer->ReadS();
+			//const FString& PackageID = Buffer->ReadS();
+			FName src = Buffer->ReadFName();
+			FName PackageID = Buffer->ReadFName();
 
 			TSharedPtr<FFairyPackageItem> ChildPackageItem = nullptr;
-			if (!src.IsEmpty())
+			if (!src.IsNone())
 			{
 				UFairyPackage* Package;
-				if (!PackageID.IsEmpty())
+				if (!PackageID.IsNone())
 				{
 					Package = UFairyPackageMgr::Get()->GetPackageByID(PackageID);
 				}
@@ -1379,10 +1380,11 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 		//setMask(getChildAt(maskId)->displayObject(), inverted);
 	}
 
-	const FString& hitTestId = Buffer->ReadS();
+	//const FString& hitTestId = Buffer->ReadS();
+	FName hitTestId = Buffer->ReadFName();
 	int32 i1 = Buffer->ReadInt();
 	int32 i2 = Buffer->ReadInt();
-	if (!hitTestId.IsEmpty())
+	if (!hitTestId.IsNone())
 	{
 		TSharedPtr<FFairyPackageItem> pi = ContentItem->OwnerPackage->GetItem(hitTestId);
 		/*if (pi != nullptr && pi->pixelHitTestData != nullptr)

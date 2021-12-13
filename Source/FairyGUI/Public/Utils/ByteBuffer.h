@@ -34,7 +34,9 @@ public:
 	FString ReadString();
 	FString ReadString(int32 InLen);
 	const FString& ReadS();
+	FName ReadFName();
 	void ReadSArray(TArray<FString>& OutArray, int32 InCount);
+	void ReadFNameArray(TArray<FName>& OutArray, int32 InCount);
 	bool ReadS(FString& OutString);
 	const FString* ReadSP();
 	void WriteS(const FString& InString);

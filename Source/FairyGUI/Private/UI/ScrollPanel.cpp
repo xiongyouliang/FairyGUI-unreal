@@ -122,7 +122,7 @@ void UScrollPanel::Setup(FByteBuffer* Buffer)
 			const FString& res = vtScrollBarRes.Len() == 0 ? UFairyConfig::Config->VerticalScrollBar : vtScrollBarRes;
 			if (res.Len() > 0)
 			{
-				VScrollBar = Cast<UGScrollBar>(UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), res));
+				VScrollBar = Cast<UGScrollBar>(UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), FName(res)));
 				if (VScrollBar)
 				{
 					VScrollBar->SetScrollPane(this, true);
@@ -135,7 +135,7 @@ void UScrollPanel::Setup(FByteBuffer* Buffer)
 			const FString& res = hzScrollBarRes.Len() == 0 ? UFairyConfig::Config->HorizontalScrollBar : hzScrollBarRes;
 			if (res.Len() > 0)
 			{
-				HScrollBar = Cast<UGScrollBar>(UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), res));
+				HScrollBar = Cast<UGScrollBar>(UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), FName(res)));
 				if (HScrollBar)
 				{
 					HScrollBar->SetScrollPane(this, false);
@@ -169,7 +169,7 @@ void UScrollPanel::Setup(FByteBuffer* Buffer)
 
 	if (headerRes.Len() > 0)
 	{
-		Header = Cast<UFairyComponent>(UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), headerRes));
+		Header = Cast<UFairyComponent>(UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), FName(headerRes)));
 		if (Header)
 		{
 			Header->SetVisible(false);
@@ -179,7 +179,7 @@ void UScrollPanel::Setup(FByteBuffer* Buffer)
 
 	if (footerRes.Len() > 0)
 	{
-		Footer = Cast<UFairyComponent>(UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), footerRes));
+		Footer = Cast<UFairyComponent>(UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), FName(footerRes)));
 		if (Footer)
 		{
 			Footer->SetVisible(false);

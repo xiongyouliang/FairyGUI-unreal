@@ -161,13 +161,13 @@ public:
 	void StopDrag();
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	FString GetResourceURL() const;
+	FName GetResourceURL() const;
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	FString GetResourceName() const;
+	FName GetResourceName() const;
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	FString GetPackageName() const;
+	FName GetPackageName() const;
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	FVector2D GlobalToLocal(const FVector2D& InPoint);

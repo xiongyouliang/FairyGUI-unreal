@@ -3,10 +3,10 @@
 #include "Package/FairyPackage.h"
 #include "Package/FairyPackageMgr.h"
 
-UFairyObject* FFairyObjectPool::GetOrCreateObject(UObject* Outer, const FString & URL)
+UFairyObject* FFairyObjectPool::GetOrCreateObject(UObject* Outer, const FName & URL)
 {
-    FString URL2 = UFairyPackageMgr::Get()->NormalizeURL(URL);
-    if (URL2.Len() == 0)
+    FName URL2 = UFairyPackageMgr::Get()->NormalizeURL(URL);
+    if (URL2.IsNone())
     {
         return nullptr;
     }
@@ -19,7 +19,7 @@ UFairyObject* FFairyObjectPool::GetOrCreateObject(UObject* Outer, const FString 
     }
     else
     {
-        ret = UFairyPackageMgr::Get()->CreateObjectFromURL(Outer, FName(URL2));
+        ret = UFairyPackageMgr::Get()->CreateObjectFromURL(Outer, URL2);
     }
     return ret;
 }

@@ -116,7 +116,7 @@ UFairyPackage* UFairyPackageMgr::GetPackageByID(const FName& PackageID)
 	}
 }
 
-FString UFairyPackageMgr::ConvertToItemURL(const FName& PackageName, const FName& ResourceName)
+FName UFairyPackageMgr::ConvertToItemURL(FName PackageName, FName ResourceName)
 {
 	UFairyPackage* pkg = GetPackageByName(PackageName);
 	if (pkg != nullptr)
@@ -124,37 +124,40 @@ FString UFairyPackageMgr::ConvertToItemURL(const FName& PackageName, const FName
 		TSharedPtr<FFairyPackageItem> pi = pkg->GetItemByName(ResourceName);
 		if (pi.IsValid())
 		{
-			return FString(TEXT("ui://")) + pkg->GetID().ToString() + pi->ID.ToString();
+			FString TempStr = TEXT("ui://") + pkg->GetID().ToString() + pi->ID.ToString();
+			return FName(TempStr);
 		}
 	}
-	return TEXT("");
+	return NAME_None;
 }
 
-FString UFairyPackageMgr::NormalizeURL(const FString& URL)
+FName UFairyPackageMgr::NormalizeURL(FName InUrl)
 {
-	if (URL.IsEmpty()) 
+	if (InUrl.IsNone()) 
 	{
-		return URL;
+		return InUrl;
 	}
 
 	int32 pos1;
-	if (!URL.FindChar('/', pos1)) 
+	FString TempUrl = InUrl.ToString();
+	if (!TempUrl.FindChar('/', pos1)) 
 	{
-		return URL;
+		return InUrl;
 	}
 
-	int32 pos2 = URL.Find("/", ESearchCase::CaseSensitive, ESearchDir::FromStart, pos1 + 2);
+	int32 pos2 = TempUrl.Find("/", ESearchCase::CaseSensitive, ESearchDir::FromStart, pos1 + 2);
 	if (pos2 == -1) 
 	{
-		return URL;
+		return InUrl;
 	}	
 	else
 	{
-		FString pkgName = URL.Mid(pos1 + 2, pos2 - pos1 - 2);
-		FString srcName = URL.Mid(pos2 + 1);
+		FString pkgName = TempUrl.Mid(pos1 + 2, pos2 - pos1 - 2);
+		FString srcName = TempUrl.Mid(pos2 + 1);
 		return ConvertToItemURL(FName(pkgName), FName(srcName));
 	}
 }
+
 TSharedPtr<FFairyPackageItem> UFairyPackageMgr::GetPackageItemByURL(const FString& URL)
 {
 	if (URL.IsEmpty()) 

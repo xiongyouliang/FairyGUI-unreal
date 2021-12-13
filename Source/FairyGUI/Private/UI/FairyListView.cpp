@@ -214,7 +214,7 @@ void UFairyListView::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 
 	Buffer->Seek(BeginPos, 8);
 
-	DefaultItem = Buffer->ReadS();
+	DefaultItem = Buffer->ReadFName();
 	ReadItems(Buffer);
 }
 
@@ -234,6 +234,7 @@ void UFairyListView::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 void UFairyListView::ReadItems(FByteBuffer* Buffer)
 {
 	const FString* str = nullptr;
+	FName url;
 
 	int32 itemCount = Buffer->ReadShort();
 	for (int32 i = 0; i < itemCount; i++)
@@ -244,15 +245,19 @@ void UFairyListView::ReadItems(FByteBuffer* Buffer)
 		str = Buffer->ReadSP();
 		if (!str || (*str).IsEmpty())
 		{
-			str = &DefaultItem;
-			if ((*str).IsEmpty())
+			url = DefaultItem;
+			if (url.IsNone())
 			{
 				Buffer->SetPos(nextPos);
 				continue;
 			}
 		}
+		else
+		{
+			url = FName(*str);
+		}
 
-		UFairyObject* obj = GetFromPool(*str);
+		UFairyObject* obj = GetFromPool(url);
 		if (obj != nullptr)
 		{
 			AddChild(obj);
@@ -664,13 +669,13 @@ void UFairyListView::SetAutoResizeItem(bool bFlag)
 
 UFairyObject* UFairyListView::GetFromPool()
 {
-	return GetFromPool(G_EMPTY_STRING);
+	return GetFromPool(NAME_None);
 }
 
-UFairyObject* UFairyListView::GetFromPool(const FString& URL)
+UFairyObject* UFairyListView::GetFromPool(const FName& URL)
 {
 	UFairyObject* ret = nullptr;
-	if (URL.Len() == 0)
+	if (URL.IsNone())
 	{
 		ret = Pool->GetOrCreateObject(this, DefaultItem);
 	}
@@ -691,7 +696,7 @@ void UFairyListView::ReturnToPool(UFairyObject* Obj)
 	Pool->ReturnObject(Obj);
 }
 
-UFairyObject* UFairyListView::AddItemFromPool(const FString& URL)
+UFairyObject* UFairyListView::AddItemFromPool(const FName& URL)
 {
 	UFairyObject* Obj = GetFromPool(URL);
 
@@ -1695,7 +1700,7 @@ void UFairyListView::SetNumItems(int32 InNumItems)
 				}
 				else
 				{
-					AddItemFromPool(ItemProvider.Execute(i));
+					AddItemFromPool(FName(ItemProvider.Execute(i)));
 				}
 			}
 		}
@@ -2156,7 +2161,7 @@ bool UFairyListView::HandleScroll1(bool forceUpdate)
 	bool needRender;
 	float deltaSize = 0;
 	float firstItemDeltaSize = 0;
-	FString url = DefaultItem;
+	FName url(DefaultItem);
 	int32 partSize = (int32)((ScrollPanel->GetViewSize().X - ColSpacing * (CurLineItemCount - 1)) / CurLineItemCount);
 
 	ItemInfoVer++;
@@ -2168,8 +2173,8 @@ bool UFairyListView::HandleScroll1(bool forceUpdate)
 		{
 			if (ItemProvider.IsBound())
 			{
-				url = ItemProvider.Execute(curIndex % NumItems);
-				if (url.Len() == 0)
+				url = FName(ItemProvider.Execute(curIndex % NumItems));
+				if (url.IsNone())
 				{
 					url = DefaultItem;
 				}
@@ -2361,7 +2366,7 @@ bool UFairyListView::HandleScroll2(bool forceUpdate)
 	bool needRender;
 	float deltaSize = 0;
 	float firstItemDeltaSize = 0;
-	FString url = DefaultItem;
+	FName url(DefaultItem);
 	int32 partSize = (int32)((ScrollPanel->GetViewSize().Y - RowSpacing * (CurLineItemCount - 1)) / CurLineItemCount);
 
 	ItemInfoVer++;
@@ -2373,8 +2378,8 @@ bool UFairyListView::HandleScroll2(bool forceUpdate)
 		{
 			if (ItemProvider.IsBound())
 			{
-				url = ItemProvider.Execute(curIndex % NumItems);
-				if (url.Len() == 0)
+				url = FName(ItemProvider.Execute(curIndex % NumItems));
+				if (url.IsNone())
 				{
 					url = DefaultItem;
 				}
@@ -2555,7 +2560,7 @@ void UFairyListView::HandleScroll3(bool forceUpdate)
 	int32 startIndex = page * pageSize;
 	int32 lastIndex = startIndex + pageSize * 2;
 	bool needRender;
-	FString url = DefaultItem;
+	FName url(DefaultItem);
 	int32 partWidth = (int32)((ScrollPanel->GetViewSize().X - ColSpacing * (CurLineItemCount - 1)) / CurLineItemCount);
 	int32 partHeight = (int32)((ScrollPanel->GetViewSize().Y - RowSpacing * (CurLineItemCount2 - 1)) / CurLineItemCount2);
 	ItemInfoVer++;
@@ -2616,9 +2621,11 @@ void UFairyListView::HandleScroll3(bool forceUpdate)
 			{
 				if (ItemProvider.IsBound())
 				{
-					url = ItemProvider.Execute(i % NumItems);
-					if (url.Len() == 0)
+					url = FName(ItemProvider.Execute(i % NumItems));
+					if (url.IsNone())
+					{
 						url = DefaultItem;
+					}
 					url = UFairyPackageMgr::Get()->NormalizeURL(url);
 				}
 

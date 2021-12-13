@@ -195,8 +195,10 @@ public:
 
 	// ************** ScrollView API Start *******************
 	virtual void SetupScroll(FByteBuffer* Buffer);
+
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	FVector2D GetScrollMaskSizeForBind();
+
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	FVector2D GetScrollContentSizeForBind();
 
@@ -238,8 +240,10 @@ protected:
 
 	UPROPERTY(Transient)
 	TArray<UGController*> Controllers;
+	
 	UPROPERTY(Transient)
 	TArray<UTransition*> Transitions;
+	
 	UPROPERTY(Transient)
 	UScrollPanel* ScrollPanel;
 

@@ -44,7 +44,7 @@ public:
     SLATE_BEGIN_ARGS(SContainer) :
         _GObject(nullptr)
     {}
-    SLATE_ARGUMENT(UFairyObject*, GObject)
+    SLATE_ARGUMENT(UFairyObject*, GObject) // todo: rename to FairyObject
     SLATE_END_ARGS()
 
     SContainer();

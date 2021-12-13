@@ -9,20 +9,20 @@ inline bool IsLittleEndian()
 	return (bool)nativeendian.little;
 }
 
-FByteBuffer::FByteBuffer(const uint8* InBuffer, int32 InOffset, int32 InLen, bool bInTransferOwnerShip)
+FByteBuffer::FByteBuffer(const uint8* InBuffer, int32 InOffset, int32 InLen, bool bInTransferBuffer)
 	: bLittleEndian(false),
 	Version(0),
 	Buffer(InBuffer),
 	Offset(InOffset),
 	Length(InLen),
 	Position(0),
-	bOwnsBuffer(bInTransferOwnerShip)
+	bTransferBuffer(bInTransferBuffer)
 {
 }
 
 FByteBuffer::~FByteBuffer()
 {
-	if (bOwnsBuffer && Buffer != nullptr)
+	if (bTransferBuffer && Buffer != nullptr)
 	{
 		FMemory::Free((void*)Buffer);
 	}

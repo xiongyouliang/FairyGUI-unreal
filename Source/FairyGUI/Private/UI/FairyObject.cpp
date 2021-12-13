@@ -423,39 +423,40 @@ void UFairyObject::StopDrag()
 	DragEnd();
 }
 
-FString UFairyObject::GetResourceURL() const
+FName UFairyObject::GetResourceURL() const
 {
 	if (PackageItem.IsValid())
 	{
-		return FString(TEXT("ui://")) + PackageItem->OwnerPackage->GetID().ToString() + PackageItem->ID.ToString();
+		FString TempUrl = FString(TEXT("ui://")) + PackageItem->OwnerPackage->GetID().ToString() + PackageItem->ID.ToString();
+		return FName(TempUrl);
 	}
 	else
 	{
-		return G_EMPTY_STRING;
+		return NAME_None;
 	}
 }
 
-FString UFairyObject::GetResourceName() const
+FName UFairyObject::GetResourceName() const
 {
 	if (PackageItem.IsValid())
 	{
-		return PackageItem->Name.ToString();
+		return PackageItem->Name;
 	}
 	else
 	{
-		return G_EMPTY_STRING;
+		return NAME_None;
 	}
 }
 
-FString UFairyObject::GetPackageName() const
+FName UFairyObject::GetPackageName() const
 {
 	if (PackageItem.IsValid())
 	{
-		return PackageItem->OwnerPackage->GetName().ToString();
+		return PackageItem->OwnerPackage->GetName();
 	}
 	else
 	{
-		return G_EMPTY_STRING;
+		return NAME_None;
 	}
 }
 

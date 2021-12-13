@@ -76,11 +76,11 @@ public:
 
 	FFairyObjectPool* GetItemPool() const { return Pool; }
 	UFairyObject* GetFromPool();
-	UFairyObject* GetFromPool(const FString& URL);
+	UFairyObject* GetFromPool(const FName& URL);
 	void ReturnToPool(UFairyObject* Obj);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	UFairyObject* AddItemFromPool(const FString& URL = "");
+	UFairyObject* AddItemFromPool(const FName& URL = NAME_None);
 
 	virtual UFairyObject* AddChildAt(UFairyObject* Child, int32 Index) override;
 	virtual void RemoveChildAt(int32 Index) override;
@@ -172,7 +172,7 @@ public:
 	FGUIEventDynMDelegate OnClickItem;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
-	FString DefaultItem;
+	FName DefaultItem;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
 	bool bScrollItemToViewOnClick;

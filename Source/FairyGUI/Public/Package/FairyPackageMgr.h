@@ -40,8 +40,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	UFairyPackage* GetPackageByID(const FName& PackageID);
 
-	FString ConvertToItemURL(const FName& PackageName, const FName& ResourceName);
-	FString NormalizeURL(const FString& URL);
+	FName ConvertToItemURL(FName PackageName, FName ResourceName);
+	FName NormalizeURL(FName InUrl);
 	TSharedPtr<FFairyPackageItem> GetPackageItemByURL(const FString& URL);
 	
 

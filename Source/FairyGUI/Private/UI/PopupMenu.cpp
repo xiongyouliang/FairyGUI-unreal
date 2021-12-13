@@ -100,7 +100,7 @@ void UPopupMenu::AddSeperator()
         return;
     }
 
-    List->AddItemFromPool(UFairyConfig::Config->PopupMenuSeperator);
+    List->AddItemFromPool(FName(UFairyConfig::Config->PopupMenuSeperator));
 }
 
 const FString& UPopupMenu::GetItemName(int32 Index) const

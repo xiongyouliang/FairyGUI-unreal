@@ -11,7 +11,7 @@ enum FairyBinaryBlockIndex
 class FAIRYGUI_API FByteBuffer
 {
 public:
-	FByteBuffer(const uint8* InBuffer, int32 InOffset, int32 InLen, bool bInTransferOwnerShip);
+	FByteBuffer(const uint8* InBuffer, int32 InOffset, int32 InLen, bool bInTransferBuffer);
 	~FByteBuffer();
 
 	const uint8* GetBuffer() const { return Buffer; }
@@ -52,6 +52,6 @@ private:
 	const uint8* Buffer;
 	int32 Offset;
 	int32 Length;
-	int32 Position;;
-	bool bOwnsBuffer;
+	int32 Position;
+	bool bTransferBuffer;
 };

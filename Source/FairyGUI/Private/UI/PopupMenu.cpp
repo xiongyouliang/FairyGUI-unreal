@@ -37,7 +37,7 @@ void UPopupMenu::Create(const FString& ResourceURL)
     ContentPane = UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), url)->As<UFairyComponent>();
     ContentPane->On(FFairyEventNames::AddedToStage).AddUObject(this, &UPopupMenu::OnAddedToStage);
 
-    List = ContentPane->GetChild("list")->As<UGList>();
+    List = ContentPane->GetChild("list")->As<UFairyListView>();
     List->RemoveChildrenToPool();
 
     List->AddRelation(ContentPane, ERelationType::Width);

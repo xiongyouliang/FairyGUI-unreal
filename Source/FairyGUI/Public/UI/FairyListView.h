@@ -1,7 +1,7 @@
 #pragma once
 
 #include "UI/FairyComponent.h"
-#include "GList.generated.h"
+#include "FairyListView.generated.h"
 
 class FFairyObjectPool;
 
@@ -22,12 +22,12 @@ struct FFairyListItemInfo
 };
 
 UCLASS(BlueprintType, NotBlueprintable)
-class FAIRYGUI_API UGList : public UFairyComponent
+class FAIRYGUI_API UFairyListView : public UFairyComponent
 {
 	GENERATED_BODY()
 public:
-	UGList();
-	virtual ~UGList();
+	UFairyListView();
+	virtual ~UFairyListView();
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	EListLayoutType GetLayout() const { return LayoutType; }

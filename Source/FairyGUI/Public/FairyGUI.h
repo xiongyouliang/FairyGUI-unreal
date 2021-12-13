@@ -19,7 +19,7 @@
 #include "UI/GProgressBar.h"
 #include "UI/GSlider.h"
 #include "UI/GScrollBar.h"
-#include "UI/GList.h"
+#include "UI/FairyListView.h"
 #include "UI/GTree.h"
 #include "UI/PopupMenu.h"
 #include "UI/GWindow.h"

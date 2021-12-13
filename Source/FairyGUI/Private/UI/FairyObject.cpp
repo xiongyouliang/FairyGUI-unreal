@@ -1,6 +1,6 @@
 #include "UI/FairyObject.h"
 #include "Package/FairyPackage.h"
-#include "UI/GList.h"
+#include "UI/FairyListView.h"
 #include "UI/GGroup.h"
 #include "UI/Controller/GController.h"
 #include "UI/FairyRoot.h"

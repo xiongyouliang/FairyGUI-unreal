@@ -6,7 +6,7 @@
 #include "UI/GLabel.h"
 #include "UI/FairyButton.h"
 #include "UI/Controller/GController.h"
-#include "UI/GList.h"
+#include "UI/FairyListView.h"
 #include "UI/FairyRoot.h"
 #include "Utils/ByteBuffer.h"
 
@@ -310,7 +310,7 @@ void UGComboBox::ConstructExtension(FByteBuffer* Buffer)
         DropdownObject = Cast<UFairyComponent>(UFairyPackageMgr::Get()->CreateObjectFromURL(this, dropdownResource));
         verifyf(DropdownObject != nullptr, TEXT("should be a component."));
 
-        ListObject = Cast<UGList>(DropdownObject->GetChild("list"));
+        ListObject = Cast<UFairyListView>(DropdownObject->GetChild("list"));
         verifyf(ListObject != nullptr, TEXT("should container a list component named list."));
 
         ListObject->On(FFairyEventNames::ClickItem).AddUObject(this, &UGComboBox::OnClickItem);

@@ -3,7 +3,7 @@
 #include "Engine/GameViewportClient.h"
 #include "TimerManager.h"
 #include "Package/FairyPackageMgr.h"
-#include "UI/GList.h"
+#include "UI/FairyListView.h"
 #include "UI/Controller/GController.h"
 #include "UI/GScrollBar.h"
 #include "Utils/ByteBuffer.h"
@@ -1060,7 +1060,7 @@ void UScrollPanel::OnBarTweenComplete(UFairyTweener* Tweener)
 
 float UScrollPanel::GetLoopPartSize(float Division, int32 Axis)
 {
-	return (ContentSize.Component(Axis) + (Axis == 0 ? ((UGList*)Owner)->GetColumnGap() : ((UGList*)Owner)->GetLineGap())) / Division;
+	return (ContentSize.Component(Axis) + (Axis == 0 ? ((UFairyListView*)Owner)->GetColumnGap() : ((UFairyListView*)Owner)->GetLineGap())) / Division;
 }
 
 bool UScrollPanel::LoopCheckingCurrent()

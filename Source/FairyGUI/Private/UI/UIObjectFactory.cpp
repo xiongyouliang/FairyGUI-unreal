@@ -17,7 +17,7 @@
 #include "UI/GProgressBar.h"
 #include "UI/GSlider.h"
 #include "UI/GScrollBar.h"
-#include "UI/GList.h"
+#include "UI/FairyListView.h"
 #include "UI/GTree.h"
 #include "Package/FairyPackageMgr.h"
 
@@ -85,7 +85,7 @@ UFairyObject* FUIObjectFactory::NewObject(UObject* Outer, EObjectType Type)
     case EObjectType::Group:
         return ::NewObject<UGGroup>(Outer);
     case EObjectType::List:
-        return ::NewObject<UGList>(Outer);
+        return ::NewObject<UFairyListView>(Outer);
     case EObjectType::Graph:
         return ::NewObject<UGGraph>(Outer);
     case EObjectType::Loader:

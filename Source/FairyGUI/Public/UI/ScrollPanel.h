@@ -271,6 +271,6 @@ private:
     static TWeakObjectPtr<UScrollPanel> DraggingPane;
 
     friend class UFairyComponent;
-    friend class UGList;
+    friend class UFairyListView;
     friend class UGScrollBar;
 };

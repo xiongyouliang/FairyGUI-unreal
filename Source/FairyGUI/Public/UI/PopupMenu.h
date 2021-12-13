@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GList.h"
+#include "UI/FairyListView.h"
 #include "UI/FairyButton.h"
 #include "PopupMenu.generated.h"
 
@@ -63,7 +63,7 @@ public:
     UFairyComponent* GetContentPane() const { return ContentPane; }
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    UGList* GetList() const { return List; }
+    UFairyListView* GetList() const { return List; }
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     void Show(UFairyObject* AtObject, EPopupDirection Dir = EPopupDirection::Auto);
@@ -73,7 +73,7 @@ protected:
 
     UPROPERTY(Transient)
     UFairyComponent* ContentPane;
-    UGList* List;
+    UFairyListView* List;
 
 private:
     void OnClickItem(UEventContext* Context);

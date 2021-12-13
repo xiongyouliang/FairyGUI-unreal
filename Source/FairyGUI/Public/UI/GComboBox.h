@@ -5,7 +5,7 @@
 
 class UGController;
 class UGTextField;
-class UGList;
+class UFairyListView;
 
 UCLASS(BlueprintType, Blueprintable)
 class FAIRYGUI_API UGComboBox : public UFairyComponent
@@ -96,7 +96,7 @@ protected:
     UFairyComponent* DropdownObject;
     UFairyObject* TitleObject;
     UFairyObject* IconObject;
-    UGList* ListObject;
+    UFairyListView* ListObject;
     UGController* SelectionController;
 
 private:

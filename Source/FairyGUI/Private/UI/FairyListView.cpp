@@ -1,4 +1,4 @@
-﻿#include "UI/GList.h"
+#include "UI/FairyListView.h"
 #include "UI/FairyButton.h"
 #include "UI/FairyObjectPool.h"
 #include "UI/Controller/GController.h"
@@ -15,7 +15,7 @@ FFairyListItemInfo::FFairyListItemInfo() :
 {
 }
 
-UGList::UGList() :
+UFairyListView::UFairyListView() :
 	bScrollItemToViewOnClick(true),
 	bAutoResizeItem(true),
 	LastSelectedIndex(-1),
@@ -28,7 +28,7 @@ UGList::UGList() :
 	}
 }
 
-UGList::~UGList()
+UFairyListView::~UFairyListView()
 {
 	delete Pool;
 
@@ -39,7 +39,7 @@ UGList::~UGList()
 	MaskWidgetSlot = nullptr;
 }
 
-void UGList::MakeSlateWidget()
+void UFairyListView::MakeSlateWidget()
 {
 	if (!DisplayObject.IsValid())
 	{
@@ -62,22 +62,22 @@ void UGList::MakeSlateWidget()
 	}
 }
 
-TSharedPtr<SContainer> UGList::GetContentContainerWidget()
+TSharedPtr<SContainer> UFairyListView::GetContentContainerWidget()
 {
 	return ScrollWidget;
 }
 
-TSharedPtr<SContainer> UGList::GetMaskContainerWidget()
+TSharedPtr<SContainer> UFairyListView::GetMaskContainerWidget()
 {
 	return MaskWidget;
 }
 
-void UGList::SetupScroll(FByteBuffer* Buffer)
+void UFairyListView::SetupScroll(FByteBuffer* Buffer)
 {
 	Super::SetupScroll(Buffer);
 }
 
-FVector2D UGList::GetScrollMaskSize()
+FVector2D UFairyListView::GetScrollMaskSize()
 {
 	// scroll area size is equal FVector2D(Size.X - VerticalScrollBarWith, Size.Y - HorizontalScrollBarHeight)
 	const FVector2D& ComponentSize = GetSize();
@@ -99,12 +99,12 @@ FVector2D UGList::GetScrollMaskSize()
 	return FinalSize;
 }
 
-FVector2D UGList::GetScrollContentSize()
+FVector2D UFairyListView::GetScrollContentSize()
 {
 	return GetContentContainerSize();
 }
 
-FVector2D UGList::GetContentContainerSize()
+FVector2D UFairyListView::GetContentContainerSize()
 {
 	if (ScrollContentSize.Equals(FVector2D::ZeroVector))
 	{
@@ -113,12 +113,12 @@ FVector2D UGList::GetContentContainerSize()
 	return ScrollContentSize;
 }
 
-void UGList::SetContentContainerSize(FVector2D InSize)
+void UFairyListView::SetContentContainerSize(FVector2D InSize)
 {
 	ScrollContentSize = InSize;
 }
 
-FVector2D UGList::GetContentContainerPosition()
+FVector2D UFairyListView::GetContentContainerPosition()
 {
 	if (ScrollWidgetSlot)
 	{
@@ -127,7 +127,7 @@ FVector2D UGList::GetContentContainerPosition()
 	return FVector2D::ZeroVector;
 }
 
-void UGList::SetContentContainerPosition(FVector2D InPosition)
+void UFairyListView::SetContentContainerPosition(FVector2D InPosition)
 {
 	if (ScrollWidgetSlot)
 	{
@@ -135,7 +135,7 @@ void UGList::SetContentContainerPosition(FVector2D InPosition)
 	}
 }
 
-void UGList::ApplyController(UGController* Controller)
+void UFairyListView::ApplyController(UGController* Controller)
 {
 	UFairyComponent::ApplyController(Controller);
 
@@ -145,13 +145,13 @@ void UGList::ApplyController(UGController* Controller)
 	}
 }
 
-void UGList::UpdateBounds()
+void UFairyListView::UpdateBounds()
 {
-	UE_LOG(LogTemp, Warning, TEXT("UGList::UpdateBounds()"));
+	UE_LOG(LogTemp, Warning, TEXT("UFairyListView::UpdateBounds()"));
 	Super::UpdateBounds();
 }
 
-void UGList::SetBounds(float ax, float ay, float aw, float ah)
+void UFairyListView::SetBounds(float ax, float ay, float aw, float ah)
 {
 	Super::SetBounds(ax, ay, aw, ah);
 
@@ -161,7 +161,7 @@ void UGList::SetBounds(float ax, float ay, float aw, float ah)
 	}
 }
 
-void UGList::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
+void UFairyListView::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
 	Super::SetupBeforeAdd(Buffer, BeginPos);
 
@@ -218,7 +218,7 @@ void UGList::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 	ReadItems(Buffer);
 }
 
-void UGList::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
+void UFairyListView::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
 	Super::SetupAfterAdd(Buffer, BeginPos);
 
@@ -231,7 +231,7 @@ void UGList::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 	}
 }
 
-void UGList::ReadItems(FByteBuffer* Buffer)
+void UFairyListView::ReadItems(FByteBuffer* Buffer)
 {
 	const FString* str = nullptr;
 
@@ -265,7 +265,7 @@ void UGList::ReadItems(FByteBuffer* Buffer)
 	RefreshItemsLayout();
 }
 
-void UGList::SetupItem(FByteBuffer* Buffer, UFairyObject* Obj)
+void UFairyListView::SetupItem(FByteBuffer* Buffer, UFairyObject* Obj)
 {
 	const FString* str;
 	UFairyButton* btn = Cast<UFairyButton>(Obj);
@@ -325,7 +325,7 @@ void UGList::SetupItem(FByteBuffer* Buffer, UFairyObject* Obj)
 }
 
 // *********************** item layout start *********************************
-void UGList::RefreshItemsLayout()
+void UFairyListView::RefreshItemsLayout()
 {
 	if (LayoutType == EListLayoutType::SingleCol)
 	{
@@ -349,7 +349,7 @@ void UGList::RefreshItemsLayout()
 	}
 }
 
-void UGList::RefreshItemsLayoutForSingleCol()
+void UFairyListView::RefreshItemsLayoutForSingleCol()
 {
 	const int ChildNum = Children.Num();
 	int curPosY = 0;
@@ -377,7 +377,7 @@ void UGList::RefreshItemsLayoutForSingleCol()
 	}
 }
 
-void UGList::RefreshItemsLayoutForSingleRow()
+void UFairyListView::RefreshItemsLayoutForSingleRow()
 {
 	const int ChildNum = Children.Num();
 	int curPosX = 0;
@@ -405,7 +405,7 @@ void UGList::RefreshItemsLayoutForSingleRow()
 	}
 }
 
-void UGList::RefreshItemsLayoutForHorizontalFlow()
+void UFairyListView::RefreshItemsLayoutForHorizontalFlow()
 {
 	const int ChildNum = Children.Num();
 	if (ChildNum == 0)
@@ -445,7 +445,7 @@ void UGList::RefreshItemsLayoutForHorizontalFlow()
 	}
 }
 
-void UGList::RefreshItemsLayoutForVerticalFlow()
+void UFairyListView::RefreshItemsLayoutForVerticalFlow()
 {
 	const int ChildNum = Children.Num();
 	if (ChildNum == 0)
@@ -485,7 +485,7 @@ void UGList::RefreshItemsLayoutForVerticalFlow()
 	}
 }
 
-void UGList::RefreshItemsLayoutForPagination()
+void UFairyListView::RefreshItemsLayoutForPagination()
 {
 	const int ChildNum = Children.Num();
 	if (ChildNum == 0)
@@ -552,7 +552,7 @@ void UGList::RefreshItemsLayoutForPagination()
 }
 // *********************** item layout end *********************************
 
-void UGList::SetLayout(EListLayoutType InLayout)
+void UFairyListView::SetLayout(EListLayoutType InLayout)
 {
 	if (LayoutType != InLayout)
 	{
@@ -565,7 +565,7 @@ void UGList::SetLayout(EListLayoutType InLayout)
 	}
 }
 
-void UGList::SetLineCount(int32 InLineCount)
+void UFairyListView::SetLineCount(int32 InLineCount)
 {
 	if (RowNum != InLineCount)
 	{
@@ -581,7 +581,7 @@ void UGList::SetLineCount(int32 InLineCount)
 	}
 }
 
-void UGList::SetColumnCount(int32 InColumnCount)
+void UFairyListView::SetColumnCount(int32 InColumnCount)
 {
 	if (ColNum != InColumnCount)
 	{
@@ -597,7 +597,7 @@ void UGList::SetColumnCount(int32 InColumnCount)
 	}
 }
 
-void UGList::SetLineGap(int32 InLineGap)
+void UFairyListView::SetLineGap(int32 InLineGap)
 {
 	if (RowSpacing != InLineGap)
 	{
@@ -610,7 +610,7 @@ void UGList::SetLineGap(int32 InLineGap)
 	}
 }
 
-void UGList::SetColumnGap(int32 InColumnGap)
+void UFairyListView::SetColumnGap(int32 InColumnGap)
 {
 	if (ColSpacing != InColumnGap)
 	{
@@ -623,7 +623,7 @@ void UGList::SetColumnGap(int32 InColumnGap)
 	}
 }
 
-void UGList::SetHorizontalAlign(EHAlignType InAlign)
+void UFairyListView::SetHorizontalAlign(EHAlignType InAlign)
 {
 	if (HorizontalAlign != InAlign)
 	{
@@ -636,7 +636,7 @@ void UGList::SetHorizontalAlign(EHAlignType InAlign)
 	}
 }
 
-void UGList::SetVerticalAlign(EVAlignType InVerticalAlign)
+void UFairyListView::SetVerticalAlign(EVAlignType InVerticalAlign)
 {
 	if (VerticalAlign != InVerticalAlign)
 	{
@@ -649,7 +649,7 @@ void UGList::SetVerticalAlign(EVAlignType InVerticalAlign)
 	}
 }
 
-void UGList::SetAutoResizeItem(bool bFlag)
+void UFairyListView::SetAutoResizeItem(bool bFlag)
 {
 	if (bAutoResizeItem != bFlag)
 	{
@@ -662,12 +662,12 @@ void UGList::SetAutoResizeItem(bool bFlag)
 	}
 }
 
-UFairyObject* UGList::GetFromPool()
+UFairyObject* UFairyListView::GetFromPool()
 {
 	return GetFromPool(G_EMPTY_STRING);
 }
 
-UFairyObject* UGList::GetFromPool(const FString& URL)
+UFairyObject* UFairyListView::GetFromPool(const FString& URL)
 {
 	UFairyObject* ret = nullptr;
 	if (URL.Len() == 0)
@@ -686,19 +686,19 @@ UFairyObject* UGList::GetFromPool(const FString& URL)
 	return ret;
 }
 
-void UGList::ReturnToPool(UFairyObject* Obj)
+void UFairyListView::ReturnToPool(UFairyObject* Obj)
 {
 	Pool->ReturnObject(Obj);
 }
 
-UFairyObject* UGList::AddItemFromPool(const FString& URL)
+UFairyObject* UFairyListView::AddItemFromPool(const FString& URL)
 {
 	UFairyObject* Obj = GetFromPool(URL);
 
 	return AddChild(Obj);
 }
 
-UFairyObject* UGList::AddChildAt(UFairyObject* Child, int32 Index)
+UFairyObject* UFairyListView::AddChildAt(UFairyObject* Child, int32 Index)
 {
 	Super::AddChildAt(Child, Index); // Replace UFairyComponent with Super; maybe we need change inherit to de: UFairyComponent -> UFairyScrollPanel -> UFairyList
 
@@ -709,32 +709,32 @@ UFairyObject* UGList::AddChildAt(UFairyObject* Child, int32 Index)
 		Button->bChangeStateOnClick = false;
 	}
 
-	Child->OnClick.AddUniqueDynamic(this, &UGList::OnClickItemHandler);
+	Child->OnClick.AddUniqueDynamic(this, &UFairyListView::OnClickItemHandler);
 
 	return Child;
 }
 
-void UGList::RemoveChildAt(int32 Index)
+void UFairyListView::RemoveChildAt(int32 Index)
 {
 	UFairyObject* Child = Children[Index];
-	Child->OnClick.RemoveDynamic(this, &UGList::OnClickItemHandler);
+	Child->OnClick.RemoveDynamic(this, &UFairyListView::OnClickItemHandler);
 
 	Super::RemoveChildAt(Index);
 }
 
-void UGList::RemoveChildToPoolAt(int32 Index)
+void UFairyListView::RemoveChildToPoolAt(int32 Index)
 {
 	ReturnToPool(GetChildAt(Index));
 	RemoveChildAt(Index);
 }
 
-void UGList::RemoveChildToPool(UFairyObject* Child)
+void UFairyListView::RemoveChildToPool(UFairyObject* Child)
 {
 	ReturnToPool(Child);
 	RemoveChild(Child);
 }
 
-void UGList::RemoveChildrenToPool(int32 BeginIndex, int32 EndIndex)
+void UFairyListView::RemoveChildrenToPool(int32 BeginIndex, int32 EndIndex)
 {
 	if (EndIndex < 0 || EndIndex >= Children.Num())
 	{
@@ -747,7 +747,7 @@ void UGList::RemoveChildrenToPool(int32 BeginIndex, int32 EndIndex)
 	}
 }
 
-int32 UGList::GetSelectedIndex() const
+int32 UFairyListView::GetSelectedIndex() const
 {
 	if (bVirtual)
 	{
@@ -783,7 +783,7 @@ int32 UGList::GetSelectedIndex() const
 	return -1;
 }
 
-void UGList::SetSelectedIndex(int32 Index)
+void UFairyListView::SetSelectedIndex(int32 Index)
 {
 	if (Index >= 0 && Index < GetNumItems())
 	{
@@ -799,12 +799,12 @@ void UGList::SetSelectedIndex(int32 Index)
 	}
 }
 
-void UGList::SetSelectionController(UGController* InController)
+void UFairyListView::SetSelectionController(UGController* InController)
 {
 	SelectionController = InController;
 }
 
-void UGList::GetSelection(TArray<int32>& OutIndice) const
+void UFairyListView::GetSelection(TArray<int32>& OutIndice) const
 {
 	OutIndice.Reset();
 	if (bVirtual)
@@ -842,7 +842,7 @@ void UGList::GetSelection(TArray<int32>& OutIndice) const
 	}
 }
 
-void UGList::AddSelection(int32 Index, bool bScrollItToView)
+void UFairyListView::AddSelection(int32 Index, bool bScrollItToView)
 {
 	if (SelectionMode == EListSelectionMode::None)
 	{
@@ -884,7 +884,7 @@ void UGList::AddSelection(int32 Index, bool bScrollItToView)
 	}
 }
 
-void UGList::RemoveSelection(int32 Index)
+void UFairyListView::RemoveSelection(int32 Index)
 {
 	if (SelectionMode == EListSelectionMode::None)
 	{
@@ -912,7 +912,7 @@ void UGList::RemoveSelection(int32 Index)
 	}
 }
 
-void UGList::ClearSelection()
+void UFairyListView::ClearSelection()
 {
 	if (bVirtual)
 	{
@@ -941,7 +941,7 @@ void UGList::ClearSelection()
 	}
 }
 
-void UGList::ClearSelectionExcept(UFairyObject* Obj)
+void UFairyListView::ClearSelectionExcept(UFairyObject* Obj)
 {
 	if (bVirtual)
 	{
@@ -973,7 +973,7 @@ void UGList::ClearSelectionExcept(UFairyObject* Obj)
 	}
 }
 
-void UGList::SelectAll()
+void UFairyListView::SelectAll()
 {
 	CheckVirtualList();
 
@@ -1012,7 +1012,7 @@ void UGList::SelectAll()
 	}
 }
 
-void UGList::SelectReverse()
+void UFairyListView::SelectReverse()
 {
 	CheckVirtualList();
 
@@ -1057,7 +1057,7 @@ void UGList::SelectReverse()
 	}
 }
 
-void UGList::HandleArrowKey(int32 Direction)
+void UFairyListView::HandleArrowKey(int32 Direction)
 {
 	int32 index = GetSelectedIndex();
 	if (index == -1)
@@ -1223,7 +1223,7 @@ void UGList::HandleArrowKey(int32 Direction)
 	}
 }
 
-void UGList::OnClickItemHandler(UEventContext* Context)
+void UFairyListView::OnClickItemHandler(UEventContext* Context)
 {
 	UFairyObject* Obj = Context->GetSender();
 	if (Obj->IsA<UFairyButton>() && SelectionMode != EListSelectionMode::None)
@@ -1239,12 +1239,12 @@ void UGList::OnClickItemHandler(UEventContext* Context)
 	DispatchItemEvent(Obj, Context);
 }
 
-void UGList::DispatchItemEvent(UFairyObject* Obj, UEventContext* Context)
+void UFairyListView::DispatchItemEvent(UFairyObject* Obj, UEventContext* Context)
 {
 	DispatchEvent(FFairyEventNames::ClickItem, FNVariant(Obj));
 }
 
-void UGList::SetSelectionOnEvent(UFairyObject* Obj, UEventContext* Context)
+void UFairyListView::SetSelectionOnEvent(UFairyObject* Obj, UEventContext* Context)
 {
 	bool bDontChangeLastIndex = false;
 	UFairyButton* Button = Cast<UFairyButton>(Obj);
@@ -1330,7 +1330,7 @@ void UGList::SetSelectionOnEvent(UFairyObject* Obj, UEventContext* Context)
 	}
 }
 
-void UGList::ResizeToFit(int32 ItemCount, int32 InMinSize)
+void UFairyListView::ResizeToFit(int32 ItemCount, int32 InMinSize)
 {
 	EnsureBoundsCorrect();
 
@@ -1412,12 +1412,12 @@ void UGList::ResizeToFit(int32 ItemCount, int32 InMinSize)
 	}
 }
 
-int32 UGList::GetFirstChildInView() const
+int32 UFairyListView::GetFirstChildInView() const
 {
 	return ChildIndexToItemIndex(UFairyComponent::GetFirstChildInView());
 }
 
-//void UGList::HandleSizeChanged()
+//void UFairyListView::HandleSizeChanged()
 //{
 //    UFairyComponent::HandleSizeChanged();
 //
@@ -1430,7 +1430,7 @@ int32 UGList::GetFirstChildInView() const
 
 
 
-void UGList::UpdateSelectionController(int32 Index)
+void UFairyListView::UpdateSelectionController(int32 Index)
 {
 	if (SelectionController != nullptr && !SelectionController->bChanging && Index < SelectionController->GetPageCount())
 	{
@@ -1441,7 +1441,7 @@ void UGList::UpdateSelectionController(int32 Index)
 	}
 }
 
-void UGList::ScrollToView(int32 Index, bool bAnimation, bool bSetFirst)
+void UFairyListView::ScrollToView(int32 Index, bool bAnimation, bool bSetFirst)
 {
 	if (bVirtual)
 	{
@@ -1514,7 +1514,7 @@ void UGList::ScrollToView(int32 Index, bool bAnimation, bool bSetFirst)
 	}
 }
 
-int32 UGList::ChildIndexToItemIndex(int32 Index) const
+int32 UFairyListView::ChildIndexToItemIndex(int32 Index) const
 {
 	if (!bVirtual)
 	{
@@ -1549,7 +1549,7 @@ int32 UGList::ChildIndexToItemIndex(int32 Index) const
 	}
 }
 
-int32 UGList::ItemIndexToChildIndex(int32 Index) const
+int32 UFairyListView::ItemIndexToChildIndex(int32 Index) const
 {
 	if (!bVirtual)
 		return Index;
@@ -1582,17 +1582,17 @@ int32 UGList::ItemIndexToChildIndex(int32 Index) const
 	}
 }
 
-void UGList::SetVirtual()
+void UFairyListView::SetVirtual()
 {
 	SetVirtual(false);
 }
 
-void UGList::SetVirtualAndLoop()
+void UFairyListView::SetVirtualAndLoop()
 {
 	SetVirtual(true);
 }
 
-void UGList::SetVirtual(bool bInLoop)
+void UFairyListView::SetVirtual(bool bInLoop)
 {
 	if (!bVirtual)
 	{
@@ -1637,17 +1637,17 @@ void UGList::SetVirtual(bool bInLoop)
 			}
 		}
 
-		On(FFairyEventNames::Scroll).AddUObject(this, &UGList::OnScrollHandler);
+		On(FFairyEventNames::Scroll).AddUObject(this, &UFairyListView::OnScrollHandler);
 		SetVirtualListChangedFlag(true);
 	}
 }
 
-int32 UGList::GetNumItems() const
+int32 UFairyListView::GetNumItems() const
 {
 	return bVirtual ? NumItems : Children.Num();
 }
 
-void UGList::SetNumItems(int32 InNumItems)
+void UFairyListView::SetNumItems(int32 InNumItems)
 {
 	if (bVirtual)
 	{
@@ -1714,14 +1714,14 @@ void UGList::SetNumItems(int32 InNumItems)
 	}
 }
 
-void UGList::RefreshVirtualList()
+void UFairyListView::RefreshVirtualList()
 {
 	verifyf(bVirtual, TEXT("not virtual list"));
 
 	SetVirtualListChangedFlag(false);
 }
 
-FVector2D UGList::GetSnappingPosition(const FVector2D& InPoint)
+FVector2D UFairyListView::GetSnappingPosition(const FVector2D& InPoint)
 {
 	if (bVirtual)
 	{
@@ -1759,7 +1759,7 @@ FVector2D UGList::GetSnappingPosition(const FVector2D& InPoint)
 	}
 }
 
-void UGList::CheckVirtualList()
+void UFairyListView::CheckVirtualList()
 {
 	if (VirtualListChanged != 0)
 	{
@@ -1768,7 +1768,7 @@ void UGList::CheckVirtualList()
 	}
 }
 
-void UGList::SetVirtualListChangedFlag(bool bLayoutChanged)
+void UFairyListView::SetVirtualListChangedFlag(bool bLayoutChanged)
 {
 	if (bLayoutChanged)
 	{
@@ -1779,11 +1779,11 @@ void UGList::SetVirtualListChangedFlag(bool bLayoutChanged)
 		VirtualListChanged = 1;
 	}
 
-	//DelayCall(RefreshTimerHandle, this, &UGList::DoRefreshVirtualList);
+	//DelayCall(RefreshTimerHandle, this, &UFairyListView::DoRefreshVirtualList);
 	DoRefreshVirtualList();
 }
 
-void UGList::DoRefreshVirtualList()
+void UFairyListView::DoRefreshVirtualList()
 {
 	bool bLayoutChanged = VirtualListChanged == 2;
 	VirtualListChanged = 0;
@@ -1929,12 +1929,12 @@ void UGList::DoRefreshVirtualList()
 	HandleScroll(true);
 }
 
-void UGList::OnScrollHandler(UEventContext* Context)
+void UFairyListView::OnScrollHandler(UEventContext* Context)
 {
 	HandleScroll(false);
 }
 
-int32 UGList::GetIndexOnPos1(float& pos, bool forceUpdate)
+int32 UFairyListView::GetIndexOnPos1(float& pos, bool forceUpdate)
 {
 	if (RealNumItems < CurLineItemCount)
 	{
@@ -1998,7 +1998,7 @@ int32 UGList::GetIndexOnPos1(float& pos, bool forceUpdate)
 	}
 }
 
-int32 UGList::GetIndexOnPos2(float& pos, bool forceUpdate)
+int32 UFairyListView::GetIndexOnPos2(float& pos, bool forceUpdate)
 {
 	if (RealNumItems < CurLineItemCount)
 	{
@@ -2062,7 +2062,7 @@ int32 UGList::GetIndexOnPos2(float& pos, bool forceUpdate)
 	}
 }
 
-int32 UGList::GetIndexOnPos3(float& pos, bool forceUpdate)
+int32 UFairyListView::GetIndexOnPos3(float& pos, bool forceUpdate)
 {
 	if (RealNumItems < CurLineItemCount)
 	{
@@ -2090,7 +2090,7 @@ int32 UGList::GetIndexOnPos3(float& pos, bool forceUpdate)
 	return startIndex + CurLineItemCount - 1;
 }
 
-void UGList::HandleScroll(bool forceUpdate)
+void UFairyListView::HandleScroll(bool forceUpdate)
 {
 	if (bEventLocked)
 	{
@@ -2135,7 +2135,7 @@ void UGList::HandleScroll(bool forceUpdate)
 	bBoundsChanged = false;
 }
 
-bool UGList::HandleScroll1(bool forceUpdate)
+bool UFairyListView::HandleScroll1(bool forceUpdate)
 {
 	float pos = ScrollPanel->GetScrollingPosY();
 	float max = pos + ScrollPanel->GetViewSize().Y;
@@ -2338,7 +2338,7 @@ bool UGList::HandleScroll1(bool forceUpdate)
 	return true;
 }
 
-bool UGList::HandleScroll2(bool forceUpdate)
+bool UFairyListView::HandleScroll2(bool forceUpdate)
 {
 	float pos = ScrollPanel->GetScrollingPosX();
 	float max = pos + ScrollPanel->GetViewSize().X;
@@ -2535,7 +2535,7 @@ bool UGList::HandleScroll2(bool forceUpdate)
 	return true;
 }
 
-void UGList::HandleScroll3(bool forceUpdate)
+void UFairyListView::HandleScroll3(bool forceUpdate)
 {
 	float pos = ScrollPanel->GetScrollingPosX();
 
@@ -2718,7 +2718,7 @@ void UGList::HandleScroll3(bool forceUpdate)
 	}
 }
 
-void UGList::HandleArchOrder1()
+void UFairyListView::HandleArchOrder1()
 {
 	if (ChildrenRenderOrder == EChildrenRenderOrder::Arch)
 	{
@@ -2743,7 +2743,7 @@ void UGList::HandleArchOrder1()
 	}
 }
 
-void UGList::HandleArchOrder2()
+void UFairyListView::HandleArchOrder2()
 {
 	if (ChildrenRenderOrder == EChildrenRenderOrder::Arch)
 	{
@@ -2768,7 +2768,7 @@ void UGList::HandleArchOrder2()
 	}
 }
 
-void UGList::HandleAlign(float contentWidth, float contentHeight)
+void UFairyListView::HandleAlign(float contentWidth, float contentHeight)
 {
 	FVector2D newOffset(0, 0);
 
@@ -2806,7 +2806,7 @@ void UGList::HandleAlign(float contentWidth, float contentHeight)
 	}
 }
 
-void UGList::SetItemRenderer(const FDynListItemRenderer& InItemRenderer)
+void UFairyListView::SetItemRenderer(const FDynListItemRenderer& InItemRenderer)
 {
 	if (InItemRenderer.IsBound())
 	{
@@ -2818,7 +2818,7 @@ void UGList::SetItemRenderer(const FDynListItemRenderer& InItemRenderer)
 	}
 }
 
-void UGList::SetItemProvider(const FDynListItemProvider& InItemProvider)
+void UFairyListView::SetItemProvider(const FDynListItemProvider& InItemProvider)
 {
 	if (InItemProvider.IsBound())
 	{
@@ -2831,7 +2831,7 @@ void UGList::SetItemProvider(const FDynListItemProvider& InItemProvider)
 }
 
 
-EFairyScrollDirection UGList::GetScrollDirection()
+EFairyScrollDirection UFairyListView::GetScrollDirection()
 {
 	if (LayoutType == EListLayoutType::SingleCol || LayoutType == EListLayoutType::HorizontalFlow)
 	{

@@ -7,20 +7,20 @@
 UCLASS()
 class FAIRYGUI_API UFairyPackageAsset : public UObject
 {
-    GENERATED_BODY()
+	GENERATED_BODY()
 
 public:
 
-    UFairyPackageAsset();
-    ~UFairyPackageAsset();
+	UFairyPackageAsset();
+	~UFairyPackageAsset();
 
-    UPROPERTY(EditAnywhere)
-    TArray<uint8> Data;
+	UPROPERTY(EditAnywhere)
+	TArray<uint8> Data;
 
 #if WITH_EDITORONLY_DATA
-    UPROPERTY(Instanced)
-    class UAssetImportData* AssetImportData;
+	UPROPERTY(Instanced)
+	class UAssetImportData* AssetImportData;
 
-    virtual void GetAssetRegistryTags(TArray<FAssetRegistryTag>& OutTags) const override;
+	virtual void GetAssetRegistryTags(TArray<FAssetRegistryTag>& OutTags) const override;
 #endif
 };

@@ -8,10 +8,10 @@ namespace FairyGUI {
 	enum class EPackageSegmentIndex
 	{
 		DependencyAndBranch = 0, // Package dependency and branch info segment
-		CompontentList = 1, // All component data in this package
-		Unknow = 3, // I don't know this segment means by code analysis
-		Atlas = 2, // Atlas info for this package
-		StringTable = 4, // String table data in this package
+		CompontentList = 1, // All component data in package
+		PixelHitTest = 3, // Pixel hit test data in package
+		Atlas = 2, // Atlas info for package
+		StringTable = 4, // String table data in package
 	};
 
 	enum class EComponentBlockIndex

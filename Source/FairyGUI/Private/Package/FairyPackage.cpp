@@ -130,14 +130,13 @@ void UFairyPackage::Load(FairyGUI::FByteBuffer* Buffer)
     Buffer->Skip(20);
 
     int32 indexTablePos = Buffer->GetPos();
-    int32 cnt;
     
     // string table segment: index = 4
     Buffer->Seek(indexTablePos, 4);
-    cnt = Buffer->ReadInt();
+    int32 strNum = Buffer->ReadInt();
     TArray<FString>* StringTable = new TArray<FString>();
-    StringTable->SetNum(cnt, true);
-    for (int32 i = 0; i < cnt; i++)
+    StringTable->SetNum(strNum, true);
+    for (int32 i = 0; i < strNum; i++)
     {
         (*StringTable)[i] = Buffer->ReadString();
     }
@@ -145,8 +144,8 @@ void UFairyPackage::Load(FairyGUI::FByteBuffer* Buffer)
 
     // dependency and branch segment: index = 0
     Buffer->Seek(indexTablePos, 0);
-    cnt = Buffer->ReadShort();
-    for (int32 i = 0; i < cnt; i++)
+    int32 depNum = Buffer->ReadShort();
+    for (int32 i = 0; i < depNum; i++)
     {
         TMap<FName, FName> info;
         info.Add(FName(TEXT("id")), Buffer->ReadFNameFromCache());
@@ -158,10 +157,10 @@ void UFairyPackage::Load(FairyGUI::FByteBuffer* Buffer)
     bool branchIncluded = false;
     if (ver2)
     {
-        cnt = Buffer->ReadShort();
-        if (cnt > 0)
+        int branchNum = Buffer->ReadShort();
+        if (branchNum > 0)
         {
-            Buffer->ReadFNameArray(Branches, cnt);
+            Buffer->ReadFNameArray(Branches, branchNum);
             FName CurBranch = UFairyPackageMgr::Get()->GetBranch();
             if (!CurBranch.IsNone())
             {
@@ -169,7 +168,7 @@ void UFairyPackage::Load(FairyGUI::FByteBuffer* Buffer)
             }
         }
 
-        branchIncluded = cnt > 0;
+        branchIncluded = branchNum > 0;
     }
 
     // all item info segument in this package: index = 1;
@@ -177,8 +176,8 @@ void UFairyPackage::Load(FairyGUI::FByteBuffer* Buffer)
     FString path = FPaths::GetPath(AssetPath.ToString());
     FString fileName = FPaths::GetBaseFilename(AssetPath.ToString());
 
-    cnt = Buffer->ReadShort();
-    for (int32 i = 0; i < cnt; i++)
+    int32 itemNum = Buffer->ReadShort();
+    for (int32 i = 0; i < itemNum; i++)
     {
         int32 nextPos = Buffer->ReadInt();
         nextPos += Buffer->GetPos();
@@ -313,8 +312,8 @@ void UFairyPackage::Load(FairyGUI::FByteBuffer* Buffer)
 
     // Atlas Sprite info segment: index = 2
     Buffer->Seek(indexTablePos, 2);
-    cnt = Buffer->ReadShort();
-    for (int32 i = 0; i < cnt; i++)
+    int32 atlasNum = Buffer->ReadShort();
+    for (int32 i = 0; i < atlasNum; i++)
     {
         int32 nextPos = Buffer->ReadShort();
         nextPos += Buffer->GetPos();

@@ -116,7 +116,7 @@ void UGTextInput::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 
     Buffer->Seek(BeginPos, 5);
 
-    TextFormat.Face = Buffer->ReadS();
+    TextFormat.Face = Buffer->ReadStringFromCache();
     TextFormat.Size = Buffer->ReadShort();
     TextFormat.Color = Buffer->ReadColor();
     TextFormat.HAlign = (EHAlignType)Buffer->ReadByte();
@@ -185,7 +185,7 @@ void UGTextInput::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 
     Buffer->Seek(BeginPos, 6);
 
-    const FString& str = Buffer->ReadS();
+    const FString& str = Buffer->ReadStringFromCache();
     if (!str.IsEmpty())
     {
         SetText(str);

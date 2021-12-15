@@ -214,7 +214,7 @@ void UFairyListView::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 
 	Buffer->Seek(BeginPos, 8);
 
-	DefaultItem = Buffer->ReadFName();
+	DefaultItem = Buffer->ReadFNameFromCache();
 	ReadItems(Buffer);
 }
 
@@ -306,8 +306,8 @@ void UFairyListView::SetupItem(FByteBuffer* Buffer, UFairyObject* Obj)
 		int32 cnt = Buffer->ReadShort();
 		for (int32 i = 0; i < cnt; i++)
 		{
-			UGController* cc = gcom->GetController(Buffer->ReadS());
-			const FString& PageID = Buffer->ReadS();
+			UGController* cc = gcom->GetController(Buffer->ReadStringFromCache());
+			const FString& PageID = Buffer->ReadStringFromCache();
 			cc->SetSelectedPageID(PageID);
 		}
 
@@ -316,9 +316,9 @@ void UFairyListView::SetupItem(FByteBuffer* Buffer, UFairyObject* Obj)
 			cnt = Buffer->ReadShort();
 			for (int32 i = 0; i < cnt; i++)
 			{
-				const FString& target = Buffer->ReadS();
+				const FString& target = Buffer->ReadStringFromCache();
 				EObjectPropID PropID = (EObjectPropID)Buffer->ReadShort();
-				FString value = Buffer->ReadS();
+				FString value = Buffer->ReadStringFromCache();
 				UFairyObject* obj2 = gcom->GetChildByPath(target);
 				if (obj2 != nullptr)
 				{

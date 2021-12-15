@@ -798,8 +798,8 @@ void UFairyObject::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 	Buffer->Seek(BeginPos, 0);
 	Buffer->Skip(5);
 
-	this->ID = Buffer->ReadS();
-	this->Name = Buffer->ReadS();
+	this->ID = Buffer->ReadStringFromCache();
+	this->Name = Buffer->ReadStringFromCache();
 
 	// position attribute, delay setting as we need know the anchor attribute
 	float PosX = Buffer->ReadInt();
@@ -878,7 +878,7 @@ void UFairyObject::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 	Buffer->ReadByte(); //blendMode
 	Buffer->ReadByte(); //filter
 
-	const FString& str = Buffer->ReadS();
+	const FString& str = Buffer->ReadStringFromCache();
 	if (!str.IsEmpty())
 	{
 		UserData = str;
@@ -889,7 +889,7 @@ void UFairyObject::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 {
 	Buffer->Seek(BeginPos, 1);
 
-	const FString& str = Buffer->ReadS();
+	const FString& str = Buffer->ReadStringFromCache();
 	if (!str.IsEmpty())
 	{
 		SetTooltips(str);

@@ -6,9 +6,9 @@ void FChangePageAction::Setup(FByteBuffer* Buffer)
 {
     FControllerAction::Setup(Buffer);
 
-    ObjectID = Buffer->ReadS();
-    ControllerName = Buffer->ReadS();
-    TargetPage = Buffer->ReadS();
+    ObjectID = Buffer->ReadStringFromCache();
+    ControllerName = Buffer->ReadStringFromCache();
+    TargetPage = Buffer->ReadStringFromCache();
 }
 
 void FChangePageAction::Enter(UGController* Controller)

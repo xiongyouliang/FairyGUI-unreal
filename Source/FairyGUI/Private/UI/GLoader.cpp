@@ -426,7 +426,7 @@ void UGLoader::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 
     Buffer->Seek(BeginPos, 5);
 
-    URL = Buffer->ReadS();
+    URL = Buffer->ReadStringFromCache();
     Align = (EHAlignType)Buffer->ReadByte();
     VerticalAlign = (EVAlignType)Buffer->ReadByte();
     Fill = (ELoaderFillType)Buffer->ReadByte();

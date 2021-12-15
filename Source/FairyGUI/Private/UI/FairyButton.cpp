@@ -422,9 +422,9 @@ void UFairyButton::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 	{
 		RelatedController = GetParent()->GetControllerAt(iv);
 	}
-	RelatedPageID = Buffer->ReadS();
+	RelatedPageID = Buffer->ReadStringFromCache();
 
-	Buffer->ReadS(Sound);
+	Sound = Buffer->ReadStringFromCache();
 	if (Buffer->ReadBool())
 	{
 		SoundVolumeScale = Buffer->ReadFloat();

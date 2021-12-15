@@ -20,7 +20,7 @@ void FTransitionItemBase::ParseBaseData(FByteBuffer* InBuffer, int32 curPos)
 {
 	startTime = InBuffer->ReadFloat();
 	targetID = InBuffer->ReadShort();
-	label = InBuffer->ReadS();
+	label = InBuffer->ReadStringFromCache();
 	bHasTween = InBuffer->ReadBool();
 }
 
@@ -33,7 +33,7 @@ void FTransitionItemBase::ParseTweenData(FByteBuffer* InBuffer, int32 curPos)
 	TweenConfigPtr->EaseType = (EFairyEaseType)InBuffer->ReadByte();
 	TweenConfigPtr->Repeat = InBuffer->ReadInt();
 	TweenConfigPtr->bYoyo = InBuffer->ReadBool();
-	TweenConfigPtr->EndLabel = InBuffer->ReadS();
+	TweenConfigPtr->EndLabel = InBuffer->ReadStringFromCache();
 
 	InBuffer->Seek(curPos, 2);
 	TweenConfigPtr->SetupStartData(InBuffer);

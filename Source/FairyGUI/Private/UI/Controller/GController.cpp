@@ -177,7 +177,7 @@ void UGController::Setup(FByteBuffer* Buffer)
 	int32 BeginPos = Buffer->GetPos();
 	Buffer->Seek(BeginPos, 0);
 
-	Name = Buffer->ReadS();
+	Name = Buffer->ReadStringFromCache();
 	bAutoRadioGroupDepth = Buffer->ReadBool();
 
 	Buffer->Seek(BeginPos, 1);
@@ -188,8 +188,8 @@ void UGController::Setup(FByteBuffer* Buffer)
 	PageNames.SetNum(cnt);
 	for (int32 i = 0; i < cnt; i++)
 	{
-		PageIDs[i] = Buffer->ReadS();
-		PageNames[i] = Buffer->ReadS();
+		PageIDs[i] = Buffer->ReadStringFromCache();
+		PageNames[i] = Buffer->ReadStringFromCache();
 	}
 
 	// Parse HomePage property for this Controller
@@ -212,7 +212,7 @@ void UGController::Setup(FByteBuffer* Buffer)
 			break;
 
 		case EHomePageType::MatchVariable:
-			HomePageIndex = PageNames.Find(UFairyPackageMgr::Get()->GetVar(Buffer->ReadFName()).ToString());
+			HomePageIndex = PageNames.Find(UFairyPackageMgr::Get()->GetVar(Buffer->ReadFNameFromCache()).ToString());
 			if (HomePageIndex == INDEX_NONE)
 			{
 				HomePageIndex = 0;

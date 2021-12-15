@@ -247,7 +247,7 @@ void UGTextField::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 	Buffer->Seek(BeginPos, 5);
 
 	FNTextFormat& TextFormat = Content->GetTextFormat();
-	TextFormat.Face				= Buffer->ReadS();
+	TextFormat.Face				= Buffer->ReadStringFromCache();
 	TextFormat.Size				= Buffer->ReadShort();
 	TextFormat.Color			= Buffer->ReadColor();
 	TextFormat.HAlign			= (EHAlignType)Buffer->ReadByte();
@@ -286,7 +286,7 @@ void UGTextField::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 	UFairyObject::SetupAfterAdd(Buffer, BeginPos);
 	Buffer->Seek(BeginPos, 6);
 
-	const FString& str = Buffer->ReadS();
+	const FString& str = Buffer->ReadStringFromCache();
 	if (!str.IsEmpty())
 	{
 		SetText(str);

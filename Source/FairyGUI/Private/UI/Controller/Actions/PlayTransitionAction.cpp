@@ -15,7 +15,7 @@ void FPlayTransitionAction::Setup(FByteBuffer* Buffer)
 {
     FControllerAction::Setup(Buffer);
 
-    TransitionName = Buffer->ReadS();
+    TransitionName = Buffer->ReadStringFromCache();
     PlayTimes = Buffer->ReadInt();
     Delay = Buffer->ReadFloat();
     bStopOnExit = Buffer->ReadBool();
@@ -27,9 +27,13 @@ void FPlayTransitionAction::Enter(UGController* Controller)
     if (trans != nullptr)
     {
         if (CurrentTransition != nullptr && CurrentTransition->IsPlaying())
+        {
             trans->ChangePlayTimes(PlayTimes);
+        }
         else
+        {
             trans->Play(PlayTimes, Delay);
+        }
         CurrentTransition = trans;
     }
 }

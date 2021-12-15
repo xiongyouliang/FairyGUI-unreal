@@ -80,10 +80,10 @@ void UScrollPanel::Setup(FByteBuffer* Buffer)
 		ScrollBarMargin.Right = Buffer->ReadInt();
 	}
 
-	const FString& vtScrollBarRes = Buffer->ReadS();
-	const FString& hzScrollBarRes = Buffer->ReadS();
-	const FString& headerRes = Buffer->ReadS();
-	const FString& footerRes = Buffer->ReadS();
+	const FString& vtScrollBarRes = Buffer->ReadStringFromCache();
+	const FString& hzScrollBarRes = Buffer->ReadStringFromCache();
+	const FString& headerRes = Buffer->ReadStringFromCache();
+	const FString& footerRes = Buffer->ReadStringFromCache();
 
 	bScrollBarOnLeft = (flags & 1) != 0; // 1 bit
 	bSnapToItem = (flags & (1 << 1)) != 0; // 2 bit

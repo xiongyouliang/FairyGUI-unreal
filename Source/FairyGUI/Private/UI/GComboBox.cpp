@@ -304,7 +304,7 @@ void UGComboBox::ConstructExtension(FByteBuffer* Buffer)
     TitleObject = GetChild("title");
     IconObject = GetChild("icon");
 
-    const FString& dropdownResource = Buffer->ReadS();
+    const FString& dropdownResource = Buffer->ReadStringFromCache();
     if (!dropdownResource.IsEmpty())
     {
         DropdownObject = Cast<UFairyComponent>(UFairyPackageMgr::Get()->CreateObjectFromURL(this, FName(dropdownResource)));
@@ -335,10 +335,14 @@ void UGComboBox::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
     UFairyComponent::SetupAfterAdd(Buffer, BeginPos);
 
     if (!Buffer->Seek(BeginPos, 6))
+    {
         return;
+    }
 
     if ((EObjectType)Buffer->ReadByte() != PackageItem->ObjectType)
+    {
         return;
+    }
 
     const FString* str;
     bool hasIcon = false;
@@ -348,14 +352,16 @@ void UGComboBox::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
         int32 nextPos = Buffer->ReadShort();
         nextPos += Buffer->GetPos();
 
-        Items.Add(Buffer->ReadS());
-        Values.Add(Buffer->ReadS());
+        Items.Add(Buffer->ReadStringFromCache());
+        Values.Add(Buffer->ReadStringFromCache());
         if ((str = Buffer->ReadSP()) != nullptr)
         {
             if (!hasIcon)
             {
                 for (int32 j = 0; j < Items.Num() - 1; j++)
+                {
                     Icons.Add(G_EMPTY_STRING);
+                }
             }
             Icons.Add(*str);
         }
@@ -374,21 +380,31 @@ void UGComboBox::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
         SetTitle(Items[0]);
     }
     else
+    {
         SelectedIndex = -1;
+    }
 
     if ((str = Buffer->ReadSP()) != nullptr)
+    {
         SetIcon(*str);
+    }
 
     if (Buffer->ReadBool())
+    {
         SetTitleColor(Buffer->ReadColor());
+    }
     int32 iv = Buffer->ReadInt();
     if (iv > 0)
+    {
         VisibleItemCount = iv;
+    }
     PopupDirection = (EPopupDirection)Buffer->ReadByte();
 
     iv = Buffer->ReadShort();
     if (iv >= 0)
+    {
         SelectionController = GetParent()->GetControllerAt(iv);
+    }
 }
 
 void UGComboBox::OnClickItem(UEventContext* Context)

@@ -102,6 +102,11 @@ float FByteBuffer::ReadFloat()
 	return *(float*)&val;
 }
 
+uint16 FByteBuffer::ReadStringIdx()
+{
+	return ReadUshort();
+}
+
 FString FByteBuffer::ReadString()
 {
 	int32 len = ReadUshort();
@@ -135,7 +140,33 @@ const FString& FByteBuffer::ReadS()
 	}
 }
 
+const FString& FByteBuffer::ReadStringFromCache()
+{
+	uint16 index = ReadUshort();
+	if (index == 65534 || index == 65533)
+	{
+		return G_EMPTY_STRING;
+	}
+	else
+	{
+		return (*StringTable)[index];
+	}
+}
+
 FName FByteBuffer::ReadFName()
+{
+	uint16 index = ReadUshort();
+	if (index == 65534 || index == 65533)
+	{
+		return NAME_None;
+	}
+	else
+	{
+		return FName((*StringTable)[index]);
+	}
+}
+
+FName FByteBuffer::ReadFNameFromCache()
 {
 	uint16 index = ReadUshort();
 	if (index == 65534 || index == 65533)
@@ -188,7 +219,7 @@ void FByteBuffer::ReadSArray(TArray<FString>& OutArray, int32 InCount)
 {
 	for (int32 i = 0; i < InCount; i++)
 	{
-		OutArray.Push(ReadS());
+		OutArray.Push(ReadStringFromCache());
 	}
 }
 
@@ -196,7 +227,7 @@ void FByteBuffer::ReadFNameArray(TArray<FName>& OutArray, int32 InCount)
 {
 	for (int32 i = 0; i < InCount; i++)
 	{
-		OutArray.Push(FName(ReadS()));
+		OutArray.Push(ReadFNameFromCache());
 	}
 }
 
@@ -222,7 +253,7 @@ FColor FByteBuffer::ReadColor()
 }
 
 /**
-* this function is not good design: 
+* this function is not a good design: 
 * if this FByteBuffer's Buffer is a outside  pointer, when argument bCloneBuffer is false, the new SubBuffer has a outside Buffer too;
 * maybe outside pointer managed with Parent FByteBuffer togethor, but will not with SubBuffer
 */

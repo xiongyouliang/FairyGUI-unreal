@@ -1192,7 +1192,7 @@ void UTransition::Setup(FByteBuffer* Buffer)
 {
 	Owner = Cast<UFairyComponent>(GetOuter());
 
-	Name = Buffer->ReadS();
+	Name = Buffer->ReadStringFromCache();
 	Options = Buffer->ReadInt();
 	bAutoPlay = Buffer->ReadBool();
 	AutoPlayTimes = Buffer->ReadInt();

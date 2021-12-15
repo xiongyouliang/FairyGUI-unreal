@@ -1293,8 +1293,8 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 			EObjectType ObjectType = (EObjectType)Buffer->ReadByte();
 			//const FString& src = Buffer->ReadS();
 			//const FString& PackageID = Buffer->ReadS();
-			FName src = Buffer->ReadFName();
-			FName PackageID = Buffer->ReadFName();
+			FName src = Buffer->ReadFNameFromCache();
+			FName PackageID = Buffer->ReadFNameFromCache();
 
 			TSharedPtr<FFairyPackageItem> ChildPackageItem = nullptr;
 			if (!src.IsNone())
@@ -1381,7 +1381,7 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 	}
 
 	//const FString& hitTestId = Buffer->ReadS();
-	FName hitTestId = Buffer->ReadFName();
+	FName hitTestId = Buffer->ReadFNameFromCache();
 	int32 i1 = Buffer->ReadInt();
 	int32 i2 = Buffer->ReadInt();
 	if (!hitTestId.IsNone())
@@ -1454,8 +1454,8 @@ void UFairyComponent::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 	int32 cnt = Buffer->ReadShort();
 	for (int32 i = 0; i < cnt; i++)
 	{
-		UGController* Controller = GetController(Buffer->ReadS());
-		const FString& PageID = Buffer->ReadS();
+		UGController* Controller = GetController(Buffer->ReadStringFromCache());
+		const FString& PageID = Buffer->ReadStringFromCache();
 		if (Controller != nullptr)
 		{
 			Controller->SetSelectedPageID(PageID);
@@ -1467,9 +1467,9 @@ void UFairyComponent::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 		cnt = Buffer->ReadShort();
 		for (int32 i = 0; i < cnt; i++)
 		{
-			FString Target = Buffer->ReadS();
+			FString Target = Buffer->ReadStringFromCache();
 			EObjectPropID PropID = (EObjectPropID)Buffer->ReadShort();
-			FString Value = Buffer->ReadS();
+			FString Value = Buffer->ReadStringFromCache();
 			UFairyObject* Obj = GetChildByPath(Target);
 			if (Obj != nullptr)
 			{

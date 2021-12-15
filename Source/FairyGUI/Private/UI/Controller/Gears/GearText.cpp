@@ -22,11 +22,11 @@ void FGearText::AddStatus(const FString& PageID, FByteBuffer* Buffer)
 {
     if (PageID.IsEmpty())
     {
-		Default = Buffer->ReadS();
+		Default = Buffer->ReadStringFromCache();
     }
     else
     {
-		Storage.Add(PageID, Buffer->ReadS());
+		Storage.Add(PageID, Buffer->ReadStringFromCache());
     }
 }
 

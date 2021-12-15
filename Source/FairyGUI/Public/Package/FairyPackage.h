@@ -12,60 +12,61 @@ class UFairyPackageAsset;
 UCLASS(BlueprintType)
 class FAIRYGUI_API UFairyPackage : public UObject
 {
-    GENERATED_BODY()
+	GENERATED_BODY()
 
 public:
-    static int32 Constructing;
+	static int32 Constructing;
 
 public:
-    UFairyPackage();
-    virtual  ~UFairyPackage();
+	UFairyPackage();
+	virtual  ~UFairyPackage();
 
-    UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    const FName GetID() const { return ID; }
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+	const FName GetID() const { return ID; }
 
-    UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    const FName GetName() const { return Name; }
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+	const FName GetName() const { return Name; }
 
-    TSharedPtr<FFairyPackageItem> GetItem(const FName& ResourceID) const;
-    TSharedPtr<FFairyPackageItem> GetItemByName(const FName& ResourceName);
-    void* GetItemAsset(const TSharedPtr<FFairyPackageItem>& Item);
+	TSharedPtr<FFairyPackageItem> GetItem(const FName& ComponentID) const;
+	TSharedPtr<FFairyPackageItem> GetItemByName(const FName& ComponentName);
+	void* GetItemAsset(const TSharedPtr<FFairyPackageItem>& Item);
 
-    UFairyObject* CreateObject(UObject* Owner, const FName& ResourceName);
-    UFairyObject* CreateObject(UObject* Owner, const TSharedPtr<FFairyPackageItem>& Item);
-
-private:
-    void Load(FByteBuffer* Buffer);
-    void LoadAtlas(const TSharedPtr<FFairyPackageItem>& Item);
-    void LoadImage(const TSharedPtr<FFairyPackageItem>& Item);
-    void LoadMovieClip(const TSharedPtr<FFairyPackageItem>& Item);
-    void LoadFont(const TSharedPtr<FFairyPackageItem>& Item);
-    void LoadSound(const TSharedPtr<FFairyPackageItem>& Item);
-
-    UObject* LoadSoundObject(FName GameAssetFilePath);
+	UFairyObject* CreateObject(UObject* Owner, const FName& ComponentName);
+	UFairyObject* CreateObject(UObject* Owner, const TSharedPtr<FFairyPackageItem>& Item);
 
 private:
-    FName ID;
-    FName Name;
-    FName AssetPath;
+	void Load(FByteBuffer* Buffer);
+	void LoadAtlas(const TSharedPtr<FFairyPackageItem>& Item);
+	void LoadImage(const TSharedPtr<FFairyPackageItem>& Item);
+	void LoadMovieClip(const TSharedPtr<FFairyPackageItem>& Item);
+	void LoadFont(const TSharedPtr<FFairyPackageItem>& Item);
+	void LoadSound(const TSharedPtr<FFairyPackageItem>& Item);
 
-    UPROPERTY(Transient)
-    UFairyPackageAsset* Asset;
+	UObject* LoadSoundObject(FName GameAssetFilePath);
 
-    TArray<TSharedPtr<FFairyPackageItem>> Items;
-    TMap<FName, TSharedPtr<FFairyPackageItem>> ItemsByID;
-    TMap<FName, TSharedPtr<FFairyPackageItem>> ItemsByName;
-    TMap<FName, struct FAtlasSprite*> Sprites;
-    
-    UPROPERTY()
-    TMap<FName, UObject*> SoundsByName;
+private:
+	FName ID;
+	FName Name;
+	FName AssetPath;
 
-    FName CustomID;
-    TArray<TMap<FName, FName>> Dependencies;
-    TArray<FName> Branches;
-    int32 BranchIndex;
+	UPROPERTY(Transient)
+	UFairyPackageAsset* Asset;
 
-    friend class UFairyPackageMgr;
-    friend class FFairyPackageItem;
-    friend class UFairyApplication;
+	TArray<TSharedPtr<FFairyPackageItem>> Items;
+	TMap<FName, TSharedPtr<FFairyPackageItem>> ItemsByID;
+	TMap<FName, TSharedPtr<FFairyPackageItem>> ItemsByName;
+	TMap<FName, struct FAtlasSprite*> Sprites;
+	
+	UPROPERTY()
+	TMap<FName, UObject*> SoundsByName;
+
+	FName CustomID;
+	TArray<TMap<FName, FName>> Dependencies;
+	TArray<FName> Branches;
+	int32 BranchIndex;
+	uint32 VersionCode;
+
+	friend class UFairyPackageMgr;
+	friend class FFairyPackageItem;
+	friend class UFairyApplication;
 };

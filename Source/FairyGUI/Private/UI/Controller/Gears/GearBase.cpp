@@ -158,7 +158,7 @@ void FGearBase::Setup(FByteBuffer* Buffer)
 	{
 		for (int32 i = 0; i < Count; i++)
 		{
-			const FString& page = Buffer->ReadS();
+			const FString& page = Buffer->ReadStringFromCache();
 			if (page.IsEmpty())
 			{
 				continue;
@@ -191,7 +191,7 @@ void FGearBase::Setup(FByteBuffer* Buffer)
 				g2->bPositionsInPercent = true;
 				for (int32 i = 0; i < Count; i++)
 				{
-					const FString& page = Buffer->ReadS();
+					const FString& page = Buffer->ReadStringFromCache();
 					if (page.IsEmpty())
 					{
 						continue;

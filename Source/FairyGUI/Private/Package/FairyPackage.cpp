@@ -76,16 +76,16 @@ TSharedPtr<FFairyPackageItem> UFairyPackage::GetItemByName(const FName& Resource
     }
 }
 
-UFairyObject* UFairyPackage::CreateObject(UObject* Owner, const FName& ResourceName)
+UFairyObject* UFairyPackage::CreateObject(UObject* Owner, const FName& ComponentName)
 {
-    TSharedPtr<FFairyPackageItem> item = GetItemByName(ResourceName);
+    TSharedPtr<FFairyPackageItem> item = GetItemByName(ComponentName);
     //verifyf will break app, use a error log replace it in Dev/Test/Debug Build, include Editor;
 #if UE_BUILD_SHIPPING
     verifyf(item.IsValid(), TEXT("FairyGUI: resource not found - %s in  %s"), *ResourceName, *Name);
 #else
     if (!item.IsValid())
     {
-        UE_LOG(LogTemp, Error, TEXT("FairyGUI: resource not found - %s in  %s"), *ResourceName.ToString(), *Name.ToString());
+        UE_LOG(LogTemp, Error, TEXT("FairyGUI: resource not found - %s in  %s"), *ComponentName.ToString(), *Name.ToString());
         return nullptr;
     }
 #endif // UE_BUILD_SHIPPING
@@ -108,23 +108,29 @@ UFairyObject* UFairyPackage::CreateObject(UObject* Owner, const TSharedPtr<FFair
 
 void UFairyPackage::Load(FByteBuffer* Buffer)
 {
-    if (Buffer->ReadUint() != 0x46475549)
+    // Is the first 4 bytes is check code?
+    uint32 checkCode = Buffer->ReadUint();
+    VersionCode = Buffer->ReadUint();
+    if ( checkCode != 0x46475549)
     {
-        UE_LOG(LogFairyGUI, Error, TEXT("not valid package format in %d '%s'"), Buffer->ReadUint(), *AssetPath.ToString());
+        UE_LOG(LogFairyGUI, Error, TEXT("not valid package format in %d '%s'"), VersionCode, *AssetPath.ToString());
         return;
     }
-    uint32 CurVersion = Buffer->ReadInt();
-    Buffer->Version = CurVersion; // todo: Version property need move to UFairyPackage class or/and FFairyPackageItem, FByteBuffer just as a help class
+    Buffer->Version = VersionCode; // todo: Version property has add in UFairyPackage, this will remove in next refactor;
 
-    bool ver2 = Buffer->Version >= 2;
-    Buffer->ReadBool(); //compressed
+    bool ver2 = VersionCode >= 2;
+
+    bool IsCompressed = Buffer->ReadBool(); //compressed
+
     ID = FName(Buffer->ReadString());
     Name = FName(Buffer->ReadString());
+
     Buffer->Skip(20);
+
     int32 indexTablePos = Buffer->GetPos();
     int32 cnt;
     
-    // parse package string table first: index = 4
+    // string table segment: index = 4
     Buffer->Seek(indexTablePos, 4);
     cnt = Buffer->ReadInt();
     TArray<FString>* StringTable = new TArray<FString>();
@@ -135,14 +141,14 @@ void UFairyPackage::Load(FByteBuffer* Buffer)
     }
     Buffer->StringTable = MakeShareable(StringTable);
 
-    // dependency segment: index = 0
+    // dependency and branch segment: index = 0
     Buffer->Seek(indexTablePos, 0);
     cnt = Buffer->ReadShort();
     for (int32 i = 0; i < cnt; i++)
     {
         TMap<FName, FName> info;
-        info.Add(FName(TEXT("id")), FName(Buffer->ReadS()));
-        info.Add(FName(TEXT("name")), FName(Buffer->ReadS()));
+        info.Add(FName(TEXT("id")), Buffer->ReadFNameFromCache());
+        info.Add(FName(TEXT("name")), Buffer->ReadFNameFromCache());
 
         Dependencies.Push(info);
     }
@@ -178,10 +184,10 @@ void UFairyPackage::Load(FByteBuffer* Buffer)
         TSharedPtr<FFairyPackageItem> pi = MakeShared<FFairyPackageItem>();
         pi->OwnerPackage = this;
         pi->Type = (EPackageItemType)Buffer->ReadByte();
-        pi->ID = Buffer->ReadFName();
-        pi->Name = Buffer->ReadFName();
+        pi->ID = Buffer->ReadFNameFromCache();
+        pi->Name = Buffer->ReadFNameFromCache();
         Buffer->Skip(2); //path
-        pi->File = FName(Buffer->ReadS());
+        pi->File = Buffer->ReadFNameFromCache();
         Buffer->ReadBool(); //exported
         pi->Size.X = Buffer->ReadInt();
         pi->Size.Y = Buffer->ReadInt();
@@ -264,7 +270,7 @@ void UFairyPackage::Load(FByteBuffer* Buffer)
 
         if (ver2)
         {
-            FName BranchStr = Buffer->ReadFName(); //branch
+            FName BranchStr = Buffer->ReadFNameFromCache(); //branch
             if (!BranchStr.IsNone())
             {
                 // construct a new FName;
@@ -281,7 +287,7 @@ void UFairyPackage::Load(FByteBuffer* Buffer)
                 }
                 else
                 {
-                    ItemsByID.Add(FName(Buffer->ReadS()), pi);
+                    ItemsByID.Add(Buffer->ReadFNameFromCache(), pi);
                 }
             }
 
@@ -311,11 +317,12 @@ void UFairyPackage::Load(FByteBuffer* Buffer)
         int32 nextPos = Buffer->ReadShort();
         nextPos += Buffer->GetPos();
 
-        const FString& itemId = Buffer->ReadS();
-        const TSharedPtr<FFairyPackageItem>& pi = ItemsByID[FName(Buffer->ReadS())];
+        FName itemId = Buffer->ReadFNameFromCache();
+        FName atlasItemId = Buffer->ReadFNameFromCache();
+        const TSharedPtr<FFairyPackageItem>& atlasPackageItem = ItemsByID[atlasItemId];
 
         FAtlasSprite* sprite = new FAtlasSprite();
-        sprite->Atlas = pi;
+        sprite->Atlas = atlasPackageItem;
         sprite->Rect.Min.X = Buffer->ReadInt();
         sprite->Rect.Min.Y = Buffer->ReadInt();
         sprite->Rect.Max.X = sprite->Rect.Min.X + Buffer->ReadInt();
@@ -339,7 +346,7 @@ void UFairyPackage::Load(FByteBuffer* Buffer)
             sprite->Offset.Set(0, 0);
             sprite->OriginalSize = sprite->Rect.GetSize();
         }
-        Sprites.Add(FName(itemId), sprite);
+        Sprites.Add(itemId, sprite);
 
         Buffer->SetPos(nextPos);
     }
@@ -465,7 +472,7 @@ void UFairyPackage::LoadMovieClip(const TSharedPtr<FFairyPackageItem>& Item)
         FrameRect.Max.X = FrameRect.Min.X + Buffer->ReadInt();
         FrameRect.Max.Y = FrameRect.Min.Y + Buffer->ReadInt();
         Frame.AddDelay = Buffer->ReadInt() / 1000.0f;
-        const FString& spriteId = Buffer->ReadS();
+        const FString& spriteId = Buffer->ReadStringFromCache();
 
         if (!spriteId.IsEmpty() && (sprite = Sprites.FindRef(FName(spriteId))) != nullptr)
         {
@@ -518,7 +525,7 @@ void UFairyPackage::LoadFont(const TSharedPtr<FFairyPackageItem>& Item)
         FBitmapFont::FGlyph Glyph;
 
         TCHAR ch = Buffer->ReadUshort();
-        const FString& img = Buffer->ReadS();
+        const FString& img = Buffer->ReadStringFromCache();
         GlyphTexCoords.X = Buffer->ReadInt();
         GlyphTexCoords.Y = Buffer->ReadInt();
         GlyphOffset.X = Buffer->ReadInt();

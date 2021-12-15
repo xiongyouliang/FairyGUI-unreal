@@ -40,7 +40,7 @@ public:
     virtual void SetProp(EObjectPropID PropID, const FNVariant& InValue) override;
 
 protected:
-    virtual void SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos) override;
+    virtual void SetupBeforeAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos) override;
 
 private:
     TSharedPtr<class SShape> Content;

@@ -420,7 +420,7 @@ void UGLoader::SetProp(EObjectPropID PropID, const FNVariant& InValue)
 //    }
 //}
 
-void UGLoader::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
+void UGLoader::SetupBeforeAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos)
 {
     UFairyObject::SetupBeforeAdd(Buffer, BeginPos);
 

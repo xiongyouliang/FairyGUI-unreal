@@ -194,7 +194,7 @@ public:
 	virtual void SetupOverflow(EOverflowType InOverflow);
 
 	// ************** ScrollView API Start *******************
-	virtual void SetupScroll(FByteBuffer* Buffer);
+	virtual void SetupScroll(FairyGUI::FByteBuffer* Buffer);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	FVector2D GetScrollMaskSizeForBind();
@@ -225,9 +225,9 @@ protected:
 		void K2_OnConstruct();
 
 protected:
-	virtual void ConstructExtension(FByteBuffer* Buffer);
+	virtual void ConstructExtension(FairyGUI::FByteBuffer* Buffer);
 	virtual void OnConstruct();
-	virtual void SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos) override;
+	virtual void SetupAfterAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos) override;
 
 	//virtual void HandleSizeChanged() override;
 	virtual void HandleGrayedChanged() override;

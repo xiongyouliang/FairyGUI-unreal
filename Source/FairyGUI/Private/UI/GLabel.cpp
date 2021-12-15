@@ -171,13 +171,13 @@ void UGLabel::SetProp(EObjectPropID PropID, const FNVariant& InValue)
     }
 }
 
-void UGLabel::ConstructExtension(FByteBuffer* Buffer)
+void UGLabel::ConstructExtension(FairyGUI::FByteBuffer* Buffer)
 {
     TitleObject = GetChild("title");
     IconObject = GetChild("icon");
 }
 
-void UGLabel::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
+void UGLabel::SetupAfterAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos)
 {
     UFairyComponent::SetupAfterAdd(Buffer, BeginPos);
 

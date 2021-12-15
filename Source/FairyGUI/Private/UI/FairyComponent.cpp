@@ -1066,7 +1066,7 @@ void UFairyComponent::SetupOverflow(EOverflowType InOverflow)
 	}
 }
 
-void UFairyComponent::SetupScroll(FByteBuffer* Buffer)
+void UFairyComponent::SetupScroll(FairyGUI::FByteBuffer* Buffer)
 {
 	if (!MaskWidget.IsValid() &&Container.IsValid())
 	{
@@ -1202,7 +1202,7 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 		FTranslationHelper::TranslateComponent(ContentItem);
 	}
 
-	FByteBuffer* Buffer = ContentItem->RawData.Get();
+	FairyGUI::FByteBuffer* Buffer = ContentItem->RawData.Get();
 	Buffer->Seek(0, 0);
 
 	bUnderConstruct = true;
@@ -1430,7 +1430,7 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 	OnConstruct();
 }
 
-void UFairyComponent::ConstructExtension(FByteBuffer* Buffer)
+void UFairyComponent::ConstructExtension(FairyGUI::FByteBuffer* Buffer)
 {
 }
 
@@ -1439,7 +1439,7 @@ void UFairyComponent::OnConstruct()
 	K2_OnConstruct();
 }
 
-void UFairyComponent::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
+void UFairyComponent::SetupAfterAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos)
 {
 	Super::SetupAfterAdd(Buffer, BeginPos);
 

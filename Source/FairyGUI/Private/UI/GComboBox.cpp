@@ -294,7 +294,7 @@ void UGComboBox::SetProp(EObjectPropID PropID, const FNVariant& InValue)
     }
 }
 
-void UGComboBox::ConstructExtension(FByteBuffer* Buffer)
+void UGComboBox::ConstructExtension(FairyGUI::FByteBuffer* Buffer)
 {
     VisibleItemCount = UFairyConfig::Config->DefaultComboBoxVisibleItemCount;
 
@@ -330,7 +330,7 @@ void UGComboBox::ConstructExtension(FByteBuffer* Buffer)
     On(FFairyEventNames::TouchEnd).AddUObject(this, &UGComboBox::OnTouchEndHandler);
 }
 
-void UGComboBox::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
+void UGComboBox::SetupAfterAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos)
 {
     UFairyComponent::SetupAfterAdd(Buffer, BeginPos);
 

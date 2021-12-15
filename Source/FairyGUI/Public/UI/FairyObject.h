@@ -9,6 +9,7 @@
 #include "FairyCommons.h"
 #include "Event/EventContext.h"
 #include "Utils/NVariant.h"
+#include "Utils/ByteBuffer.h"
 #include "UI/FairyVisual.h"
 #include "Slate/WidgetTransform.h"
 
@@ -279,8 +280,8 @@ public:
 
 	virtual void ConstructFromResource() {}; // todo: Unknow 
 	virtual void MakeSlateWidget() {} // subclass use this method to create Slate Widget Object
-	virtual void SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos);
-	virtual void SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos);
+	virtual void SetupBeforeAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos);
+	virtual void SetupAfterAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos);
 
 	inline void SetPackageItem(const TSharedPtr<FFairyPackageItem>& InPackageItem) { PackageItem = InPackageItem; }
 

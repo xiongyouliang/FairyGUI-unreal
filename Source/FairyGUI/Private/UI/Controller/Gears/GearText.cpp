@@ -18,7 +18,7 @@ void FGearText::Init()
     Storage.Reset();
 }
 
-void FGearText::AddStatus(const FString& PageID, FByteBuffer* Buffer)
+void FGearText::AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer)
 {
     if (PageID.IsEmpty())
     {

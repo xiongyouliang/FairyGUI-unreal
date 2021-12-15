@@ -24,7 +24,7 @@ void FGearAnimation::Init()
     Storage.Reset();
 }
 
-void FGearAnimation::AddStatus(const FString& PageID, FByteBuffer* Buffer)
+void FGearAnimation::AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer)
 {
     FValue Value;
     Value.bPlaying = Buffer->ReadBool();

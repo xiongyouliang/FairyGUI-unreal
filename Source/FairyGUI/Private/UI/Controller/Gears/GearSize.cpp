@@ -19,7 +19,7 @@ void FGearSize::Init()
     Storage.Reset();
 }
 
-void FGearSize::AddStatus(const FString& PageID, FByteBuffer* Buffer)
+void FGearSize::AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer)
 {
     FVector4 Value;
     Value.X = Buffer->ReadInt();

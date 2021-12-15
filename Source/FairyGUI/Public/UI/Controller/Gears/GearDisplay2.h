@@ -22,7 +22,7 @@ public:
     EConditionType Condition;
 
 protected:
-    virtual void AddStatus(const FString& pageID, FByteBuffer* Buffer) override;
+    virtual void AddStatus(const FString& pageID, FairyGUI::FByteBuffer* Buffer) override;
     virtual void Init() override;
 
 private:

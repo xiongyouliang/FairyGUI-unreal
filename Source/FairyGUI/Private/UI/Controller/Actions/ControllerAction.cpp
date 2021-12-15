@@ -33,7 +33,7 @@ void FControllerAction::Run(UGController* Controller, const FString& PreviousPag
 		Leave(Controller);
 }
 
-void FControllerAction::Setup(FByteBuffer * Buffer)
+void FControllerAction::Setup(FairyGUI::FByteBuffer* Buffer)
 {
 	int32 cnt;
 

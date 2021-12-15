@@ -793,7 +793,7 @@ void UFairyObject::HandleVisibleChanged()
 /**
 * setup base property for this FairyObject
 */
-void UFairyObject::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
+void UFairyObject::SetupBeforeAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos)
 {
 	Buffer->Seek(BeginPos, 0);
 	Buffer->Skip(5);
@@ -885,7 +885,7 @@ void UFairyObject::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 	}
 }
 
-void UFairyObject::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
+void UFairyObject::SetupAfterAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos)
 {
 	Buffer->Seek(BeginPos, 1);
 

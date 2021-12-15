@@ -72,7 +72,7 @@ TSharedPtr<SContainer> UFairyListView::GetMaskContainerWidget()
 	return MaskWidget;
 }
 
-void UFairyListView::SetupScroll(FByteBuffer* Buffer)
+void UFairyListView::SetupScroll(FairyGUI::FByteBuffer* Buffer)
 {
 	Super::SetupScroll(Buffer);
 }
@@ -161,7 +161,7 @@ void UFairyListView::SetBounds(float ax, float ay, float aw, float ah)
 	}
 }
 
-void UFairyListView::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
+void UFairyListView::SetupBeforeAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos)
 {
 	Super::SetupBeforeAdd(Buffer, BeginPos);
 
@@ -218,7 +218,7 @@ void UFairyListView::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 	ReadItems(Buffer);
 }
 
-void UFairyListView::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
+void UFairyListView::SetupAfterAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos)
 {
 	Super::SetupAfterAdd(Buffer, BeginPos);
 
@@ -231,7 +231,7 @@ void UFairyListView::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
 	}
 }
 
-void UFairyListView::ReadItems(FByteBuffer* Buffer)
+void UFairyListView::ReadItems(FairyGUI::FByteBuffer* Buffer)
 {
 	const FString* str = nullptr;
 	FName url;
@@ -270,7 +270,7 @@ void UFairyListView::ReadItems(FByteBuffer* Buffer)
 	RefreshItemsLayout();
 }
 
-void UFairyListView::SetupItem(FByteBuffer* Buffer, UFairyObject* Obj)
+void UFairyListView::SetupItem(FairyGUI::FByteBuffer* Buffer, UFairyObject* Obj)
 {
 	const FString* str;
 	UFairyButton* btn = Cast<UFairyButton>(Obj);

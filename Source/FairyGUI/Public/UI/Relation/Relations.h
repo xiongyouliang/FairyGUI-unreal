@@ -3,9 +3,9 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "UI/Relation/RelationItem.h"
+#include "Utils/ByteBuffer.h"
 
 class UFairyObject;
-class FByteBuffer;
 
 /**
 * A UFairyObject Handle a FRelations Object;
@@ -27,7 +27,7 @@ public:
 	void ClearAll();
 	void CopyFrom(const FRelations& Source);
 	bool IsEmpty() const;
-	void Setup(FByteBuffer* Buffer, bool bParentToChild);
+	void Setup(FairyGUI::FByteBuffer* Buffer, bool bParentToChild);
 
 	void ApplyRelation() const;
 

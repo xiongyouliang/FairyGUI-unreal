@@ -11,7 +11,7 @@ FPlayTransitionAction::FPlayTransitionAction() :
 {
 }
 
-void FPlayTransitionAction::Setup(FByteBuffer* Buffer)
+void FPlayTransitionAction::Setup(FairyGUI::FByteBuffer* Buffer)
 {
     FControllerAction::Setup(Buffer);
 

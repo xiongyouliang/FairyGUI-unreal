@@ -58,8 +58,8 @@ public:
 	TOptional<TMap<FString, FString>> TemplateVars;
 
 protected:
-	virtual void SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos) override;
-	virtual void SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos) override;
+	virtual void SetupBeforeAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos) override;
+	virtual void SetupAfterAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos) override;
 
 	virtual void UpdateSize();
 

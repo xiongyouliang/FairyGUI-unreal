@@ -75,8 +75,8 @@ public:
     static const FString SELECTED_DISABLED;
 
 protected:
-    virtual void ConstructExtension(FByteBuffer* Buffer) override;
-    virtual void SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos) override;
+    virtual void ConstructExtension(FairyGUI::FByteBuffer* Buffer) override;
+    virtual void SetupAfterAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos) override;
 
     virtual void ApplyController(UGController* Controller) override;
 

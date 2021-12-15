@@ -41,7 +41,7 @@ void UScrollPanel::AddCommonWidget(UFairyObject* InFairyObject)
 	}
 }
 
-void UScrollPanel::Setup(FByteBuffer* Buffer)
+void UScrollPanel::Setup(FairyGUI::FByteBuffer* Buffer)
 {
 	Owner = Cast<UFairyComponent>(GetOuter());
 	OwnerRootContainer = Owner->GetRootContainerWidget();

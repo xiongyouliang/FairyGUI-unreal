@@ -240,7 +240,7 @@ void UGTextField::SetProp(EObjectPropID PropID, const FNVariant& InValue)
 	}
 }
 
-void UGTextField::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
+void UGTextField::SetupBeforeAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos)
 {
 	UFairyObject::SetupBeforeAdd(Buffer, BeginPos);
 
@@ -281,7 +281,7 @@ void UGTextField::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
 	}
 }
 
-void UGTextField::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
+void UGTextField::SetupAfterAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos)
 {
 	UFairyObject::SetupAfterAdd(Buffer, BeginPos);
 	Buffer->Seek(BeginPos, 6);

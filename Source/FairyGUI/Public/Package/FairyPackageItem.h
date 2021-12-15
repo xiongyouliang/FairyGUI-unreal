@@ -4,8 +4,8 @@
 #include "Engine/Texture2D.h"
 #include "UI/FieldTypes.h"
 #include "FairyCommons.h"
+#include "Utils/ByteBuffer.h"
 
-class FByteBuffer;
 struct FMovieClipData;
 struct FBitmapFont;
 
@@ -35,7 +35,7 @@ public:
     FName File;
     FVector2D Size;
 
-    TSharedPtr<FByteBuffer> RawData;
+    TSharedPtr<FairyGUI::FByteBuffer> RawData;
     TOptional<TArray<FName>> Branches;
     TOptional<TArray<FName>> HighResolution;
 

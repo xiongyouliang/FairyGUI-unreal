@@ -56,7 +56,7 @@ void FGearDisplay2::UpdateState()
 {
 }
 
-void FGearDisplay2::AddStatus(const FString& PageID, FByteBuffer* Buffer)
+void FGearDisplay2::AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer)
 {
 }
 

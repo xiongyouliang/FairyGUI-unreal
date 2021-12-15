@@ -41,8 +41,8 @@ public:
     virtual void SetProp(EObjectPropID PropID, const FNVariant& InValue) override;
 
 protected:
-    virtual void ConstructExtension(FByteBuffer* Buffer) override;
-    virtual void SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos) override;
+    virtual void ConstructExtension(FairyGUI::FByteBuffer* Buffer) override;
+    virtual void SetupAfterAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos) override;
 
     UFairyObject* TitleObject;
     UFairyObject* IconObject;

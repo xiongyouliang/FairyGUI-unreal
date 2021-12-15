@@ -139,7 +139,7 @@ void UGImage::ConstructFromResource()
 	SetSize(ContentItem->Size);
 }
 
-void UGImage::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
+void UGImage::SetupBeforeAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos)
 {
 	UFairyObject::SetupBeforeAdd(Buffer, BeginPos);
 

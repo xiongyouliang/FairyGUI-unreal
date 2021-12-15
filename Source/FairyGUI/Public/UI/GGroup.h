@@ -59,8 +59,8 @@ public:
     uint8 Updating;
 
 protected:
-    virtual void SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos) override;
-    virtual void SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos) override;
+    virtual void SetupBeforeAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos) override;
+    virtual void SetupAfterAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos) override;
     virtual void HandleAlphaChanged() override;
     virtual void HandleVisibleChanged() override;
 

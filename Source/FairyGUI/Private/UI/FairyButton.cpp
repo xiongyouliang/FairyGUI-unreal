@@ -327,7 +327,7 @@ void UFairyButton::SetProp(EObjectPropID PropID, const FNVariant& InValue)
 	}
 }
 
-void UFairyButton::ConstructExtension(FByteBuffer* Buffer)
+void UFairyButton::ConstructExtension(FairyGUI::FByteBuffer* Buffer)
 {
 	Sound = UFairyConfig::Config->ButtonSound;
 	SoundVolumeScale = UFairyConfig::Config->ButtonSoundVolumeScale;
@@ -370,7 +370,7 @@ void UFairyButton::ConstructExtension(FByteBuffer* Buffer)
 	On(FFairyEventNames::RemovedFromStage).AddUObject(this, &UFairyButton::OnRemovedFromStageHandler);
 }
 
-void UFairyButton::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
+void UFairyButton::SetupAfterAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos)
 {
 	Super::SetupAfterAdd(Buffer, BeginPos);
 

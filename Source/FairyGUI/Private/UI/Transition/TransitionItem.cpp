@@ -16,7 +16,7 @@ FTransitionItemBase::~FTransitionItemBase()
 
 }
 
-void FTransitionItemBase::ParseBaseData(FByteBuffer* InBuffer, int32 curPos)
+void FTransitionItemBase::ParseBaseData(FairyGUI::FByteBuffer* InBuffer, int32 curPos)
 {
 	startTime = InBuffer->ReadFloat();
 	targetID = InBuffer->ReadShort();
@@ -24,7 +24,7 @@ void FTransitionItemBase::ParseBaseData(FByteBuffer* InBuffer, int32 curPos)
 	bHasTween = InBuffer->ReadBool();
 }
 
-void FTransitionItemBase::ParseTweenData(FByteBuffer* InBuffer, int32 curPos)
+void FTransitionItemBase::ParseTweenData(FairyGUI::FByteBuffer* InBuffer, int32 curPos)
 {
 	TweenConfigPtr = MakeShareable(CreateTwencConfigWithType(ActionType));
 
@@ -84,12 +84,12 @@ void FTransitionItemBase::ParseTweenData(FByteBuffer* InBuffer, int32 curPos)
 	}
 }
 
-void FTransitionItemBase::ParseKeyFrameData(FByteBuffer* InBuffer, int32 curPos)
+void FTransitionItemBase::ParseKeyFrameData(FairyGUI::FByteBuffer* InBuffer, int32 curPos)
 {
 
 }
 
-void FTransitionItemBase::Setup(FByteBuffer* InBuffer, int32 curPos)
+void FTransitionItemBase::Setup(FairyGUI::FByteBuffer* InBuffer, int32 curPos)
 {
 	ParseBaseData(InBuffer, curPos);
 	if (bHasTween)
@@ -154,7 +154,7 @@ FTransitionItemPos::FTransitionItemPos()
 {
 }
 
-void FTransitionItemPos::ParseKeyFrameData(FByteBuffer* InBuffer, int32 curPos)
+void FTransitionItemPos::ParseKeyFrameData(FairyGUI::FByteBuffer* InBuffer, int32 curPos)
 {
 	InBuffer->Seek(curPos, 2);
 

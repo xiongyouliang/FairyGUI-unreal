@@ -2,7 +2,7 @@
 #include "UI/Controller/GController.h"
 #include "Utils/ByteBuffer.h"
 
-void FChangePageAction::Setup(FByteBuffer* Buffer)
+void FChangePageAction::Setup(FairyGUI::FByteBuffer* Buffer)
 {
     FControllerAction::Setup(Buffer);
 

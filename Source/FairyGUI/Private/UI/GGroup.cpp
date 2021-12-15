@@ -472,7 +472,7 @@ void UGGroup::HandleVisibleChanged()
     }
 }
 
-void UGGroup::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
+void UGGroup::SetupBeforeAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos)
 {
     UFairyObject::SetupBeforeAdd(Buffer, BeginPos);
 
@@ -489,7 +489,7 @@ void UGGroup::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
     }
 }
 
-void UGGroup::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
+void UGGroup::SetupAfterAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos)
 {
     UFairyObject::SetupAfterAdd(Buffer, BeginPos);
 

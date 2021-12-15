@@ -133,7 +133,7 @@ void UGMovieClip::ConstructFromResource()
     SetSize(contentItem->Size);
 }
 
-void UGMovieClip::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
+void UGMovieClip::SetupBeforeAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos)
 {
     UFairyObject::SetupBeforeAdd(Buffer, BeginPos);
 

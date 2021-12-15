@@ -28,7 +28,7 @@ public:
 
 protected:
     //virtual void HandleSizeChanged() override;
-    virtual void SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos) override;
+    virtual void SetupBeforeAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos) override;
 
     void LoadContent();
     void ClearContent();

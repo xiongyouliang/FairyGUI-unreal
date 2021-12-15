@@ -21,8 +21,8 @@ struct FTweenConfig {
 	FTweenConfig();
 	virtual ~FTweenConfig() {};
 
-	virtual void SetupStartData(FByteBuffer* InBuffer) {};
-	virtual void SetupEndData(FByteBuffer* InBuffer) {};
+	virtual void SetupStartData(FairyGUI::FByteBuffer* InBuffer) {};
+	virtual void SetupEndData(FairyGUI::FByteBuffer* InBuffer) {};
 };
 
 FTweenConfig* CreateTwencConfigWithType(const ETransitionActionType InActionType);
@@ -40,8 +40,8 @@ struct FTweenConfigPos : public FTweenConfig
 	KeyFrameDataPos StartData;
 	KeyFrameDataPos EndData;
 
-	virtual void SetupStartData(FByteBuffer* InBuffer) override;
-	virtual void SetupEndData(FByteBuffer* InBuffer) override;
+	virtual void SetupStartData(FairyGUI::FByteBuffer* InBuffer) override;
+	virtual void SetupEndData(FairyGUI::FByteBuffer* InBuffer) override;
 };
 
 struct KeyFrameDataSize 
@@ -56,6 +56,6 @@ struct FTweenConfigSize : public FTweenConfig
 	KeyFrameDataSize StartData;
 	KeyFrameDataSize EndData;
 
-	virtual void SetupStartData(FByteBuffer* InBuffer) override;
-	virtual void SetupEndData(FByteBuffer* InBuffer) override;
+	virtual void SetupStartData(FairyGUI::FByteBuffer* InBuffer) override;
+	virtual void SetupEndData(FairyGUI::FByteBuffer* InBuffer) override;
 };

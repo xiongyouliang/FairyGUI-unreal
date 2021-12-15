@@ -22,7 +22,7 @@ public:
     UScrollPanel();
     ~UScrollPanel();
 
-    void Setup(FByteBuffer* Buffer);
+    void Setup(FairyGUI::FByteBuffer* Buffer);
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     UFairyComponent* GetHeader() const { return Header; }

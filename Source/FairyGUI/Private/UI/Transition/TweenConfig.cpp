@@ -49,7 +49,7 @@ FTweenConfig* CreateTwencConfigWithType(ETransitionActionType InActionType)
 
 FTweenConfig::FTweenConfig() : EaseType(EFairyEaseType::QuadOut) {}
 
-void FTweenConfigPos::SetupStartData(FByteBuffer* InBuffer)
+void FTweenConfigPos::SetupStartData(FairyGUI::FByteBuffer* InBuffer)
 {
 	StartData.bChangeAxisX = InBuffer->ReadBool();
 	StartData.bChangeAxisY = InBuffer->ReadBool();
@@ -62,7 +62,7 @@ void FTweenConfigPos::SetupStartData(FByteBuffer* InBuffer)
 	}
 }
 
-void FTweenConfigPos::SetupEndData(FByteBuffer* InBuffer)
+void FTweenConfigPos::SetupEndData(FairyGUI::FByteBuffer* InBuffer)
 {
 	EndData.bChangeAxisX = InBuffer->ReadBool();
 	EndData.bChangeAxisY = InBuffer->ReadBool();
@@ -75,7 +75,7 @@ void FTweenConfigPos::SetupEndData(FByteBuffer* InBuffer)
 	}
 }
 
-void FTweenConfigSize::SetupStartData(FByteBuffer* InBuffer)
+void FTweenConfigSize::SetupStartData(FairyGUI::FByteBuffer* InBuffer)
 {
 	StartData.bChangeWidth = InBuffer->ReadBool();
 	StartData.bChangeHeight = InBuffer->ReadBool();
@@ -84,7 +84,7 @@ void FTweenConfigSize::SetupStartData(FByteBuffer* InBuffer)
 	StartData.Size.Y = InBuffer->ReadFloat();
 }
 
-void FTweenConfigSize::SetupEndData(FByteBuffer* InBuffer)
+void FTweenConfigSize::SetupEndData(FairyGUI::FByteBuffer* InBuffer)
 {
 	EndData.bChangeWidth = InBuffer->ReadBool();
 	EndData.bChangeHeight = InBuffer->ReadBool();

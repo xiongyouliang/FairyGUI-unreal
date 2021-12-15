@@ -112,7 +112,7 @@ bool FRelations::IsEmpty() const
 	return ItemList.Num() == 0;
 }
 
-void FRelations::Setup(FByteBuffer * Buffer, bool bParentToChild)
+void FRelations::Setup(FairyGUI::FByteBuffer* Buffer, bool bParentToChild)
 {
 	int32 TargetNum = Buffer->ReadByte();
 	UFairyObject* TargetObject = nullptr; // the owner relations from target

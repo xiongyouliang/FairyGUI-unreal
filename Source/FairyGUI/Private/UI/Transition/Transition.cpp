@@ -1188,7 +1188,7 @@ void UTransition::ApplyValue(FTransitionItemBase* item)
 	//item->Target->bGearLocked = false;
 }
 
-void UTransition::Setup(FByteBuffer* Buffer)
+void UTransition::Setup(FairyGUI::FByteBuffer* Buffer)
 {
 	Owner = Cast<UFairyComponent>(GetOuter());
 

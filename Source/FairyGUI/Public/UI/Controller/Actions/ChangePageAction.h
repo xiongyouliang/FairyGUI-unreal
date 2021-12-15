@@ -5,7 +5,7 @@
 class FChangePageAction : public FControllerAction
 {
 public:
-    virtual void Setup(FByteBuffer * Buffer) override;
+    virtual void Setup(FairyGUI::FByteBuffer* Buffer) override;
 
     FString ObjectID;
     FString ControllerName;

@@ -69,7 +69,7 @@ float UGScrollBar::GetMinSize()
     }
 }
 
-void UGScrollBar::ConstructExtension(FByteBuffer* buffer)
+void UGScrollBar::ConstructExtension(FairyGUI::FByteBuffer* buffer)
 {
     buffer->Seek(0, 6);
 

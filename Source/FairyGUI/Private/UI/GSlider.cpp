@@ -167,7 +167,7 @@ void UGSlider::UpdateWithPercent(float Percent, bool bManual)
 //    }
 //}
 
-void UGSlider::ConstructExtension(FByteBuffer* Buffer)
+void UGSlider::ConstructExtension(FairyGUI::FByteBuffer* Buffer)
 {
     TitleType = (EProgressTitleType)Buffer->ReadByte();
     bReverse = Buffer->ReadBool();
@@ -204,7 +204,7 @@ void UGSlider::ConstructExtension(FByteBuffer* Buffer)
     On(FFairyEventNames::TouchBegin).AddUObject(this, &UGSlider::OnTouchBeginHandler);
 }
 
-void UGSlider::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
+void UGSlider::SetupAfterAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos)
 {
     UFairyComponent::SetupAfterAdd(Buffer, BeginPos);
 

@@ -110,7 +110,7 @@ void UGTextInput::SetProp(EObjectPropID PropID, const FNVariant& InValue)
     }
 }
 
-void UGTextInput::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
+void UGTextInput::SetupBeforeAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos)
 {
     UFairyObject::SetupBeforeAdd(Buffer, BeginPos);
 
@@ -179,7 +179,7 @@ void UGTextInput::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
     }
 }
 
-void UGTextInput::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
+void UGTextInput::SetupAfterAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos)
 {
     ApplyFormat();
 

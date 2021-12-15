@@ -24,7 +24,7 @@ void FGearColor::Init()
     Storage.Reset();
 }
 
-void FGearColor::AddStatus(const FString& PageID, FByteBuffer* Buffer)
+void FGearColor::AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer)
 {
     FValue Value;
     Value.Color = Buffer->ReadColor();

@@ -30,7 +30,7 @@ void FGearLook::Init()
     Storage.Reset();
 }
 
-void FGearLook::AddStatus(const FString& PageID, FByteBuffer* Buffer)
+void FGearLook::AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer)
 {
     FValue Value;
     Value.Alpha = Buffer->ReadFloat();

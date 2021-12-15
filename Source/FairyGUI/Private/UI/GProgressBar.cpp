@@ -158,7 +158,7 @@ bool UGProgressBar::SetFillAmount(UFairyObject* Bar, float Amount)
 //    }
 //}
 
-void UGProgressBar::ConstructExtension(FByteBuffer* Buffer)
+void UGProgressBar::ConstructExtension(FairyGUI::FByteBuffer* Buffer)
 {
     Buffer->Seek(0, 6);
 
@@ -183,7 +183,7 @@ void UGProgressBar::ConstructExtension(FByteBuffer* Buffer)
     }
 }
 
-void UGProgressBar::SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos)
+void UGProgressBar::SetupAfterAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos)
 {
     UFairyComponent::SetupAfterAdd(Buffer, BeginPos);
 

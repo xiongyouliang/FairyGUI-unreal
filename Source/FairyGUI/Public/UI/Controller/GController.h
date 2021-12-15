@@ -6,11 +6,10 @@
 #include "Delegates/DelegateCombinations.h"
 
 #include "UI/Controller/Actions/ControllerAction.h"
-
+#include "Utils/ByteBuffer.h"
 #include "GController.generated.h"
 
 class UFairyComponent;
-class FByteBuffer;
 class UGController;
 
 enum class EHomePageType : int32
@@ -57,7 +56,7 @@ public:
 	void RunActions();
 
 	// Initialize from binary data
-	void Setup(FByteBuffer* Buffer);
+	void Setup(FairyGUI::FByteBuffer* Buffer);
 
 	FString Name;
 	bool bChanging;

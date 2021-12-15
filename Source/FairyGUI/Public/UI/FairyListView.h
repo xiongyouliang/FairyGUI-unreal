@@ -183,7 +183,7 @@ public:
 	virtual void MakeSlateWidget() override;
 	virtual TSharedPtr<SContainer> GetContentContainerWidget() override;
 	virtual TSharedPtr<SContainer> GetMaskContainerWidget() override;
-	virtual void SetupScroll(FByteBuffer* Buffer) override;
+	virtual void SetupScroll(FairyGUI::FByteBuffer* Buffer) override;
 
 	virtual FVector2D GetScrollMaskSize() override;
 	virtual FVector2D GetScrollContentSize() override;
@@ -199,12 +199,12 @@ protected:
 	//virtual void HandleSizeChanged() override;
 	virtual void UpdateBounds() override;
 	virtual void SetBounds(float ax, float ay, float aw, float ah) override;
-	virtual void SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos) override;
-	virtual void SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos) override;
+	virtual void SetupBeforeAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos) override;
+	virtual void SetupAfterAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos) override;
 
 	virtual void DispatchItemEvent(UFairyObject* Obj, UEventContext* Context);
-	virtual void ReadItems(FByteBuffer* Buffer);
-	virtual void SetupItem(FByteBuffer* Buffer, UFairyObject* Obj);
+	virtual void ReadItems(FairyGUI::FByteBuffer* Buffer);
+	virtual void SetupItem(FairyGUI::FByteBuffer* Buffer, UFairyObject* Obj);
 
 	void RefreshItemsLayout();
 	void RefreshItemsLayoutForSingleCol();

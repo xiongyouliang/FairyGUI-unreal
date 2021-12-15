@@ -107,7 +107,7 @@ public:
     void OnOwnerAddedToStage();
     void OnOwnerRemovedFromStage();
 
-    void Setup(FByteBuffer* Buffer);
+    void Setup(FairyGUI::FByteBuffer* Buffer);
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
     FString Name;

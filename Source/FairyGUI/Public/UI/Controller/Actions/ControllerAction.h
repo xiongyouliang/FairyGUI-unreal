@@ -1,9 +1,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Utils/ByteBuffer.h"
 
 class UGController;
-class FByteBuffer;
 
 class FControllerAction
 {
@@ -14,7 +14,7 @@ public:
     virtual ~FControllerAction();
 
     void Run(UGController* Controller, const FString& PreviousPage, const FString& CurrentPage);
-    virtual void Setup(FByteBuffer * Buffer);
+    virtual void Setup(FairyGUI::FByteBuffer* Buffer);
 
     TArray<FString> FromPage;
     TArray<FString> ToPage;

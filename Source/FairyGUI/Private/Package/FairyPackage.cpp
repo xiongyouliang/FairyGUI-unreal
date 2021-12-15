@@ -11,6 +11,8 @@
 #include "Utils/ByteBuffer.h"
 #include "Package/FairyPackageMgr.h"
 
+using namespace FairyGUI;
+
 struct FAtlasSprite
 {
     FAtlasSprite() :
@@ -106,7 +108,7 @@ UFairyObject* UFairyPackage::CreateObject(UObject* Owner, const TSharedPtr<FFair
     return Object;
 }
 
-void UFairyPackage::Load(FByteBuffer* Buffer)
+void UFairyPackage::Load(FairyGUI::FByteBuffer* Buffer)
 {
     // Is the first 4 bytes is check code?
     uint32 checkCode = Buffer->ReadUint();
@@ -444,7 +446,7 @@ void UFairyPackage::LoadMovieClip(const TSharedPtr<FFairyPackageItem>& Item)
 {
     TSharedPtr<FMovieClipData> Data = MakeShared<FMovieClipData>();
     Item->MovieClipData = Data;
-    FByteBuffer* Buffer = Item->RawData.Get();
+    FairyGUI::FByteBuffer* Buffer = Item->RawData.Get();
 
     Buffer->Seek(0, 0);
 
@@ -492,7 +494,7 @@ void UFairyPackage::LoadFont(const TSharedPtr<FFairyPackageItem>& Item)
 {
     TSharedPtr<FBitmapFont> BitmapFont = MakeShared<FBitmapFont>();
     Item->BitmapFont = BitmapFont;
-    FByteBuffer* Buffer = Item->RawData.Get();
+    FairyGUI::FByteBuffer* Buffer = Item->RawData.Get();
 
     Buffer->Seek(0, 0);
 

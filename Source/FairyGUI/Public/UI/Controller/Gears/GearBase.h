@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Tween/FairyEaseType.h"
 #include "Tween/FairyTweener.h"
+#include "Utils/ByteBuffer.h"
 
 class UFairyObject;
 class UGController;
@@ -54,13 +55,13 @@ public:
     virtual void Apply();
     virtual void UpdateState();
 
-    virtual void Setup(FByteBuffer* Buffer);
+    virtual void Setup(FairyGUI::FByteBuffer* Buffer);
 
     static FGearBase* Create(UFairyObject* InOwner, EGearType InType);
     static bool bDisableAllTweenEffect;
 
 protected:
-    virtual void AddStatus(const FString& PageID, FByteBuffer* Buffer);
+    virtual void AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer);
     virtual void Init();
 
     EGearType Type;

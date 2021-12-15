@@ -54,10 +54,10 @@ public:
 
 	virtual bool IsTargetValid() { return TargetPtr.IsValid(); }
 
-	virtual void Setup(FByteBuffer* InBuffer, int32 curPos);
-	virtual void ParseBaseData(FByteBuffer* InBuffer, int32 curPos);
-	virtual void ParseTweenData(FByteBuffer* InBuffer, int32 curPos);
-	virtual void ParseKeyFrameData(FByteBuffer* InBuffer, int32 curPos);
+	virtual void Setup(FairyGUI::FByteBuffer* InBuffer, int32 curPos);
+	virtual void ParseBaseData(FairyGUI::FByteBuffer* InBuffer, int32 curPos);
+	virtual void ParseTweenData(FairyGUI::FByteBuffer* InBuffer, int32 curPos);
+	virtual void ParseKeyFrameData(FairyGUI::FByteBuffer* InBuffer, int32 curPos);
 	
 	virtual void RunItem() {};
 };
@@ -72,6 +72,6 @@ public:
 	float duration;
 	KeyFrameDataPos frameData;
 
-	virtual void ParseKeyFrameData(FByteBuffer* InBuffer, int32 curPos) override;
+	virtual void ParseKeyFrameData(FairyGUI::FByteBuffer* InBuffer, int32 curPos) override;
 	virtual void RunItem() override;
 };

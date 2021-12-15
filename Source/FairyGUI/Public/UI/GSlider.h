@@ -45,8 +45,8 @@ public:
 
 protected:
     //virtual void HandleSizeChanged() override;
-    virtual void ConstructExtension(FByteBuffer* Buffer);
-    virtual void SetupAfterAdd(FByteBuffer* Buffer, int32 BeginPos) override;
+    virtual void ConstructExtension(FairyGUI::FByteBuffer* Buffer);
+    virtual void SetupAfterAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos) override;
 
     void Update();
     void UpdateWithPercent(float Percent, bool bManual);

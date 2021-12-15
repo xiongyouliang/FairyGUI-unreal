@@ -22,7 +22,7 @@ public:
     bool bGripDragging;
 
 protected:
-    virtual void ConstructExtension(FByteBuffer* Buffer);
+    virtual void ConstructExtension(FairyGUI::FByteBuffer* Buffer);
 
 private:
     void OnTouchBeginHandler(UEventContext* Context);

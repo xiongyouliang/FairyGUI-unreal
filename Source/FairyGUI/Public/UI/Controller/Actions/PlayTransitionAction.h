@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ControllerAction.h"
+#include "Utils/ByteBuffer.h"
 
 class UTransition;
 
@@ -8,7 +9,7 @@ class FPlayTransitionAction : public FControllerAction
 {
 public:
     FPlayTransitionAction();
-    virtual void Setup(FByteBuffer * Buffer) override;
+    virtual void Setup(FairyGUI::FByteBuffer* Buffer) override;
 
     FString TransitionName;
     int32 PlayTimes;

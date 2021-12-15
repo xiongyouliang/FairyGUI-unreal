@@ -135,7 +135,7 @@ void UGGraph::SetProp(EObjectPropID PropID, const FNVariant& InValue)
     }
 }
 
-void UGGraph::SetupBeforeAdd(FByteBuffer* Buffer, int32 BeginPos)
+void UGGraph::SetupBeforeAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos)
 {
     UFairyObject::SetupBeforeAdd(Buffer, BeginPos);
     Buffer->Seek(BeginPos, 5);

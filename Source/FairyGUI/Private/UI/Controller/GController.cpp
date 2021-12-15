@@ -172,7 +172,7 @@ void UGController::RunActions()
 	}
 }
 
-void UGController::Setup(FByteBuffer* Buffer)
+void UGController::Setup(FairyGUI::FByteBuffer* Buffer)
 {
 	int32 BeginPos = Buffer->GetPos();
 	Buffer->Seek(BeginPos, 0);

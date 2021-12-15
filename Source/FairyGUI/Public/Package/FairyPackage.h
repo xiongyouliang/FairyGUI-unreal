@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "Utils/ByteBuffer.h"
 #include "FairyPackage.generated.h"
 
 class FFairyPackageItem;
@@ -35,7 +36,7 @@ public:
 	UFairyObject* CreateObject(UObject* Owner, const TSharedPtr<FFairyPackageItem>& Item);
 
 private:
-	void Load(FByteBuffer* Buffer);
+	void Load(FairyGUI::FByteBuffer* Buffer);
 	void LoadAtlas(const TSharedPtr<FFairyPackageItem>& Item);
 	void LoadImage(const TSharedPtr<FFairyPackageItem>& Item);
 	void LoadMovieClip(const TSharedPtr<FFairyPackageItem>& Item);

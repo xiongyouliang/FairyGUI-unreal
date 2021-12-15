@@ -118,7 +118,7 @@ void FGearBase::Init()
 {
 }
 
-void FGearBase::AddStatus(const FString& PageID, FByteBuffer* Buffer)
+void FGearBase::AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer)
 {
 }
 
@@ -134,7 +134,7 @@ void FGearBase::UpdateFromRelations(const FVector2D& Delta)
 {
 }
 
-void FGearBase::Setup(FByteBuffer* Buffer)
+void FGearBase::Setup(FairyGUI::FByteBuffer* Buffer)
 {
 	int32 index = Buffer->ReadShort();
 	Controller = Owner->GetParent()->GetControllerAt(index);

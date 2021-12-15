@@ -13,10 +13,10 @@ public:
     virtual void UpdateFromRelations(const FVector2D& Delta) override;
 
     bool bPositionsInPercent;
-    void AddExtStatus(const FString& PageID, FByteBuffer* Buffer);
+    void AddExtStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer);
 
 protected:
-    virtual void AddStatus(const FString& PageID, FByteBuffer* Buffer) override;
+    virtual void AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer) override;
     virtual void Init() override;
 
 private:

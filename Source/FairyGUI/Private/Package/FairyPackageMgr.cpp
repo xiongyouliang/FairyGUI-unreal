@@ -80,7 +80,7 @@ UFairyPackage* UFairyPackageMgr::AddPackage(UFairyPackageAsset* InAsset)
 	Pkg->Asset = InAsset;
 	Pkg->AssetPath = AssetPathName;
 
-	FByteBuffer Buffer(InAsset->Data.GetData(), 0, InAsset->Data.Num(), false);
+	FairyGUI::FByteBuffer Buffer(InAsset->Data.GetData(), 0, InAsset->Data.Num(), false);
 	Pkg->Load(&Buffer);
 
 	//UFairyApplication::Get()->PackageList.Add(Pkg);

@@ -24,7 +24,7 @@ void FGearXY::Init()
     Storage.Reset();
 }
 
-void FGearXY::AddStatus(const FString& PageID, FByteBuffer* Buffer)
+void FGearXY::AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer)
 {
     FVector4 Value;
     Value.X = Buffer->ReadInt();
@@ -40,7 +40,7 @@ void FGearXY::AddStatus(const FString& PageID, FByteBuffer* Buffer)
     }
 }
 
-void FGearXY::AddExtStatus(const FString& PageID, FByteBuffer* Buffer)
+void FGearXY::AddExtStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer)
 {
     FVector4* Value = PageID.IsEmpty() ? &Default : Storage.Find(Controller->GetSelectedPageID());
     Value->Z = Buffer->ReadFloat();

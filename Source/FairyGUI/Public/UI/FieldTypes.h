@@ -44,6 +44,14 @@ enum class EObjectType
 	Loader3D
 };
 
+enum class EComponentSubtype
+{
+	Controller,
+	Clipping,
+	ScrollView,
+	List
+};
+
 UENUM()
 enum class EButtonMode : uint8
 {

@@ -9,7 +9,7 @@
 class UFairyObject;
 class UFairyComponent;
 class UGScrollBar;
-class UGController;
+class UFairyController;
 class FByteBuffer;
 class UFairyTweener;
 class SContainer;
@@ -145,7 +145,7 @@ public:
     float ScrollStep;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
-    UGController* PageController;
+    UFairyController* PageController;
 
 private:
     void OnOwnerSizeChanged();
@@ -156,7 +156,7 @@ private:
     void SetSize(const FVector2D& InSize);
     void HandleSizeChanged();
 
-    void ApplyController(UGController* Controller);
+    void ApplyController(UFairyController* Controller);
     void UpdatePageController();
 
     void PosChanged(bool bAnimation);

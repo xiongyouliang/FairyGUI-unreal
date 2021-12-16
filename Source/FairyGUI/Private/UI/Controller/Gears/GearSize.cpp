@@ -1,7 +1,7 @@
 #include "UI/Controller/Gears/GearSize.h"
 #include "UI/FairyObject.h"
 #include "Package/FairyPackage.h"
-#include "UI/Controller/GController.h"
+#include "UI/Controller/FairyController.h"
 #include "Utils/ByteBuffer.h"
 
 FGearSize::FGearSize(UFairyObject* InOwner) : FGearBase(InOwner)

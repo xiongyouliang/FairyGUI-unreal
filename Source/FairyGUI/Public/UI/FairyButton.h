@@ -3,7 +3,7 @@
 #include "UI/FairyComponent.h"
 #include "FairyButton.generated.h"
 
-class UGController;
+class UFairyController;
 class UGTextField;
 
 UCLASS(BlueprintType, Blueprintable)
@@ -52,9 +52,9 @@ public:
     void SetSelected(bool bInSelected);
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    UGController* GetRelatedController() const { return RelatedController; }
+    UFairyController* GetRelatedController() const { return RelatedController; }
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    void SetRelatedController(UGController* InController);
+    void SetRelatedController(UFairyController* InController);
 
     UGTextField* GetTextField() const;
 
@@ -78,7 +78,7 @@ protected:
     virtual void ConstructExtension(FairyGUI::FByteBuffer* Buffer) override;
     virtual void SetupAfterAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos) override;
 
-    virtual void ApplyController(UGController* Controller) override;
+    virtual void ApplyController(UFairyController* Controller) override;
 
     void SetState(const FString& InState);
     void SetCurrentState();
@@ -98,9 +98,9 @@ private:
     UPROPERTY()
     UFairyObject* IconObject;
     UPROPERTY()
-    UGController* ButtonController;
+    UFairyController* ButtonController;
     UPROPERTY()
-    UGController* RelatedController;
+    UFairyController* RelatedController;
 
     FString RelatedPageID;
     FString Title;

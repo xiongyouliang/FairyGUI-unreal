@@ -1,5 +1,5 @@
 #include "UI/Controller/Actions/ChangePageAction.h"
-#include "UI/Controller/GController.h"
+#include "UI/Controller/FairyController.h"
 #include "Utils/ByteBuffer.h"
 
 void FChangePageAction::Setup(FairyGUI::FByteBuffer* Buffer)
@@ -11,7 +11,7 @@ void FChangePageAction::Setup(FairyGUI::FByteBuffer* Buffer)
     TargetPage = Buffer->ReadStringFromCache();
 }
 
-void FChangePageAction::Enter(UGController* Controller)
+void FChangePageAction::Enter(UFairyController* Controller)
 {
     if (ControllerName.IsEmpty())
         return;
@@ -23,7 +23,7 @@ void FChangePageAction::Enter(UGController* Controller)
         gcom = Cast<UFairyComponent>(Controller->GetOuter());
     if (gcom != nullptr)
     {
-        UGController* cc = gcom->GetController(ControllerName);
+        UFairyController* cc = gcom->GetController(ControllerName);
         if (cc != nullptr && cc != Controller && !cc->bChanging)
         {
             if (TargetPage.Compare("~1") == 0)
@@ -39,6 +39,6 @@ void FChangePageAction::Enter(UGController* Controller)
     }
 }
 
-void FChangePageAction::Leave(UGController* Controller)
+void FChangePageAction::Leave(UFairyController* Controller)
 {
 }

@@ -1,5 +1,5 @@
 #include "UI/Controller/Actions/PlayTransitionAction.h"
-#include "UI/Controller/GController.h"
+#include "UI/Controller/FairyController.h"
 #include "UI/Transition/Transition.h"
 #include "Utils/ByteBuffer.h"
 
@@ -21,7 +21,7 @@ void FPlayTransitionAction::Setup(FairyGUI::FByteBuffer* Buffer)
     bStopOnExit = Buffer->ReadBool();
 }
 
-void FPlayTransitionAction::Enter(UGController* Controller)
+void FPlayTransitionAction::Enter(UFairyController* Controller)
 {
     UTransition* trans = Cast<UFairyComponent>(Controller->GetOuter())->GetTransition(TransitionName);
     if (trans != nullptr)
@@ -38,7 +38,7 @@ void FPlayTransitionAction::Enter(UGController* Controller)
     }
 }
 
-void FPlayTransitionAction::Leave(UGController* Controller)
+void FPlayTransitionAction::Leave(UFairyController* Controller)
 {
     if (bStopOnExit && CurrentTransition != nullptr)
     {

@@ -1,5 +1,5 @@
 #include "UI/Controller/Gears/GearDisplay.h"
-#include "UI/Controller/GController.h"
+#include "UI/Controller/FairyController.h"
 #include "Utils/ByteBuffer.h"
 
 #define MAX_DISPLAY_LOCK_SESSION 10086

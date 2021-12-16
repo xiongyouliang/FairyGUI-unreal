@@ -1,7 +1,7 @@
 #include "UI/PopupMenu.h"
 #include "UI/FairyRoot.h"
 #include "Package/FairyPackage.h"
-#include "UI/Controller/GController.h"
+#include "UI/Controller/FairyController.h"
 #include "FairyApplication.h"
 
 const FName UPopupMenu::ClickMenu("ClickMenu");
@@ -52,7 +52,7 @@ UFairyButton* UPopupMenu::AddItem(const FString& Caption, FGUIEventDelegate Call
     UFairyButton* item = List->AddItemFromPool()->As<UFairyButton>();
     item->SetTitle(Caption);
     item->SetGrayed(false);
-    UGController* c = item->GetController("checked");
+    UFairyController* c = item->GetController("checked");
     if (c != nullptr)
         c->SetSelectedIndex(0);
     item->On(ClickMenu).Clear();
@@ -76,7 +76,7 @@ UFairyButton* UPopupMenu::AddItemAt(const FString& Caption, int32 Index, FGUIEve
 
     item->SetTitle(Caption);
     item->SetGrayed(false);
-    UGController* c = item->GetController("checked");
+    UFairyController* c = item->GetController("checked");
     if (c != nullptr)
         c->SetSelectedIndex(0);
     if (Callback.IsBound())
@@ -134,7 +134,7 @@ void UPopupMenu::SetItemGrayed(const FString& Name, bool bGrayed)
 void UPopupMenu::SetItemCheckable(const FString& Name, bool bCheckable)
 {
     UFairyButton* item = List->GetChild(Name)->As<UFairyButton>();
-    UGController* c = item->GetController("checked");
+    UFairyController* c = item->GetController("checked");
     if (c != nullptr)
     {
         if (bCheckable)
@@ -150,7 +150,7 @@ void UPopupMenu::SetItemCheckable(const FString& Name, bool bCheckable)
 void UPopupMenu::SetItemChecked(const FString& Name, bool bCheck)
 {
     UFairyButton* item = List->GetChild(Name)->As<UFairyButton>();
-    UGController* c = item->GetController("checked");
+    UFairyController* c = item->GetController("checked");
     if (c != nullptr)
         c->SetSelectedIndex(bCheck ? 2 : 1);
 }
@@ -158,7 +158,7 @@ void UPopupMenu::SetItemChecked(const FString& Name, bool bCheck)
 bool UPopupMenu::IsItemChecked(const FString& Name) const
 {
     UFairyButton* item = List->GetChild(Name)->As<UFairyButton>();
-    UGController* c = item->GetController("checked");
+    UFairyController* c = item->GetController("checked");
     if (c != nullptr)
         return c->GetSelectedIndex() == 2;
     else
@@ -210,7 +210,7 @@ void UPopupMenu::OnClickItem(UEventContext * Context)
         return;
     }
 
-    UGController* c = item->GetController("checked");
+    UFairyController* c = item->GetController("checked");
     if (c != nullptr && c->GetSelectedIndex() != 0)
     {
         if (c->GetSelectedIndex() == 1)

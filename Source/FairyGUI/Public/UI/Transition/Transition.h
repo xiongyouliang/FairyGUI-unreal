@@ -9,7 +9,7 @@
 
 class UFairyObject;
 class UFairyComponent;
-class UGController;
+class UFairyController;
 class FByteBuffer;
 class UFairyTweener;
 

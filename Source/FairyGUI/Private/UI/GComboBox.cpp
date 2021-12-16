@@ -5,7 +5,7 @@
 #include "UI/GTextInput.h"
 #include "UI/GLabel.h"
 #include "UI/FairyButton.h"
-#include "UI/Controller/GController.h"
+#include "UI/Controller/FairyController.h"
 #include "UI/FairyListView.h"
 #include "UI/FairyRoot.h"
 #include "Utils/ByteBuffer.h"
@@ -171,7 +171,7 @@ void UGComboBox::UpdateSelectionController()
 {
     if (SelectionController != nullptr && !SelectionController->bChanging && SelectedIndex < SelectionController->GetPageCount())
     {
-        UGController* c = SelectionController;
+        UFairyController* c = SelectionController;
         SelectionController = nullptr;
         c->SetSelectedIndex(SelectedIndex);
         SelectionController = c;
@@ -214,7 +214,7 @@ void UGComboBox::RenderDropdownList()
     }
 }
 
-void UGComboBox::ApplyController(UGController* Controller)
+void UGComboBox::ApplyController(UFairyController* Controller)
 {
     UFairyComponent::ApplyController(Controller);
 

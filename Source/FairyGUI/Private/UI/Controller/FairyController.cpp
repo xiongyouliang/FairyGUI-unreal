@@ -1,25 +1,25 @@
-#include "UI/Controller/GController.h"
+#include "UI/Controller/FairyController.h"
 #include "UI/FairyComponent.h"
 #include "Package/FairyPackage.h"
 #include "Utils/ByteBuffer.h"
 #include "Package/FairyPackageMgr.h"
 
-UGController::UGController() :
+UFairyController::UFairyController() :
 	SelectedIndex(-1),
 	PreviousIndex(-1)
 {
 }
 
-UGController::~UGController()
+UFairyController::~UFairyController()
 {
 }
 
-void UGController::SetSelectedIndex(int32 Index)
+void UFairyController::SetSelectedIndex(int32 Index)
 {
 	SetSelectedIndex(Index, true);
 }
 
-void UGController::SetSelectedIndex(int32 Index, bool bTriggerEvent)
+void UFairyController::SetSelectedIndex(int32 Index, bool bTriggerEvent)
 {
 	if (SelectedIndex != Index)
 	{
@@ -41,7 +41,7 @@ void UGController::SetSelectedIndex(int32 Index, bool bTriggerEvent)
 	}
 }
 
-const FString& UGController::GetSelectedPage() const
+const FString& UFairyController::GetSelectedPage() const
 {
 	if (SelectedIndex == -1)
 	{
@@ -53,12 +53,12 @@ const FString& UGController::GetSelectedPage() const
 	}
 }
 
-void UGController::SetSelectedPage(const FString& PageName)
+void UFairyController::SetSelectedPage(const FString& PageName)
 {
 	SetSelectedPage(PageName, true);
 }
 
-void UGController::SetSelectedPage(const FString& PageName, bool bTriggerEvent)
+void UFairyController::SetSelectedPage(const FString& PageName, bool bTriggerEvent)
 {
 	int32 i = PageNames.Find(PageName);
 	if (i == INDEX_NONE)
@@ -68,7 +68,7 @@ void UGController::SetSelectedPage(const FString& PageName, bool bTriggerEvent)
 	SetSelectedIndex(i, bTriggerEvent);
 }
 
-const FString& UGController::GetSelectedPageID() const
+const FString& UFairyController::GetSelectedPageID() const
 {
 	if (SelectedIndex == -1)
 	{
@@ -80,7 +80,7 @@ const FString& UGController::GetSelectedPageID() const
 	}
 }
 
-void UGController::SetSelectedPageID(const FString& PageID, bool bTriggerEvent)
+void UFairyController::SetSelectedPageID(const FString& PageID, bool bTriggerEvent)
 {
 	int32 i = PageIDs.Find(PageID);
 	if (i != INDEX_NONE)
@@ -89,7 +89,7 @@ void UGController::SetSelectedPageID(const FString& PageID, bool bTriggerEvent)
 	}
 }
 
-const FString& UGController::GetPreviousPage() const
+const FString& UFairyController::GetPreviousPage() const
 {
 	if (PreviousIndex == -1)
 	{
@@ -101,7 +101,7 @@ const FString& UGController::GetPreviousPage() const
 	}
 }
 
-const FString& UGController::GetPreviousPageID() const
+const FString& UFairyController::GetPreviousPageID() const
 {
 	if (PreviousIndex == -1)
 	{
@@ -113,22 +113,22 @@ const FString& UGController::GetPreviousPageID() const
 	}
 }
 
-int32 UGController::GetPageCount() const
+int32 UFairyController::GetPageCount() const
 {
 	return PageIDs.Num();
 }
 
-bool UGController::HasPage(const FString& PageName) const
+bool UFairyController::HasPage(const FString& PageName) const
 {
 	return PageNames.Find(PageName) != INDEX_NONE;
 }
 
-int32 UGController::GetPageIndexByID(const FString& PageID) const
+int32 UFairyController::GetPageIndexByID(const FString& PageID) const
 {
 	return PageIDs.Find(PageID) != INDEX_NONE;
 }
 
-const FString& UGController::GetPageNameByID(const FString& PageID) const
+const FString& UFairyController::GetPageNameByID(const FString& PageID) const
 {
 	int32 i = PageIDs.Find(PageID);
 	if (i != INDEX_NONE)
@@ -141,12 +141,12 @@ const FString& UGController::GetPageNameByID(const FString& PageID) const
 	}
 }
 
-const FString& UGController::GetPageID(int32 Index) const
+const FString& UFairyController::GetPageID(int32 Index) const
 {
 	return PageIDs[Index];
 }
 
-void UGController::SetOppositePageID(const FString& PageID)
+void UFairyController::SetOppositePageID(const FString& PageID)
 {
 	int32 i = PageIDs.Find(PageID);
 	if (i > 0)
@@ -159,7 +159,7 @@ void UGController::SetOppositePageID(const FString& PageID)
 	}
 }
 
-void UGController::RunActions()
+void UFairyController::RunActions()
 {
 	if (Actions.Num() == 0)
 	{
@@ -172,7 +172,7 @@ void UGController::RunActions()
 	}
 }
 
-void UGController::Setup(FairyGUI::FByteBuffer* Buffer)
+void UFairyController::Setup(FairyGUI::FByteBuffer* Buffer)
 {
 	int32 BeginPos = Buffer->GetPos();
 	Buffer->Seek(BeginPos, 0);

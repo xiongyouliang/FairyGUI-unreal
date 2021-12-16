@@ -12,6 +12,6 @@ public:
     FString TargetPage;
 
 protected:
-    virtual void Enter(UGController* Controller) override;
-    virtual void Leave(UGController* Controller) override;
+    virtual void Enter(UFairyController* Controller) override;
+    virtual void Leave(UFairyController* Controller) override;
 };

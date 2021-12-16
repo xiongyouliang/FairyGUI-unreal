@@ -4,7 +4,7 @@
 #include "TimerManager.h"
 #include "Package/FairyPackageMgr.h"
 #include "UI/FairyListView.h"
-#include "UI/Controller/GController.h"
+#include "UI/Controller/FairyController.h"
 #include "UI/GScrollBar.h"
 #include "Utils/ByteBuffer.h"
 #include "Widgets/SContainer.h"
@@ -582,7 +582,7 @@ void UScrollPanel::CancelDragging()
 	bDragged = false;
 }
 
-void UScrollPanel::ApplyController(UGController* Controller)
+void UScrollPanel::ApplyController(UFairyController* Controller)
 {
 	if (PageController == Controller)
 	{
@@ -613,7 +613,7 @@ void UScrollPanel::UpdatePageController()
 		}
 		if (index < PageController->GetPageCount())
 		{
-			UGController* Controller = PageController;
+			UFairyController* Controller = PageController;
 			PageController = nullptr; //avoid calling handleControllerChanged
 			Controller->SetSelectedIndex(index);
 			PageController = Controller;

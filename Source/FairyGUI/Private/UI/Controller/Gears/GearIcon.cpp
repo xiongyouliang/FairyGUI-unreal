@@ -1,6 +1,6 @@
 #include "UI/Controller/Gears/GearIcon.h"
 #include "UI/FairyObject.h"
-#include "UI/Controller/GController.h"
+#include "UI/Controller/FairyController.h"
 #include "Utils/ByteBuffer.h"
 
 FGearIcon::FGearIcon(UFairyObject * InOwner) :FGearBase(InOwner)

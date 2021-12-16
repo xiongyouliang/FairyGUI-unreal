@@ -6,7 +6,7 @@
 #include "UI/UIObjectFactory.h"
 #include "Package/FairyPackage.h"
 #include "Package/FairyPackageMgr.h"
-#include "UI/Controller/GController.h"
+#include "UI/Controller/FairyController.h"
 #include "UI/Transition/Transition.h"
 #include "UI/FairyRoot.h"
 #include "Utils/ByteBuffer.h"
@@ -532,7 +532,7 @@ int32 UFairyComponent::GetFirstChildInView() const
 
 // *************************************************************************
 // *********************** Component Controller start **********************
-UGController* UFairyComponent::GetController(const FString& ControllerName) const
+UFairyController* UFairyComponent::GetController(const FString& ControllerName) const
 {
 	for (const auto& Controller : Controllers)
 	{
@@ -545,21 +545,21 @@ UGController* UFairyComponent::GetController(const FString& ControllerName) cons
 	return nullptr;
 }
 
-void UFairyComponent::AddController(UGController* Controller)
+void UFairyComponent::AddController(UFairyController* Controller)
 {
 	verifyf(Controller != nullptr, TEXT("Argument must be non-nil"));
 
 	Controllers.Add(Controller);
 }
 
-UGController* UFairyComponent::GetControllerAt(int32 Index) const
+UFairyController* UFairyComponent::GetControllerAt(int32 Index) const
 {
 	verifyf(Index >= 0 && Index < Controllers.Num(), TEXT("Invalid controller index"));
 
 	return Controllers[Index];
 }
 
-void UFairyComponent::RemoveController(UGController* Controller)
+void UFairyComponent::RemoveController(UFairyController* Controller)
 {
 	verifyf(Controller != nullptr, TEXT("Argument must be non-nil"));
 
@@ -570,7 +570,7 @@ void UFairyComponent::RemoveController(UGController* Controller)
 	Controllers.RemoveAt(Index);
 }
 
-void UFairyComponent::ApplyController(UGController* Controller)
+void UFairyComponent::ApplyController(UFairyController* Controller)
 {
 	ApplyingController = Controller;
 
@@ -618,7 +618,7 @@ UTransition* UFairyComponent::GetTransitionAt(int32 Index) const
 	return Transitions[Index];
 }
 
-void UFairyComponent::AdjustRadioGroupDepth(UFairyObject* Obj, UGController* Controller)
+void UFairyComponent::AdjustRadioGroupDepth(UFairyObject* Obj, UFairyController* Controller)
 {
 	int32 cnt = Children.Num();
 	int32 i;
@@ -1155,7 +1155,7 @@ void UFairyComponent::HandleGrayedChanged()
 {
 	UFairyObject::HandleGrayedChanged();
 
-	UGController* Controller = GetController("grayed");
+	UFairyController* Controller = GetController("grayed");
 	if (Controller != nullptr)
 	{
 		Controller->SetSelectedIndex(IsGrayed() ? 1 : 0);
@@ -1266,7 +1266,7 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 		int32 nextPos = Buffer->ReadShort();
 		nextPos += Buffer->GetPos();
 
-		UGController* Controller = NewObject<UGController>(this);
+		UFairyController* Controller = NewObject<UFairyController>(this);
 		Controllers.Add(Controller);
 		Controller->Setup(Buffer);
 
@@ -1454,7 +1454,7 @@ void UFairyComponent::SetupAfterAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPo
 	int32 cnt = Buffer->ReadShort();
 	for (int32 i = 0; i < cnt; i++)
 	{
-		UGController* Controller = GetController(Buffer->ReadStringFromCache());
+		UFairyController* Controller = GetController(Buffer->ReadStringFromCache());
 		const FString& PageID = Buffer->ReadStringFromCache();
 		if (Controller != nullptr)
 		{

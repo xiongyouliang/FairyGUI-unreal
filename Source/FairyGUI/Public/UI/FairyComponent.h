@@ -5,7 +5,7 @@
 
 #include "FairyComponent.generated.h"
 
-class UGController;
+class UFairyController;
 class UTransition;
 class SContainer;
 
@@ -82,13 +82,19 @@ public:
 
 	// *********** Controller start ***********
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	UGController* GetControllerAt(int32 Index) const;
+	UFairyController* GetControllerAt(int32 Index) const;
+
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	UGController* GetController(const FString& ControllerName) const;
-	const TArray<UGController*>& GetControllers() const { return Controllers; }
-	void AddController(UGController* Controller);
-	void RemoveController(UGController* Controller);
-	virtual void ApplyController(UGController* Controller) override;
+	UFairyController* GetController(const FString& ControllerName) const;
+
+	const TArray<UFairyController*>& GetControllers() const { return Controllers; }
+
+	void AddController(UFairyController* Controller);
+
+	void RemoveController(UFairyController* Controller);
+
+	virtual void ApplyController(UFairyController* Controller) override;
+
 	void ApplyAllControllers();
 	// *********** Controller end ***********
 
@@ -171,7 +177,7 @@ public:
 	//internal use
 	void ChildSortingOrderChanged(UFairyObject* Child, int32 OldValue, int32 NewValue);
 	void ChildStateChanged(UFairyObject* Child);
-	void AdjustRadioGroupDepth(UFairyObject* Child, UGController* Controller);
+	void AdjustRadioGroupDepth(UFairyObject* Child, UFairyController* Controller);
 
 	virtual void ConstructFromResource() override;
 	void ConstructFromResource(TArray<UFairyObject*>* ObjectPool, int32 PoolIndex);
@@ -222,7 +228,7 @@ public:
 	// ************** ScrollView API End *******************
 protected:
 	UFUNCTION(BlueprintImplementableEvent, Category = "FairyGUI", meta = (DisplayName = "OnConstruct"))
-		void K2_OnConstruct();
+	void K2_OnConstruct();
 
 protected:
 	virtual void ConstructExtension(FairyGUI::FByteBuffer* Buffer);
@@ -239,7 +245,7 @@ protected:
 	TArray<UFairyObject*> Children; // Child FairyObject
 
 	UPROPERTY(Transient)
-	TArray<UGController*> Controllers;
+	TArray<UFairyController*> Controllers;
 	
 	UPROPERTY(Transient)
 	TArray<UTransition*> Transitions;
@@ -266,7 +272,7 @@ private:
 	void OnRemovedFromStageHandler(UEventContext* Context);
 
 	int32 SortingChildCount;
-	UGController* ApplyingController;
+	UFairyController* ApplyingController;
 
 	FTimerHandle UpdateBoundsTimerHandle;
 	FTimerHandle BuildDisplayListTimerHandle;

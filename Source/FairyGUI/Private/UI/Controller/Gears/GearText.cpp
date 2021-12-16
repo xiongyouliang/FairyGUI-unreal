@@ -1,6 +1,6 @@
 #include "UI/Controller/Gears/GearText.h"
 #include "UI/FairyObject.h"
-#include "UI/Controller/GController.h"
+#include "UI/Controller/FairyController.h"
 #include "Utils/ByteBuffer.h"
 
 FGearText::FGearText(UFairyObject* InOwner) : FGearBase(InOwner)

@@ -128,10 +128,10 @@ public:
 	void ScrollToView(int32 Index, bool bAnimation = false, bool bSetFirst = false);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	UGController* GetSelectionController() const { return SelectionController; }
+	UFairyController* GetSelectionController() const { return SelectionController; }
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	void SetSelectionController(UGController* InController);
+	void SetSelectionController(UFairyController* InController);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	void SetVirtual();
@@ -195,7 +195,7 @@ public:
 	virtual void SetContentContainerPosition(FVector2D InPosition) override;
 
 protected:
-	virtual void ApplyController(UGController* Controller) override;
+	virtual void ApplyController(UFairyController* Controller) override;
 	//virtual void HandleSizeChanged() override;
 	virtual void UpdateBounds() override;
 	virtual void SetBounds(float ax, float ay, float aw, float ah) override;
@@ -254,7 +254,7 @@ private:
 	EVAlignType VerticalAlign;
 	bool bAutoResizeItem;
 	EListSelectionMode SelectionMode;
-	UGController* SelectionController;
+	UFairyController* SelectionController;
 	FListItemRenderer ItemRenderer;
 	FListItemProvider ItemProvider;
 

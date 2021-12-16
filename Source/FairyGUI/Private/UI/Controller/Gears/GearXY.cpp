@@ -1,7 +1,7 @@
 #include "UI/Controller/Gears/GearXY.h"
 #include "UI/FairyComponent.h"
 #include "Package/FairyPackage.h"
-#include "UI/Controller/GController.h"
+#include "UI/Controller/FairyController.h"
 #include "Utils/ByteBuffer.h"
 
 FGearXY::FGearXY(UFairyObject* InOwner) :

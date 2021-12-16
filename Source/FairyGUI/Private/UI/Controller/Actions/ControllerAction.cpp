@@ -24,7 +24,7 @@ FControllerAction::~FControllerAction()
 {
 }
 
-void FControllerAction::Run(UGController* Controller, const FString& PreviousPage, const FString& CurrentPage)
+void FControllerAction::Run(UFairyController* Controller, const FString& PreviousPage, const FString& CurrentPage)
 {
 	if ((FromPage.Num() == 0 || FromPage.Contains(PreviousPage))
 		&& (ToPage.Num() == 0 || ToPage.Contains(CurrentPage)))

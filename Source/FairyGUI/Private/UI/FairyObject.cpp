@@ -2,7 +2,7 @@
 #include "Package/FairyPackage.h"
 #include "UI/FairyListView.h"
 #include "UI/GGroup.h"
-#include "UI/Controller/GController.h"
+#include "UI/Controller/FairyController.h"
 #include "UI/FairyRoot.h"
 #include "UI/Controller/Gears/GearBase.h"
 #include "UI/Controller/Gears/GearDisplay.h"
@@ -561,7 +561,7 @@ void UFairyObject::UpdateGear(int32 Index)
 	}
 }
 
-bool UFairyObject::CheckGearController(int32 Index, UGController* Controller)
+bool UFairyObject::CheckGearController(int32 Index, UFairyController* Controller)
 {
 	return Gears[Index] != nullptr && Gears[Index]->GetController() == Controller;
 }
@@ -646,7 +646,7 @@ void UFairyObject::CheckGearDisplay()
 	}
 }
 
-void UFairyObject::ApplyController(UGController* Controller)
+void UFairyObject::ApplyController(UFairyController* Controller)
 {
 	bHandlingController = true;
 	for (int32 i = 0; i < 10; i++)

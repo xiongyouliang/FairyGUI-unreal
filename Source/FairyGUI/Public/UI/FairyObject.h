@@ -22,7 +22,7 @@ class FGearBase;
 class UGGroup;
 class UFairyComponent;
 class UGTreeNode;
-class UGController;
+class UFairyController;
 class UFairyRoot;
 
 /**
@@ -195,7 +195,7 @@ public:
 	FBox2D LocalToRootRect(const FBox2D& InRect);
 
 	FGearBase* GetOrCreateGear(FGearBase::EGearType GearType);
-	bool CheckGearController(int32 Index, UGController* Controller);
+	bool CheckGearController(int32 Index, UFairyController* Controller);
 	uint32 AddDisplayLock();
 	void ReleaseDisplayLock(uint32 Token);
 
@@ -419,7 +419,7 @@ public:
 	 * @return boolean result, means GearDisplay effect; if no GearDisplay, return true;
 	 */
 	bool IsGearVisible();
-	virtual void ApplyController(UGController* Controller);
+	virtual void ApplyController(UFairyController* Controller);
 	// *************** Controller property end ******************
 private:
 	void UpdateRenderTransform();

@@ -82,12 +82,12 @@ FGearBase::~FGearBase()
 	}
 }
 
-UGController* FGearBase::GetController() const
+UFairyController* FGearBase::GetController() const
 {
 	return Controller.Get();
 }
 
-void FGearBase::SetController(UGController* InController)
+void FGearBase::SetController(UFairyController* InController)
 {
 	if (!Controller.IsValid() || Controller.Get() != InController)
 	{
@@ -99,7 +99,7 @@ void FGearBase::SetController(UGController* InController)
 	}
 }
 
-void FGearBase::HandleControllerChanged(UGController* InController)
+void FGearBase::HandleControllerChanged(UFairyController* InController)
 {
 	this->Apply();
 }

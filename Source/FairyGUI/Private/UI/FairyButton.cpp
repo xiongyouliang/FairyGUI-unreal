@@ -1,7 +1,7 @@
 #include "UI/FairyButton.h"
 #include "UI/GTextField.h"
 #include "UI/GLabel.h"
-#include "UI/Controller/GController.h"
+#include "UI/Controller/FairyController.h"
 #include "Utils/ByteBuffer.h"
 
 #include "FairyApplication.h"
@@ -163,7 +163,7 @@ void UFairyButton::SetSelected(bool bInSelected)
 	}
 }
 
-void UFairyButton::SetRelatedController(UGController* InController)
+void UFairyButton::SetRelatedController(UFairyController* InController)
 {
 	RelatedController = InController;
 }
@@ -433,7 +433,7 @@ void UFairyButton::SetupAfterAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos)
 	SetSelected(Buffer->ReadBool());
 }
 
-void UFairyButton::ApplyController(UGController* Controller)
+void UFairyButton::ApplyController(UFairyController* Controller)
 {
 	UFairyComponent::ApplyController(Controller);
 

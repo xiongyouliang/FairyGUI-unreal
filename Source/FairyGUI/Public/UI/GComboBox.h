@@ -3,7 +3,7 @@
 #include "UI/FairyComponent.h"
 #include "GComboBox.generated.h"
 
-class UGController;
+class UFairyController;
 class UGTextField;
 class UFairyListView;
 
@@ -48,9 +48,9 @@ public:
     void SetSelectedIndex(int32 InIndex);
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    UGController* GetSelectionController() const { return SelectionController; }
+    UFairyController* GetSelectionController() const { return SelectionController; }
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-    void SetSelectionController(UGController* InController) { SelectionController = InController; }
+    void SetSelectionController(UFairyController* InController) { SelectionController = InController; }
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     UFairyObject* GetDropdown() const { return DropdownObject; }
@@ -82,7 +82,7 @@ protected:
     virtual void ConstructExtension(FairyGUI::FByteBuffer* Buffer);
     virtual void SetupAfterAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos) override;
 
-    virtual void ApplyController(UGController* Controller) override;
+    virtual void ApplyController(UFairyController* Controller) override;
     virtual void HandleGrayedChanged() override;
 
     void SetState(const FString& InState);
@@ -97,7 +97,7 @@ protected:
     UFairyObject* TitleObject;
     UFairyObject* IconObject;
     UFairyListView* ListObject;
-    UGController* SelectionController;
+    UFairyController* SelectionController;
 
 private:
 
@@ -110,7 +110,7 @@ private:
 
     bool bItemsUpdated;
     int32 SelectedIndex;
-    UGController* ButtonController;
+    UFairyController* ButtonController;
     bool bDown;
     bool bOver;
 };

@@ -1,7 +1,7 @@
 #include "UI/FairyListView.h"
 #include "UI/FairyButton.h"
 #include "UI/FairyObjectPool.h"
-#include "UI/Controller/GController.h"
+#include "UI/Controller/FairyController.h"
 #include "UI/GScrollBar.h"
 #include "Package/FairyPackage.h"
 #include "Package/FairyPackageMgr.h"
@@ -135,7 +135,7 @@ void UFairyListView::SetContentContainerPosition(FVector2D InPosition)
 	}
 }
 
-void UFairyListView::ApplyController(UGController* Controller)
+void UFairyListView::ApplyController(UFairyController* Controller)
 {
 	UFairyComponent::ApplyController(Controller);
 
@@ -306,7 +306,7 @@ void UFairyListView::SetupItem(FairyGUI::FByteBuffer* Buffer, UFairyObject* Obj)
 		int32 cnt = Buffer->ReadShort();
 		for (int32 i = 0; i < cnt; i++)
 		{
-			UGController* cc = gcom->GetController(Buffer->ReadStringFromCache());
+			UFairyController* cc = gcom->GetController(Buffer->ReadStringFromCache());
 			const FString& PageID = Buffer->ReadStringFromCache();
 			cc->SetSelectedPageID(PageID);
 		}
@@ -804,7 +804,7 @@ void UFairyListView::SetSelectedIndex(int32 Index)
 	}
 }
 
-void UFairyListView::SetSelectionController(UGController* InController)
+void UFairyListView::SetSelectionController(UFairyController* InController)
 {
 	SelectionController = InController;
 }
@@ -1439,7 +1439,7 @@ void UFairyListView::UpdateSelectionController(int32 Index)
 {
 	if (SelectionController != nullptr && !SelectionController->bChanging && Index < SelectionController->GetPageCount())
 	{
-		UGController* Controller = SelectionController;
+		UFairyController* Controller = SelectionController;
 		SelectionController = nullptr;
 		Controller->SetSelectedIndex(Index);
 		SelectionController = Controller;

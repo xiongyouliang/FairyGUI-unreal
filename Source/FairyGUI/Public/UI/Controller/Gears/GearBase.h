@@ -6,7 +6,7 @@
 #include "Utils/ByteBuffer.h"
 
 class UFairyObject;
-class UGController;
+class UFairyController;
 class FByteBuffer;
 
 class FAIRYGUI_API FGearTweenConfig
@@ -45,9 +45,9 @@ public:
 
     EGearType GetType() const { return Type; }
 
-    UGController* GetController() const;
-    void SetController(UGController* InController);
-    void HandleControllerChanged(UGController* InController);
+    UFairyController* GetController() const;
+    void SetController(UFairyController* InController);
+    void HandleControllerChanged(UFairyController* InController);
 
     FGearTweenConfig& GetTweenConfig();
 
@@ -66,7 +66,7 @@ protected:
 
     EGearType Type;
     TWeakObjectPtr<UFairyObject> Owner;
-    TWeakObjectPtr<UGController> Controller;
+    TWeakObjectPtr<UFairyController> Controller;
     TOptional<FGearTweenConfig> TweenConfig;
 
     FDelegateHandle ControllerHandle;

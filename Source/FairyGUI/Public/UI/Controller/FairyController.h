@@ -7,10 +7,10 @@
 
 #include "UI/Controller/Actions/ControllerAction.h"
 #include "Utils/ByteBuffer.h"
-#include "GController.generated.h"
+#include "FairyController.generated.h"
 
 class UFairyComponent;
-class UGController;
+class UFairyController;
 
 enum class EHomePageType : int32
 {
@@ -21,12 +21,12 @@ enum class EHomePageType : int32
 };
 
 UCLASS(BlueprintType)
-class FAIRYGUI_API UGController : public UObject
+class FAIRYGUI_API UFairyController : public UObject
 {
 	GENERATED_BODY()
 public:
-	UGController();
-	virtual ~UGController();
+	UFairyController();
+	virtual ~UFairyController();
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	int32 GetSelectedIndex() const { return SelectedIndex; }
@@ -62,7 +62,7 @@ public:
 	bool bChanging;
 	bool bAutoRadioGroupDepth;
 
-	DECLARE_EVENT_OneParam(UGController, FOnFairyControllerChanged, UGController*);
+	DECLARE_EVENT_OneParam(UFairyController, FOnFairyControllerChanged, UFairyController*);
 	FOnFairyControllerChanged& OnChanged() { return OnChangedEvent; }
 
 private:

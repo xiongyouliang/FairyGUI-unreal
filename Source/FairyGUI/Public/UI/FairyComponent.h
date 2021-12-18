@@ -87,7 +87,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	UFairyController* GetController(const FString& ControllerName) const;
 
-	const TArray<UFairyController*>& GetControllers() const { return Controllers; }
+	const TArray<UFairyController*>& GetControllers() const;
 
 	void AddController(UFairyController* Controller);
 
@@ -243,9 +243,6 @@ protected:
 
 	UPROPERTY(Transient)
 	TArray<UFairyObject*> Children; // Child FairyObject
-
-	UPROPERTY(Transient)
-	TArray<UFairyController*> Controllers;
 	
 	UPROPERTY(Transient)
 	TArray<UTransition*> Transitions;

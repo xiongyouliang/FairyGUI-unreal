@@ -103,6 +103,15 @@ void UFairyApplication::Destroy()
 	Instance = nullptr;
 }
 
+UFairyControllerMgr* UFairyApplication::GetControllerMgr()
+{
+	if (!FairyControllerMgr)
+	{
+		FairyControllerMgr = NewObject<UFairyControllerMgr>(this);
+	}
+	return FairyControllerMgr;
+}
+
 void UFairyApplication::AddUIRoot(UObject* WorldContextObject)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("UFairyApplication::AddUIRoot(...)"));

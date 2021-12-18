@@ -7,6 +7,7 @@
 #include "FairyCommons.h"
 #include "Event/EventContext.h"
 #include "UI/FairyConfig.h"
+#include "UI/Controller/FairyControllerMgr.h"
 #include "FairyApplication.generated.h"
 
 class UFairyPackage;
@@ -57,6 +58,9 @@ public:
 
 	UFairyApplication();
 	~UFairyApplication();
+
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI¡¡£ü FairyApplication")
+	UFairyControllerMgr* GetControllerMgr();
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI | FairyApplication")
 	void AddUIRoot(UObject* WorldContextObject);
@@ -145,6 +149,9 @@ private:
 	TMap<UWorld*, UFairyRoot*> UIRoots;
 	UPROPERTY()
 	TMap<UWorld*, UDragDropManager*> DragDropManagers;
+
+	UPROPERTY()
+	UFairyControllerMgr* FairyControllerMgr;
 
 	UPROPERTY(Transient)
 	TArray<UEventContext*> EventContextPool;

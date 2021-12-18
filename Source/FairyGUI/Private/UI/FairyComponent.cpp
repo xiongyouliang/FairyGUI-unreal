@@ -7,10 +7,13 @@
 #include "Package/FairyPackage.h"
 #include "Package/FairyPackageMgr.h"
 #include "UI/Controller/FairyController.h"
+#include "UI/Controller/FairyControllerMgr.h"
 #include "UI/Transition/Transition.h"
 #include "UI/FairyRoot.h"
 #include "Utils/ByteBuffer.h"
 #include "Widgets/SContainer.h"
+
+#include "FairyApplication.h"
 
 static FThreadSafeCounter FairyComponentCount;
 
@@ -534,66 +537,39 @@ int32 UFairyComponent::GetFirstChildInView() const
 // *********************** Component Controller start **********************
 UFairyController* UFairyComponent::GetController(const FString& ControllerName) const
 {
-	for (const auto& Controller : Controllers)
-	{
-		if (Controller->Name.Compare(ControllerName) == 0)
-		{
-			return Controller;
-		}
-	}
+	UFairyControllerMgr* ControllerMgr = UFairyApplication::Get()->GetControllerMgr();
+	return ControllerMgr->GetController(this, FName(ControllerName));
+}
 
-	return nullptr;
+const TArray<UFairyController*>& UFairyComponent::GetControllers() const
+{
+	return UFairyApplication::Get()->GetControllerMgr()->GetControllerList(this);
 }
 
 void UFairyComponent::AddController(UFairyController* Controller)
 {
-	verifyf(Controller != nullptr, TEXT("Argument must be non-nil"));
-
-	Controllers.Add(Controller);
+	UFairyControllerMgr* ControllerMgr = UFairyApplication::Get()->GetControllerMgr();
+	ControllerMgr->AddController(this, Controller);
 }
 
 UFairyController* UFairyComponent::GetControllerAt(int32 Index) const
 {
-	verifyf(Index >= 0 && Index < Controllers.Num(), TEXT("Invalid controller index"));
-
-	return Controllers[Index];
+	return UFairyApplication::Get()->GetControllerMgr()->GetController(this, Index);
 }
 
 void UFairyComponent::RemoveController(UFairyController* Controller)
 {
-	verifyf(Controller != nullptr, TEXT("Argument must be non-nil"));
-
-	int32 Index = Controllers.IndexOfByKey(Controller);
-	verifyf(Index != -1, TEXT("controller not exists"));
-
-	ApplyController(Controller);
-	Controllers.RemoveAt(Index);
+	UFairyApplication::Get()->GetControllerMgr()->RemoveController(this, Controller);
 }
 
 void UFairyComponent::ApplyController(UFairyController* Controller)
 {
-	ApplyingController = Controller;
-
-	for (int32 i = 0; i < Children.Num(); i++)
-	{
-		Children[i]->ApplyController(Controller);
-	}
-	Controller->RunActions();
-
-	if (ScrollPanel != nullptr)
-	{
-		ScrollPanel->ApplyController(Controller);
-	}
-
-	ApplyingController = nullptr;
+	UFairyApplication::Get()->GetControllerMgr()->ApplyController(this, Controller);
 }
 
 void UFairyComponent::ApplyAllControllers()
 {
-	for (const auto& Controller : Controllers)
-	{
-		ApplyController(Controller);
-	}
+	UFairyApplication::Get()->GetControllerMgr()->ApplyAllController(this);
 }
 // *********************** Component Controller end **********************
 // *************************************************************************
@@ -1258,7 +1234,7 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 
 	bBuildingDisplayList = true;
 
-	// Parse Controllers for this UFairyComponent
+	// Parse all controller for this UFairyComponent
 	Buffer->Seek(0, 1);
 	int32 controllerCount = Buffer->ReadShort();
 	for (int32 i = 0; i < controllerCount; i++)
@@ -1267,8 +1243,9 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 		nextPos += Buffer->GetPos();
 
 		UFairyController* Controller = NewObject<UFairyController>(this);
-		Controllers.Add(Controller);
 		Controller->Setup(Buffer);
+
+		UFairyApplication::Get()->GetControllerMgr()->AddController(this, Controller);
 
 		Buffer->SetPos(nextPos);
 	}

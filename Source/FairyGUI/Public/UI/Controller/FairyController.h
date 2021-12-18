@@ -30,6 +30,9 @@ public:
 	virtual ~UFairyController();
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+	FName GetName() { return FName(Name); }
+
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	int32 GetSelectedIndex() const { return SelectedIndex; }
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	void SetSelectedIndex(int32 Index);
@@ -54,6 +57,12 @@ public:
 	const FString& GetPageNameByID(const FString& PageID) const;
 	const FString& GetPageID(int32 Index) const;
 	void SetOppositePageID(const FString& PageID);
+
+	void AddAbserver(TSharedPtr<FGearBase> InPenddingAddGear);
+	void RemoveAllAbserver();
+	void RemoveAbserver(TSharedPtr<FGearBase> InPenddingRemoveGear);
+	void Apply();
+
 	void RunActions();
 
 	// Initialize from binary data
@@ -72,6 +81,6 @@ private:
 	TArray<FString> PageIDs;
 	TArray<FString> PageNames;
 	TIndirectArray<FControllerAction> Actions;
-
+	TArray<TSharedPtr<FGearBase>> ObserverList;
 	FOnFairyControllerChanged OnChangedEvent;
 };

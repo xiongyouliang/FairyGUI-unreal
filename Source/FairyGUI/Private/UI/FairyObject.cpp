@@ -534,29 +534,19 @@ void UFairyObject::RemoveRelation(UFairyObject* Obj, ERelationType RelationType)
 }
 
 // ********************* Controller start *******************
-FGearBase* UFairyObject::GetOrCreateGear(FGearBase::EGearType GearType)
-{
-	FGearBase* gear = Gears[GearType];
-	if (gear == nullptr)
-	{
-		gear = FGearBase::Create(this, GearType);
-		Gears[GearType] = gear;
-	}
-	return gear;
-}
 
 void UFairyObject::UpdateGear(int32 Index)
 {
-	if (bUnderConstruct || bGearLocked)
-	{
-		return;
-	}
+	//if (bUnderConstruct || bGearLocked)
+	//{
+	//	return;
+	//}
 
-	FGearBase* gear = Gears[Index];
-	if (gear != nullptr && gear->GetController() != nullptr)
-	{
-		gear->UpdateState();
-	}
+	//FGearBase* gear = Gears[Index];
+	//if (gear != nullptr && gear->GetController() != nullptr)
+	//{
+	//	gear->UpdateState();
+	//}
 }
 
 bool UFairyObject::CheckGearController(int32 Index, UFairyController* Controller)
@@ -908,8 +898,10 @@ void UFairyObject::SetupAfterAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos)
 		int16 nextPos = Buffer->ReadShort();
 		nextPos += Buffer->GetPos();
 
-		FGearBase* gear = GetOrCreateGear( (FGearBase::EGearType)Buffer->ReadByte() );
+		EFairyGearType GearType = (EFairyGearType)Buffer->ReadByte();
+		FGearBase* gear = FGearBase::Create(this, GearType);
 		gear->Setup(Buffer);
+		gear->GetController()->AddAbserver(MakeShareable<FGearBase>(gear));
 
 		Buffer->SetPos(nextPos);
 	}

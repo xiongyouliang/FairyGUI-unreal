@@ -26,6 +26,7 @@ class UGTreeNode;
 class UFairyRoot;
 
 class UFairyController;
+
 /**
 * TODO:
 * UFairyObject is base object as FairyGUI Object, I want to refactor it only handle some base attribute and some optional attribute:
@@ -410,7 +411,7 @@ protected:
 
 	// *************** Controller property start ******************
 private:
-	bool bHandlingController = false;
+	bool bHandlingController;
 	FGearBase* Gears[10];
 public:
 	/**

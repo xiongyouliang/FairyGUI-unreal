@@ -1,4 +1,5 @@
 #include "UI/Controller/FairyController.h"
+#include "UI/Controller/Gears/GearBase.h"
 #include "UI/FairyComponent.h"
 #include "Package/FairyPackage.h"
 #include "Utils/ByteBuffer.h"
@@ -156,6 +157,39 @@ void UFairyController::SetOppositePageID(const FString& PageID)
 	else if (PageIDs.Num() > 1)
 	{
 		SetSelectedIndex(1);
+	}
+}
+
+void UFairyController::AddAbserver(TSharedPtr<FGearBase> InPenddingAddGear)
+{
+	ObserverList.Push(InPenddingAddGear);
+}
+
+void UFairyController::RemoveAbserver(TSharedPtr<FGearBase> InPenddingRemoveGear)
+{
+	for (size_t i = 0; i < ObserverList.Num(); i++)
+	{
+		if (ObserverList[i].Get() == InPenddingRemoveGear.Get())
+		{
+			ObserverList.RemoveAt(i);
+		}
+	}
+}
+
+void UFairyController::RemoveAllAbserver()
+{
+	ObserverList.Empty();
+}
+
+void UFairyController::Apply()
+{
+	for (size_t i = 0; i < ObserverList.Num(); i++)
+	{
+		TSharedPtr<FGearBase> Observer = ObserverList[i];
+		if (Observer.IsValid())
+		{
+			Observer->Apply();
+		}
 	}
 }
 

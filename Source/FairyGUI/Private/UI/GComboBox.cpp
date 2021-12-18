@@ -6,6 +6,7 @@
 #include "UI/GLabel.h"
 #include "UI/FairyButton.h"
 #include "UI/Controller/FairyController.h"
+#include "UI/Controller/Gears/FairyGearType.h"
 #include "UI/FairyListView.h"
 #include "UI/FairyRoot.h"
 #include "Utils/ByteBuffer.h"
@@ -33,7 +34,7 @@ void UGComboBox::SetText(const FString& InText)
 {
     if (TitleObject != nullptr)
         TitleObject->SetText(InText);
-    UpdateGear(6);
+    UpdateGear(EFairyGearType::Text);
 }
 
 const FString& UGComboBox::GetIcon() const
@@ -48,7 +49,7 @@ void UGComboBox::SetIcon(const FString & InIcon)
 {
     if (IconObject != nullptr)
         IconObject->SetIcon(InIcon);
-    UpdateGear(7);
+    UpdateGear(EFairyGearType::Icon);
 }
 
 FColor UGComboBox::GetTitleColor() const

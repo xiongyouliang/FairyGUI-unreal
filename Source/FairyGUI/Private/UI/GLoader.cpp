@@ -30,7 +30,7 @@ void UGLoader::SetURL(const FString& InURL)
     ClearContent();
     URL = InURL;
     LoadContent();
-    UpdateGear(7);
+    UpdateGear(EFairyGearType::Icon);
 }
 
 void UGLoader::SetAlign(EHAlignType InAlign)
@@ -148,7 +148,7 @@ void UGLoader::SetPlaying(bool bInPlaying)
     if (Content->IsPlaying() != bInPlaying)
     {
         Content->SetPlaying(bInPlaying);
-        UpdateGear(5);
+        UpdateGear(EFairyGearType::Animation);
     }
 }
 
@@ -162,7 +162,7 @@ void UGLoader::SetFrame(int32 InFrame)
     if (Content->GetFrame() != InFrame)
     {
         Content->SetFrame(InFrame);
-        UpdateGear(5);
+        UpdateGear(EFairyGearType::Animation);
     }
 }
 

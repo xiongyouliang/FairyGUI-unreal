@@ -4,9 +4,10 @@
 #include "UObject/NoExportTypes.h"
 #include "Delegates/Delegate.h"
 #include "Delegates/DelegateCombinations.h"
-
 #include "UI/Controller/Actions/ControllerAction.h"
 #include "Utils/ByteBuffer.h"
+#include "UI/Controller/Gears/FairyGearType.h"
+
 #include "FairyController.generated.h"
 
 class UFairyComponent;

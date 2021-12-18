@@ -2,6 +2,7 @@
 #include "UI/GTextInput.h"
 #include "UI/FairyButton.h"
 #include "UI/GTextField.h"
+#include "UI/Controller/Gears/FairyGearType.h"
 #include "Utils/ByteBuffer.h"
 
 UGLabel::UGLabel()
@@ -30,7 +31,7 @@ void UGLabel::SetText(const FString& InText)
     {
         TitleObject->SetText(InText);
     }
-    UpdateGear(6);
+    UpdateGear(EFairyGearType::Text);
 }
 
 const FString& UGLabel::GetIcon() const
@@ -51,7 +52,7 @@ void UGLabel::SetIcon(const FString & InIcon)
     {
         IconObject->SetIcon(InIcon);
     }
-    UpdateGear(7);
+    UpdateGear(EFairyGearType::Icon);
 }
 
 FColor UGLabel::GetTitleColor() const

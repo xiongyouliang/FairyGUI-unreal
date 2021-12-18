@@ -2,29 +2,30 @@
 
 #include "Widgets/SDisplayObject.h"
 #include "Widgets/SContainer.h"
-#include "UI/Relation/Relations.h"
-#include "UI/Controller/Gears/GearBase.h"
+#include "Slate/WidgetTransform.h"
+
 #include "Package/FairyPackageItem.h"
+#include "UI/FairyVisual.h"
+#include "UI/Relation/Relations.h"
 #include "UI/FairyConfig.h"
+#include "UI/Controller/Gears/FairyGearType.h"
 #include "FairyCommons.h"
 #include "Event/EventContext.h"
 #include "Utils/NVariant.h"
 #include "Utils/ByteBuffer.h"
-#include "UI/FairyVisual.h"
-#include "Slate/WidgetTransform.h"
+
 
 #include "FairyObject.generated.h"
 
 class FByteBuffer;
 class FRelations;
-class FGearBase;
 
 class UGGroup;
 class UFairyComponent;
 class UGTreeNode;
-class UFairyController;
 class UFairyRoot;
 
+class UFairyController;
 /**
 * TODO:
 * UFairyObject is base object as FairyGUI Object, I want to refactor it only handle some base attribute and some optional attribute:
@@ -194,7 +195,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	FBox2D LocalToRootRect(const FBox2D& InRect);
 
-	FGearBase* GetOrCreateGear(FGearBase::EGearType GearType);
 	bool CheckGearController(int32 Index, UFairyController* Controller);
 	uint32 AddDisplayLock();
 	void ReleaseDisplayLock(uint32 Token);

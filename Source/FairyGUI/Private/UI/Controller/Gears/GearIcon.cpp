@@ -5,7 +5,7 @@
 
 FGearIcon::FGearIcon(UFairyObject * InOwner) :FGearBase(InOwner)
 {
-    Type = EGearType::Icon;
+    Type = EFairyGearType::Icon;
 }
 
 FGearIcon::~FGearIcon()

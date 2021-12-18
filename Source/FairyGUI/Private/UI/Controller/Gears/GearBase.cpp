@@ -9,44 +9,48 @@
 #include "UI/Controller/Gears/GearSize.h"
 #include "UI/Controller/Gears/GearText.h"
 #include "UI/Controller/Gears/GearXY.h"
+
+#include "UI/Controller/FairyController.h"
+
+#include "UI/FairyObject.h"
 #include "UI/FairyComponent.h"
 #include "Utils/ByteBuffer.h"
 
 bool FGearBase::bDisableAllTweenEffect = false;
 
-FGearBase* FGearBase::Create(UFairyObject* InOwner, EGearType InType)
+FGearBase* FGearBase::Create(UFairyObject* InOwner, EFairyGearType InType)
 {
 	FGearBase* Gear = nullptr;
 	switch (InType)
 	{
-	case EGearType::Display:
+	case EFairyGearType::Display:
 		Gear = new FGearDisplay(InOwner);
 		break;
-	case EGearType::XY:
+	case EFairyGearType::XY:
 		Gear = new FGearXY(InOwner);
 		break;
-	case EGearType::Size:
+	case EFairyGearType::Size:
 		Gear = new FGearSize(InOwner);
 		break;
-	case EGearType::Look:
+	case EFairyGearType::Look:
 		Gear = new FGearLook(InOwner);
 		break;
-	case EGearType::Color:
+	case EFairyGearType::Color:
 		Gear = new FGearColor(InOwner);
 		break;
-	case EGearType::Animation:
+	case EFairyGearType::Animation:
 		Gear = new FGearAnimation(InOwner);
 		break;
-	case EGearType::Text:
+	case EFairyGearType::Text:
 		Gear = new FGearText(InOwner);
 		break;
-	case EGearType::Icon:
+	case EFairyGearType::Icon:
 		Gear = new FGearIcon(InOwner);
 		break;
-	case EGearType::Display2:
+	case EFairyGearType::Display2:
 		Gear = new FGearDisplay2(InOwner);
 		break;
-	case EGearType::FontSize:
+	case EFairyGearType::FontSize:
 		Gear = new FGearFontSize(InOwner);
 		break;
 	}
@@ -67,7 +71,7 @@ FGearBase::FGearBase(UFairyObject* InOwner) : Owner(InOwner)
 {
 }
 
-FGearBase::FGearBase(UFairyObject* InOwner, EGearType InType)
+FGearBase::FGearBase(UFairyObject* InOwner, EFairyGearType InType)
 	: Type(InType)
 	, Owner(InOwner)
 {
@@ -138,13 +142,13 @@ void FGearBase::Setup(FairyGUI::FByteBuffer* Buffer)
 {
 	int32 index = Buffer->ReadShort();
 	Controller = Owner->GetParent()->GetControllerAt(index);
-	Controller->OnChanged().AddRaw(this, &FGearBase::HandleControllerChanged);
+	//Controller->OnChanged().AddRaw(this, &FGearBase::HandleControllerChanged);
 	
 	Init();
 
 	int32 Count = Buffer->ReadShort();
-	FGearDisplay* g0 = Type == EGearType::Display ? static_cast<FGearDisplay*>(this) : nullptr;
-	FGearDisplay2* g1 = Type == EGearType::Display2 ? static_cast<FGearDisplay2*>(this) : nullptr;
+	FGearDisplay* g0 = Type == EFairyGearType::Display ? static_cast<FGearDisplay*>(this) : nullptr;
+	FGearDisplay2* g1 = Type == EFairyGearType::Display2 ? static_cast<FGearDisplay2*>(this) : nullptr;
 	FGearXY* g2 = nullptr;
 	if (g0)
 	{
@@ -183,7 +187,7 @@ void FGearBase::Setup(FairyGUI::FByteBuffer* Buffer)
 
 	if (Buffer->Version >= 2)
 	{
-		g2 = Type == EGearType::XY ? static_cast<FGearXY*>(this) : nullptr;
+		g2 = Type == EFairyGearType::XY ? static_cast<FGearXY*>(this) : nullptr;
 		if (g2)
 		{
 			if (Buffer->ReadBool())

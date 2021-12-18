@@ -7,7 +7,7 @@ FGearDisplay2::FGearDisplay2(UFairyObject* InOwner) :
     Condition(EConditionType::And),
     Visible(0)
 {
-    Type = EGearType::Display2;
+    Type = EFairyGearType::Display2;
 }
 
 FGearDisplay2::~FGearDisplay2()

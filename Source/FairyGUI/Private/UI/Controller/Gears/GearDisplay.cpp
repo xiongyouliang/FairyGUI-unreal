@@ -5,7 +5,7 @@
 #define MAX_DISPLAY_LOCK_SESSION 10086
 
 FGearDisplay::FGearDisplay(UFairyObject* InOwner) :
-	FGearBase(InOwner, EGearType::Display),
+	FGearBase(InOwner, EFairyGearType::Display),
 	Visible(0),
 	DisplayLockToken(1)
 {

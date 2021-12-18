@@ -2,9 +2,7 @@
 #include "Package/FairyPackage.h"
 #include "UI/FairyListView.h"
 #include "UI/GGroup.h"
-#include "UI/Controller/FairyController.h"
 #include "UI/FairyRoot.h"
-#include "UI/Controller/Gears/GearBase.h"
 #include "UI/Controller/Gears/GearDisplay.h"
 #include "UI/Controller/Gears/GearDisplay2.h"
 #include "Tween/TweenManager.h"
@@ -245,7 +243,7 @@ void UFairyObject::SetAlpha(float InAlpha)
 	{
 		Alpha = InAlpha;
 		HandleAlphaChanged();
-		UpdateGear(3);
+		UpdateGear(EFairyGearType::Look);
 	}
 }
 
@@ -255,7 +253,7 @@ void UFairyObject::SetGrayed(bool InBGrayed)
 	{
 		bGrayed = InBGrayed;
 		HandleGrayedChanged();
-		UpdateGear(3);
+		UpdateGear(EFairyGearType::Look);
 	}
 }
 
@@ -570,8 +568,8 @@ bool UFairyObject::IsGearVisible()
 {
 	bool bGearVisible = false;
 
-	FGearDisplay* DisplayGear = (FGearDisplay*)Gears[FGearBase::EGearType::Display];
-	FGearDisplay2* Display2Gear = (FGearDisplay2*)Gears[FGearBase::EGearType::Display2];
+	FGearDisplay* DisplayGear = (FGearDisplay*)Gears[EFairyGearType::Display];
+	FGearDisplay2* Display2Gear = (FGearDisplay2*)Gears[EFairyGearType::Display2];
 
 	// no display control option
 	if (DisplayGear == nullptr)
@@ -599,7 +597,7 @@ void UFairyObject::UpdateGearFromRelations(int32 Index, const FVector2D& Delta)
 
 uint32 UFairyObject::AddDisplayLock()
 {
-	FGearDisplay* gearDisplay = (FGearDisplay*)Gears[FGearBase::EGearType::Display];
+	FGearDisplay* gearDisplay = (FGearDisplay*)Gears[EFairyGearType::Display];
 	if (gearDisplay != nullptr && gearDisplay->GetController() != nullptr)
 	{
 		uint32 ret = gearDisplay->AddLock();
@@ -615,7 +613,7 @@ uint32 UFairyObject::AddDisplayLock()
 
 void UFairyObject::ReleaseDisplayLock(uint32 Token)
 {
-	FGearDisplay* gearDisplay = (FGearDisplay*)Gears[FGearBase::EGearType::Display];
+	FGearDisplay* gearDisplay = (FGearDisplay*)Gears[EFairyGearType::Display];
 	if (gearDisplay != nullptr && gearDisplay->GetController() != nullptr)
 	{
 		gearDisplay->ReleaseLock(Token);

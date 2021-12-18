@@ -8,7 +8,7 @@ FGearXY::FGearXY(UFairyObject* InOwner) :
     FGearBase(InOwner),
     bPositionsInPercent(false)
 {
-    Type = EGearType::XY;
+    Type = EFairyGearType::XY;
 }
 
 FGearXY::~FGearXY()

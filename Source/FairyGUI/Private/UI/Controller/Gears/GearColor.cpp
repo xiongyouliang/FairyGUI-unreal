@@ -10,7 +10,7 @@ FGearColor::FValue::FValue()
 
 FGearColor::FGearColor(UFairyObject* InOwner) : FGearBase(InOwner)
 {
-    Type = EGearType::Color;
+    Type = EFairyGearType::Color;
 }
 
 FGearColor::~FGearColor()

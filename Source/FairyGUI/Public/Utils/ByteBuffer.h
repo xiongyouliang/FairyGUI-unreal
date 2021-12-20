@@ -53,24 +53,25 @@ namespace FairyGUI {
 		* @return A new FString object.
 		*/
 		FString ReadString();
-
-
+		
+		[[deprecated("Use ReadStringFromCache() instead.")]]
+		const FString& ReadS();
+		
 		/**
 		* Position add 2 bytes for get string table index.
 		*
 		* @return A FString reference that handled in StringTable.
 		*/
-		[[deprecated("Use ReadStringFromCache() instead.")]]
-		const FString& ReadS();
 		const FString& ReadStringFromCache();
+
+		[[deprecated("Use ReadFNameFromCache() instead.")]]
+		FName ReadFName();
 
 		/**
 		* Position add 2 bytes for get string table index.
 		*
 		* @return A FName object equal to FString object that handled in StringTable.
 		*/
-		[[deprecated("Use ReadFNameFromCache() instead.")]]
-		FName ReadFName();
 		FName ReadFNameFromCache();
 
 		void ReadSArray(TArray<FString>& OutArray, int32 InCount);

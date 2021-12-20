@@ -329,14 +329,14 @@ void UFairyButton::SetProp(EObjectPropID PropID, const FNVariant& InValue)
 
 void UFairyButton::ConstructExtension(FairyGUI::FByteBuffer* Buffer)
 {
-	Sound = UFairyConfig::Config->ButtonSound;
-	SoundVolumeScale = UFairyConfig::Config->ButtonSoundVolumeScale;
+	FString TargetSound;
+	float TargetSoundVolumeScale;
 
 	Buffer->Seek(0, 6);
 
 	Mode = (EButtonMode)Buffer->ReadByte();
-	Buffer->ReadS(Sound);
-	SoundVolumeScale = Buffer->ReadFloat();
+	TargetSound = Buffer->ReadStringFromCache();
+	TargetSoundVolumeScale = Buffer->ReadFloat();
 	DownEffect = (EButtonPressedEffect)Buffer->ReadByte();
 	DownEffectValue = Buffer->ReadFloat();
 	if (DownEffect == EButtonPressedEffect::Scale)
@@ -368,6 +368,17 @@ void UFairyButton::ConstructExtension(FairyGUI::FByteBuffer* Buffer)
 	On(FFairyEventNames::TouchEnd).AddUObject(this, &UFairyButton::OnTouchEndHandler);
 	On(FFairyEventNames::Click).AddUObject(this, &UFairyButton::OnClickHandler);
 	On(FFairyEventNames::RemovedFromStage).AddUObject(this, &UFairyButton::OnRemovedFromStageHandler);
+	
+	if (TargetSound.IsEmpty())
+	{
+		Sound = UFairyConfig::Config->ButtonSound;
+		SoundVolumeScale = UFairyConfig::Config->ButtonSoundVolumeScale;
+	}
+	else
+	{
+		Sound = TargetSound;
+		SoundVolumeScale = TargetSoundVolumeScale;
+	}
 }
 
 void UFairyButton::SetupAfterAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos)
@@ -424,7 +435,15 @@ void UFairyButton::SetupAfterAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos)
 	}
 	RelatedPageID = Buffer->ReadStringFromCache();
 
-	Sound = Buffer->ReadStringFromCache();
+	/**
+	* The Button's property as a child for UFairyComponent
+	*/
+	FString SoundURL = Buffer->ReadStringFromCache();
+	if (!SoundURL.IsEmpty())
+	{
+		Sound = SoundURL;
+	}
+
 	if (Buffer->ReadBool())
 	{
 		SoundVolumeScale = Buffer->ReadFloat();

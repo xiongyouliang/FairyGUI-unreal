@@ -31,7 +31,7 @@ public:
 	virtual ~UFairyController();
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	FName GetName() { return FName(Name); }
+	FName GetName() { return Name; }
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	int32 GetSelectedIndex() const { return SelectedIndex; }
@@ -70,7 +70,7 @@ public:
 	// Initialize from binary data
 	void Setup(FairyGUI::FByteBuffer* Buffer);
 
-	FString Name;
+	FName Name;
 	bool bChanging;
 	bool bAutoRadioGroupDepth;
 

@@ -252,7 +252,7 @@ void UFairyController::Setup(FairyGUI::FByteBuffer* Buffer)
 	int32 BeginPos = Buffer->GetPos();
 	Buffer->Seek(BeginPos, 0);
 
-	Name = Buffer->ReadStringFromCache();
+	Name = Buffer->ReadFNameFromCache();
 	bAutoRadioGroupDepth = Buffer->ReadBool();
 
 	Buffer->Seek(BeginPos, 1);

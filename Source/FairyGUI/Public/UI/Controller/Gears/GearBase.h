@@ -27,8 +27,8 @@ class FGearBase
 {
 public:
 
-	FGearBase(UFairyObject* InOwner);
-	FGearBase(UFairyObject* InOwner, EFairyGearType InType);
+	FGearBase(UFairyObject* InTarget);
+	FGearBase(UFairyObject* InTarget, EFairyGearType InType);
 	virtual ~FGearBase();
 
 	EFairyGearType GetType() const { return Type; }
@@ -37,11 +37,15 @@ public:
 	void SetController(UFairyController* InController);
 	void HandleControllerChanged(UFairyController* InController);
 
+	UFairyObject* GetTarget();
+
 	FGearTweenConfig& GetTweenConfig();
 
 	virtual void UpdateFromRelations(const FVector2D& Delta);
 	virtual void Apply();
 	virtual void UpdateState();
+
+	virtual bool IsActived();
 
 	virtual void Setup(FairyGUI::FByteBuffer* Buffer);
 
@@ -49,7 +53,7 @@ public:
 	* This is a Factory Method. All Gear object Come from here.
 	* If you need a gear object pool for reuseable, just change the Factory Method implementations.
 	*/
-	static FGearBase* Create(UFairyObject* InOwner, EFairyGearType InType);
+	static FGearBase* Create(UFairyObject* InTarget, EFairyGearType InType);
 
 	static bool bDisableAllTweenEffect;
 
@@ -58,7 +62,7 @@ protected:
 	virtual void Init();
 
 	EFairyGearType Type;
-	TWeakObjectPtr<UFairyObject> Owner;
+	TWeakObjectPtr<UFairyObject> TargetObject;
 	TWeakObjectPtr<UFairyController> Controller;
 	TOptional<FGearTweenConfig> TweenConfig;
 

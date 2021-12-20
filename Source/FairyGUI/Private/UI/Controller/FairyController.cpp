@@ -1,6 +1,9 @@
 #include "UI/Controller/FairyController.h"
 #include "UI/Controller/Gears/GearBase.h"
+#include "UI/Controller/Gears/GearDisplay.h"
+#include "UI/Controller/Gears/GearDisplay2.h"
 #include "UI/FairyComponent.h"
+#include "UI/FairyObject.h"
 #include "Package/FairyPackage.h"
 #include "Utils/ByteBuffer.h"
 #include "Package/FairyPackageMgr.h"
@@ -35,7 +38,8 @@ void UFairyController::SetSelectedIndex(int32 Index, bool bTriggerEvent)
 
 		if (bTriggerEvent)
 		{
-			OnChangedEvent.Broadcast(this);
+			//OnChangedEvent.Broadcast(this);
+			Apply();
 		}
 
 		bChanging = false;
@@ -191,6 +195,44 @@ void UFairyController::Apply()
 			Observer->Apply();
 		}
 	}
+}
+
+bool UFairyController::CheckGearVisible(const UFairyObject* InTarget)
+{
+	if (!InTarget)
+	{
+		return false;
+	}
+
+	FGearDisplay* DisplayGear1 = nullptr;
+	FGearDisplay2* DisplayGear2 = nullptr;
+	for (size_t i = 0; i < ObserverList.Num(); i++)
+	{
+		FGearBase* Gear = ObserverList[i].Get();
+		if (Gear->GetTarget() == InTarget)
+		{
+			if (Gear->GetType() == EFairyGearType::Display)
+			{
+				DisplayGear1 = static_cast<FGearDisplay*>(Gear);
+			}
+
+			if (Gear->GetType() == EFairyGearType::Display2)
+			{
+				DisplayGear2 = static_cast<FGearDisplay2*>(Gear);
+			}
+		}
+	}
+
+	if (DisplayGear1 && DisplayGear2)
+	{
+		return DisplayGear2->Evaluate(DisplayGear1->IsActived());
+	}
+	else if (DisplayGear1)
+	{
+		return DisplayGear1->IsActived();
+	}
+
+	return false;
 }
 
 void UFairyController::RunActions()

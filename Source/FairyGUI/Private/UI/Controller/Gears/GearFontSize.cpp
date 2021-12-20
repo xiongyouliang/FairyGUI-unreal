@@ -5,7 +5,7 @@
 
 FGearFontSize::FGearFontSize(UFairyObject* InOwner) : FGearBase(InOwner)
 {
-    Type = EFairyGearType::FontSize;
+	Type = EFairyGearType::FontSize;
 }
 
 FGearFontSize::~FGearFontSize()
@@ -14,36 +14,36 @@ FGearFontSize::~FGearFontSize()
 
 void FGearFontSize::Init()
 {
-    Default = Owner->GetProp<int32>(EObjectPropID::FontSize);
-    Storage.Reset();
+	Default = TargetObject->GetProp<int32>(EObjectPropID::FontSize);
+	Storage.Reset();
 }
 
 void FGearFontSize::AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer)
 {
-    if (PageID.IsEmpty())
-    {
+	if (PageID.IsEmpty())
+	{
 		Default = Buffer->ReadInt();
-    }
-    else
-    {
+	}
+	else
+	{
 		Storage.Add(PageID, Buffer->ReadInt());
-    }
+	}
 }
 
 void FGearFontSize::Apply()
 {
-    int32* Value = Storage.Find(Controller->GetSelectedPageID());
-    if (Value == nullptr)
-    {
+	int32* Value = Storage.Find(Controller->GetSelectedPageID());
+	if (Value == nullptr)
+	{
 		Value = &Default;
-    }
+	}
 
-    Owner->bGearLocked = true;
-    Owner->SetProp(EObjectPropID::FontSize, FNVariant(*Value));
-    Owner->bGearLocked = false;
+	TargetObject->bGearLocked = true;
+	TargetObject->SetProp(EObjectPropID::FontSize, FNVariant(*Value));
+	TargetObject->bGearLocked = false;
 }
 
 void FGearFontSize::UpdateState()
 {
-    Storage.Add(Controller->GetSelectedPageID(), Owner->GetProp<int32>(EObjectPropID::FontSize));
+	Storage.Add(Controller->GetSelectedPageID(), TargetObject->GetProp<int32>(EObjectPropID::FontSize));
 }

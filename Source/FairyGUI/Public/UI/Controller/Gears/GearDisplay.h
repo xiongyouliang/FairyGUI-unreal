@@ -10,6 +10,7 @@ public:
 
 	virtual void Apply() override;
 	virtual void UpdateState() override;
+	virtual bool IsActived() override;
 
 	uint32 AddLock();
 	void ReleaseLock(uint32 Token);

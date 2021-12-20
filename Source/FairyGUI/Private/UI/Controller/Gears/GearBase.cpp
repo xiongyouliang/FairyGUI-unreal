@@ -18,40 +18,40 @@
 
 bool FGearBase::bDisableAllTweenEffect = false;
 
-FGearBase* FGearBase::Create(UFairyObject* InOwner, EFairyGearType InType)
+FGearBase* FGearBase::Create(UFairyObject* InTarget, EFairyGearType InType)
 {
 	FGearBase* Gear = nullptr;
 	switch (InType)
 	{
 	case EFairyGearType::Display:
-		Gear = new FGearDisplay(InOwner);
+		Gear = new FGearDisplay(InTarget);
 		break;
 	case EFairyGearType::XY:
-		Gear = new FGearXY(InOwner);
+		Gear = new FGearXY(InTarget);
 		break;
 	case EFairyGearType::Size:
-		Gear = new FGearSize(InOwner);
+		Gear = new FGearSize(InTarget);
 		break;
 	case EFairyGearType::Look:
-		Gear = new FGearLook(InOwner);
+		Gear = new FGearLook(InTarget);
 		break;
 	case EFairyGearType::Color:
-		Gear = new FGearColor(InOwner);
+		Gear = new FGearColor(InTarget);
 		break;
 	case EFairyGearType::Animation:
-		Gear = new FGearAnimation(InOwner);
+		Gear = new FGearAnimation(InTarget);
 		break;
 	case EFairyGearType::Text:
-		Gear = new FGearText(InOwner);
+		Gear = new FGearText(InTarget);
 		break;
 	case EFairyGearType::Icon:
-		Gear = new FGearIcon(InOwner);
+		Gear = new FGearIcon(InTarget);
 		break;
 	case EFairyGearType::Display2:
-		Gear = new FGearDisplay2(InOwner);
+		Gear = new FGearDisplay2(InTarget);
 		break;
 	case EFairyGearType::FontSize:
-		Gear = new FGearFontSize(InOwner);
+		Gear = new FGearFontSize(InTarget);
 		break;
 	}
 
@@ -67,13 +67,13 @@ FGearTweenConfig::FGearTweenConfig():
 {
 }
 
-FGearBase::FGearBase(UFairyObject* InOwner) : Owner(InOwner)
+FGearBase::FGearBase(UFairyObject* InTarget) : TargetObject(InTarget)
 {
 }
 
-FGearBase::FGearBase(UFairyObject* InOwner, EFairyGearType InType)
+FGearBase::FGearBase(UFairyObject* InTarget, EFairyGearType InType)
 	: Type(InType)
-	, Owner(InOwner)
+	, TargetObject(InTarget)
 {
 
 }
@@ -108,6 +108,15 @@ void FGearBase::HandleControllerChanged(UFairyController* InController)
 	this->Apply();
 }
 
+UFairyObject* FGearBase::GetTarget()
+{
+	if (TargetObject.IsValid())
+	{
+		TargetObject.Get();
+	}
+	return nullptr;
+}
+
 FGearTweenConfig& FGearBase::GetTweenConfig()
 {
 	if (!TweenConfig.IsSet())
@@ -134,14 +143,23 @@ void FGearBase::UpdateState()
 {
 }
 
+bool FGearBase::IsActived()
+{
+	return false;
+}
+
 void FGearBase::UpdateFromRelations(const FVector2D& Delta)
 {
 }
 
+
+/**
+* todo: this is not a good desgin, buffer parsing need remove to inherited class.
+*/
 void FGearBase::Setup(FairyGUI::FByteBuffer* Buffer)
 {
 	int32 index = Buffer->ReadShort();
-	Controller = Owner->GetParent()->GetControllerAt(index);
+	Controller = TargetObject->GetParent()->GetControllerAt(index);
 	//Controller->OnChanged().AddRaw(this, &FGearBase::HandleControllerChanged);
 	
 	Init();

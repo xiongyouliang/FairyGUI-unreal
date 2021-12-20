@@ -5,29 +5,29 @@
 class FAIRYGUI_API FGearColor : public FGearBase
 {
 public:
-    FGearColor(UFairyObject* InOwner);
-    virtual ~FGearColor();
+	FGearColor(UFairyObject* InOwner);
+	virtual ~FGearColor();
 
-    virtual void Apply() override;
-    virtual void UpdateState() override;
+	virtual void Apply() override;
+	virtual void UpdateState() override;
 
 protected:
-    virtual void AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer) override;
-    virtual void Init() override;
+	virtual void AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer) override;
+	virtual void Init() override;
 
 private:
-    void OnTweenUpdate(UFairyTweener* Tweener);
-    void OnTweenComplete();
+	void OnTweenUpdate(UFairyTweener* Tweener);
+	void OnTweenComplete();
 
-    struct FValue
-    {
-    public:
-        FColor Color;
-        FColor OutlineColor;
+	struct FValue
+	{
+	public:
+		FColor Color;
+		FColor OutlineColor;
 
-        FValue();
-    };
+		FValue();
+	};
 
-    TMap<FString, FValue> Storage;
-    FValue Default;
+	TMap<FString, FValue> Storage;
+	FValue Default;
 };

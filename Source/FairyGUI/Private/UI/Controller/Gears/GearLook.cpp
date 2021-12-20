@@ -5,16 +5,16 @@
 #include "Utils/ByteBuffer.h"
 
 FGearLook::FValue::FValue() :
-    Alpha(0),
-    Rotation(0),
-    bGrayed(false),
-    bTouchable(false)
+	Alpha(0),
+	Rotation(0),
+	bGrayed(false),
+	bTouchable(false)
 {
 }
 
 FGearLook::FGearLook(UFairyObject* InOwner) : FGearBase(InOwner)
 {
-    Type = EFairyGearType::Look;
+	Type = EFairyGearType::Look;
 }
 
 FGearLook::~FGearLook()
@@ -23,88 +23,88 @@ FGearLook::~FGearLook()
 
 void FGearLook::Init()
 {
-    Default.Alpha = Owner->GetAlpha();
-    Default.Rotation = Owner->GetRotation();
-    Default.bGrayed = Owner->IsGrayed();
-    Default.bTouchable = Owner->IsTouchable();
-    Storage.Reset();
+	Default.Alpha = TargetObject->GetAlpha();
+	Default.Rotation = TargetObject->GetRotation();
+	Default.bGrayed = TargetObject->IsGrayed();
+	Default.bTouchable = TargetObject->IsTouchable();
+	Storage.Reset();
 }
 
 void FGearLook::AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer)
 {
-    FValue Value;
-    Value.Alpha = Buffer->ReadFloat();
-    Value.Rotation = Buffer->ReadFloat();
-    Value.bGrayed = Buffer->ReadBool();
-    Value.bTouchable = Buffer->ReadBool();
+	FValue Value;
+	Value.Alpha = Buffer->ReadFloat();
+	Value.Rotation = Buffer->ReadFloat();
+	Value.bGrayed = Buffer->ReadBool();
+	Value.bTouchable = Buffer->ReadBool();
 
-    if (PageID.IsEmpty())
-    {
+	if (PageID.IsEmpty())
+	{
 		Default = Value;
-    }
-    else
-    {
+	}
+	else
+	{
 		Storage.Add(PageID, MoveTemp(Value));
-    }
+	}
 }
 
 void FGearLook::Apply()
 {
-    FValue* Value = Storage.Find(Controller->GetSelectedPageID());
-    if (Value == nullptr)
-    {
+	FValue* Value = Storage.Find(Controller->GetSelectedPageID());
+	if (Value == nullptr)
+	{
 		Value = &Default;
-    }
+	}
 
-    if (TweenConfig.IsSet() && TweenConfig->bTween && UFairyPackage::Constructing == 0 && !bDisableAllTweenEffect)
-    {
-        // todo: use new tween system
-    }
-    else
-    {
-        Owner->bGearLocked = true;
-        Owner->SetAlpha(Value->Alpha);
-        Owner->SetRotation(Value->Rotation);
-        Owner->SetGrayed(Value->bGrayed);
-        Owner->SetTouchable(Value->bTouchable);
-        Owner->bGearLocked = false;
-    }
+	if (TweenConfig.IsSet() && TweenConfig->bTween && UFairyPackage::Constructing == 0 && !bDisableAllTweenEffect)
+	{
+		// todo: use new tween system
+	}
+	else
+	{
+		TargetObject->bGearLocked = true;
+		TargetObject->SetAlpha(Value->Alpha);
+		TargetObject->SetRotation(Value->Rotation);
+		TargetObject->SetGrayed(Value->bGrayed);
+		TargetObject->SetTouchable(Value->bTouchable);
+		TargetObject->bGearLocked = false;
+	}
 }
 
 void FGearLook::OnTweenUpdate(UFairyTweener* Tweener)
 {
   //  int32 flag = Tweener->GetUserData().AsInt();
-  //  Owner->bGearLocked = true;
+  //  TargetObject->bGearLocked = true;
 
   //  if ((flag & 1) != 0)
   //  {
-		//Owner->SetAlpha(Tweener->Value.X);
+		//TargetObject->SetAlpha(Tweener->Value.X);
   //  }
 
   //  if ((flag & 2) != 0)
   //  {
-		//Owner->SetRotation(Tweener->Value.Y);
+		//TargetObject->SetRotation(Tweener->Value.Y);
   //  }
-  //  Owner->bGearLocked = false;
+  //  TargetObject->bGearLocked = false;
 }
 
 void FGearLook::OnTweenComplete()
 {
-    //if (TweenConfig->DisplayLockToken != 0)
-    //{
-    //    Owner->ReleaseDisplayLock(TweenConfig->DisplayLockToken);
-    //    TweenConfig->DisplayLockToken = 0;
-    //}
-    //TweenConfig->Handle.Invalidate();
-    //Owner->DispatchEvent(FFairyEventNames::GearStop);
+	//if (TweenConfig->DisplayLockToken != 0)
+	//{
+	//    TargetObject->ReleaseDisplayLock(TweenConfig->DisplayLockToken);
+	//    TweenConfig->DisplayLockToken = 0;
+	//}
+	//TweenConfig->Handle.Invalidate();
+	//TargetObject->DispatchEvent(FFairyEventNames::GearStop);
 }
 
 void FGearLook::UpdateState()
 {
-    FValue Value;
-    Value.Alpha = Owner->GetAlpha();
-    Value.Rotation = Owner->GetRotation();
-    Value.bGrayed = Owner->IsGrayed();
-    Value.bTouchable = Owner->IsTouchable();
-    Storage.Add(Controller->GetSelectedPageID(), MoveTemp(Value));
+	FValue Value;
+	Value.Alpha = TargetObject->GetAlpha();
+	Value.Rotation = TargetObject->GetRotation();
+	Value.bGrayed = TargetObject->IsGrayed();
+	Value.bTouchable = TargetObject->IsTouchable();
+	Storage.Add(Controller->GetSelectedPageID(), MoveTemp(Value));
 }

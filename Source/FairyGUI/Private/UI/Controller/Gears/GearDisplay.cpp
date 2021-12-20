@@ -29,24 +29,33 @@ void FGearDisplay::Apply()
 	}
 	else
 	{
-		if (Controller.IsValid() && Pages.Contains(Controller->GetSelectedPageID()))
+		if (IsActived())
 		{
 			Visible = 1;
+			TargetObject->SetVisible(true);
 		}
 		else
 		{
 			Visible = 0;
+			TargetObject->SetVisible(false);
 		}
-	}
-
-	if (Owner.IsValid())
-	{
-		Owner->CheckGearDisplay();
 	}
 }
 
 void FGearDisplay::UpdateState()
 {
+}
+
+bool FGearDisplay::IsActived()
+{
+	if (Controller.IsValid() && Pages.Contains(Controller->GetSelectedPageID()))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 void FGearDisplay::AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer)
@@ -74,14 +83,7 @@ void FGearDisplay::ReleaseLock(uint32 token)
 
 bool FGearDisplay::IsConnected()
 {
-	if (Controller.IsValid() && Visible > 0)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+	return IsActived();
 	//return Controller == nullptr || Visible > 0;
 }
 

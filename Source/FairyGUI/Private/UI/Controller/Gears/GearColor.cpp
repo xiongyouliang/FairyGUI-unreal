@@ -10,7 +10,7 @@ FGearColor::FValue::FValue()
 
 FGearColor::FGearColor(UFairyObject* InOwner) : FGearBase(InOwner)
 {
-    Type = EFairyGearType::Color;
+	Type = EFairyGearType::Color;
 }
 
 FGearColor::~FGearColor()
@@ -19,69 +19,69 @@ FGearColor::~FGearColor()
 
 void FGearColor::Init()
 {
-    Default.Color = Owner->GetProp<FColor>(EObjectPropID::Color);
-    Default.OutlineColor = Owner->GetProp<FColor>(EObjectPropID::OutlineColor);
-    Storage.Reset();
+	Default.Color = TargetObject->GetProp<FColor>(EObjectPropID::Color);
+	Default.OutlineColor = TargetObject->GetProp<FColor>(EObjectPropID::OutlineColor);
+	Storage.Reset();
 }
 
 void FGearColor::AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer)
 {
-    FValue Value;
-    Value.Color = Buffer->ReadColor();
-    Value.OutlineColor = Buffer->ReadColor();
-    if (PageID.IsEmpty())
-    {
+	FValue Value;
+	Value.Color = Buffer->ReadColor();
+	Value.OutlineColor = Buffer->ReadColor();
+	if (PageID.IsEmpty())
+	{
 		Default = Value;
-    }
-    else
-    {
+	}
+	else
+	{
 		Storage.Add(PageID, MoveTemp(Value));
-    }
+	}
 }
 
 void FGearColor::Apply()
 {
-    FValue* Value = Storage.Find(Controller->GetSelectedPageID());
-    if (Value == nullptr)
-    {
+	FValue* Value = Storage.Find(Controller->GetSelectedPageID());
+	if (Value == nullptr)
+	{
 		Value = &Default;
-    }
+	}
 
-    if (TweenConfig.IsSet() && TweenConfig->bTween && UFairyPackage::Constructing == 0 && !bDisableAllTweenEffect)
-    {
-        // todo: use new tween system
-    }
-    else
-    {
-        Owner->bGearLocked = true;
-        Owner->SetProp(EObjectPropID::Color, FNVariant(Value->Color));
-        Owner->SetProp(EObjectPropID::OutlineColor, FNVariant(Value->OutlineColor));
-        Owner->bGearLocked = false;
-    }
+	if (TweenConfig.IsSet() && TweenConfig->bTween && UFairyPackage::Constructing == 0 && !bDisableAllTweenEffect)
+	{
+		// todo: use new tween system
+	}
+	else
+	{
+		TargetObject->bGearLocked = true;
+		TargetObject->SetProp(EObjectPropID::Color, FNVariant(Value->Color));
+		TargetObject->SetProp(EObjectPropID::OutlineColor, FNVariant(Value->OutlineColor));
+		TargetObject->bGearLocked = false;
+	}
 }
 
 void FGearColor::OnTweenUpdate(UFairyTweener* Tweener)
 {
-	//Owner->bGearLocked = true;
-	//Owner->SetProp(EObjectPropID::Color, FNVariant(Tweener->Value.GetColor()));
-	//Owner->bGearLocked = false;
+	//TargetObject->bGearLocked = true;
+	//TargetObject->SetProp(EObjectPropID::Color, FNVariant(Tweener->Value.GetColor()));
+	//TargetObject->bGearLocked = false;
 }
 
 void FGearColor::OnTweenComplete()
 {
-    //if (TweenConfig->DisplayLockToken != 0)
-    //{
-    //    Owner->ReleaseDisplayLock(TweenConfig->DisplayLockToken);
-    //    TweenConfig->DisplayLockToken = 0;
-    //}
-    //TweenConfig->Handle.Invalidate();
-    //Owner->DispatchEvent(FFairyEventNames::GearStop);
+	//if (TweenConfig->DisplayLockToken != 0)
+	//{
+	//    TargetObject->ReleaseDisplayLock(TweenConfig->DisplayLockToken);
+	//    TweenConfig->DisplayLockToken = 0;
+	//}
+	//TweenConfig->Handle.Invalidate();
+	//TargetObject->DispatchEvent(FFairyEventNames::GearStop);
 }
 
 void FGearColor::UpdateState()
 {
-    FValue Value;
-    Value.Color = Owner->GetProp<FColor>(EObjectPropID::Color);
-    Value.OutlineColor = Owner->GetProp<FColor>(EObjectPropID::OutlineColor);
-    Storage.Add(Controller->GetSelectedPageID(), MoveTemp(Value));
+	FValue Value;
+	Value.Color = TargetObject->GetProp<FColor>(EObjectPropID::Color);
+	Value.OutlineColor = TargetObject->GetProp<FColor>(EObjectPropID::OutlineColor);
+	Storage.Add(Controller->GetSelectedPageID(), MoveTemp(Value));
 }

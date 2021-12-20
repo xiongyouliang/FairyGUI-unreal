@@ -4,13 +4,13 @@
 #include "Utils/ByteBuffer.h"
 
 FGearAnimation::FValue::FValue() :
-    bPlaying(false), Frame(0)
+	bPlaying(false), Frame(0)
 {
 }
 
 FGearAnimation::FGearAnimation(UFairyObject* InOwner) : FGearBase(InOwner)
 {
-    Type = EFairyGearType::Animation;
+	Type = EFairyGearType::Animation;
 }
 
 FGearAnimation::~FGearAnimation()
@@ -19,46 +19,46 @@ FGearAnimation::~FGearAnimation()
 
 void FGearAnimation::Init()
 {
-    Default.bPlaying = Owner->GetProp<bool>(EObjectPropID::Playing);
-    Default.Frame = Owner->GetProp<int32>(EObjectPropID::Frame);
-    Storage.Reset();
+	Default.bPlaying = TargetObject->GetProp<bool>(EObjectPropID::Playing);
+	Default.Frame = TargetObject->GetProp<int32>(EObjectPropID::Frame);
+	Storage.Reset();
 }
 
 void FGearAnimation::AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer)
 {
-    FValue Value;
-    Value.bPlaying = Buffer->ReadBool();
-    Value.Frame = Buffer->ReadInt();
-    if (PageID.IsEmpty())
-    {
+	FValue Value;
+	Value.bPlaying = Buffer->ReadBool();
+	Value.Frame = Buffer->ReadInt();
+	if (PageID.IsEmpty())
+	{
 		Default = Value;
-    }
-    else
-    {
+	}
+	else
+	{
 		Storage.Add(PageID, MoveTemp(Value));
-    }
+	}
 }
 
 void FGearAnimation::Apply()
 {
-    Owner->bGearLocked = true;
+	TargetObject->bGearLocked = true;
 
-    FValue* Value = Storage.Find(Controller->GetSelectedPageID());
-    if (Value == nullptr)
-    {
+	FValue* Value = Storage.Find(Controller->GetSelectedPageID());
+	if (Value == nullptr)
+	{
 		Value = &Default;
-    }
+	}
 
-    Owner->SetProp(EObjectPropID::Playing, FNVariant(Value->bPlaying));
-    Owner->SetProp(EObjectPropID::Frame, FNVariant(Value->Frame));
+	TargetObject->SetProp(EObjectPropID::Playing, FNVariant(Value->bPlaying));
+	TargetObject->SetProp(EObjectPropID::Frame, FNVariant(Value->Frame));
 
-    Owner->bGearLocked = false;
+	TargetObject->bGearLocked = false;
 }
 
 void FGearAnimation::UpdateState()
 {
-    FValue Value;
-    Value.bPlaying = Owner->GetProp<bool>(EObjectPropID::Playing);
-    Value.Frame = Owner->GetProp<int32>(EObjectPropID::Frame);
-    Storage.Add(Controller->GetSelectedPageID(), MoveTemp(Value));
+	FValue Value;
+	Value.bPlaying = TargetObject->GetProp<bool>(EObjectPropID::Playing);
+	Value.Frame = TargetObject->GetProp<int32>(EObjectPropID::Frame);
+	Storage.Add(Controller->GetSelectedPageID(), MoveTemp(Value));
 }

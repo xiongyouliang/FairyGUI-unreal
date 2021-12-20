@@ -10,6 +10,7 @@
 
 #include "FairyController.generated.h"
 
+class UFairyObject;
 class UFairyComponent;
 class UFairyController;
 
@@ -62,6 +63,7 @@ public:
 	void RemoveAllAbserver();
 	void RemoveAbserver(TSharedPtr<FGearBase> InPenddingRemoveGear);
 	void Apply();
+	bool CheckGearVisible(const UFairyObject* InTarget);
 
 	void RunActions();
 

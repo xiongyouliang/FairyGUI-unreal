@@ -5,21 +5,21 @@
 class FAIRYGUI_API FGearSize : public FGearBase
 {
 public:
-    FGearSize(UFairyObject* InOwner);
-    virtual ~FGearSize();
+	FGearSize(UFairyObject* InOwner);
+	virtual ~FGearSize();
 
-    virtual void Apply() override;
-    virtual void UpdateState() override;
-    virtual void UpdateFromRelations(const FVector2D& Delta) override;
+	virtual void Apply() override;
+	virtual void UpdateState() override;
+	virtual void UpdateFromRelations(const FVector2D& Delta) override;
 
 protected:
-    virtual void AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer) override;
-    virtual void Init() override;
+	virtual void AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer) override;
+	virtual void Init() override;
 
 private:
-    void OnTweenUpdate(UFairyTweener* Tweener);
-    void OnTweenComplete();
+	void OnTweenUpdate(UFairyTweener* Tweener);
+	void OnTweenComplete();
 
-    TMap<FString, FVector4> Storage;
-    FVector4 Default;
+	TMap<FString, FVector4> Storage;
+	FVector4 Default;
 };

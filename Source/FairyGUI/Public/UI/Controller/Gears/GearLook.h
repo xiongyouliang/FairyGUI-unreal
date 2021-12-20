@@ -5,30 +5,30 @@
 class FAIRYGUI_API FGearLook : public FGearBase
 {
 public:
-    FGearLook(UFairyObject* InOwner);
-    virtual ~FGearLook();
+	FGearLook(UFairyObject* InOwner);
+	virtual ~FGearLook();
 
-    virtual void Apply() override;
-    virtual void UpdateState() override;
+	virtual void Apply() override;
+	virtual void UpdateState() override;
 
 protected:
-    virtual void AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer) override;
-    virtual void Init() override;
+	virtual void AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer) override;
+	virtual void Init() override;
 
 private:
-    void OnTweenUpdate(UFairyTweener* Tweener);
-    void OnTweenComplete();
+	void OnTweenUpdate(UFairyTweener* Tweener);
+	void OnTweenComplete();
 
-    struct FValue
-    {
-        float Alpha;
-        float Rotation;
-        bool bGrayed;
-        bool bTouchable;
+	struct FValue
+	{
+		float Alpha;
+		float Rotation;
+		bool bGrayed;
+		bool bTouchable;
 
-        FValue();
-    };
+		FValue();
+	};
 
-    TMap<FString, FValue> Storage;
-    FValue Default;
+	TMap<FString, FValue> Storage;
+	FValue Default;
 };

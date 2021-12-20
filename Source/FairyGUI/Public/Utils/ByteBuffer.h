@@ -74,7 +74,14 @@ namespace FairyGUI {
 		*/
 		FName ReadFNameFromCache();
 
+		/**
+		* Position add 2*InCount bytes for get all string table index.
+		*/
 		void ReadSArray(TArray<FString>& OutArray, int32 InCount);
+
+		/**
+		* Position add 2*InCount bytes for get all string table index.
+		*/
 		void ReadFNameArray(TArray<FName>& OutArray, int32 InCount);
 		bool ReadS(FString& OutString);
 		const FString* ReadSP();

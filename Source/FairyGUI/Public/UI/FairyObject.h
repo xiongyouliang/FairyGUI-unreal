@@ -410,16 +410,12 @@ protected:
 	TSharedPtr<FFairyPackageItem> PackageItem; // A Fairy Editor export data
 
 	// *************** Controller property start ******************
-private:
-	bool bHandlingController;
-	FGearBase* Gears[10];
 public:
 	/**
 	 * Return FGearDisplay and FGearDisplay2 combine result:
 	 * 
 	 * @return boolean result, means GearDisplay effect; if no GearDisplay, return true;
 	 */
-	bool IsGearVisible();
 	virtual void ApplyController(UFairyController* Controller);
 	// *************** Controller property end ******************
 private:

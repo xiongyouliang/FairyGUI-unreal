@@ -30,25 +30,11 @@ UFairyObject::UFairyObject() :
 {
 	static int32 _gInstanceCounter = 1;
 	ID.AppendInt(_gInstanceCounter);
-
-	for (int32 i = 0; i < 10; i++)
-	{
-		Gears[i] = nullptr;
-	}
 }
 
 UFairyObject::~UFairyObject()
 {
 	WidgetSlot = nullptr;
-
-	for (int32 i = 0; i < 10; i++)
-	{
-		if (Gears[i])
-		{
-			delete Gears[i];
-			Gears[i] = nullptr;
-		}
-	}
 }
 
 void UFairyObject::ReleaseSlateResources(bool bReleaseChildren)
@@ -537,117 +523,35 @@ void UFairyObject::RemoveRelation(UFairyObject* Obj, ERelationType RelationType)
 
 void UFairyObject::UpdateGear(int32 Index)
 {
-	//if (bUnderConstruct || bGearLocked)
-	//{
-	//	return;
-	//}
-
-	//FGearBase* gear = Gears[Index];
-	//if (gear != nullptr && gear->GetController() != nullptr)
-	//{
-	//	gear->UpdateState();
-	//}
 }
 
 bool UFairyObject::CheckGearController(int32 Index, UFairyController* Controller)
 {
-	return Gears[Index] != nullptr && Gears[Index]->GetController() == Controller;
-}
-
-bool UFairyObject::IsGearVisible()
-{
-	bool bGearVisible = false;
-
-	FGearDisplay* DisplayGear = (FGearDisplay*)Gears[EFairyGearType::Display];
-	FGearDisplay2* Display2Gear = (FGearDisplay2*)Gears[EFairyGearType::Display2];
-
-	// no display control option
-	if (DisplayGear == nullptr)
-	{
-		bGearVisible = true;
-	}
-	else
-	{
-		bGearVisible = DisplayGear->IsConnected(); // get DisplayGear1 option value
-		if (Display2Gear != nullptr)
-		{
-			bGearVisible = Display2Gear->Evaluate(bGearVisible); // evaluate with DisplayGear2 option value
-		}
-	}
-	return bGearVisible;
+	return false;
 }
 
 void UFairyObject::UpdateGearFromRelations(int32 Index, const FVector2D& Delta)
 {
-	if (Gears[Index] != nullptr)
-	{
-		Gears[Index]->UpdateFromRelations(Delta);
-	}
+	// todo:
 }
 
 uint32 UFairyObject::AddDisplayLock()
 {
-	FGearDisplay* gearDisplay = (FGearDisplay*)Gears[EFairyGearType::Display];
-	if (gearDisplay != nullptr && gearDisplay->GetController() != nullptr)
-	{
-		uint32 ret = gearDisplay->AddLock();
-		CheckGearDisplay();
-
-		return ret;
-	}
-	else
-	{
-		return 0;
-	}
+	// todo:
+	return 0;
 }
 
 void UFairyObject::ReleaseDisplayLock(uint32 Token)
 {
-	FGearDisplay* gearDisplay = (FGearDisplay*)Gears[EFairyGearType::Display];
-	if (gearDisplay != nullptr && gearDisplay->GetController() != nullptr)
-	{
-		gearDisplay->ReleaseLock(Token);
-		CheckGearDisplay();
-	}
+	// todo:
 }
 
 void UFairyObject::CheckGearDisplay()
 {
-	if (bHandlingController)
-	{
-		return;
-	}
-
-	bool bGearVisible = IsGearVisible();
-	if (bInternalVisible != bGearVisible)
-	{
-		bInternalVisible = bGearVisible;
-		if (Parent)
-		{
-			Parent->ChildStateChanged(this);
-		}
-
-		if (Group.IsValid() && Group->IsExcludeInvisibles())
-		{
-			Group->SetBoundsChangedFlag();
-		}
-	}
 }
 
 void UFairyObject::ApplyController(UFairyController* Controller)
 {
-	bHandlingController = true;
-	for (int32 i = 0; i < 10; i++)
-	{
-		FGearBase* gear = Gears[i];
-		if (gear != nullptr && gear->GetController() == Controller)
-		{
-			gear->Apply();
-		}
-	}
-	bHandlingController = false;
-
-	CheckGearDisplay();
 }
 // ********************* Controller end *******************
 

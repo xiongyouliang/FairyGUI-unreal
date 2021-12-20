@@ -1170,94 +1170,94 @@ void UFairyComponent::ConstructFromResource()
 
 void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, int32 PoolIndex)
 {
-	TSharedPtr<FFairyPackageItem> ContentItem = PackageItem->GetBranch();
+	TSharedPtr<FFairyPackageItem> CurPackageItem = PackageItem->GetBranch();
 
-	if (!ContentItem->bTranslated)
+	if (!CurPackageItem->bTranslated)
 	{
-		ContentItem->bTranslated = true;
-		FTranslationHelper::TranslateComponent(ContentItem);
+		CurPackageItem->bTranslated = true;
+		FTranslationHelper::TranslateComponent(CurPackageItem);
 	}
 
-	FairyGUI::FByteBuffer* Buffer = ContentItem->RawData.Get();
-	Buffer->Seek(0, 0);
+	FairyGUI::FByteBuffer* CurPackageItemBuffer = CurPackageItem->RawData.Get();
+	CurPackageItemBuffer->Seek(0, 0);
 
 	bUnderConstruct = true;
 
 	// Set this Fairy Object Size attribute
-	float SizeX = Buffer->ReadInt();
-	float SizeY = Buffer->ReadInt();
+	float SizeX = CurPackageItemBuffer->ReadInt();
+	float SizeY = CurPackageItemBuffer->ReadInt();
 	this->SetSize(FVector2D(SizeX, SizeY));
 
-	if (Buffer->ReadBool())
+	if (CurPackageItemBuffer->ReadBool())
 	{
-		this->MinSize.X = Buffer->ReadInt();
-		this->MaxSize.X = Buffer->ReadInt();
-		this->MinSize.Y = Buffer->ReadInt();
-		this->MaxSize.Y = Buffer->ReadInt();
+		this->MinSize.X = CurPackageItemBuffer->ReadInt();
+		this->MaxSize.X = CurPackageItemBuffer->ReadInt();
+		this->MinSize.Y = CurPackageItemBuffer->ReadInt();
+		this->MaxSize.Y = CurPackageItemBuffer->ReadInt();
 	}
 
 	// Set this Object Pivot attribute
-	if (Buffer->ReadBool())
+	if (CurPackageItemBuffer->ReadBool())
 	{
-		float PivotX = Buffer->ReadFloat();
-		float PivotY = Buffer->ReadFloat();
-		bool PivotAsAnchor = Buffer->ReadBool();
+		float PivotX = CurPackageItemBuffer->ReadFloat();
+		float PivotY = CurPackageItemBuffer->ReadFloat();
+		bool PivotAsAnchor = CurPackageItemBuffer->ReadBool();
 		SetPivot(FVector2D(PivotX, PivotY), PivotAsAnchor);
 	}
 
 	// Set this Component Margin attribute
-	if (Buffer->ReadBool())
+	if (CurPackageItemBuffer->ReadBool())
 	{
-		Margin.Top = Buffer->ReadInt();
-		Margin.Bottom = Buffer->ReadInt();
-		Margin.Left = Buffer->ReadInt();
-		Margin.Right = Buffer->ReadInt();
+		Margin.Top = CurPackageItemBuffer->ReadInt();
+		Margin.Bottom = CurPackageItemBuffer->ReadInt();
+		Margin.Left = CurPackageItemBuffer->ReadInt();
+		Margin.Right = CurPackageItemBuffer->ReadInt();
 	}
 
-	EOverflowType overflow = (EOverflowType)Buffer->ReadByte();
+	EOverflowType overflow = (EOverflowType)CurPackageItemBuffer->ReadByte();
 	if (overflow == EOverflowType::Scroll)
 	{
-		int32 savedPos = Buffer->GetPos();
-		Buffer->Seek(0, 7);
-		SetupScroll(Buffer);
-		Buffer->SetPos(savedPos);
+		int32 savedPos = CurPackageItemBuffer->GetPos();
+		CurPackageItemBuffer->Seek(0, 7);
+		SetupScroll(CurPackageItemBuffer);
+		CurPackageItemBuffer->SetPos(savedPos);
 	}
 	else
 	{
 		SetupOverflow(overflow);
 	}
 
-	if (Buffer->ReadBool()) //clipsoft
+	if (CurPackageItemBuffer->ReadBool()) //clipsoft
 	{
-		Buffer->Skip(8);
+		CurPackageItemBuffer->Skip(8);
 	}
 
 	bBuildingDisplayList = true;
 
 	// Parse all controller for this UFairyComponent
-	Buffer->Seek(0, 1);
-	int32 controllerCount = Buffer->ReadShort();
+	CurPackageItemBuffer->Seek(0, 1);
+	int32 controllerCount = CurPackageItemBuffer->ReadShort();
 	for (int32 i = 0; i < controllerCount; i++)
 	{
-		int32 nextPos = Buffer->ReadShort();
-		nextPos += Buffer->GetPos();
+		int32 nextPos = CurPackageItemBuffer->ReadShort();
+		nextPos += CurPackageItemBuffer->GetPos();
 
 		UFairyController* Controller = NewObject<UFairyController>(this);
-		Controller->Setup(Buffer);
+		Controller->Setup(CurPackageItemBuffer);
 
 		UFairyApplication::Get()->GetControllerMgr()->AddController(this, Controller);
 
-		Buffer->SetPos(nextPos);
+		CurPackageItemBuffer->SetPos(nextPos);
 	}
 
 	// Parse Children
-	Buffer->Seek(0, 2);
+	CurPackageItemBuffer->Seek(0, 2);
 	UFairyObject* Child = nullptr;
-	int32 childCount = Buffer->ReadShort();
+	int32 childCount = CurPackageItemBuffer->ReadShort();
 	for (int32 i = 0; i < childCount; i++)
 	{
-		int32 dataLen = Buffer->ReadShort();
-		int32 curPos = Buffer->GetPos();
+		int32 dataLen = CurPackageItemBuffer->ReadShort();
+		int32 curPos = CurPackageItemBuffer->GetPos();
 
 		if (ObjectPool != nullptr) 
 		{
@@ -1265,13 +1265,13 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 		}
 		else
 		{
-			Buffer->Seek(curPos, 0);
+			CurPackageItemBuffer->Seek(curPos, 0);
 
-			EObjectType ObjectType = (EObjectType)Buffer->ReadByte();
-			//const FString& src = Buffer->ReadS();
-			//const FString& PackageID = Buffer->ReadS();
-			FName src = Buffer->ReadFNameFromCache();
-			FName PackageID = Buffer->ReadFNameFromCache();
+			EObjectType ObjectType = (EObjectType)CurPackageItemBuffer->ReadByte();
+			//const FString& src = CurPackageItemBuffer->ReadS();
+			//const FString& PackageID = CurPackageItemBuffer->ReadS();
+			FName src = CurPackageItemBuffer->ReadFNameFromCache();
+			FName PackageID = CurPackageItemBuffer->ReadFNameFromCache();
 
 			TSharedPtr<FFairyPackageItem> ChildPackageItem = nullptr;
 			if (!src.IsNone())
@@ -1283,7 +1283,7 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 				}
 				else 
 				{
-					Package = ContentItem->OwnerPackage;
+					Package = CurPackageItem->OwnerPackage;
 				}
 
 				if (Package != nullptr)
@@ -1306,64 +1306,64 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 		}
 
 		Child->bUnderConstruct = true;
-		Child->SetupBeforeAdd(Buffer, curPos);
+		Child->SetupBeforeAdd(CurPackageItemBuffer, curPos);
 
 		AddChild(Child);
 
-		Buffer->SetPos(curPos + dataLen);
+		CurPackageItemBuffer->SetPos(curPos + dataLen);
 	}
 
-	Buffer->Seek(0, 3);
-	GetRelations().Setup(Buffer, true); // setup the Component relation info
+	CurPackageItemBuffer->Seek(0, 3);
+	GetRelations().Setup(CurPackageItemBuffer, true); // setup the Component relation info
 
-	Buffer->Seek(0, 2);
-	Buffer->Skip(2);
+	CurPackageItemBuffer->Seek(0, 2);
+	CurPackageItemBuffer->Skip(2);
 
 	// setup the children relation info
 	for (int32 i = 0; i < childCount; i++)
 	{
-		int32 nextPos = Buffer->ReadShort();
-		nextPos += Buffer->GetPos();
+		int32 nextPos = CurPackageItemBuffer->ReadShort();
+		nextPos += CurPackageItemBuffer->GetPos();
 
-		Buffer->Seek(Buffer->GetPos(), 3);
-		Children[i]->GetRelations().Setup(Buffer, false);
+		CurPackageItemBuffer->Seek(CurPackageItemBuffer->GetPos(), 3);
+		Children[i]->GetRelations().Setup(CurPackageItemBuffer, false);
 
-		Buffer->SetPos(nextPos);
+		CurPackageItemBuffer->SetPos(nextPos);
 	}
 
-	Buffer->Seek(0, 2);
-	Buffer->Skip(2);
+	CurPackageItemBuffer->Seek(0, 2);
+	CurPackageItemBuffer->Skip(2);
 
 	for (int32 i = 0; i < childCount; i++)
 	{
-		int32 nextPos = Buffer->ReadShort();
-		nextPos += Buffer->GetPos();
+		int32 nextPos = CurPackageItemBuffer->ReadShort();
+		nextPos += CurPackageItemBuffer->GetPos();
 
 		Child = Children[i];
-		Child->SetupAfterAdd(Buffer, Buffer->GetPos());
+		Child->SetupAfterAdd(CurPackageItemBuffer, CurPackageItemBuffer->GetPos());
 		Child->bUnderConstruct = false;
 
-		Buffer->SetPos(nextPos);
+		CurPackageItemBuffer->SetPos(nextPos);
 	}
 
-	Buffer->Seek(0, 4);
+	CurPackageItemBuffer->Seek(0, 4);
 
-	Buffer->Skip(2); //customData
-	SetOpaque(Buffer->ReadBool());
-	int32 maskId = Buffer->ReadShort();
+	CurPackageItemBuffer->Skip(2); //customData
+	SetOpaque(CurPackageItemBuffer->ReadBool());
+	int32 maskId = CurPackageItemBuffer->ReadShort();
 	if (maskId != -1)
 	{
-		bool inverted = Buffer->ReadBool();
+		bool inverted = CurPackageItemBuffer->ReadBool();
 		//setMask(getChildAt(maskId)->displayObject(), inverted);
 	}
 
 	//const FString& hitTestId = Buffer->ReadS();
-	FName hitTestId = Buffer->ReadFNameFromCache();
-	int32 i1 = Buffer->ReadInt();
-	int32 i2 = Buffer->ReadInt();
+	FName hitTestId = CurPackageItemBuffer->ReadFNameFromCache();
+	int32 i1 = CurPackageItemBuffer->ReadInt();
+	int32 i2 = CurPackageItemBuffer->ReadInt();
 	if (!hitTestId.IsNone())
 	{
-		TSharedPtr<FFairyPackageItem> pi = ContentItem->OwnerPackage->GetItem(hitTestId);
+		TSharedPtr<FFairyPackageItem> pi = CurPackageItem->OwnerPackage->GetItem(hitTestId);
 		/*if (pi != nullptr && pi->pixelHitTestData != nullptr)
 			setHitArea(new PixelHitTest(pi->pixelHitTestData, i1, i2));*/
 	}
@@ -1372,20 +1372,20 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 		//setHitArea(new ChildHitArea(getChildAt(i2)));
 	}
 
-	Buffer->Seek(0, 5);
+	CurPackageItemBuffer->Seek(0, 5);
 
 	// *** parse transitions start ***
-	int32 transitionCount = Buffer->ReadShort();
+	int32 transitionCount = CurPackageItemBuffer->ReadShort();
 	for (int32 i = 0; i < transitionCount; i++)
 	{
-		int32 nextPos = Buffer->ReadShort();
-		nextPos += Buffer->GetPos();
+		int32 nextPos = CurPackageItemBuffer->ReadShort();
+		nextPos += CurPackageItemBuffer->GetPos();
 
 		UTransition* Transition = NewObject<UTransition>(this);
 		Transitions.Add(Transition);
-		Transition->Setup(Buffer);
+		Transition->Setup(CurPackageItemBuffer);
 
-		Buffer->SetPos(nextPos);
+		CurPackageItemBuffer->SetPos(nextPos);
 	}
 
 	if (Transitions.Num() > 0) 
@@ -1402,7 +1402,7 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 
 	BuildNativeDisplayList();
 	SetBoundsChangedFlag();
-	ConstructExtension(Buffer);
+	ConstructExtension(CurPackageItemBuffer);
 
 	OnConstruct();
 }

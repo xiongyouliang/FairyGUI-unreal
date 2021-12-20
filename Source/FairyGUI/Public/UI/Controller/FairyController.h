@@ -74,9 +74,6 @@ public:
 	bool bChanging;
 	bool bAutoRadioGroupDepth;
 
-	DECLARE_EVENT_OneParam(UFairyController, FOnFairyControllerChanged, UFairyController*);
-	FOnFairyControllerChanged& OnChanged() { return OnChangedEvent; }
-
 private:
 	int32 SelectedIndex;
 	int32 PreviousIndex;
@@ -84,5 +81,4 @@ private:
 	TArray<FString> PageNames;
 	TIndirectArray<FControllerAction> Actions;
 	TArray<TSharedPtr<FGearBase>> ObserverList;
-	FOnFairyControllerChanged OnChangedEvent;
 };

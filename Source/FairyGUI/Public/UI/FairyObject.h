@@ -196,10 +196,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	FBox2D LocalToRootRect(const FBox2D& InRect);
 
-	bool CheckGearController(int32 Index, UFairyController* Controller);
-	uint32 AddDisplayLock();
-	void ReleaseDisplayLock(uint32 Token);
-
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	bool OnStage() const { return DisplayObject->OnStage(); }
 
@@ -368,7 +364,6 @@ public:
 	virtual void HandleVisibleChanged();
 
 	void UpdateGear(int32 Index);
-	void CheckGearDisplay();
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	virtual void RunTween(UFairyTweener* InAction);
@@ -411,6 +406,10 @@ protected:
 
 	// *************** Controller property start ******************
 public:
+	bool CheckGearController(int32 Index, UFairyController* Controller);
+	uint32 AddDisplayLock();
+	void ReleaseDisplayLock(uint32 Token);
+
 	/**
 	 * Return FGearDisplay and FGearDisplay2 combine result:
 	 * 

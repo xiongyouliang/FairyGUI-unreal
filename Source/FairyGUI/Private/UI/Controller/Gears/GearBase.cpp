@@ -80,10 +80,6 @@ FGearBase::FGearBase(UFairyObject* InTarget, EFairyGearType InType)
 
 FGearBase::~FGearBase()
 {
-	if (ControllerHandle.IsValid() && Controller.IsValid())
-	{
-		Controller->OnChanged().Remove(ControllerHandle);
-	}
 }
 
 UFairyController* FGearBase::GetController() const
@@ -160,7 +156,6 @@ void FGearBase::Setup(FairyGUI::FByteBuffer* Buffer)
 {
 	int32 index = Buffer->ReadShort();
 	Controller = TargetObject->GetParent()->GetControllerAt(index);
-	//Controller->OnChanged().AddRaw(this, &FGearBase::HandleControllerChanged);
 	
 	Init();
 

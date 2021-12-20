@@ -546,10 +546,6 @@ void UFairyObject::ReleaseDisplayLock(uint32 Token)
 	// todo:
 }
 
-void UFairyObject::CheckGearDisplay()
-{
-}
-
 void UFairyObject::ApplyController(UFairyController* Controller)
 {
 }

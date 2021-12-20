@@ -38,7 +38,6 @@ void UFairyController::SetSelectedIndex(int32 Index, bool bTriggerEvent)
 
 		if (bTriggerEvent)
 		{
-			//OnChangedEvent.Broadcast(this);
 			Apply();
 		}
 

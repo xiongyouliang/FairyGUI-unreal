@@ -112,7 +112,7 @@ UFairyObject* FGearBase::GetTarget()
 {
 	if (TargetObject.IsValid())
 	{
-		TargetObject.Get();
+		return TargetObject.Get();
 	}
 	return nullptr;
 }

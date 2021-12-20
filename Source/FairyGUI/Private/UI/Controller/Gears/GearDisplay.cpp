@@ -32,13 +32,20 @@ void FGearDisplay::Apply()
 		if (IsActived())
 		{
 			Visible = 1;
-			TargetObject->SetVisible(true);
 		}
 		else
 		{
 			Visible = 0;
-			TargetObject->SetVisible(false);
 		}
+	}
+	
+	if (Controller->CheckGearVisible(TargetObject.Get()))
+	{
+		TargetObject->SetVisible(true);
+	}
+	else
+	{
+		TargetObject->SetVisible(false);
 	}
 }
 

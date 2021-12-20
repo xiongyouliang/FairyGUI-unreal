@@ -4,8 +4,7 @@
 
 FGearDisplay2::FGearDisplay2(UFairyObject* InOwner) :
 	FGearBase(InOwner),
-	Condition(EConditionType::And),
-	Visible(0)
+	Condition(EConditionType::And)
 {
 	Type = EFairyGearType::Display2;
 }
@@ -16,37 +15,33 @@ FGearDisplay2::~FGearDisplay2()
 
 void FGearDisplay2::Apply()
 {
-	if (!Controller.IsValid() || Pages.Num() == 0)
-	{
-		Visible = 1;
-	}
-	else
-	{
-		if (IsActived())
-		{
-			Visible = 1;
-			TargetObject->SetVisible(true);
-		}
-		else
-		{
-			Visible = 0;
-			TargetObject->SetVisible(false);
-		}
-	}
+	/**
+	* this is a repreat logic code.
+	*	if has a GearDisplay2 object binding a UFairyObject and a UFairyController, 
+	*	must has a GearDisplay1 exist, GearDisplay1 Apply() logic will check GearDisplay2 state.
+	*/
+	//if (Controller.Get()->CheckGearVisible(TargetObject.Get()))
+	//{
+	//	TargetObject->SetVisible(true);
+	//}
+	//else
+	//{
+	//	TargetObject->SetVisible(false);
+	//}
 }
 
 bool FGearDisplay2::Evaluate(bool bConnected)
 {
-	bool v = Controller == nullptr || Visible > 0;
+	bool result = false;
 	if (Condition == EConditionType::And)
 	{
-		v = v && bConnected;
+		result = IsActived() && bConnected;
 	}
 	else
 	{
-		v = v || bConnected;
+		result = IsActived() || bConnected;
 	}
-	return v;
+	return result;
 }
 
 void FGearDisplay2::UpdateState()

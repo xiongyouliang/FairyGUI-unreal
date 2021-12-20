@@ -25,7 +25,4 @@ public:
 protected:
 	virtual void AddStatus(const FString& pageID, FairyGUI::FByteBuffer* Buffer) override;
 	virtual void Init() override;
-
-private:
-	int32 Visible;
 };

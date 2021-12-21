@@ -19,7 +19,7 @@ void FGearSize::Init()
 	Storage.Reset();
 }
 
-void FGearSize::AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer)
+void FGearSize::AddStatus(const FName& PageID, FairyGUI::FByteBuffer* Buffer)
 {
 	FVector4 Value;
 	Value.X = Buffer->ReadInt();
@@ -27,7 +27,7 @@ void FGearSize::AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer)
 	Value.Z = Buffer->ReadFloat();
 	Value.W = Buffer->ReadFloat();
 
-	if (PageID.IsEmpty())
+	if (PageID.IsNone())
 	{
 		Default = Value;
 	}
@@ -89,8 +89,7 @@ void FGearSize::OnTweenComplete()
 
 void FGearSize::UpdateState()
 {
-	Storage.Add(Controller->GetSelectedPageID(), FVector4(TargetObject->GetWidth(), TargetObject->GetHeight(),
-		TargetObject->GetScaleX(), TargetObject->GetScaleY()));
+	Storage.Add(Controller->GetSelectedPageID(), FVector4(TargetObject->GetWidth(), TargetObject->GetHeight(), TargetObject->GetScaleX(), TargetObject->GetScaleY()));
 }
 
 void FGearSize::UpdateFromRelations(const FVector2D& Delta)

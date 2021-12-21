@@ -58,7 +58,7 @@ public:
 	static bool bDisableAllTweenEffect;
 
 protected:
-	virtual void AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer);
+	virtual void AddStatus(const FName& PageID, FairyGUI::FByteBuffer* Buffer);
 	virtual void Init();
 
 	EFairyGearType Type;

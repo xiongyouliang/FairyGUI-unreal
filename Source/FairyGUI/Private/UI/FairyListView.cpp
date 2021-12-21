@@ -306,8 +306,8 @@ void UFairyListView::SetupItem(FairyGUI::FByteBuffer* Buffer, UFairyObject* Obj)
 		int32 cnt = Buffer->ReadShort();
 		for (int32 i = 0; i < cnt; i++)
 		{
-			UFairyController* cc = gcom->GetController(Buffer->ReadStringFromCache());
-			const FString& PageID = Buffer->ReadStringFromCache();
+			UFairyController* cc = gcom->GetController(Buffer->ReadFNameFromCache());
+			const FName& PageID = Buffer->ReadFNameFromCache();
 			cc->SetSelectedPageID(PageID);
 		}
 

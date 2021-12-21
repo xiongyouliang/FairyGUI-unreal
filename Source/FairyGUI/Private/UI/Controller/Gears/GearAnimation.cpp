@@ -24,12 +24,12 @@ void FGearAnimation::Init()
 	Storage.Reset();
 }
 
-void FGearAnimation::AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer)
+void FGearAnimation::AddStatus(const FName& PageID, FairyGUI::FByteBuffer* Buffer)
 {
 	FValue Value;
 	Value.bPlaying = Buffer->ReadBool();
 	Value.Frame = Buffer->ReadInt();
-	if (PageID.IsEmpty())
+	if (PageID.IsNone())
 	{
 		Default = Value;
 	}

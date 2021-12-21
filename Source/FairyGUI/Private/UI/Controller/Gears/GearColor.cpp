@@ -24,12 +24,12 @@ void FGearColor::Init()
 	Storage.Reset();
 }
 
-void FGearColor::AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer)
+void FGearColor::AddStatus(const FName& PageID, FairyGUI::FByteBuffer* Buffer)
 {
 	FValue Value;
 	Value.Color = Buffer->ReadColor();
 	Value.OutlineColor = Buffer->ReadColor();
-	if (PageID.IsEmpty())
+	if (PageID.IsNone())
 	{
 		Default = Value;
 	}

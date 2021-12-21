@@ -12,10 +12,10 @@ public:
 	virtual void UpdateState() override;
 
 protected:
-	virtual void AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer) override;
+	virtual void AddStatus(const FName& PageID, FairyGUI::FByteBuffer* Buffer) override;
 	virtual void Init() override;
 
 private:
-	TMap<FString, FString> Storage;
+	TMap<FName, FString> Storage;
 	FString Default;
 };

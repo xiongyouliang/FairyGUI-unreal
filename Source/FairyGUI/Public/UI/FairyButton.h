@@ -67,12 +67,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
 	bool bChangeStateOnClick;
 
-	static const FString UP;
-	static const FString DOWN;
-	static const FString OVER;
-	static const FString SELECTED_OVER;
-	static const FString DISABLED;
-	static const FString SELECTED_DISABLED;
+	static const FName UP;
+	static const FName DOWN;
+	static const FName OVER;
+	static const FName SELECTED_OVER;
+	static const FName DISABLED;
+	static const FName SELECTED_DISABLED;
 
 protected:
 	virtual void ConstructExtension(FairyGUI::FByteBuffer* Buffer) override;
@@ -80,7 +80,7 @@ protected:
 
 	virtual void ApplyController(UFairyController* Controller) override;
 
-	void SetState(const FString& InState);
+	void SetState(const FName& InState);
 	void SetCurrentState();
 
 private:
@@ -102,7 +102,7 @@ private:
 	UPROPERTY()
 	UFairyController* RelatedController;
 
-	FString RelatedPageID;
+	FName RelatedPageID;
 	FString Title;
 	FString SelectedTitle;
 	FString Icon;

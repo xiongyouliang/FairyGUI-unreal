@@ -13,13 +13,13 @@ public:
 	virtual void UpdateFromRelations(const FVector2D& Delta) override;
 
 protected:
-	virtual void AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer) override;
+	virtual void AddStatus(const FName& PageID, FairyGUI::FByteBuffer* Buffer) override;
 	virtual void Init() override;
 
 private:
 	void OnTweenUpdate(UFairyTweener* Tweener);
 	void OnTweenComplete();
 
-	TMap<FString, FVector4> Storage;
+	TMap<FName, FVector4> Storage;
 	FVector4 Default;
 };

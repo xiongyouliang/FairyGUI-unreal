@@ -30,7 +30,7 @@ void FGearLook::Init()
 	Storage.Reset();
 }
 
-void FGearLook::AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer)
+void FGearLook::AddStatus(const FName& PageID, FairyGUI::FByteBuffer* Buffer)
 {
 	FValue Value;
 	Value.Alpha = Buffer->ReadFloat();
@@ -38,7 +38,7 @@ void FGearLook::AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer)
 	Value.bGrayed = Buffer->ReadBool();
 	Value.bTouchable = Buffer->ReadBool();
 
-	if (PageID.IsEmpty())
+	if (PageID.IsNone())
 	{
 		Default = Value;
 	}

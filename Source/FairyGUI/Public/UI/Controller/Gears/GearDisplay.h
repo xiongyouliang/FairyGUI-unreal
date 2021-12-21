@@ -18,10 +18,10 @@ public:
 	bool IsConnected();
 	bool IsOwnerVisible();
 
-	TArray<FString> Pages;
+	TArray<FName> Pages;
 
 protected:
-	virtual void AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer) override;
+	virtual void AddStatus(const FName& PageID, FairyGUI::FByteBuffer* Buffer) override;
 	virtual void Init() override;
 
 private:

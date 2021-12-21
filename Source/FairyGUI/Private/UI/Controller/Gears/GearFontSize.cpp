@@ -18,9 +18,9 @@ void FGearFontSize::Init()
 	Storage.Reset();
 }
 
-void FGearFontSize::AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer)
+void FGearFontSize::AddStatus(const FName& PageID, FairyGUI::FByteBuffer* Buffer)
 {
-	if (PageID.IsEmpty())
+	if (PageID.IsNone())
 	{
 		Default = Buffer->ReadInt();
 	}

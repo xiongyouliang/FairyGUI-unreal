@@ -6,12 +6,12 @@
 
 #include "FairyApplication.h"
 
-const FString UFairyButton::UP = TEXT("up");
-const FString UFairyButton::DOWN = TEXT("down");
-const FString UFairyButton::OVER = TEXT("over");
-const FString UFairyButton::SELECTED_OVER = TEXT("selectedOver");
-const FString UFairyButton::DISABLED = TEXT("disabled");
-const FString UFairyButton::SELECTED_DISABLED = TEXT("selectedDisabled");
+const FName UFairyButton::UP = TEXT("up");
+const FName UFairyButton::DOWN = TEXT("down");
+const FName UFairyButton::OVER = TEXT("over");
+const FName UFairyButton::SELECTED_OVER = TEXT("selectedOver");
+const FName UFairyButton::DISABLED = TEXT("disabled");
+const FName UFairyButton::SELECTED_DISABLED = TEXT("selectedDisabled");
 
 UFairyButton::UFairyButton() :
 	bChangeStateOnClick(true),
@@ -168,7 +168,7 @@ void UFairyButton::SetRelatedController(UFairyController* InController)
 	RelatedController = InController;
 }
 
-void UFairyButton::SetState(const FString& InState)
+void UFairyButton::SetState(const FName& InState)
 {
 	if (ButtonController != nullptr)
 	{
@@ -178,7 +178,7 @@ void UFairyButton::SetState(const FString& InState)
 	if (DownEffect == EButtonPressedEffect::Dark)
 	{
 		int32 cnt = this->NumChildren();
-		if (InState == UFairyButton::DOWN || InState == UFairyButton::SELECTED_OVER || InState == UFairyButton::SELECTED_DISABLED)
+		if (InState.IsEqual(UFairyButton::DOWN) || InState.IsEqual(UFairyButton::SELECTED_OVER) || InState.IsEqual(UFairyButton::SELECTED_DISABLED))
 		{
 			int32 c = DownEffectValue * 255;
 			FNVariant Color(FColor(c, c, c, 255));
@@ -206,7 +206,7 @@ void UFairyButton::SetState(const FString& InState)
 	}
 	else if (DownEffect == EButtonPressedEffect::Scale)
 	{
-		if (InState == UFairyButton::DOWN || InState == UFairyButton::SELECTED_OVER || InState == UFairyButton::SELECTED_DISABLED)
+		if (InState.IsEqual(UFairyButton::DOWN)|| InState.IsEqual(UFairyButton::SELECTED_OVER) || InState.IsEqual(UFairyButton::SELECTED_DISABLED))
 		{
 			if (!bDownScaled)
 			{
@@ -433,7 +433,7 @@ void UFairyButton::SetupAfterAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos)
 	{
 		RelatedController = GetParent()->GetControllerAt(iv);
 	}
-	RelatedPageID = Buffer->ReadStringFromCache();
+	RelatedPageID = Buffer->ReadFNameFromCache();
 
 	/**
 	* The Button's property as a child for UFairyComponent

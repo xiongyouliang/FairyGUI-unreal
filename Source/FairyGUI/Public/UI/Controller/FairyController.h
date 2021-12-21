@@ -40,24 +40,25 @@ public:
 	void SetSelectedIndex(int32 Index, bool bTriggerEvent);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	const FString& GetSelectedPage() const;
-	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	void SetSelectedPage(const FString& PageName);
-	void SetSelectedPage(const FString& PageName, bool bTriggerEvent);
+	FName GetSelectedPage() const;
 
-	const FString& GetSelectedPageID() const;
-	void SetSelectedPageID(const FString& PageID, bool bTriggerEvent = true);
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+	void SetSelectedPage(const FName& PageName);
+	void SetSelectedPage(const FName& PageName, bool bTriggerEvent);
+
+	FName GetSelectedPageID() const;
+	void SetSelectedPageID(const FName& PageID, bool bTriggerEvent = true);
 
 	int32 GetPrevisousIndex() const { return PreviousIndex; }
-	const FString& GetPreviousPage() const;
-	const FString& GetPreviousPageID() const;
+	FName GetPreviousPage() const;
+	FName GetPreviousPageID() const;
 
 	int32 GetPageCount() const;
-	bool HasPage(const FString& PageName) const;
-	int32 GetPageIndexByID(const FString& PageID) const;
-	const FString& GetPageNameByID(const FString& PageID) const;
-	const FString& GetPageID(int32 Index) const;
-	void SetOppositePageID(const FString& PageID);
+	bool HasPage(const FName& PageName) const;
+	int32 GetPageIndexByID(const FName& PageID) const;
+	FName GetPageNameByID(const FName& PageID) const;
+	FName GetPageID(int32 Index) const;
+	void SetOppositePageID(const FName& PageID);
 
 	void AddAbserver(TSharedPtr<FGearBase> InPenddingAddGear);
 	void RemoveAllAbserver();
@@ -77,8 +78,10 @@ public:
 private:
 	int32 SelectedIndex;
 	int32 PreviousIndex;
-	TArray<FString> PageIDs;
-	TArray<FString> PageNames;
+
+	TArray<FName> PageIDs;
+	TArray<FName> PageNames;
+
 	TIndirectArray<FControllerAction> Actions;
 	TArray<TSharedPtr<FGearBase>> ObserverList;
 };

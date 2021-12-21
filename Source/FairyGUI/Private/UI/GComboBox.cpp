@@ -152,20 +152,28 @@ void UGComboBox::Refresh()
     bItemsUpdated = true;
 }
 
-void UGComboBox::SetState(const FString& InState)
+void UGComboBox::SetState(const FName& InState)
 {
     if (ButtonController != nullptr)
+    {
         ButtonController->SetSelectedPage(InState);
+    }
 }
 
 void UGComboBox::SetCurrentState()
 {
     if (IsGrayed() && ButtonController != nullptr && ButtonController->HasPage(UFairyButton::DISABLED))
+    {
         SetState(UFairyButton::DISABLED);
+    }
     else if (DropdownObject != nullptr && DropdownObject->GetParent() != nullptr)
+    {
         SetState(UFairyButton::DOWN);
+    }
     else
+    {
         SetState(bOver ? UFairyButton::OVER : UFairyButton::UP);
+    }
 }
 
 void UGComboBox::UpdateSelectionController()

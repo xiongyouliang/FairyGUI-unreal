@@ -60,7 +60,7 @@ bool FGearDisplay2::IsActived()
 	}
 }
 
-void FGearDisplay2::AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer)
+void FGearDisplay2::AddStatus(const FName& PageID, FairyGUI::FByteBuffer* Buffer)
 {
 }
 

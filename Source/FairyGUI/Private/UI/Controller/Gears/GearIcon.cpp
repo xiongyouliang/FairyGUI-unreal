@@ -18,9 +18,9 @@ void FGearIcon::Init()
 	Storage.Reset();
 }
 
-void FGearIcon::AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer)
+void FGearIcon::AddStatus(const FName& PageID, FairyGUI::FByteBuffer* Buffer)
 {
-	if (PageID.IsEmpty())
+	if (PageID.IsNone())
 	{
 		Default = Buffer->ReadStringFromCache();
 	}

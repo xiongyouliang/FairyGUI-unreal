@@ -127,7 +127,7 @@ void FGearBase::Init()
 {
 }
 
-void FGearBase::AddStatus(const FString& PageID, FairyGUI::FByteBuffer* Buffer)
+void FGearBase::AddStatus(const FName& PageID, FairyGUI::FByteBuffer* Buffer)
 {
 }
 
@@ -165,18 +165,18 @@ void FGearBase::Setup(FairyGUI::FByteBuffer* Buffer)
 	FGearXY* g2 = nullptr;
 	if (g0)
 	{
-		Buffer->ReadSArray(g0->Pages, Count);
+		Buffer->ReadFNameArray(g0->Pages, Count);
 	}
 	else if (g1)
 	{
-		Buffer->ReadSArray(g1->Pages, Count);
+		Buffer->ReadFNameArray(g1->Pages, Count);
 	}
 	else
 	{
 		for (int32 i = 0; i < Count; i++)
 		{
-			const FString& page = Buffer->ReadStringFromCache();
-			if (page.IsEmpty())
+			FName page = Buffer->ReadFNameFromCache();
+			if (page.IsNone())
 			{
 				continue;
 			}
@@ -185,7 +185,7 @@ void FGearBase::Setup(FairyGUI::FByteBuffer* Buffer)
 
 		if (Buffer->ReadBool())
 		{
-			AddStatus(G_EMPTY_STRING, Buffer);
+			AddStatus(NAME_None, Buffer);
 		}
 	}
 
@@ -208,8 +208,8 @@ void FGearBase::Setup(FairyGUI::FByteBuffer* Buffer)
 				g2->bPositionsInPercent = true;
 				for (int32 i = 0; i < Count; i++)
 				{
-					const FString& page = Buffer->ReadStringFromCache();
-					if (page.IsEmpty())
+					FName page = Buffer->ReadFNameFromCache();
+					if (page.IsNone())
 					{
 						continue;
 					}
@@ -219,7 +219,7 @@ void FGearBase::Setup(FairyGUI::FByteBuffer* Buffer)
 
 				if (Buffer->ReadBool())
 				{
-					g2->AddExtStatus(G_EMPTY_STRING, Buffer);
+					g2->AddExtStatus(NAME_None, Buffer);
 				}
 			}
 		}

@@ -45,11 +45,11 @@ void UFairyController::SetSelectedIndex(int32 Index, bool bTriggerEvent)
 	}
 }
 
-const FString& UFairyController::GetSelectedPage() const
+FName UFairyController::GetSelectedPage() const
 {
 	if (SelectedIndex == -1)
 	{
-		return G_EMPTY_STRING;
+		return NAME_None;
 	}
 	else
 	{
@@ -57,12 +57,12 @@ const FString& UFairyController::GetSelectedPage() const
 	}
 }
 
-void UFairyController::SetSelectedPage(const FString& PageName)
+void UFairyController::SetSelectedPage(const FName& PageName)
 {
 	SetSelectedPage(PageName, true);
 }
 
-void UFairyController::SetSelectedPage(const FString& PageName, bool bTriggerEvent)
+void UFairyController::SetSelectedPage(const FName& PageName, bool bTriggerEvent)
 {
 	int32 i = PageNames.Find(PageName);
 	if (i == INDEX_NONE)
@@ -72,11 +72,11 @@ void UFairyController::SetSelectedPage(const FString& PageName, bool bTriggerEve
 	SetSelectedIndex(i, bTriggerEvent);
 }
 
-const FString& UFairyController::GetSelectedPageID() const
+FName UFairyController::GetSelectedPageID() const
 {
 	if (SelectedIndex == -1)
 	{
-		return G_EMPTY_STRING;
+		return NAME_None;
 	}
 	else
 	{
@@ -84,7 +84,7 @@ const FString& UFairyController::GetSelectedPageID() const
 	}
 }
 
-void UFairyController::SetSelectedPageID(const FString& PageID, bool bTriggerEvent)
+void UFairyController::SetSelectedPageID(const FName& PageID, bool bTriggerEvent)
 {
 	int32 i = PageIDs.Find(PageID);
 	if (i != INDEX_NONE)
@@ -93,11 +93,11 @@ void UFairyController::SetSelectedPageID(const FString& PageID, bool bTriggerEve
 	}
 }
 
-const FString& UFairyController::GetPreviousPage() const
+FName UFairyController::GetPreviousPage() const
 {
 	if (PreviousIndex == -1)
 	{
-		return G_EMPTY_STRING;
+		return NAME_None;
 	}
 	else
 	{
@@ -105,11 +105,11 @@ const FString& UFairyController::GetPreviousPage() const
 	}
 }
 
-const FString& UFairyController::GetPreviousPageID() const
+FName UFairyController::GetPreviousPageID() const
 {
 	if (PreviousIndex == -1)
 	{
-		return G_EMPTY_STRING;
+		return NAME_None;
 	}
 	else
 	{
@@ -122,17 +122,17 @@ int32 UFairyController::GetPageCount() const
 	return PageIDs.Num();
 }
 
-bool UFairyController::HasPage(const FString& PageName) const
+bool UFairyController::HasPage(const FName& PageName) const
 {
 	return PageNames.Find(PageName) != INDEX_NONE;
 }
 
-int32 UFairyController::GetPageIndexByID(const FString& PageID) const
+int32 UFairyController::GetPageIndexByID(const FName& PageID) const
 {
 	return PageIDs.Find(PageID) != INDEX_NONE;
 }
 
-const FString& UFairyController::GetPageNameByID(const FString& PageID) const
+FName UFairyController::GetPageNameByID(const FName& PageID) const
 {
 	int32 i = PageIDs.Find(PageID);
 	if (i != INDEX_NONE)
@@ -141,16 +141,16 @@ const FString& UFairyController::GetPageNameByID(const FString& PageID) const
 	}
 	else
 	{
-		return G_EMPTY_STRING;
+		return NAME_None;
 	}
 }
 
-const FString& UFairyController::GetPageID(int32 Index) const
+FName UFairyController::GetPageID(int32 Index) const
 {
 	return PageIDs[Index];
 }
 
-void UFairyController::SetOppositePageID(const FString& PageID)
+void UFairyController::SetOppositePageID(const FName& PageID)
 {
 	int32 i = PageIDs.Find(PageID);
 	if (i > 0)
@@ -243,7 +243,7 @@ void UFairyController::RunActions()
 
 	for (auto& it : Actions)
 	{
-		it.Run(this, GetPreviousPageID(), GetSelectedPageID());
+		it.Run(this, GetPreviousPageID().ToString(), GetSelectedPageID().ToString());
 	}
 }
 
@@ -263,8 +263,8 @@ void UFairyController::Setup(FairyGUI::FByteBuffer* Buffer)
 	PageNames.SetNum(cnt);
 	for (int32 i = 0; i < cnt; i++)
 	{
-		PageIDs[i] = Buffer->ReadStringFromCache();
-		PageNames[i] = Buffer->ReadStringFromCache();
+		PageIDs[i] = Buffer->ReadFNameFromCache();
+		PageNames[i] = Buffer->ReadFNameFromCache();
 	}
 
 	// Parse HomePage property for this Controller
@@ -279,7 +279,7 @@ void UFairyController::Setup(FairyGUI::FByteBuffer* Buffer)
 			break;
 
 		case EHomePageType::MatchBranch:
-			HomePageIndex = PageNames.Find(UFairyPackageMgr::Get()->GetBranch().ToString());
+			HomePageIndex = PageNames.Find(UFairyPackageMgr::Get()->GetBranch());
 			if (HomePageIndex == INDEX_NONE)
 			{
 				HomePageIndex = 0;
@@ -287,7 +287,7 @@ void UFairyController::Setup(FairyGUI::FByteBuffer* Buffer)
 			break;
 
 		case EHomePageType::MatchVariable:
-			HomePageIndex = PageNames.Find(UFairyPackageMgr::Get()->GetVar(Buffer->ReadFNameFromCache()).ToString());
+			HomePageIndex = PageNames.Find(UFairyPackageMgr::Get()->GetVar(Buffer->ReadFNameFromCache()));
 			if (HomePageIndex == INDEX_NONE)
 			{
 				HomePageIndex = 0;

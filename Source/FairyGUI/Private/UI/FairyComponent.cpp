@@ -535,10 +535,10 @@ int32 UFairyComponent::GetFirstChildInView() const
 
 // *************************************************************************
 // *********************** Component Controller start **********************
-UFairyController* UFairyComponent::GetController(const FString& ControllerName) const
+UFairyController* UFairyComponent::GetController(const FName& ControllerName) const
 {
 	UFairyControllerMgr* ControllerMgr = UFairyApplication::Get()->GetControllerMgr();
-	return ControllerMgr->GetController(this, FName(ControllerName));
+	return ControllerMgr->GetController(this, ControllerName);
 }
 
 const TArray<UFairyController*>& UFairyComponent::GetControllers() const
@@ -1431,8 +1431,8 @@ void UFairyComponent::SetupAfterAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPo
 	int32 cnt = Buffer->ReadShort();
 	for (int32 i = 0; i < cnt; i++)
 	{
-		UFairyController* Controller = GetController(Buffer->ReadStringFromCache());
-		const FString& PageID = Buffer->ReadStringFromCache();
+		UFairyController* Controller = GetController(Buffer->ReadFNameFromCache());
+		const FName& PageID = Buffer->ReadFNameFromCache();
 		if (Controller != nullptr)
 		{
 			Controller->SetSelectedPageID(PageID);

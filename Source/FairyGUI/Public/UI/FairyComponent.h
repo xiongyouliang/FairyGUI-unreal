@@ -85,7 +85,7 @@ public:
 	UFairyController* GetControllerAt(int32 Index) const;
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	UFairyController* GetController(const FString& ControllerName) const;
+	UFairyController* GetController(const FName& ControllerName) const;
 
 	const TArray<UFairyController*>& GetControllers() const;
 

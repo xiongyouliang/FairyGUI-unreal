@@ -85,7 +85,7 @@ protected:
     virtual void ApplyController(UFairyController* Controller) override;
     virtual void HandleGrayedChanged() override;
 
-    void SetState(const FString& InState);
+    void SetState(const FName& InState);
     void SetCurrentState();
     void UpdateSelectionController();
     void UpdateDropdownList();

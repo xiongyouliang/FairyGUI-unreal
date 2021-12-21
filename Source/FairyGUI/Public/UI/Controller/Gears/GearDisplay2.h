@@ -13,7 +13,7 @@ public:
 	virtual bool IsActived() override;
 	bool Evaluate(bool bConnected);
 
-	TArray<FString> Pages;
+	TArray<FName> Pages;
 
 	enum EConditionType
 	{
@@ -23,6 +23,6 @@ public:
 	EConditionType Condition;
 
 protected:
-	virtual void AddStatus(const FString& pageID, FairyGUI::FByteBuffer* Buffer) override;
+	virtual void AddStatus(const FName& pageID, FairyGUI::FByteBuffer* Buffer) override;
 	virtual void Init() override;
 };

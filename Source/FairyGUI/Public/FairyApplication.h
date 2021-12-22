@@ -8,6 +8,7 @@
 #include "Event/EventContext.h"
 #include "UI/FairyConfig.h"
 #include "UI/Controller/FairyControllerMgr.h"
+#include "Tween/FairyTweenMgr.h"
 #include "FairyApplication.generated.h"
 
 class UFairyPackage;
@@ -61,6 +62,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI¡¡£ü FairyApplication")
 	UFairyControllerMgr* GetControllerMgr();
+
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI | FairyApplication")
+	UFairyTweenMgr* GetTweenMgr();
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI | FairyApplication")
 	void AddUIRoot(UObject* WorldContextObject);
@@ -152,6 +156,9 @@ private:
 
 	UPROPERTY()
 	UFairyControllerMgr* FairyControllerMgr;
+
+	UPROPERTY()
+	UFairyTweenMgr* FairyTweenMgr;
 
 	UPROPERTY(Transient)
 	TArray<UEventContext*> EventContextPool;

@@ -5,7 +5,7 @@
 #include "UI/FairyRoot.h"
 #include "UI/Controller/Gears/GearDisplay.h"
 #include "UI/Controller/Gears/GearDisplay2.h"
-#include "Tween/TweenManager.h"
+#include "Tween/FairyTweenMgr.h"
 #include "Widgets/SDisplayObject.h"
 #include "Utils/ByteBuffer.h"
 #include "FairyApplication.h"
@@ -554,27 +554,27 @@ void UFairyObject::ApplyController(UFairyController* Controller)
 void UFairyObject::RunTween(UFairyTweener* InAction)
 {
 	bool bOnStage = OnStage();
-	UTweenManager::Get()->AddTweener(InAction, this, !bOnStage);
+	UFairyApplication::Get()->GetTweenMgr()->AddTweener(InAction, this, !bOnStage);
 }
 
 UFairyTweener* UFairyObject::GetTweenerByTag(int InTag)
 {
-	return UTweenManager::Get()->GetTweenerByTag(InTag, this);
+	return UFairyApplication::Get()->GetTweenMgr()->GetTweenerByTag(InTag, this);
 }
 
 void UFairyObject::StopTween(UFairyTweener* InAction)
 {
-	UTweenManager::Get()->RemoveTweener(InAction);
+	UFairyApplication::Get()->GetTweenMgr()->RemoveTweener(InAction);
 }
 
 void UFairyObject::StopTweenByTag(int InTag)
 {
-	UTweenManager::Get()->RemoveTweenerByTag(InTag, this);
+	UFairyApplication::Get()->GetTweenMgr()->RemoveTweenerByTag(InTag, this);
 }
 
 void UFairyObject::StopAllTweens()
 {
-	UTweenManager::Get()->RemoveAllTweenerWithTarget(this);
+	UFairyApplication::Get()->GetTweenMgr()->RemoveAllTweenerWithTarget(this);
 }
 
 void UFairyObject::RemoveFromParent()

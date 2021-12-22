@@ -9,20 +9,17 @@
 #include "Tween/FairyTweenerInstant.h"
 #include "Tween/FairyTweenerEase.h"
 
-#include "TweenManager.generated.h"
+#include "FairyTweenMgr.generated.h"
 
 typedef UFairyTweener* FairyTweenerPointer;
 
 UCLASS(BlueprintType)
-class FAIRYGUI_API UTweenManager : public UObject, public FTickableGameObject
+class FAIRYGUI_API UFairyTweenMgr : public UObject, public FTickableGameObject
 {
 	GENERATED_BODY()
 public:
 	
-	~UTweenManager();
-
-	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	static UTweenManager* Get();
+	~UFairyTweenMgr();
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	UFairyTweenerPos* CreateTweenerPos(float InDuration, FVector2D InStartPos, FVector2D InDstPos);
@@ -92,8 +89,9 @@ public:
 	}
 
 private:
-	UTweenManager(); // hide outside allocate object.
-	static UTweenManager* Instance;
+	friend class UFairyApplication;
+	UFairyTweenMgr(); // hide outside allocate object.
+	static UFairyTweenMgr* Instance;
 	bool bTicking;
 
 	TMap<UFairyObject*, TArray<UFairyTweener*>> TweenerTable;	

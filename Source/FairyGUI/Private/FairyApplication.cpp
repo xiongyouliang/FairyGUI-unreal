@@ -112,6 +112,15 @@ UFairyControllerMgr* UFairyApplication::GetControllerMgr()
 	return FairyControllerMgr;
 }
 
+UFairyTweenMgr* UFairyApplication::GetTweenMgr()
+{
+	if (!FairyTweenMgr)
+	{
+		FairyTweenMgr = NewObject<UFairyTweenMgr>(this);
+	}
+	return FairyTweenMgr;
+}
+
 void UFairyApplication::AddUIRoot(UObject* WorldContextObject)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("UFairyApplication::AddUIRoot(...)"));

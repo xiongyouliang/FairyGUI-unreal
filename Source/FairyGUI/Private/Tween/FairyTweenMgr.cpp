@@ -1,27 +1,15 @@
-#include "Tween/TweenManager.h"
+#include "Tween/FairyTweenMgr.h"
 
 #include "FairyApplication.h"
 
-UTweenManager* UTweenManager::Instance = nullptr;
+UFairyTweenMgr* UFairyTweenMgr::Instance = nullptr;
 
-UTweenManager* UTweenManager::Get()
-{
-	if (UTweenManager::Instance == nullptr)
-	{
-		UTweenManager::Instance = NewObject<UTweenManager>(UFairyApplication::Get());
-		
-		// todo: maybe make this object as class UFairyApplication singletion object's property is better.
-		UTweenManager::Instance->AddToRoot(); 
-	}
-	return UTweenManager::Instance;
-}
-
-UTweenManager::UTweenManager()
+UFairyTweenMgr::UFairyTweenMgr()
 	:bTicking(false)
 {
 }
 
-UTweenManager::~UTweenManager()
+UFairyTweenMgr::~UFairyTweenMgr()
 {
 	if (!HasAnyFlags(RF_ClassDefaultObject))
 	{
@@ -29,56 +17,56 @@ UTweenManager::~UTweenManager()
 	}
 }
 
-UFairyTweenerPos* UTweenManager::CreateTweenerPos(float InDuration, FVector2D InStartPos, FVector2D InDstPos)
+UFairyTweenerPos* UFairyTweenMgr::CreateTweenerPos(float InDuration, FVector2D InStartPos, FVector2D InDstPos)
 {
 	UFairyTweenerPos* Tweener = NewObject<UFairyTweenerPos>(this);
 	Tweener->Init(InDuration, InStartPos, InDstPos);
 	return Tweener;
 }
 
-UFairyTweenerSize* UTweenManager::CreateTweenerSize(float InDuration, FVector2D InStartSize, FVector2D InDstSize)
+UFairyTweenerSize* UFairyTweenMgr::CreateTweenerSize(float InDuration, FVector2D InStartSize, FVector2D InDstSize)
 {
 	UFairyTweenerSize* Tweener = NewObject<UFairyTweenerSize>(this);
 	Tweener->Init(InDuration, InStartSize, InDstSize);
 	return Tweener;
 }
 
-UFairyTweenerOpacity* UTweenManager::CreateTweenerOpacity(float InDuration, float InStartOpacity, float InDstOpacity)
+UFairyTweenerOpacity* UFairyTweenMgr::CreateTweenerOpacity(float InDuration, float InStartOpacity, float InDstOpacity)
 {
 	UFairyTweenerOpacity* Tweener = NewObject<UFairyTweenerOpacity>(this);
 	Tweener->Init(InDuration, InStartOpacity, InDstOpacity);
 	return Tweener;
 }
 
-UFairyTweenerRotate* UTweenManager::CreateTweenerRotate(float InDuration, float InStartRotate, float InDstRotate)
+UFairyTweenerRotate* UFairyTweenMgr::CreateTweenerRotate(float InDuration, float InStartRotate, float InDstRotate)
 {
 	UFairyTweenerRotate* Tweener = NewObject<UFairyTweenerRotate>(this);
 	Tweener->Init(InDuration, InStartRotate, InDstRotate);
 	return Tweener;
 }
 
-UFairyTweenerScale* UTweenManager::CreateTweenerScale(float InDuration, FVector2D InStartScale, FVector2D InDstScale)
+UFairyTweenerScale* UFairyTweenMgr::CreateTweenerScale(float InDuration, FVector2D InStartScale, FVector2D InDstScale)
 {
 	UFairyTweenerScale* Tweener = NewObject<UFairyTweenerScale>(this);
 	Tweener->Init(InDuration, InStartScale, InDstScale);
 	return Tweener;
 }
 
-UFairyTweenerSkew* UTweenManager::CreateTweenerSkew(float InDuration, FVector2D InStartSkew, FVector2D InDstSkew)
+UFairyTweenerSkew* UFairyTweenMgr::CreateTweenerSkew(float InDuration, FVector2D InStartSkew, FVector2D InDstSkew)
 {
 	UFairyTweenerSkew* Tweener = NewObject<UFairyTweenerSkew>(this);
 	Tweener->Init(InDuration, InStartSkew, InDstSkew);
 	return Tweener;
 }
 
-UFairyTweenerColor* UTweenManager::CreateTweenerColor(float InDuration, FColor InStartColor, FColor InDstColor)
+UFairyTweenerColor* UFairyTweenMgr::CreateTweenerColor(float InDuration, FColor InStartColor, FColor InDstColor)
 {
 	UFairyTweenerColor* Tweener = NewObject<UFairyTweenerColor>(this);
 	Tweener->Init(InDuration, InStartColor, InDstColor);
 	return Tweener;
 }
 
-UFairyTweenerSequence* UTweenManager::CreateTweenerSequence(const TArray<UFairyTweenerFiniteTime*>& InTweenerList)
+UFairyTweenerSequence* UFairyTweenMgr::CreateTweenerSequence(const TArray<UFairyTweenerFiniteTime*>& InTweenerList)
 {
 	UFairyTweenerSequence* Tweener = NewObject<UFairyTweenerSequence>(this);
 	Tweener->Init(InTweenerList);
@@ -86,45 +74,45 @@ UFairyTweenerSequence* UTweenManager::CreateTweenerSequence(const TArray<UFairyT
 	return Tweener;
 }
 
-UFairyTweenerDelay* UTweenManager::CreateTweenerDelay(float InDelayTime)
+UFairyTweenerDelay* UFairyTweenMgr::CreateTweenerDelay(float InDelayTime)
 {
 	UFairyTweenerDelay* Tweener = NewObject<UFairyTweenerDelay>(this);
 	Tweener->Init(InDelayTime);
 	return Tweener;
 }
 
-UFairyTweenerShow* UTweenManager::CreateTweenerShow()
+UFairyTweenerShow* UFairyTweenMgr::CreateTweenerShow()
 {
 	return NewObject<UFairyTweenerShow>(this);
 }
 
-UFairyTweenerHide* UTweenManager::CreateTweenerHide()
+UFairyTweenerHide* UFairyTweenMgr::CreateTweenerHide()
 {
 	return NewObject<UFairyTweenerHide>(this);
 }
 
-UFairyTweenerPivot* UTweenManager::CreateTweenerPivot(FVector2D InDstPivot)
+UFairyTweenerPivot* UFairyTweenMgr::CreateTweenerPivot(FVector2D InDstPivot)
 {
 	UFairyTweenerPivot* Tweener = NewObject<UFairyTweenerPivot>(this);
 	Tweener->Init(InDstPivot);
 	return Tweener;
 }
 
-UFairyTweenerCallFunc* UTweenManager::CreateTweenerCallFunc(const FTweenDelegate& InDelegate)
+UFairyTweenerCallFunc* UFairyTweenMgr::CreateTweenerCallFunc(const FTweenDelegate& InDelegate)
 {
 	UFairyTweenerCallFunc* Tweener = NewObject<UFairyTweenerCallFunc>(this);
 	Tweener->Init(InDelegate);
 	return Tweener;
 }
 
-UFairyTweenerDynamicCallFunc* UTweenManager::CreateTweenerDynamicCallFunc(const FTweenDynamicDelegate& InDelegate)
+UFairyTweenerDynamicCallFunc* UFairyTweenMgr::CreateTweenerDynamicCallFunc(const FTweenDynamicDelegate& InDelegate)
 {
 	UFairyTweenerDynamicCallFunc* Tweener = NewObject<UFairyTweenerDynamicCallFunc>(this);
 	Tweener->Init(InDelegate);
 	return Tweener;
 }
 
-UFairyTweenerEase* UTweenManager::CreateTweenerEase(UFairyTweenerInterval* InInnerTweener, EFairyEaseType InEaseType, float InArgs)
+UFairyTweenerEase* UFairyTweenMgr::CreateTweenerEase(UFairyTweenerInterval* InInnerTweener, EFairyEaseType InEaseType, float InArgs)
 {
 	UFairyTweenerEaseElastic* ElasticTweener = nullptr;
 	UFairyTweenerEaseRate* RateTweeener = nullptr;
@@ -286,7 +274,7 @@ UFairyTweenerEase* UTweenManager::CreateTweenerEase(UFairyTweenerInterval* InInn
 }
 
 
-void UTweenManager::AddTweener(UFairyTweener* InTweener, UFairyObject* InTarget, bool InPaused)
+void UFairyTweenMgr::AddTweener(UFairyTweener* InTweener, UFairyObject* InTarget, bool InPaused)
 {
 	if (InTweener)
 	{
@@ -297,7 +285,7 @@ void UTweenManager::AddTweener(UFairyTweener* InTweener, UFairyObject* InTarget,
 	}
 }
 
-UFairyTweener* UTweenManager::GetTweenerByTag(int InTag, UFairyObject* InTarget)
+UFairyTweener* UFairyTweenMgr::GetTweenerByTag(int InTag, UFairyObject* InTarget)
 {
 	UFairyTweener* target = nullptr;
 	if (TweenerTable.Contains(InTarget))
@@ -316,7 +304,7 @@ UFairyTweener* UTweenManager::GetTweenerByTag(int InTag, UFairyObject* InTarget)
 	return target;
 }
 
-void UTweenManager::RemoveTweener(UFairyTweener* InTweener)
+void UFairyTweenMgr::RemoveTweener(UFairyTweener* InTweener)
 {
 	if (!InTweener)
 	{
@@ -333,7 +321,7 @@ void UTweenManager::RemoveTweener(UFairyTweener* InTweener)
 	}
 }
 
-void UTweenManager::RemoveTweenerByTag(int InTag, UFairyObject* InTarget)
+void UFairyTweenMgr::RemoveTweenerByTag(int InTag, UFairyObject* InTarget)
 {
 	if (TweenerTable.Contains(InTarget))
 	{
@@ -349,7 +337,7 @@ void UTweenManager::RemoveTweenerByTag(int InTag, UFairyObject* InTarget)
 	}
 }
 
-void UTweenManager::RemoveAllTweenerWithTarget(UFairyObject* InTarget)
+void UFairyTweenMgr::RemoveAllTweenerWithTarget(UFairyObject* InTarget)
 {
 	if (TweenerTable.Contains(InTarget))
 	{
@@ -362,7 +350,7 @@ void UTweenManager::RemoveAllTweenerWithTarget(UFairyObject* InTarget)
 	}
 }
 
-void UTweenManager::DoRemoveTweener(UFairyTweener* InTweener)
+void UFairyTweenMgr::DoRemoveTweener(UFairyTweener* InTweener)
 {
 	TArray<UFairyObject*> PendingDeleteArray;
 	for (auto& Pair : TweenerTable)
@@ -397,7 +385,7 @@ void UTweenManager::DoRemoveTweener(UFairyTweener* InTweener)
 	//InTweener->MarkPendingKill();
 }
 
-void UTweenManager::Tick(float DeltaTime)
+void UFairyTweenMgr::Tick(float DeltaTime)
 {
 	for (size_t i = 0; i < PrePendingRemoveArray.Num(); i++)
 	{

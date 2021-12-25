@@ -6,7 +6,7 @@
 #include "FairyComponent.generated.h"
 
 class UFairyController;
-class UTransition;
+class UFairyTransition;
 class SContainer;
 
 UCLASS(BlueprintType, Blueprintable)
@@ -99,12 +99,12 @@ public:
 	// *********** Controller end ***********
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	UTransition* GetTransition(const FString& TransitionName) const;
+	UFairyTransition* GetTransition(const FString& TransitionName) const;
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	UTransition* GetTransitionAt(int32 Index) const;
+	UFairyTransition* GetTransitionAt(int32 Index) const;
 
-	const TArray<UTransition*>& GetTransitions() const { return Transitions; }
+	const TArray<UFairyTransition*>& GetTransitions() const { return Transitions; }
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	bool IsOpaque() const;
@@ -245,7 +245,7 @@ protected:
 	TArray<UFairyObject*> Children; // Child FairyObject
 	
 	UPROPERTY(Transient)
-	TArray<UTransition*> Transitions;
+	TArray<UFairyTransition*> Transitions;
 	
 	UPROPERTY(Transient)
 	UScrollPanel* ScrollPanel;

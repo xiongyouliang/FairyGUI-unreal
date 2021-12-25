@@ -175,7 +175,7 @@ enum class EFlipType : uint8
 };
 
 UENUM()
-enum class ETransitionActionType
+enum class EFairyTransitionItemType
 {
 	XY,
 	Size,

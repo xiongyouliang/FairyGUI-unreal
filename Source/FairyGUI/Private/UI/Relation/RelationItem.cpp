@@ -5,7 +5,7 @@
 #include "UI/FairyObject.h"
 #include "UI/FairyComponent.h"
 #include "UI/GGroup.h"
-#include "UI/Transition/Transition.h"
+#include "UI/Transition/FairyTransition.h"
 
 FRelationItem::FRelationItem(UFairyObject* InOwner) :
 	Owner(nullptr),

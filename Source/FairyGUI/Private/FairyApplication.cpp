@@ -121,6 +121,16 @@ UFairyTweenMgr* UFairyApplication::GetTweenMgr()
 	return FairyTweenMgr;
 }
 
+UFairyTransitionMgr* UFairyApplication::GetTransitionMgr()
+{
+	if (!FairyTransitionMgr)
+	{
+		FairyTransitionMgr = NewObject<UFairyTransitionMgr>(this);
+	}
+
+	return FairyTransitionMgr;
+}
+
 void UFairyApplication::AddUIRoot(UObject* WorldContextObject)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("UFairyApplication::AddUIRoot(...)"));

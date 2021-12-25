@@ -2,13 +2,12 @@
 #include "UI/FairyButton.h"
 #include "UI/GGroup.h"
 #include "UI/Relation/Relations.h"
-#include "UI/Transition/TranslationHelper.h"
 #include "UI/UIObjectFactory.h"
 #include "Package/FairyPackage.h"
 #include "Package/FairyPackageMgr.h"
 #include "UI/Controller/FairyController.h"
 #include "UI/Controller/FairyControllerMgr.h"
-#include "UI/Transition/Transition.h"
+#include "UI/Transition/FairyTransition.h"
 #include "UI/FairyRoot.h"
 #include "Utils/ByteBuffer.h"
 #include "Widgets/SContainer.h"
@@ -574,24 +573,25 @@ void UFairyComponent::ApplyAllControllers()
 // *********************** Component Controller end **********************
 // *************************************************************************
 
-UTransition* UFairyComponent::GetTransition(const FString& TransitionName) const
+UFairyTransition* UFairyComponent::GetTransition(const FString& TransitionName) const
 {
-	for (const auto& Transition : Transitions)
-	{
-		if (Transition->GetName().Compare(TransitionName) == 0)
-		{
-			return Transition;
-		}
-	}
+	//for (const auto& Transition : Transitions)
+	//{
+	//	if (Transition->GetName().Compare(TransitionName) == 0)
+	//	{
+	//		return Transition;
+	//	}
+	//}
 
 	return nullptr;
 }
 
-UTransition* UFairyComponent::GetTransitionAt(int32 Index) const
+UFairyTransition* UFairyComponent::GetTransitionAt(int32 Index) const
 {
-	verifyf(Index >= 0 && Index < Transitions.Num(), TEXT("Invalid transition index"));
+	//verifyf(Index >= 0 && Index < Transitions.Num(), TEXT("Invalid transition index"));
 
-	return Transitions[Index];
+	//return Transitions[Index];
+	return nullptr;
 }
 
 void UFairyComponent::AdjustRadioGroupDepth(UFairyObject* Obj, UFairyController* Controller)
@@ -1175,7 +1175,6 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 	if (!CurPackageItem->bTranslated)
 	{
 		CurPackageItem->bTranslated = true;
-		FTranslationHelper::TranslateComponent(CurPackageItem);
 	}
 
 	FairyGUI::FByteBuffer* CurPackageItemBuffer = CurPackageItem->RawData.Get();
@@ -1381,14 +1380,16 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 		int32 nextPos = CurPackageItemBuffer->ReadShort();
 		nextPos += CurPackageItemBuffer->GetPos();
 
-		UTransition* Transition = NewObject<UTransition>(this);
-		Transitions.Add(Transition);
+		UFairyTransition* Transition = NewObject<UFairyTransition>(this);
+		Transition->SetTargetComponent(this);
 		Transition->Setup(CurPackageItemBuffer);
+		UFairyApplication::Get()->GetTransitionMgr()->AddTransition(Transition);
 
 		CurPackageItemBuffer->SetPos(nextPos);
 	}
 
-	if (Transitions.Num() > 0) 
+	// todo: This code will remove when all FairyObject has OnEnter/OnExit Event Callback method.
+	if (transitionCount > 0)
 	{
 		On(FFairyEventNames::AddedToStage).AddUObject(this, &UFairyComponent::OnAddedToStageHandler);
 		On(FFairyEventNames::RemovedFromStage).AddUObject(this, &UFairyComponent::OnRemovedFromStageHandler);

@@ -3,7 +3,7 @@
 #include "ControllerAction.h"
 #include "Utils/ByteBuffer.h"
 
-class UTransition;
+class UFairyTransition;
 
 class FPlayTransitionAction : public FControllerAction
 {
@@ -20,5 +20,5 @@ protected:
     virtual void Enter(UFairyController* Controller) override;
     virtual void Leave(UFairyController* Controller) override;
 
-    UTransition* CurrentTransition;
+    UFairyTransition* CurrentTransition;
 };

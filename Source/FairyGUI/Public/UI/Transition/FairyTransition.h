@@ -2,10 +2,9 @@
 
 #include "CoreMinimal.h"
 #include "Event/EventContext.h"
-#include "UI/Transition/TransitionItem.h"
-#include "UI/Transition/TransitionItemData.h"
-#include "UI/Transition/TweenConfig.h"
-#include "Transition.generated.h"
+#include "UI/Transition/FairyTransitionItemBase.h"
+#include "UI/Transition/FairyTransitionTweenConfig.h"
+#include "FairyTransition.generated.h"
 
 class UFairyObject;
 class UFairyComponent;
@@ -14,12 +13,18 @@ class FByteBuffer;
 class UFairyTweener;
 
 UCLASS(BlueprintType)
-class FAIRYGUI_API UTransition : public UObject
+class FAIRYGUI_API UFairyTransition : public UObject
 {
     GENERATED_BODY()
 public:
-    UTransition();
-    virtual ~UTransition();
+    UFairyTransition();
+    virtual ~UFairyTransition();
+
+    UFUNCTION(BlueprintCallable, Category = "FairyGUI | Transition")
+    FName GetName();
+
+    UFairyComponent* GetTargetComponent() { return TargetComponent; }
+    void SetTargetComponent(UFairyComponent* InTargetComponent) { TargetComponent = InTargetComponent; }
 
     bool IsPlaying() const { return bPlaying; }
     void Play(const FSimpleDelegate& InCompleteCallback = FSimpleDelegate())
@@ -109,27 +114,31 @@ public:
 
     void Setup(FairyGUI::FByteBuffer* Buffer);
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
-    FString Name;
+   
 
 private:
     void Play(int32 InTimes, float InDelay, float InStartTime, float InEndTime, bool bInReverse, FSimpleDelegate InCompleteCallback);
-    void StopItem(FTransitionItemBase* Item, bool bSetToComplete);
+    void StopItem(FFairyTransitionItemBase* Item, bool bSetToComplete);
     void OnDelayedPlay();
     void InternalPlay();
-    void PlayItem(FTransitionItemBase* Item);
+    void PlayItem(FFairyTransitionItemBase* Item);
     void SkipAnimations();
     void OnDelayedPlayItem(UFairyTweener* Tweener);
     void OnTweenStart(UFairyTweener* Tweener);
     void OnTweenUpdate(UFairyTweener* Tweener);
     void OnTweenComplete(UFairyTweener* Tweener);
-    void OnPlayTransCompleted(FTransitionItemBase* item);
-    void CallHook(FTransitionItemBase* Item, bool bTweenEnd);
+    void OnPlayTransCompleted(FFairyTransitionItemBase* item);
+    void CallHook(FFairyTransitionItemBase* Item, bool bTweenEnd);
     void CheckAllComplete();
-    void ApplyValue(FTransitionItemBase* Item);
+    void ApplyValue(FFairyTransitionItemBase* Item);
 
-    UFairyComponent* Owner;
-    TArray<FTransitionItemBase*> Items;
+
+    FName Name;
+
+    UPROPERTY()
+    UFairyComponent* TargetComponent;
+
+    TArray<TSharedPtr<FFairyTransitionItemBase>> Items;
 
     bool bPlaying;
     bool bPaused;

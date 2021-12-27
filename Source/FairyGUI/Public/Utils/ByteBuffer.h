@@ -29,7 +29,11 @@ namespace FairyGUI {
 
 		int32 GetBytesAvailable() const;
 		int32 GetLength() const { return Length; }
-
+		
+		/**
+		* return cursor position in current buffer object.
+		* cursor position not changed.
+		*/
 		int32 GetPos() const { return Position; }
 		void SetPos(int32 InPos) { Position = InPos; }
 		void Skip(int32 InBytes) { Position += InBytes; }

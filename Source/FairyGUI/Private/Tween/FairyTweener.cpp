@@ -18,11 +18,6 @@ UFairyTweener::~UFairyTweener()
 	}
 }
 
-void UFairyTweener::StartWithTarget(UFairyObject* InTarget)
-{
-	_Target = InTarget;
-}
-
 void UFairyTweener::SetTarget(UFairyObject* InTarget)
 {
 	_Target = InTarget;

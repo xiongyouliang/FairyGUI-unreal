@@ -16,7 +16,7 @@ public:
 
 	virtual bool IsDone() const override;
 	virtual void Step(float InDeltaTime) override;
-	virtual void StartWithTarget(UFairyObject* InTarget) override;
+	virtual void SetTarget(UFairyObject* InTarget) override;
 
 	void Init(float InDuration);
 
@@ -44,7 +44,7 @@ public:
 	bool Init(const TArray<UFairyTweenerFiniteTime*>& InTweenerList);
 
 	virtual void Step(float InDeltaTime) override;
-	virtual void StartWithTarget(UFairyObject* InTarget) override;
+	virtual void SetTarget(UFairyObject* InTarget) override;
 protected:
 	UPROPERTY()
 	TArray<UFairyTweenerFiniteTime*> tweenerList;

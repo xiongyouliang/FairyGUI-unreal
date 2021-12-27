@@ -296,7 +296,7 @@ void UFairyTweenMgr::AddTweener(UFairyTweener* InTweener, UFairyObject* InTarget
 		}
 		UFairyTweenerArrayWrapper* Array = TweenerTable[InTarget];
 		InTweener->SetPaused(InPaused);
-		InTweener->StartWithTarget(InTarget);
+		InTweener->SetTarget(InTarget);
 		Array->AddTweener(InTweener);
 	}
 }

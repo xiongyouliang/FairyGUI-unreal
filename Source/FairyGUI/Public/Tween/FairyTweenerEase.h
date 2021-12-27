@@ -13,7 +13,7 @@ class FAIRYGUI_API UFairyTweenerEase : public UFairyTweenerInterval
 public:
 	bool Init(UFairyTweenerInterval* InInnerTweener);
 
-	virtual void StartWithTarget(UFairyObject* InTarget) override;
+	virtual void SetTarget(UFairyObject* InTarget) override;
 	virtual void Update(float InTime) override;
 	virtual UFairyTweenerInterval* GetInnerTweener();
 

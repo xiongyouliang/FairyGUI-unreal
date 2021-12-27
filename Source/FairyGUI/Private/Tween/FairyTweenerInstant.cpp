@@ -6,9 +6,9 @@ bool UFairyTweenerInstant::IsInstant()
 	return true;
 }
 
-void UFairyTweenerInstant::StartWithTarget(UFairyObject* InTarget)
+void UFairyTweenerInstant::SetTarget(UFairyObject* InTarget)
 {
-	UFairyTweenerFiniteTime::StartWithTarget(InTarget);
+	UFairyTweenerFiniteTime::SetTarget(InTarget);
 	bDone = false;
 }
 

@@ -27,8 +27,7 @@ public:
 	[[deprecated("Will remove in next refactor.")]]
 	UFairyTweener* SetPath(TSharedPtr<FGPath> InPath);
 
-	virtual void StartWithTarget(UFairyObject* InTarget);
-	void SetTarget(UFairyObject* InTarget);
+	virtual void SetTarget(UFairyObject* InTarget);
 	UFairyObject* GetTarget();
 	bool IsTargetValid();
 

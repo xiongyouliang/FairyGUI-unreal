@@ -38,9 +38,9 @@ void UFairyTweenerInterval::Step(float InDeltaTime)
 	bDone = elapsedTime >= GetDuration();
 }
 
-void UFairyTweenerInterval::StartWithTarget(UFairyObject* InTarget)
+void UFairyTweenerInterval::SetTarget(UFairyObject* InTarget)
 {
-	UFairyTweenerFiniteTime::StartWithTarget(InTarget);
+	UFairyTweenerFiniteTime::SetTarget(InTarget);
 	bDone = false;
 }
 
@@ -104,9 +104,9 @@ void UFairyTweenerSequence::Step(float InDeltaTime)
 	}
 }
 
-void UFairyTweenerSequence::StartWithTarget(UFairyObject* InTarget)
+void UFairyTweenerSequence::SetTarget(UFairyObject* InTarget)
 {
-	Super::StartWithTarget(InTarget);
+	Super::SetTarget(InTarget);
 	for (size_t i = 0; i < tweenerList.Num(); i++)
 	{
 		UFairyTweenerFiniteTime* element = tweenerList[i];

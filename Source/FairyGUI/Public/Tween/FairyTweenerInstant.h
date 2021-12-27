@@ -10,7 +10,7 @@ class FAIRYGUI_API UFairyTweenerInstant : public UFairyTweenerFiniteTime
 	GENERATED_BODY()
 public:
 	virtual bool IsInstant() override;
-	virtual void StartWithTarget(UFairyObject* InTarget) override;
+	virtual void SetTarget(UFairyObject* InTarget) override;
 	virtual bool IsDone() const override;
 
 	virtual void Step(float InDeltaTime) override;

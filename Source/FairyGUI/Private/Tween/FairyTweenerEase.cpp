@@ -7,12 +7,12 @@ bool UFairyTweenerEase::Init(UFairyTweenerInterval* InInnerTweener)
 	return true;
 }
 
-void UFairyTweenerEase::StartWithTarget(UFairyObject* InTarget)
+void UFairyTweenerEase::SetTarget(UFairyObject* InTarget)
 {
 	if (InTarget && _innerTweener)
 	{
-		UFairyTweenerInterval::StartWithTarget(InTarget);
-		_innerTweener->StartWithTarget(InTarget);
+		UFairyTweenerInterval::SetTarget(InTarget);
+		_innerTweener->SetTarget(InTarget);
 	}
 }
 

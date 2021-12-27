@@ -20,6 +20,9 @@ public:
 	void RemoveTransition(UFairyTransition* InTransition);
 	void RemoveAllTransition();
 
+	void OnComponentEnter(UFairyComponent* InTargetComponent);
+	void OnComponentExit(UFairyComponent* InTargetComponent);
+
 	int32 GetTransitionNum();
 	int32 GetTransitionNumInComponent(UFairyComponent* InTragetComponent);
 private:

@@ -30,7 +30,32 @@ void UFairyTransitionMgr::RemoveTransition(UFairyTransition* InTransition)
 
 void UFairyTransitionMgr::RemoveAllTransition()
 {
+	
+}
 
+void UFairyTransitionMgr::OnComponentEnter(UFairyComponent* InTargetComponent)
+{
+	for (size_t i = 0; i < TransitionList.Num(); i++)
+	{
+		UFairyTransition* Transition = TransitionList[i];
+		if (InTargetComponent == Transition->GetTargetComponent())
+		{
+			Transition->OnTargetComponentEnter();
+		}
+	}
+}
+
+void UFairyTransitionMgr::OnComponentExit(UFairyComponent* InTargetComponent)
+{
+	for (size_t i = 0; i < TransitionList.Num(); i++)
+	{
+		UFairyTransition* Transition = TransitionList[i];
+		if (InTargetComponent == Transition->GetTargetComponent())
+		{
+			Transition->OnTargetComponentExit();
+			RemoveTransition(Transition);
+		}
+	}
 }
 
 int32 UFairyTransitionMgr::GetTransitionNum()

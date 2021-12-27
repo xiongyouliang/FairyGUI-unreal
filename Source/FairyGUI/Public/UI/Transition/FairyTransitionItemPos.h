@@ -26,4 +26,6 @@ public:
 	virtual void ParsePathData(FairyGUI::FByteBuffer* InBufffer) override;
 
 	virtual void RunItem() override;
+
+	void EndCallback(UFairyTweener* InFairyTweener);
 };

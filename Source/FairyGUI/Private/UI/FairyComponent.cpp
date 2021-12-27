@@ -1147,18 +1147,12 @@ void UFairyComponent::HandleGrayedChanged()
 
 void UFairyComponent::OnAddedToStageHandler(UEventContext* Context)
 {
-	for (auto& Transition : Transitions)
-	{
-		Transition->OnOwnerAddedToStage();
-	}
+	UFairyApplication::Get()->GetTransitionMgr()->OnComponentEnter(this);
 }
 
 void UFairyComponent::OnRemovedFromStageHandler(UEventContext* Context)
 {
-	for (auto& Transition : Transitions)
-	{
-		Transition->OnOwnerRemovedFromStage();
-	}
+	UFairyApplication::Get()->GetTransitionMgr()->OnComponentExit(this);
 }
 
 // ***************************** Parse Component start ******************************************

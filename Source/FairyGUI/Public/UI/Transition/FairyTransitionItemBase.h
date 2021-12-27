@@ -52,6 +52,9 @@ public:
 	void SetOwner(UFairyTransition* InOwner);
 	UFairyTransition* GetOwner();
 
+	void SetTarget(UFairyObject* InTargetObject);
+	UFairyObject* GetTarget();
+
 	virtual bool IsTargetValid();
 	virtual bool IsHasTween();
 

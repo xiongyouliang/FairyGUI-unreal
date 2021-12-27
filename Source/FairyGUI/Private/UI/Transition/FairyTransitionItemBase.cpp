@@ -33,6 +33,16 @@ UFairyTransition* FFairyTransitionItemBase::GetOwner()
 	return nullptr;
 }
 
+void FFairyTransitionItemBase::SetTarget(UFairyObject* InTargetObject)
+{
+	TargetPtr = InTargetObject;
+}
+
+UFairyObject* FFairyTransitionItemBase::GetTarget()
+{
+	return TargetPtr.Get();
+}
+
 bool FFairyTransitionItemBase::IsTargetValid()
 {
 	return TargetPtr.IsValid();
@@ -40,7 +50,7 @@ bool FFairyTransitionItemBase::IsTargetValid()
 
 bool FFairyTransitionItemBase::IsHasTween()
 {
-	return false;
+	return bHasTween;
 }
 
 void FFairyTransitionItemBase::ParseBaseData(FairyGUI::FByteBuffer* InBuffer, int32 curPos)
@@ -113,6 +123,7 @@ void FFairyTransitionTweenableItem::ParseTweenKeyFrameData(FairyGUI::FByteBuffer
 
 void FFairyTransitionTweenableItem::ParseNoTweenKeyFrameData(FairyGUI::FByteBuffer* InBuffer, int32 curPos)
 {
+	InBuffer->Seek(curPos, 2);
 	ParseTweenStartData(InBuffer);
 }
 

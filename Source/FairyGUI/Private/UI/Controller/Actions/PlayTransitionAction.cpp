@@ -23,26 +23,26 @@ void FPlayTransitionAction::Setup(FairyGUI::FByteBuffer* Buffer)
 
 void FPlayTransitionAction::Enter(UFairyController* Controller)
 {
-    UFairyTransition* trans = Cast<UFairyComponent>(Controller->GetOuter())->GetTransition(TransitionName);
-    if (trans != nullptr)
-    {
-        if (CurrentTransition != nullptr && CurrentTransition->IsPlaying())
-        {
-            trans->ChangePlayTimes(PlayTimes);
-        }
-        else
-        {
-            trans->Play(PlayTimes, Delay);
-        }
-        CurrentTransition = trans;
-    }
+    //UFairyTransition* trans = Cast<UFairyComponent>(Controller->GetOuter())->GetTransition(TransitionName);
+    //if (trans != nullptr)
+    //{
+    //    if (CurrentTransition != nullptr && CurrentTransition->IsPlaying())
+    //    {
+    //        trans->ChangePlayTimes(PlayTimes);
+    //    }
+    //    else
+    //    {
+    //        trans->Play(PlayTimes, Delay);
+    //    }
+    //    CurrentTransition = trans;
+    //}
 }
 
 void FPlayTransitionAction::Leave(UFairyController* Controller)
 {
-    if (bStopOnExit && CurrentTransition != nullptr)
-    {
-        CurrentTransition->Stop();
-        CurrentTransition = nullptr;
-    }
+    //if (bStopOnExit && CurrentTransition != nullptr)
+    //{
+    //    CurrentTransition->Stop();
+    //    CurrentTransition = nullptr;
+    //}
 }

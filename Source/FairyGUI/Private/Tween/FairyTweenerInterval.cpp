@@ -92,34 +92,14 @@ void UFairyTweenerSequence::Step(float InDeltaTime)
 		curTweener = tweenerList[curIndex];
 		curTweener->Step(InDeltaTime);
 
-		while (curTweener->IsDone())
+		if (curTweener->IsDone())
 		{
 			curIndex++;
+		}
 
-			if (curIndex < tweenerList.Num())
-			{
-				nextTweener = tweenerList[curIndex];
-				// If next is a instant tweener, invoke it immediately in current tick.
-				if (nextTweener->IsInstant())
-				{
-					nextTweener->Step(InDeltaTime); // one step will make a instant tweener done.
-					curTweener = nextTweener;
-					continue;
-				}
-				else if (bFirstIntervalTweener && curTweener->IsInstant())
-				{
-					// If next is first interval tweener, invoke it in current tick once.
-					bFirstIntervalTweener = false;
-					nextTweener->Step(InDeltaTime);
-					curTweener = nextTweener;
-					break;
-				}
-			}
-			else
-			{
-				bDone = true;
-				break;
-			}
+		if (curIndex == tweenerList.Num())
+		{
+			bDone = true;
 		}
 	}
 }

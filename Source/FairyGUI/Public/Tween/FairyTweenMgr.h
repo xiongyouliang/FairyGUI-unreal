@@ -14,6 +14,22 @@
 typedef UFairyTweener* FairyTweenerPointer;
 
 UCLASS(BlueprintType)
+class FAIRYGUI_API UFairyTweenerArrayWrapper : public UObject
+{
+	GENERATED_BODY()
+private:
+	UPROPERTY()
+	TArray<UFairyTweener*> TweenerList;
+
+public:
+	void AddTweener(UFairyTweener* InTweener) { TweenerList.Push(InTweener); }
+	void RemoveTweener(UFairyTweener* InTweener);
+	int32 Num() { return TweenerList.Num(); };
+
+	UFairyTweener* operator[](size_t index) { return TweenerList[index]; }
+};
+
+UCLASS(BlueprintType)
 class FAIRYGUI_API UFairyTweenMgr : public UObject, public FTickableGameObject
 {
 	GENERATED_BODY()
@@ -94,7 +110,10 @@ private:
 	static UFairyTweenMgr* Instance;
 	bool bTicking;
 
-	TMap<UFairyObject*, TArray<UFairyTweener*>> TweenerTable;	
+	UPROPERTY()
+	TMap<UFairyObject*, UFairyTweenerArrayWrapper*> TweenerTable;
+	
+	UPROPERTY()
 	TArray<UFairyTweener*> PrePendingRemoveArray;
 
 	inline void DoRemoveTweener(UFairyTweener* InTweener);

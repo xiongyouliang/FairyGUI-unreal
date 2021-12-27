@@ -100,7 +100,7 @@ void UFairyTweenerEaseElasticInOut::Update(float InTime)
 #define EASE_TEMPLATE_IMP(CLASS_NAME, EASE_FUNC) \
 void CLASS_NAME::Update(float InTime) \
 { \
-	_innerTweener->Update(FFairyEaseHelper::EASE_FUNC(InTime)); \
+	_innerTweener->Update(EASE_FUNC(InTime)); \
 }
 
 //void UFairyTweenerEaseSineIn::Update(float InTime)

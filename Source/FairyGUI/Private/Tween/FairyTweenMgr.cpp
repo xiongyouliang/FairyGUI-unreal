@@ -2,6 +2,18 @@
 
 #include "FairyApplication.h"
 
+void UFairyTweenerArrayWrapper::RemoveTweener(UFairyTweener* InTweener)
+{
+	for (size_t i = 0; i < TweenerList.Num(); i++)
+	{
+		if (InTweener == TweenerList[i])
+		{
+			TweenerList.RemoveAt(i);
+			break;
+		}
+	}
+}
+
 UFairyTweenMgr* UFairyTweenMgr::Instance = nullptr;
 
 UFairyTweenMgr::UFairyTweenMgr()
@@ -278,10 +290,14 @@ void UFairyTweenMgr::AddTweener(UFairyTweener* InTweener, UFairyObject* InTarget
 {
 	if (InTweener)
 	{
-		TArray<UFairyTweener*>& Array = TweenerTable.FindOrAdd(InTarget);
+		if (!TweenerTable.Contains(InTarget))
+		{
+			TweenerTable.Add(InTarget, NewObject<UFairyTweenerArrayWrapper>(this));
+		}
+		UFairyTweenerArrayWrapper* Array = TweenerTable[InTarget];
 		InTweener->SetPaused(InPaused);
 		InTweener->StartWithTarget(InTarget);
-		Array.Add(InTweener);
+		Array->AddTweener(InTweener);
 	}
 }
 
@@ -290,7 +306,7 @@ UFairyTweener* UFairyTweenMgr::GetTweenerByTag(int InTag, UFairyObject* InTarget
 	UFairyTweener* target = nullptr;
 	if (TweenerTable.Contains(InTarget))
 	{
-		TArray<UFairyTweener*>* Array = TweenerTable.Find(InTarget);
+		UFairyTweenerArrayWrapper* Array = TweenerTable[InTarget];
 		for (size_t i = 0; i < Array->Num(); i++)
 		{
 			UFairyTweener* element = (*Array)[i];
@@ -325,7 +341,7 @@ void UFairyTweenMgr::RemoveTweenerByTag(int InTag, UFairyObject* InTarget)
 {
 	if (TweenerTable.Contains(InTarget))
 	{
-		TArray<UFairyTweener*>* Array = TweenerTable.Find(InTarget);
+		UFairyTweenerArrayWrapper* Array = TweenerTable[InTarget];
 		for (size_t i = 0; i < Array->Num(); i++)
 		{
 			UFairyTweener* element = (*Array)[i];
@@ -341,7 +357,7 @@ void UFairyTweenMgr::RemoveAllTweenerWithTarget(UFairyObject* InTarget)
 {
 	if (TweenerTable.Contains(InTarget))
 	{
-		TArray<UFairyTweener*>* Array = TweenerTable.Find(InTarget);
+		UFairyTweenerArrayWrapper* Array = TweenerTable[InTarget];
 		for (size_t i = 0; i < Array->Num(); i++)
 		{
 			UFairyTweener* element = (*Array)[i];
@@ -355,18 +371,18 @@ void UFairyTweenMgr::DoRemoveTweener(UFairyTweener* InTweener)
 	TArray<UFairyObject*> PendingDeleteArray;
 	for (auto& Pair : TweenerTable)
 	{
-		TArray<UFairyTweener*>& Array = Pair.Value;
-		for (int i = 0; i < Array.Num(); i++)
+		UFairyTweenerArrayWrapper* Array = Pair.Value;
+		for (int i = 0; i < Array->Num(); i++)
 		{
-			const UFairyTweener* element = Array[i];
+			UFairyTweener* element = (*Array)[i];
 			if (element == InTweener)
 			{
-				Array.RemoveAt(i);
+				Array->RemoveTweener(element);
 				break;
 			}
 		}
 		// If tweener array is empty, remove it from TweenerTable
-		if (Array.Num() == 0)
+		if (Array->Num() == 0)
 		{
 			PendingDeleteArray.Add(Pair.Key);
 		}
@@ -397,20 +413,16 @@ void UFairyTweenMgr::Tick(float DeltaTime)
 	bTicking = true;
 	for (auto& Pair : TweenerTable)
 	{
-		TArray<UFairyTweener*>& Array = Pair.Value;
-		for (size_t i = 0; i < Array.Num(); i++)
+		UFairyTweenerArrayWrapper* Array = Pair.Value;
+		for (size_t i = 0; i < Array->Num(); i++)
 		{
-			UFairyTweener* element = Array[i];
-			if (!element->IsPaused())
+			UFairyTweener* element = (*Array)[i];
+			if (!element->IsPaused() && element->IsTargetValid())
 			{
-				if (element->IsDone() || !element->IsTargetValid())
+				element->Step(DeltaTime);
+				if (element->IsDone())
 				{
 					RemoveTweener(element);
-					continue;
-				}
-				else
-				{
-					element->Step(DeltaTime);
 				}
 			}
 		}

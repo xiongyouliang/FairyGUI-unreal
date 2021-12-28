@@ -63,25 +63,32 @@ void FFairyTransitionItemPos::RunItem()
 			tweenerList.Push(delay);
 		}
 		
+		UFairyTweenerInterval* finalTween;
 		UFairyTweenerPos* move = TweenMgr->CreateTweenerPos(config->Duration, startDataPtr->Pos, endDataPtr->Pos);
 		if (config->EaseType != EFairyEaseType::Linear)
 		{
 			UFairyTweenerEase* ease = TweenMgr->CreateTweenerEase(move, config->EaseType, 0);
 			tweenerList.Push(ease);
+			finalTween = ease;
 		}
 		else
 		{
 			tweenerList.Push(move);
+			finalTween = move;
 		}
 
-		FTweenDelegate delegate;
-		delegate.BindRaw(this, &FFairyTransitionItemPos::EndCallback);
-		UFairyTweenerCallFunc* callback = TweenMgr->CreateTweenerCallFunc(delegate);
-		tweenerList.Push(callback);
+		if (tweenerList.Num() > 1)
+		{
+			UFairyTweenerSequence* sequence = TweenMgr->CreateTweenerSequence(tweenerList);
+			finalTween = sequence;
+		}
 
-		UFairyTweenerSequence* sequence = TweenMgr->CreateTweenerSequence(tweenerList);
+		if (config->Repeat > 0)
+		{
+			finalTween = TweenMgr->CreateTweenerRepeat(finalTween, config->Repeat);
+		}
 
-		GetTarget()->RunTween(sequence);
+		GetTarget()->RunTween(finalTween);
 	}
 	else
 	{

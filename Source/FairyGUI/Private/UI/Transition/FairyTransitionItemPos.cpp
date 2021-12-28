@@ -99,9 +99,8 @@ void FFairyTransitionItemPos::RunItem()
 			UFairyTweenerDelay* delay = TweenMgr->CreateTweenerDelay(StartTime);
 			tweenerList.Push(delay);
 
-			FTweenDelegate delegate;
-			delegate.BindRaw(this, &FFairyTransitionItemPos::EndCallback);
-			UFairyTweenerCallFunc* callback = TweenMgr->CreateTweenerCallFunc(delegate);
+			UFairyTweenerCallFunc* callback = TweenMgr->CreateTweenerCallFunc();
+			callback->GetDelegate().BindRaw(this, &FFairyTransitionItemPos::EndCallback);
 			tweenerList.Push(callback);
 
 			UFairyTweenerSequence* sequence = TweenMgr->CreateTweenerSequence(tweenerList);
@@ -110,9 +109,8 @@ void FFairyTransitionItemPos::RunItem()
 		}
 		else
 		{
-			FTweenDelegate delegate;
-			delegate.BindRaw(this, &FFairyTransitionItemPos::EndCallback);
-			UFairyTweenerCallFunc* callback = TweenMgr->CreateTweenerCallFunc(delegate);
+			UFairyTweenerCallFunc* callback = TweenMgr->CreateTweenerCallFunc();
+			callback->GetDelegate().BindRaw(this, &FFairyTransitionItemPos::EndCallback);
 
 			GetTarget()->RunTween(callback);
 		}

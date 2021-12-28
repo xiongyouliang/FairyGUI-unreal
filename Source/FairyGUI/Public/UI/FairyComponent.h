@@ -99,14 +99,6 @@ public:
 	// *********** Controller end ***********
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	UFairyTransition* GetTransition(const FString& TransitionName) const;
-
-	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	UFairyTransition* GetTransitionAt(int32 Index) const;
-
-	const TArray<UFairyTransition*>& GetTransitions() const { return Transitions; }
-
-	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	bool IsOpaque() const;
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	void SetOpaque(bool bInOpaque);
@@ -243,9 +235,6 @@ protected:
 
 	UPROPERTY(Transient)
 	TArray<UFairyObject*> Children; // Child FairyObject
-	
-	UPROPERTY(Transient)
-	TArray<UFairyTransition*> Transitions;
 	
 	UPROPERTY(Transient)
 	UScrollPanel* ScrollPanel;

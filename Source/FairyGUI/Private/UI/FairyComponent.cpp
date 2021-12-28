@@ -573,27 +573,6 @@ void UFairyComponent::ApplyAllControllers()
 // *********************** Component Controller end **********************
 // *************************************************************************
 
-UFairyTransition* UFairyComponent::GetTransition(const FString& TransitionName) const
-{
-	//for (const auto& Transition : Transitions)
-	//{
-	//	if (Transition->GetName().Compare(TransitionName) == 0)
-	//	{
-	//		return Transition;
-	//	}
-	//}
-
-	return nullptr;
-}
-
-UFairyTransition* UFairyComponent::GetTransitionAt(int32 Index) const
-{
-	//verifyf(Index >= 0 && Index < Transitions.Num(), TEXT("Invalid transition index"));
-
-	//return Transitions[Index];
-	return nullptr;
-}
-
 void UFairyComponent::AdjustRadioGroupDepth(UFairyObject* Obj, UFairyController* Controller)
 {
 	int32 cnt = Children.Num();

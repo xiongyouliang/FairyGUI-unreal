@@ -118,10 +118,10 @@ UFairyTweenerPivot* UFairyTweenMgr::CreateTweenerPivot(FVector2D InDstPivot)
 	return Tweener;
 }
 
-UFairyTweenerCallFunc* UFairyTweenMgr::CreateTweenerCallFunc(const FTweenDelegate& InDelegate)
+UFairyTweenerCallFunc* UFairyTweenMgr::CreateTweenerCallFunc()
 {
 	UFairyTweenerCallFunc* Tweener = NewObject<UFairyTweenerCallFunc>(this);
-	Tweener->Init(InDelegate);
+	Tweener->Init();
 	return Tweener;
 }
 

@@ -73,11 +73,14 @@ void UFairyTweenerCallFunc::Update(float InTime)
 	}
 }
 
-bool UFairyTweenerCallFunc::Init(const FTweenDelegate& InDelegate)
+bool UFairyTweenerCallFunc::Init()
 {
-	_delegate = InDelegate;
-
 	return true;
+}
+
+FTweenDelegate& UFairyTweenerCallFunc::GetDelegate()
+{
+	return _delegate;
 }
 
 // Dynamic CallFunc Tweener;

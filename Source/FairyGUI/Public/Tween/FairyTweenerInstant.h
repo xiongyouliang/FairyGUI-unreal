@@ -55,7 +55,8 @@ class FAIRYGUI_API UFairyTweenerCallFunc : public UFairyTweenerInstant
 	GENERATED_BODY()
 public:
 	virtual void Update(float InTime) override;
-	bool Init(const FTweenDelegate& InDelegate);
+	bool Init();
+	FTweenDelegate& GetDelegate();
 protected:
 	FTweenDelegate _delegate;
 };

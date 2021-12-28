@@ -77,7 +77,7 @@ public:
 	UFairyTweenerPivot* CreateTweenerPivot(FVector2D InDstPivot);
 
 	// non-dynamic delegate can't pass in blueprint, so this is not a UFUNCTION
-	UFairyTweenerCallFunc* CreateTweenerCallFunc(const FTweenDelegate& InDelegate);	
+	UFairyTweenerCallFunc* CreateTweenerCallFunc();	
 	
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	UFairyTweenerDynamicCallFunc* CreateTweenerDynamicCallFunc(const FTweenDynamicDelegate& InDelegate);

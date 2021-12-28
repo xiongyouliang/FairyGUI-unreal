@@ -62,6 +62,9 @@ public:
 	UFairyTweenerSequence* CreateTweenerSequence(const TArray<UFairyTweenerFiniteTime*>& InTweenerList);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+	UFairyTweenerRepeat* CreateTweenerRepeat(UFairyTweenerFiniteTime* InTweener, int32 InTimes);
+
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	UFairyTweenerDelay* CreateTweenerDelay(float InDelayTime);
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")

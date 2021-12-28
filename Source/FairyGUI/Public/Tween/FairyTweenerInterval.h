@@ -53,6 +53,25 @@ protected:
 };
 
 UCLASS(BlueprintType)
+class FAIRYGUI_API UFairyTweenerRepeat : public UFairyTweenerInterval
+{
+	GENERATED_BODY()
+public:
+	bool Init(UFairyTweenerFiniteTime* InTweener, uint32 repeatTimes);
+
+	virtual void Step(float InDeltaTime) override;
+	virtual void Update(float InTime) override;
+	virtual void SetTarget(UFairyObject* InTarget) override;
+
+private:
+	uint32 m_curTimes;
+	uint32 m_repeatTimes;
+
+	UPROPERTY()
+	UFairyTweenerFiniteTime* _innerTweener;
+};
+
+UCLASS(BlueprintType)
 class FAIRYGUI_API UFairyTweenerPos : public UFairyTweenerInterval
 {
 	GENERATED_BODY()

@@ -86,6 +86,14 @@ UFairyTweenerSequence* UFairyTweenMgr::CreateTweenerSequence(const TArray<UFairy
 	return Tweener;
 }
 
+UFairyTweenerRepeat* UFairyTweenMgr::CreateTweenerRepeat(UFairyTweenerFiniteTime* InTweener, int32 InTimes)
+{
+	UFairyTweenerRepeat* Tweener = NewObject<UFairyTweenerRepeat>(this);
+	Tweener->Init(InTweener, InTimes);
+
+	return Tweener;
+}
+
 UFairyTweenerDelay* UFairyTweenMgr::CreateTweenerDelay(float InDelayTime)
 {
 	UFairyTweenerDelay* Tweener = NewObject<UFairyTweenerDelay>(this);

@@ -87,7 +87,6 @@ void FFairyTransitionItemPos::ConstructTweenerList(TArray<UFairyTweenerFiniteTim
 		}
 		UFairyTweenerCallFunc* callback = TweenMgr->CreateTweenerCallFunc();
 		callback->GetDelegate().BindRaw(this, &FFairyTransitionItemPos::EndCallback);
-
 		OutTweenerList.Push(callback);
 	}
 }

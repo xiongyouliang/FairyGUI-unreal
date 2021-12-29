@@ -2,6 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Utils/ByteBuffer.h"
 #include "UI/FairyObject.h"
 #include "UI/FieldTypes.h"
 #include "UI/Transition/FairyTransitionTweenConfig.h"

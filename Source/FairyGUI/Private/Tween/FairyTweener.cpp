@@ -38,6 +38,11 @@ bool UFairyTweener::IsDone() const
 	return true;
 }
 
+void UFairyTweener::Reset()
+{
+
+}
+
 UFairyTweener* UFairyTweener::SetPath(TSharedPtr<FGPath> InPath)
 {
 	Path = InPath;

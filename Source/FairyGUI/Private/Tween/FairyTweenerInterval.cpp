@@ -44,6 +44,13 @@ void UFairyTweenerInterval::SetTarget(UFairyObject* InTarget)
 	bDone = false;
 }
 
+void UFairyTweenerInterval::Reset()
+{
+	bFirstTick = false;
+	elapsedTime = K_MATH_EPSILON;
+	bDone = false;
+}
+
 void UFairyTweenerInterval::Init(float InDuration)
 {
 	UFairyTweenerFiniteTime::Init(InDuration);
@@ -114,6 +121,17 @@ void UFairyTweenerSequence::SetTarget(UFairyObject* InTarget)
 	}
 }
 
+void UFairyTweenerSequence::Reset()
+{
+	Super::Reset();
+	for (size_t i = 0; i < tweenerList.Num(); i++)
+	{
+		UFairyTweenerFiniteTime* element = tweenerList[i];
+		element->Reset();
+	}
+	curIndex = 0;
+}
+
 // Repeat tweener
 
 bool UFairyTweenerRepeat::Init(UFairyTweenerFiniteTime* InTweener, uint32 repeatTimes)
@@ -122,26 +140,19 @@ bool UFairyTweenerRepeat::Init(UFairyTweenerFiniteTime* InTweener, uint32 repeat
 	m_repeatTimes = repeatTimes;
 	_innerTweener = InTweener;
 
-	SetDuration(InTweener->GetDuration());
+	SetDuration(InTweener->GetDuration() * repeatTimes);
 	return true;
 }
 
 void UFairyTweenerRepeat::Step(float InDeltaTime)
 {
 	Super::Step(InDeltaTime);
+	_innerTweener->Step(InDeltaTime);
 
-	if (IsDone() && m_curTimes < m_repeatTimes)
+	if (_innerTweener->IsDone() && m_curTimes < m_repeatTimes)
 	{
 		m_curTimes++;
-		Super::Init(_innerTweener->GetDuration());
-	}
-}
-
-void UFairyTweenerRepeat::Update(float InTime)
-{
-	if (_innerTweener)
-	{
-		_innerTweener->Update(InTime);
+		_innerTweener->Reset();
 	}
 }
 

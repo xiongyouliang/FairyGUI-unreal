@@ -18,6 +18,8 @@ public:
 	virtual void Step(float InDeltaTime) override;
 	virtual void SetTarget(UFairyObject* InTarget) override;
 
+	virtual void Reset() override;
+
 	void Init(float InDuration);
 
 protected:
@@ -45,6 +47,7 @@ public:
 
 	virtual void Step(float InDeltaTime) override;
 	virtual void SetTarget(UFairyObject* InTarget) override;
+	virtual void Reset() override;
 protected:
 	UPROPERTY()
 	TArray<UFairyTweenerFiniteTime*> tweenerList;
@@ -60,7 +63,6 @@ public:
 	bool Init(UFairyTweenerFiniteTime* InTweener, uint32 repeatTimes);
 
 	virtual void Step(float InDeltaTime) override;
-	virtual void Update(float InTime) override;
 	virtual void SetTarget(UFairyObject* InTarget) override;
 
 private:

@@ -34,6 +34,7 @@ public:
 	virtual void Step(float InDeltaTime);
 	virtual void Update(float InTime);
 	virtual bool IsDone() const;
+	virtual void Reset();
 
 	UFairyTweener* SetPaused(bool bInPaused);
 	virtual bool IsPaused();

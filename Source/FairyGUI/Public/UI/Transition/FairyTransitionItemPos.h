@@ -25,7 +25,7 @@ public:
 	virtual void ParseTweenEndData(FairyGUI::FByteBuffer* InBuffer) override;
 	virtual void ParsePathData(FairyGUI::FByteBuffer* InBufffer) override;
 
-	virtual void RunItem() override;
+	virtual void ConstructTweenerList(TArray<UFairyTweenerFiniteTime*>& OutTweenerList, FFairyTransitionItemBase* InPreviousItem) override;
 
 	void EndCallback(UFairyTweener* InFairyTweener);
 };

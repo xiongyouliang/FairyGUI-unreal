@@ -8,6 +8,7 @@
 #include "UI/Transition/FairyTransitionTweenConfig.h"
 
 class UFairyTransition;
+class UFairyTweenerFiniteTime;
 
 struct FAniData {
 	int32 Frame;
@@ -53,11 +54,19 @@ public:
 	void SetOwner(UFairyTransition* InOwner);
 	UFairyTransition* GetOwner();
 
+	EFairyTransitionItemType GetTimelineType() { return ItemType; }
+
 	void SetTarget(UFairyObject* InTargetObject);
 	UFairyObject* GetTarget();
 
+	float GetStartTime() { return StartTime; }
+	
+	virtual float GetDuration() { return 0.0f; }
+
 	virtual bool IsTargetValid();
 	virtual bool IsHasTween();
+
+	
 
 	virtual void Setup(FairyGUI::FByteBuffer* InBuffer, int32 curPos);
 
@@ -66,6 +75,7 @@ public:
 	virtual void ParseNoTweenKeyFrameData(FairyGUI::FByteBuffer* InBuffer, int32 curPos) {};
 	
 	virtual void RunItem() {};
+	virtual void ConstructTweenerList(TArray<UFairyTweenerFiniteTime*>& OutTweenerList, FFairyTransitionItemBase* InPreviousItem) {};
 };
 
 class FFairyTransitionTweenableItem : public FFairyTransitionItemBase
@@ -77,6 +87,9 @@ protected:
 
 public:
 	FFairyTransitionTweenableItem(EFairyTransitionItemType InItemType);
+
+	virtual float GetDuration() { return TweenConfigPtr->Duration; };
+
 	virtual void ParseTweenKeyFrameData(FairyGUI::FByteBuffer* InBuffer, int32 curPos) override;
 	virtual void ParseNoTweenKeyFrameData(FairyGUI::FByteBuffer* InBuffer, int32 curPos) override;
 

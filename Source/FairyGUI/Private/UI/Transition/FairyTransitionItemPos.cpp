@@ -47,73 +47,48 @@ void FFairyTransitionItemPos::ParsePathData(FairyGUI::FByteBuffer* InBuffer)
 	// todo: parse path data
 }
 
-void FFairyTransitionItemPos::RunItem()
+void FFairyTransitionItemPos::ConstructTweenerList(TArray<UFairyTweenerFiniteTime*>& OutTweenerList, FFairyTransitionItemBase* InPreviousItem)
 {
 	//UE_LOG(LogFairyGUI, Warning, TEXT("FairyTransitionItemPos::RunItem()"));
 	UFairyTweenMgr* TweenMgr = UFairyApplication::Get()->GetTweenMgr();
 
+	float delayTime = StartTime;
+	if (InPreviousItem)
+	{
+		delayTime = StartTime - InPreviousItem->GetStartTime() - InPreviousItem->GetDuration();
+	}
+
 	if (IsHasTween())
 	{
-		TArray<UFairyTweenerFiniteTime*> tweenerList;
-
-		if (StartTime > 0.0f)
+		if (delayTime > 0.0f)
 		{
-			UFairyTweenerDelay* delay = TweenMgr->CreateTweenerDelay(StartTime);
-			tweenerList.Push(delay);
+			UFairyTweenerDelay* delay = TweenMgr->CreateTweenerDelay(delayTime);
+			OutTweenerList.Push(delay);
 		}
 
 		FFariyTransitionTweenConfig* config = TweenConfigPtr.Get();
-		UFairyTweenerInterval* finalTween;
 		UFairyTweenerPos* move = TweenMgr->CreateTweenerPos(config->Duration, startDataPtr->Pos, endDataPtr->Pos);
 		if (config->EaseType != EFairyEaseType::Linear)
 		{
 			UFairyTweenerEase* ease = TweenMgr->CreateTweenerEase(move, config->EaseType, 0);
-			tweenerList.Push(ease);
-			finalTween = ease;
+			OutTweenerList.Push(ease);
 		}
 		else
 		{
-			tweenerList.Push(move);
-			finalTween = move;
+			OutTweenerList.Push(move);
 		}
-
-		if (tweenerList.Num() > 1)
-		{
-			UFairyTweenerSequence* sequence = TweenMgr->CreateTweenerSequence(tweenerList);
-			finalTween = sequence;
-		}
-
-		if (config->Repeat > 0)
-		{
-			finalTween = TweenMgr->CreateTweenerRepeat(finalTween, config->Repeat);
-		}
-
-		GetTarget()->RunTween(finalTween);
 	}
 	else
 	{
-		if (StartTime)
+		if (delayTime > 0.0f)
 		{
-			TArray<UFairyTweenerFiniteTime*> tweenerList;
-
-			UFairyTweenerDelay* delay = TweenMgr->CreateTweenerDelay(StartTime);
-			tweenerList.Push(delay);
-
-			UFairyTweenerCallFunc* callback = TweenMgr->CreateTweenerCallFunc();
-			callback->GetDelegate().BindRaw(this, &FFairyTransitionItemPos::EndCallback);
-			tweenerList.Push(callback);
-
-			UFairyTweenerSequence* sequence = TweenMgr->CreateTweenerSequence(tweenerList);
-
-			GetTarget()->RunTween(sequence);
+			UFairyTweenerDelay* delay = TweenMgr->CreateTweenerDelay(delayTime);
+			OutTweenerList.Push(delay);
 		}
-		else
-		{
-			UFairyTweenerCallFunc* callback = TweenMgr->CreateTweenerCallFunc();
-			callback->GetDelegate().BindRaw(this, &FFairyTransitionItemPos::EndCallback);
+		UFairyTweenerCallFunc* callback = TweenMgr->CreateTweenerCallFunc();
+		callback->GetDelegate().BindRaw(this, &FFairyTransitionItemPos::EndCallback);
 
-			GetTarget()->RunTween(callback);
-		}
+		OutTweenerList.Push(callback);
 	}
 }
 
@@ -123,9 +98,5 @@ void FFairyTransitionItemPos::EndCallback(UFairyTweener* InFairyTweener)
 	if (!IsHasTween())
 	{
 		GetTarget()->SetPosition(startDataPtr->Pos);
-	}
-	else
-	{
-		// No action for tween
 	}
 }

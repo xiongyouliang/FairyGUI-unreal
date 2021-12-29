@@ -56,13 +56,13 @@ void FFairyTransitionItemPos::RunItem()
 	{
 		TArray<UFairyTweenerFiniteTime*> tweenerList;
 
-		FFariyTransitionTweenConfig* config = TweenConfigPtr.Get();
 		if (StartTime > 0.0f)
 		{
 			UFairyTweenerDelay* delay = TweenMgr->CreateTweenerDelay(StartTime);
 			tweenerList.Push(delay);
 		}
-		
+
+		FFariyTransitionTweenConfig* config = TweenConfigPtr.Get();
 		UFairyTweenerInterval* finalTween;
 		UFairyTweenerPos* move = TweenMgr->CreateTweenerPos(config->Duration, startDataPtr->Pos, endDataPtr->Pos);
 		if (config->EaseType != EFairyEaseType::Linear)

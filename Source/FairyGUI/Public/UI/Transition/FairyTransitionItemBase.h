@@ -89,5 +89,3 @@ public:
 	*/ 
 	virtual void ParsePathData(FairyGUI::FByteBuffer* InBuffer) {}; 
 };
-
-FFairyTransitionItemBase* CreateTransitionItemWithType(const EFairyTransitionItemType InActionType);

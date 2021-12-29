@@ -4,9 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "UI/Transition/FairyTransition.h"
 #include "FairyTransitionMgr.generated.h"
 
+class FFairyTransitionItemBase;
+class FFairyTransition;
 /**
  * 
  */
@@ -32,3 +33,5 @@ private:
 	UPROPERTY()
 	TArray<UFairyTransition*> TransitionList;	
 };
+
+FFairyTransitionItemBase* CreateTransitionItemWithType(const EFairyTransitionItemType InActionType);

@@ -2,7 +2,6 @@
 
 
 #include "UI/Transition/FairyTransitionItemBase.h"
-#include "UI/Transition/FairyTransitionItemPos.h"
 #include "UI/Transition/FairyTransition.h"
 #include "UI/FairyComponent.h"
 #include "UI/FieldTypes.h"
@@ -125,53 +124,6 @@ void FFairyTransitionTweenableItem::ParseNoTweenKeyFrameData(FairyGUI::FByteBuff
 {
 	InBuffer->Seek(curPos, 2);
 	ParseTweenStartData(InBuffer);
-}
-
-FFairyTransitionItemBase* CreateTransitionItemWithType(const EFairyTransitionItemType InActionType)
-{
-	FFairyTransitionItemBase *item = nullptr;
-	switch (InActionType)
-	{
-	case EFairyTransitionItemType::XY:
-		item = new FFairyTransitionItemPos();
-		break;
-	case EFairyTransitionItemType::Size:
-		break;
-	case EFairyTransitionItemType::Scale:
-		break;
-	case EFairyTransitionItemType::Pivot:
-		break;
-	case EFairyTransitionItemType::Alpha:
-		break;
-	case EFairyTransitionItemType::Rotation:
-		break;
-	case EFairyTransitionItemType::Color:
-		break;
-	case EFairyTransitionItemType::Animation:
-		break;
-	case EFairyTransitionItemType::Visible:
-		break;
-	case EFairyTransitionItemType::Sound:
-		break;
-	case EFairyTransitionItemType::Transition:
-		break;
-	case EFairyTransitionItemType::Shake:
-		break;
-	case EFairyTransitionItemType::ColorFilter:
-		break;
-	case EFairyTransitionItemType::Skew:
-		break;
-	case EFairyTransitionItemType::Text:
-		break;
-	case EFairyTransitionItemType::Icon:
-		break;
-	case EFairyTransitionItemType::Unknown:
-		break;
-	default:
-		break;
-	}
-
-	return item;
 }
 
 

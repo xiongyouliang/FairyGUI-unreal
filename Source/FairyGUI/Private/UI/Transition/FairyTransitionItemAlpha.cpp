@@ -34,14 +34,14 @@ void FFairyTransitionItemAlpha::ConstructTweenerList(TArray<UFairyTweenerFiniteT
 		delayTime = StartTime - InPreviousItem->GetStartTime() - InPreviousItem->GetDuration();
 	}
 
+	if (delayTime > 0.0f)
+	{
+		UFairyTweenerDelay* delay = TweenMgr->CreateTweenerDelay(delayTime);
+		OutTweenerList.Push(delay);
+	}
+
 	if (IsHasTween())
 	{
-		if (delayTime > 0.0f)
-		{
-			UFairyTweenerDelay* delay = TweenMgr->CreateTweenerDelay(delayTime);
-			OutTweenerList.Push(delay);
-		}
-
 		FFariyTransitionTweenConfig* config = TweenConfigPtr.Get();
 		UFairyTweenerOpacity* AlphaTweener = TweenMgr->CreateTweenerOpacity(config->Duration, startDataPtr->alpha, endDataPtr->alpha);
 		if (config->EaseType != EFairyEaseType::Linear)
@@ -56,11 +56,6 @@ void FFairyTransitionItemAlpha::ConstructTweenerList(TArray<UFairyTweenerFiniteT
 	}
 	else
 	{
-		if (delayTime > 0.0f)
-		{
-			UFairyTweenerDelay* delay = TweenMgr->CreateTweenerDelay(delayTime);
-			OutTweenerList.Push(delay);
-		}
 		UFairyTweenerCallFunc* callback = TweenMgr->CreateTweenerCallFunc();
 		callback->GetDelegate().BindRaw(this, &FFairyTransitionItemAlpha::EndCallback);
 		OutTweenerList.Push(callback);

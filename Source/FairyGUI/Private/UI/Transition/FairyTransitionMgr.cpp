@@ -8,6 +8,7 @@
 #include "UI/Transition/FairyTransitionItemSize.h"
 #include "UI/Transition/FairyTransitionItemAlpha.h"
 #include "UI/Transition/FairyTransitionItemRotation.h"
+#include "UI/Transition/FairyTransitionItemScale.h"
 #include "FairyCommons.h"
 #include "UI/FieldTypes.h"
 
@@ -97,6 +98,7 @@ FFairyTransitionItemBase* CreateTransitionItemWithType(const EFairyTransitionIte
 		item = new FFairyTransitionItemSize();
 		break;
 	case EFairyTransitionItemType::Scale:
+		item = new FFairyTransitionItemScale();
 		break;
 	case EFairyTransitionItemType::Pivot:
 		break;

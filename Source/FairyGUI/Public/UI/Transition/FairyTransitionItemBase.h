@@ -65,6 +65,7 @@ public:
 
 	virtual bool IsTargetValid();
 	virtual bool IsHasTween();
+	virtual int32 GetRepeatTimes() { return 0; }
 
 	
 
@@ -88,7 +89,8 @@ protected:
 public:
 	FFairyTransitionTweenableItem(EFairyTransitionItemType InItemType);
 
-	virtual float GetDuration() { return TweenConfigPtr->Duration; };
+	virtual float GetDuration() { return TweenConfigPtr->Duration; }
+	virtual int32 GetRepeatTimes() { return TweenConfigPtr->Repeat; }
 
 	virtual void ParseTweenKeyFrameData(FairyGUI::FByteBuffer* InBuffer, int32 curPos) override;
 	virtual void ParseNoTweenKeyFrameData(FairyGUI::FByteBuffer* InBuffer, int32 curPos) override;

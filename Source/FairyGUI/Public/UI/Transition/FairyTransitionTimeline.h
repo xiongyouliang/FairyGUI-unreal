@@ -35,7 +35,7 @@ public:
 	* 0: play once;
 	* >1: play times for give value;
 	*/
-	uint32 GetRepeatTimes();
+	int32 GetRepeatTimes();
 
 	void AddTransitionItem(FFairyTransitionItemBase* InTransitionItem);
 

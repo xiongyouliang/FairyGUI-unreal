@@ -51,10 +51,30 @@ EFairyTransitionItemType FFairyTransitionTimeline::GetTimelineType()
 	return TimelineType;
 }
 
-uint32 FFairyTransitionTimeline::GetRepeatTimes()
+int32 FFairyTransitionTimeline::GetRepeatTimes()
 {
-	// todo: get timeline repeat times from UFairyTransition object;
-	return 0;
+	/**
+	* Note:
+	* In current FairyGUI Editor Version(2021.3.1), the repeat times come from two source:
+	* 1. The transition autoplay setting
+	* 2. The keyframe with tween property setting.
+	* 
+	* The first source with effect all timeline in same transition.
+	* The second source just property in one TweenItem.
+	* When a timeline has more then one tween, just use first tween's repeat setting.
+	* If the timeline has no tween, use transition's autoplay setting.
+	*/
+	int32 repeatTimes = 0;
+	for (size_t i = 0; i < ItemList.Num(); i++)
+	{
+		TSharedPtr<FFairyTransitionItemBase> ItemPtr = ItemList[i];
+		if (ItemPtr->IsHasTween())
+		{
+			return ItemPtr->GetRepeatTimes();
+		}
+	}
+
+	return GetOwner()->GetRepeatTimes();
 }
 
 void FFairyTransitionTimeline::AddTransitionItem(FFairyTransitionItemBase* InTransitionItem)
@@ -99,7 +119,7 @@ void FFairyTransitionTimeline::Play()
 
 	if (finalTweener && TargetObjet)
 	{
-		int32 repeatTime = GetOwner()->GetRepeatTimes();
+		int32 repeatTime = GetRepeatTimes();
 		if (repeatTime < 0)
 		{
 			// todo: repeat forever

@@ -607,7 +607,12 @@ void UFairyPackage::LoadFont(const TSharedPtr<FFairyPackageItem>& Item)
 void UFairyPackage::LoadSound(const TSharedPtr<FFairyPackageItem>& Item)
 {
 	FSlateSound Sound;
-	UObject* SoundBase = SoundsByName.Num() > 0 ? *SoundsByName.Find(Item->File) : nullptr;
+	UObject* SoundBase = nullptr;
+	if (SoundsByName.Contains(Item->File))
+	{
+		SoundBase = SoundsByName[Item->File];
+	}
+
 	if (SoundBase == nullptr)
 	{
 		SoundBase = LoadSoundObject(Item->File);

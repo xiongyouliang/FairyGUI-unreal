@@ -118,6 +118,13 @@ UFairyTweenerPivot* UFairyTweenMgr::CreateTweenerPivot(FVector2D InDstPivot)
 	return Tweener;
 }
 
+UFairyTweenerShake* UFairyTweenMgr::CreateTweenerShake(float InDuration, float Amplitude)
+{
+	UFairyTweenerShake* Tweener = NewObject<UFairyTweenerShake>(this);
+	Tweener->Init(InDuration, Amplitude);
+	return Tweener;
+}
+
 UFairyTweenerCallFunc* UFairyTweenMgr::CreateTweenerCallFunc()
 {
 	UFairyTweenerCallFunc* Tweener = NewObject<UFairyTweenerCallFunc>(this);

@@ -167,5 +167,21 @@ protected:
 	FColor dstColor;
 };
 
+UCLASS(BlueprintType)
+class FAIRYGUI_API UFairyTweenerShake : public UFairyTweenerInterval
+{
+	GENERATED_BODY()
+public:
+	bool Init(float InDuration, float Amplitude);
+
+	virtual void SetTarget(UFairyObject* InTarget);
+	virtual void Step(float InDeltaTime) override;
+
+protected:
+	float Amplitude;
+	int32 Direction; // 0, 1, 2, 3 means left, top, right and bottom, and looped in clockwise direction
+	FVector2D originPos;
+};
+
 
 

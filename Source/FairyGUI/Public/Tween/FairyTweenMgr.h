@@ -76,6 +76,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	UFairyTweenerPivot* CreateTweenerPivot(FVector2D InDstPivot);
 
+	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
+	UFairyTweenerShake* CreateTweenerShake(float InDuration, float InAmplitude);
+
 	// non-dynamic delegate can't pass in blueprint, so this is not a UFUNCTION
 	UFairyTweenerCallFunc* CreateTweenerCallFunc();	
 	

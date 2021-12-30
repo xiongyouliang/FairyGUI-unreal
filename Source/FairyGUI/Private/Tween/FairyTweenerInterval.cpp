@@ -308,3 +308,64 @@ void UFairyTweenerColor::Update(float InTime)
 		_Target->SetColor(newColor);
 	}
 }
+
+bool UFairyTweenerShake::Init(float InDuration, float InAmplitude)
+{
+	Super::Init(InDuration);
+
+	Amplitude = InAmplitude;
+	Direction = FMath::RandRange(0, 3);
+
+	return true;
+}
+
+void UFairyTweenerShake::SetTarget(UFairyObject* InTarget)
+{
+	Super::SetTarget(InTarget);
+
+	if (InTarget)
+	{
+		originPos = InTarget->GetPosition();
+	}
+}
+
+void UFairyTweenerShake::Step(float InDeltaTime)
+{
+	Super::Step(InDeltaTime);
+	if (IsDone())
+	{
+		GetTarget()->SetPosition(originPos);
+	}
+	else
+	{
+		/**
+		* This is simple shake calculation, but it is run fast.
+		* Add some random to direction or/and amplitude value will has a good effect.
+		*/
+		FVector2D newPos = originPos;
+		if (Direction == 0)
+		{
+			newPos.X -= Amplitude;
+		}
+
+		if (Direction == 1)
+		{
+			newPos.Y -= Amplitude;
+		}
+
+		if (Direction == 2)
+		{
+			newPos.X += Amplitude;
+		}
+
+		if (Direction == 3)
+		{
+			newPos.Y += Amplitude;
+		}
+		GetTarget()->SetPosition(newPos);
+
+		//Direction++;
+		//Direction %= 4;
+		Direction = FMath::RandRange(0, 3);
+	}
+}

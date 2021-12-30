@@ -7,6 +7,7 @@
 #include "UI/Transition/FairyTransitionItemPos.h"
 #include "UI/Transition/FairyTransitionItemSize.h"
 #include "UI/Transition/FairyTransitionItemAlpha.h"
+#include "UI/Transition/FairyTransitionItemRotation.h"
 #include "FairyCommons.h"
 #include "UI/FieldTypes.h"
 
@@ -103,6 +104,7 @@ FFairyTransitionItemBase* CreateTransitionItemWithType(const EFairyTransitionIte
 		item = new FFairyTransitionItemAlpha();
 		break;
 	case EFairyTransitionItemType::Rotation:
+		item = new FFairyTransitionItemRotation();
 		break;
 	case EFairyTransitionItemType::Color:
 		break;

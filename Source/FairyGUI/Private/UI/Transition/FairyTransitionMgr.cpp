@@ -14,6 +14,7 @@
 #include "UI/Transition/FairyTransitionItemPivot.h"
 #include "UI/Transition/FairyTransitionItemVisible.h"
 #include "UI/Transition/FairyTransitionItemSound.h"
+#include "UI/Transition/FairyTransitionItemShake.h"
 #include "FairyCommons.h"
 #include "UI/FieldTypes.h"
 
@@ -128,6 +129,7 @@ FFairyTransitionItemBase* CreateTransitionItemWithType(const EFairyTransitionIte
 	case EFairyTransitionItemType::Transition:
 		break;
 	case EFairyTransitionItemType::Shake:
+		item = new FFairyTransitionItemShake();
 		break;
 	case EFairyTransitionItemType::ColorFilter:
 		break;

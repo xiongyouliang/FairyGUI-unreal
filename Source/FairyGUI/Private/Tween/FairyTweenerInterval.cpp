@@ -136,23 +136,28 @@ void UFairyTweenerSequence::Reset()
 
 bool UFairyTweenerRepeat::Init(UFairyTweenerFiniteTime* InTweener, uint32 repeatTimes)
 {
-	m_curTimes = 1;
+	m_passedTimes = 0;
 	m_repeatTimes = repeatTimes;
 	_innerTweener = InTweener;
 
-	SetDuration(InTweener->GetDuration() * repeatTimes);
+	SetDuration(InTweener->GetDuration());
 	return true;
 }
 
 void UFairyTweenerRepeat::Step(float InDeltaTime)
 {
-	Super::Step(InDeltaTime);
+	//Super::Step(InDeltaTime);
 	_innerTweener->Step(InDeltaTime);
 
-	if (_innerTweener->IsDone() && m_curTimes < m_repeatTimes)
+	if (_innerTweener->IsDone() && m_passedTimes < m_repeatTimes)
 	{
-		m_curTimes++;
+		m_passedTimes++;
 		_innerTweener->Reset();
+	}
+
+	if (m_passedTimes == m_repeatTimes)
+	{
+		bDone = true;
 	}
 }
 

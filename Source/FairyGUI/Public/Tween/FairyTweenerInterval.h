@@ -66,7 +66,7 @@ public:
 	virtual void SetTarget(UFairyObject* InTarget) override;
 
 private:
-	uint32 m_curTimes;
+	uint32 m_passedTimes;
 	uint32 m_repeatTimes;
 
 	UPROPERTY()

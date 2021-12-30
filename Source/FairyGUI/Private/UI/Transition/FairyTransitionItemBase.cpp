@@ -6,6 +6,7 @@
 #include "UI/FairyComponent.h"
 #include "UI/FieldTypes.h"
 #include "Utils/ByteBuffer.h"
+#include "FairyApplication.h"
 
 FFairyTransitionItemBase::FFairyTransitionItemBase(EFairyTransitionItemType InItemType)
 	:ItemType(InItemType)
@@ -127,5 +128,38 @@ void FFairyTransitionTweenableItem::ParseNoTweenKeyFrameData(FairyGUI::FByteBuff
 }
 
 
+
+void FFairyTransitionNoTweenItem::ConstructTweenerList(TArray<UFairyTweenerFiniteTime*>& OutTweenerList, FFairyTransitionItemBase* InPreviousItem)
+{
+	UE_LOG(LogFairyGUI, Warning, TEXT("FFairyTransitionItemPivot::RunItem();"));
+	UFairyTweenMgr* TweenMgr = UFairyApplication::Get()->GetTweenMgr();
+
+	float delayTime = StartTime;
+	if (InPreviousItem)
+	{
+		delayTime = StartTime - InPreviousItem->GetStartTime() - InPreviousItem->GetDuration();
+	}
+
+	if (delayTime > 0.0f)
+	{
+		UFairyTweenerDelay* delay = TweenMgr->CreateTweenerDelay(delayTime);
+		OutTweenerList.Push(delay);
+	}
+
+	UFairyTweenerCallFunc* callback = TweenMgr->CreateTweenerCallFunc();
+	callback->GetDelegate().BindRaw(this, &FFairyTransitionNoTweenItem::NoTweenCallback);
+	OutTweenerList.Push(callback);
+}
+
+FFairyTransitionNoTweenItem::FFairyTransitionNoTweenItem(EFairyTransitionItemType InItemType)
+	:FFairyTransitionItemBase(InItemType)
+{
+
+}
+
+void FFairyTransitionNoTweenItem::NoTweenCallback(UFairyTweener* InTweener)
+{
+	NoTweenKeyFrameApply();
+}
 
 

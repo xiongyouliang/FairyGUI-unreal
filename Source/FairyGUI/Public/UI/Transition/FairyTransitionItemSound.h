@@ -9,7 +9,7 @@
 /**
  * 
  */
-class FAIRYGUI_API FFairyTransitionItemSound : public FFairyTransitionItemBase
+class FAIRYGUI_API FFairyTransitionItemSound : public FFairyTransitionNoTweenItem
 {
 private:
 	FName SoundUrl;
@@ -19,7 +19,5 @@ public:
 
 	virtual void ParseNoTweenKeyFrameData(FairyGUI::FByteBuffer* InBuffer, int32 curPos) override;
 
-	virtual void ConstructTweenerList(TArray<UFairyTweenerFiniteTime*>& OutTweenerList, FFairyTransitionItemBase* InPreviousItem) override;
-
-	void KeyFrameApply(UFairyTweener* InFairyTweener);
+	virtual void NoTweenKeyFrameApply() override;
 };

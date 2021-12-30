@@ -8,7 +8,7 @@
 
 
 FFairyTransitionItemVisible::FFairyTransitionItemVisible()
-	: FFairyTransitionItemBase(EFairyTransitionItemType::Visible)
+	: FFairyTransitionNoTweenItem(EFairyTransitionItemType::Visible)
 {
 }
 
@@ -18,30 +18,8 @@ void FFairyTransitionItemVisible::ParseNoTweenKeyFrameData(FairyGUI::FByteBuffer
 	bVisible = InBuffer->ReadBool();
 }
 
-void FFairyTransitionItemVisible::ConstructTweenerList(TArray<UFairyTweenerFiniteTime*>& OutTweenerList, FFairyTransitionItemBase* InPreviousItem)
+void FFairyTransitionItemVisible::NoTweenKeyFrameApply()
 {
-	UE_LOG(LogFairyGUI, Warning, TEXT("FFairyTransitionItemVisible::RunItem();"));
-	UFairyTweenMgr* TweenMgr = UFairyApplication::Get()->GetTweenMgr();
-
-	float delayTime = StartTime;
-	if (InPreviousItem)
-	{
-		delayTime = StartTime - InPreviousItem->GetStartTime() - InPreviousItem->GetDuration();
-	}
-
-	if (delayTime > 0.0f)
-	{
-		UFairyTweenerDelay* delay = TweenMgr->CreateTweenerDelay(delayTime);
-		OutTweenerList.Push(delay);
-	}
-
-	UFairyTweenerCallFunc* callback = TweenMgr->CreateTweenerCallFunc();
-	callback->GetDelegate().BindRaw(this, &FFairyTransitionItemVisible::KeyFrameApply);
-	OutTweenerList.Push(callback);
-}
-
-void FFairyTransitionItemVisible::KeyFrameApply(UFairyTweener* InFairyTweener)
-{
-	UE_LOG(LogFairyGUI, Warning, TEXT("FFairyTransitionItemVisible::KeyFrameApply(...);"));
+	UE_LOG(LogFairyGUI, Warning, TEXT("FFairyTransitionItemVisible::NoTweenKeyFrameApply(...);"));
 	GetTarget()->SetVisible(bVisible);
 }

@@ -8,7 +8,7 @@
 
 
 FFairyTransitionItemPivot::FFairyTransitionItemPivot()
-	: FFairyTransitionItemBase(EFairyTransitionItemType::Pivot)
+	: FFairyTransitionNoTweenItem(EFairyTransitionItemType::Pivot)
 {
 }
 
@@ -25,30 +25,8 @@ void FFairyTransitionItemPivot::ParseNoTweenKeyFrameData(FairyGUI::FByteBuffer* 
 	startDataPtr->Pivot.Y = InBuffer->ReadFloat();
 }
 
-void FFairyTransitionItemPivot::ConstructTweenerList(TArray<UFairyTweenerFiniteTime*>& OutTweenerList, FFairyTransitionItemBase* InPreviousItem)
+void FFairyTransitionItemPivot::NoTweenKeyFrameApply()
 {
-	UE_LOG(LogFairyGUI, Warning, TEXT("FFairyTransitionItemPivot::RunItem();"));
-	UFairyTweenMgr* TweenMgr = UFairyApplication::Get()->GetTweenMgr();
-
-	float delayTime = StartTime;
-	if (InPreviousItem)
-	{
-		delayTime = StartTime - InPreviousItem->GetStartTime() - InPreviousItem->GetDuration();
-	}
-
-	if (delayTime > 0.0f)
-	{
-		UFairyTweenerDelay* delay = TweenMgr->CreateTweenerDelay(delayTime);
-		OutTweenerList.Push(delay);
-	}
-
-	UFairyTweenerCallFunc* callback = TweenMgr->CreateTweenerCallFunc();
-	callback->GetDelegate().BindRaw(this, &FFairyTransitionItemPivot::EndCallback);
-	OutTweenerList.Push(callback);
-}
-
-void FFairyTransitionItemPivot::EndCallback(UFairyTweener* InFairyTweener)
-{
-	UE_LOG(LogFairyGUI, Warning, TEXT("FFairyTransitionItemPivot::EndCallback(...);"));
+	UE_LOG(LogFairyGUI, Warning, TEXT("FFairyTransitionItemPivot::NoTweenKeyFrameApply(...);"));
 	GetTarget()->SetPivot(startDataPtr->Pivot);
 }

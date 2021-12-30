@@ -8,7 +8,7 @@
 
 
 FFairyTransitionItemSound::FFairyTransitionItemSound()
-	: FFairyTransitionItemBase(EFairyTransitionItemType::Sound)
+	: FFairyTransitionNoTweenItem(EFairyTransitionItemType::Sound)
 {
 }
 
@@ -19,31 +19,9 @@ void FFairyTransitionItemSound::ParseNoTweenKeyFrameData(FairyGUI::FByteBuffer* 
 	SoundVolume = InBuffer->ReadFloat();
 }
 
-void FFairyTransitionItemSound::ConstructTweenerList(TArray<UFairyTweenerFiniteTime*>& OutTweenerList, FFairyTransitionItemBase* InPreviousItem)
+void FFairyTransitionItemSound::NoTweenKeyFrameApply()
 {
-	UE_LOG(LogFairyGUI, Warning, TEXT("FFairyTransitionItemSound::RunItem();"));
-	UFairyTweenMgr* TweenMgr = UFairyApplication::Get()->GetTweenMgr();
-
-	float delayTime = StartTime;
-	if (InPreviousItem)
-	{
-		delayTime = StartTime - InPreviousItem->GetStartTime() - InPreviousItem->GetDuration();
-	}
-
-	if (delayTime > 0.0f)
-	{
-		UFairyTweenerDelay* delay = TweenMgr->CreateTweenerDelay(delayTime);
-		OutTweenerList.Push(delay);
-	}
-
-	UFairyTweenerCallFunc* callback = TweenMgr->CreateTweenerCallFunc();
-	callback->GetDelegate().BindRaw(this, &FFairyTransitionItemSound::KeyFrameApply);
-	OutTweenerList.Push(callback);
-}
-
-void FFairyTransitionItemSound::KeyFrameApply(UFairyTweener* InFairyTweener)
-{
-	UE_LOG(LogFairyGUI, Warning, TEXT("FFairyTransitionItemSound::KeyFrameApply(...);"));
+	UE_LOG(LogFairyGUI, Warning, TEXT("FFairyTransitionItemSound::NoTweenKeyFrameApply(...);"));
 
 	UFairyApplication::Get()->PlaySound(SoundUrl.ToString(), SoundVolume);
 }

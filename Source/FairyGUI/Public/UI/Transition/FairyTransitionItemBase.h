@@ -75,7 +75,8 @@ public:
 	virtual void ParseTweenKeyFrameData(FairyGUI::FByteBuffer* InBuffer, int32 curPos) {};
 	virtual void ParseNoTweenKeyFrameData(FairyGUI::FByteBuffer* InBuffer, int32 curPos) {};
 	
-	virtual void RunItem() {};
+	virtual void NoTweenKeyFrameApply() {};
+
 	virtual void ConstructTweenerList(TArray<UFairyTweenerFiniteTime*>& OutTweenerList, FFairyTransitionItemBase* InPreviousItem) {};
 };
 
@@ -104,4 +105,13 @@ public:
 	* position transition item need to override this method to parse path data when used in editor.
 	*/ 
 	virtual void ParsePathData(FairyGUI::FByteBuffer* InBuffer) {}; 
+};
+
+class FFairyTransitionNoTweenItem : public FFairyTransitionItemBase
+{
+public:
+	FFairyTransitionNoTweenItem(EFairyTransitionItemType InItemType);
+
+	virtual void ConstructTweenerList(TArray<UFairyTweenerFiniteTime*>& OutTweenerList, FFairyTransitionItemBase* InPreviousItem) override;
+	void NoTweenCallback(UFairyTweener* InFairyTweener);
 };

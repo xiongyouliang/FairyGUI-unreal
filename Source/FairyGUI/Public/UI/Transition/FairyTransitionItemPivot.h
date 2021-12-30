@@ -15,7 +15,7 @@ struct FPivotFrameData {
 /**
  * 
  */
-class FAIRYGUI_API FFairyTransitionItemPivot : public FFairyTransitionItemBase
+class FAIRYGUI_API FFairyTransitionItemPivot : public FFairyTransitionNoTweenItem
 {
 private:
 	TSharedPtr<FPivotFrameData> startDataPtr;
@@ -24,7 +24,5 @@ public:
 
 	virtual void ParseNoTweenKeyFrameData(FairyGUI::FByteBuffer* InBuffer, int32 curPos) override;
 
-	virtual void ConstructTweenerList(TArray<UFairyTweenerFiniteTime*>& OutTweenerList, FFairyTransitionItemBase* InPreviousItem) override;
-
-	void EndCallback(UFairyTweener* InFairyTweener);
+	virtual void NoTweenKeyFrameApply() override;
 };

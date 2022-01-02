@@ -5,7 +5,7 @@
 #include "UI/FairyRoot.h"
 #include "UI/Controller/Gears/GearDisplay.h"
 #include "UI/Controller/Gears/GearDisplay2.h"
-#include "Tween/FairyTweenMgr.h"
+#include "UI/Tween/FairyTweenMgr.h"
 #include "Widgets/SDisplayObject.h"
 #include "Utils/ByteBuffer.h"
 #include "FairyApplication.h"

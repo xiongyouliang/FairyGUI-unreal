@@ -1,5 +1,5 @@
-#include "Tween/FairyTweener.h"
-#include "Tween/GPath.h"
+#include "UI/Tween/FairyTweener.h"
+#include "UI/Tween/GPath.h"
 #include "UI/FairyObject.h"
 
 const float K_MATH_EPSILON = 0.000001f;

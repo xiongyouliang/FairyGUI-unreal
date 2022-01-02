@@ -9,7 +9,7 @@
 #include "UI/FairyConfig.h"
 #include "UI/Controller/FairyControllerMgr.h"
 #include "UI/Transition/FairyTransitionMgr.h"
-#include "Tween/FairyTweenMgr.h"
+#include "UI/Tween/FairyTweenMgr.h"
 #include "FairyApplication.generated.h"
 
 class UFairyPackage;
@@ -61,7 +61,7 @@ public:
 	UFairyApplication();
 	~UFairyApplication();
 
-	UFUNCTION(BlueprintCallable, Category = "FairyGUI¡¡£ü FairyApplication")
+	UFUNCTION(BlueprintCallable, Category = "FairyGUIï¿½ï¿½ï¿½ï¿½ FairyApplication")
 	UFairyControllerMgr* GetControllerMgr();
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI | FairyApplication")

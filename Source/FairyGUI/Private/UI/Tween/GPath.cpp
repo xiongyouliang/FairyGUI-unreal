@@ -1,4 +1,4 @@
-#include "Tween/GPath.h"
+#include "UI/Tween/GPath.h"
 
 FGPathPoint::FGPathPoint(const FVector& InPos)
 {

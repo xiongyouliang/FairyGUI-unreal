@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Tween/FairyTweenerFiniteTime.h"
+#include "UI/Tween/FairyTweenerFiniteTime.h"
 #include "FairyTweenerInstant.generated.h"
 
 UCLASS(BlueprintType)

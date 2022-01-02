@@ -1,8 +1,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Tween/FairyTweenerInterval.h"
-#include "Tween/FairyEaseType.h"
+#include "UI/Tween/FairyTweenerInterval.h"
+#include "UI/Tween/FairyEaseType.h"
 #include "FairyTweenerEase.generated.h"
 
 

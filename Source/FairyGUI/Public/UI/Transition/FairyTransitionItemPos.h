@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Tween/FairyEaseType.h"
+#include "UI/Tween/FairyEaseType.h"
 #include "UI/Transition/FairyTransitionItemBase.h"
 
 struct FPosFrameData {

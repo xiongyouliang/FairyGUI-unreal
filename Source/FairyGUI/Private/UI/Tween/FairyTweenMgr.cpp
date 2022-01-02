@@ -1,4 +1,4 @@
-#include "Tween/FairyTweenMgr.h"
+#include "UI/Tween/FairyTweenMgr.h"
 
 #include "FairyApplication.h"
 

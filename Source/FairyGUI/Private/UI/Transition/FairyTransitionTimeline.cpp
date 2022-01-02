@@ -6,7 +6,7 @@
 #include "UI/Transition/FairyTransitionItemBase.h"
 #include "UI/FairyObject.h"
 
-#include "Tween/FairyTweenMgr.h"
+#include "UI/Tween/FairyTweenMgr.h"
 
 #include "FairyApplication.h"
 

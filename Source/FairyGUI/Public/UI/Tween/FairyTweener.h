@@ -4,7 +4,7 @@
 #include "Delegates/DelegateCombinations.h"
 
 #include "UI/FairyObject.h"
-#include "Tween/FairyEaseType.h"
+#include "UI/Tween/FairyEaseType.h"
 
 #include "FairyTweener.generated.h"
 

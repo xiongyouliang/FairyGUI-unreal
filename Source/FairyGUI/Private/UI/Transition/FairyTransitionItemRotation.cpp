@@ -1,7 +1,7 @@
 #include "UI/Transition/FairyTransitionItemRotation.h"
 #include "FairyApplication.h"
 #include "UI/FairyObject.h"
-#include "Tween/FairyTweenerInterval.h"
+#include "UI/Tween/FairyTweenerInterval.h"
 #include "UI/Transition/FairyTransitionTweenConfig.h"
 
 FFairyTransitionItemRotation::FFairyTransitionItemRotation()

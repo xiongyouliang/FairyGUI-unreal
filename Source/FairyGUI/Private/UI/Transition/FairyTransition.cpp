@@ -6,7 +6,7 @@
 #include "UI/FairyComponent.h"
 #include "UI/Controller/FairyController.h"
 #include "UI/Transition/FairyTransitionTimeline.h"
-#include "Tween/GPath.h"
+#include "UI/Tween/GPath.h"
 
 
 const int32 OPTION_IGNORE_DISPLAY_CONTROLLER = 1;

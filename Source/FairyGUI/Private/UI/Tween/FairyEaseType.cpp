@@ -1,4 +1,4 @@
-#include "Tween/FairyEaseType.h"
+#include "UI/Tween/FairyEaseType.h"
 
 float FFairyEaseHelper::EaseRateIn(float InTime, float InRate)
 {

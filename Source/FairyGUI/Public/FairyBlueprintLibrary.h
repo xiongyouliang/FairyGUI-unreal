@@ -4,7 +4,7 @@
 #include "UObject/NoExportTypes.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Utils/NVariant.h"
-#include "Tween/FairyEaseType.h"
+#include "UI/Tween/FairyEaseType.h"
 #include "UI/FairyConfig.h"
 #include "FairyBlueprintLibrary.generated.h"
 

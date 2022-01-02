@@ -4,10 +4,10 @@
 #include "Engine/Engine.h"
 #include "Tickable.h"
 #include "UI/FairyObject.h"
-#include "Tween/FairyTweener.h"
-#include "Tween/FairyTweenerInterval.h"
-#include "Tween/FairyTweenerInstant.h"
-#include "Tween/FairyTweenerEase.h"
+#include "UI/Tween/FairyTweener.h"
+#include "UI/Tween/FairyTweenerInterval.h"
+#include "UI/Tween/FairyTweenerInstant.h"
+#include "UI/Tween/FairyTweenerEase.h"
 
 #include "FairyTweenMgr.generated.h"
 

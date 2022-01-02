@@ -11,11 +11,14 @@
 #include "UI/Transition/FairyTransitionItemScale.h"
 #include "UI/Transition/FairyTransitionItemSkew.h"
 #include "UI/Transition/FairyTransitionItemColor.h"
+#include "UI/Transition/FairyTransitionItemColorFilter.h"
 #include "UI/Transition/FairyTransitionItemPivot.h"
 #include "UI/Transition/FairyTransitionItemVisible.h"
 #include "UI/Transition/FairyTransitionItemSound.h"
 #include "UI/Transition/FairyTransitionItemShake.h"
 #include "UI/Transition/FairyTransitionItemPlayTransition.h"
+#include "UI/Transition/FairyTransitionItemIcon.h"
+#include "UI/Transition/FairyTransitionItemText.h"
 #include "FairyCommons.h"
 #include "UI/FieldTypes.h"
 
@@ -134,13 +137,16 @@ FFairyTransitionItemBase* CreateTransitionItemWithType(const EFairyTransitionIte
 		item = new FFairyTransitionItemShake();
 		break;
 	case EFairyTransitionItemType::ColorFilter:
+		item = new FFairyTransitionItemColorFilter();
 		break;
 	case EFairyTransitionItemType::Skew:
 		item = new FFairyTransitionItemSkew();
 		break;
 	case EFairyTransitionItemType::Text:
+		item = new FFairyTransitionItemText();
 		break;
 	case EFairyTransitionItemType::Icon:
+		item = new FFairyTransitionItemIcon();
 		break;
 	case EFairyTransitionItemType::Unknown:
 		break;

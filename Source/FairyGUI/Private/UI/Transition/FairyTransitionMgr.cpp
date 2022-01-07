@@ -19,6 +19,7 @@
 #include "UI/Transition/FairyTransitionItemPlayTransition.h"
 #include "UI/Transition/FairyTransitionItemIcon.h"
 #include "UI/Transition/FairyTransitionItemText.h"
+#include "UI/Transition/FairyTransitionItemAnimation.h"
 #include "FairyCommons.h"
 #include "UI/FieldTypes.h"
 
@@ -123,6 +124,7 @@ FFairyTransitionItemBase* CreateTransitionItemWithType(const EFairyTransitionIte
 		item = new FFairyTransitionItemColor();
 		break;
 	case EFairyTransitionItemType::Animation:
+		item = new FFairyTransitionItemAnimation;
 		break;
 	case EFairyTransitionItemType::Visible:
 		item = new FFairyTransitionItemVisible();

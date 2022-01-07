@@ -99,11 +99,18 @@ void UFairyTransition::Setup(FairyGUI::FByteBuffer* Buffer)
 
 		EFairyTransitionItemType ActionType = (EFairyTransitionItemType)Buffer->ReadByte();
 		FFairyTransitionItemBase* item = CreateTransitionItemWithType(ActionType);
-		item->SetOwner(this);
-		item->Setup(Buffer, curPos);
+		if (item)
+		{
+			item->SetOwner(this);
+			item->Setup(Buffer, curPos);
 
-		this->AddTransitionItem(item);
-
+			this->AddTransitionItem(item);
+		}
+		else
+		{
+			UE_LOG(LogFairyGUI, Warning, TEXT("Transition Item not exit with Item type:%d"), (int32)(ActionType));
+		}
+		
 		Buffer->SetPos(curPos + dataLen);
 	}
 }

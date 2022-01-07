@@ -2,16 +2,16 @@
 
 #include "UI/FairyObject.h"
 #include "Event/EventContext.h"
-#include "GMovieClip.generated.h"
+#include "FairyMovieClip.generated.h"
 
 UCLASS(BlueprintType)
-class FAIRYGUI_API UGMovieClip : public UFairyObject
+class FAIRYGUI_API UFairyMovieClip : public UFairyObject
 {
     GENERATED_BODY()
 
 public:
-    UGMovieClip();
-    virtual ~UGMovieClip();
+    UFairyMovieClip();
+    virtual ~UFairyMovieClip();
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     bool IsPlaying() const;

@@ -5,7 +5,7 @@
 #include "FairyApplication.h"
 #include "UI/Transition/FairyTransitionMgr.h"
 #include "UI/Transition/FairyTransitionTweenConfig.h"
-#include "UI/GMovieClip.h"
+#include "UI/FairyMovieClip.h"
 
 
 FFairyTransitionItemAnimation::FFairyTransitionItemAnimation()
@@ -24,9 +24,9 @@ void FFairyTransitionItemAnimation::NoTweenKeyFrameApply()
 {
 	UE_LOG(LogFairyGUI, Warning, TEXT("FFairyTransitionItemAnimation::NoTweenKeyFrameApply(...);"));
 	UFairyObject* TargetObject = GetTarget();
-	if (TargetObject->IsA(UGMovieClip::StaticClass()))
+	if (TargetObject->IsA(UFairyMovieClip::StaticClass()))
 	{
-		UGMovieClip* Animation = (UGMovieClip*)TargetObject;
+		UFairyMovieClip* Animation = (UFairyMovieClip*)TargetObject;
 		
 		Animation->SetFrame(curFrame);
 

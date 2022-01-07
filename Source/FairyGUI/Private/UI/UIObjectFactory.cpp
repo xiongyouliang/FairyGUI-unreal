@@ -3,7 +3,7 @@
 #include "Package/FairyPackageItem.h"
 #include "UI/FairyComponent.h"
 #include "UI/GImage.h"
-#include "UI/GMovieClip.h"
+#include "UI/FairyMovieClip.h"
 #include "UI/GTextField.h"
 #include "UI/GRichTextField.h"
 #include "UI/GTextInput.h"
@@ -73,7 +73,7 @@ UFairyObject* FUIObjectFactory::NewObject(UObject* Outer, EObjectType Type)
     case EObjectType::Image:
         return ::NewObject<UGImage>(Outer);
     case EObjectType::MovieClip:
-        return ::NewObject<UGMovieClip>(Outer);
+        return ::NewObject<UFairyMovieClip>(Outer);
     case EObjectType::Component:
         return ::NewObject<UFairyComponent>(Outer);
     case EObjectType::Text:

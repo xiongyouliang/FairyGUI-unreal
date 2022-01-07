@@ -5,7 +5,7 @@
 #include "Package/FairyPackageItem.h"
 #include "UI/FairyComponent.h"
 #include "UI/GImage.h"
-#include "UI/GMovieClip.h"
+#include "UI/FairyMovieClip.h"
 #include "UI/GTextField.h"
 #include "UI/GRichTextField.h"
 #include "UI/GTextInput.h"

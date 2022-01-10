@@ -258,7 +258,6 @@ private:
 	void OnRemovedFromStageHandler(UEventContext* Context);
 
 	int32 SortingChildCount;
-	UFairyController* ApplyingController;
 
 	FTimerHandle UpdateBoundsTimerHandle;
 	FTimerHandle BuildDisplayListTimerHandle;

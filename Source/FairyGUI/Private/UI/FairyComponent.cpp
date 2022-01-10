@@ -596,10 +596,6 @@ void UFairyComponent::AdjustRadioGroupDepth(UFairyObject* Obj, UFairyController*
 	}
 	if (myIndex < maxIndex)
 	{
-		if (ApplyingController != nullptr)
-		{
-			Children[maxIndex]->ApplyController(ApplyingController);
-		}
 		SwapChildrenAt(myIndex, maxIndex);
 	}
 }

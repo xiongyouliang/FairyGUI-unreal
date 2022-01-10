@@ -1187,7 +1187,9 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 	{
 		int32 savedPos = CurPackageItemBuffer->GetPos();
 		CurPackageItemBuffer->Seek(0, 7);
+
 		SetupScroll(CurPackageItemBuffer);
+
 		CurPackageItemBuffer->SetPos(savedPos);
 	}
 	else

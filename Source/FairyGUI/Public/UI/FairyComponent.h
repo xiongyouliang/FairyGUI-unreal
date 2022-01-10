@@ -189,6 +189,9 @@ public:
 	virtual TSharedPtr<SContainer> GetContentContainerWidget();
 	virtual TSharedPtr<SContainer> GetMaskContainerWidget();
 
+	/**
+	* Desc: Just InOverflow is equal EOverflowType::Hidden Overflow has effect for clipping.
+	*/
 	virtual void SetupOverflow(EOverflowType InOverflow);
 
 	// ************** ScrollView API Start *******************

@@ -836,14 +836,14 @@ void UScrollPanel::HandleSizeChanged()
 		max += FooterLockedSize;
 	}
 
-	const FVector2D& Pos = Owner->GetContentContainerPosition();
+	const FVector2D& Pos = Owner->GetScrollContentPosition();
 	if (RefreshBarAxis == 0)
 	{
-		Owner->SetContentContainerPosition(FVector2D(FMath::Clamp(Pos.X, -max, HeaderLockedSize), FMath::Clamp(Pos.Y, -OverlapSize.Y, 0.f)));
+		Owner->SetScrollContentPosition(FVector2D(FMath::Clamp(Pos.X, -max, HeaderLockedSize), FMath::Clamp(Pos.Y, -OverlapSize.Y, 0.f)));
 	}
 	else
 	{
-		Owner->SetContentContainerPosition(FVector2D(FMath::Clamp(Pos.X, -OverlapSize.X, 0.f), FMath::Clamp(Pos.Y, -max, HeaderLockedSize)));
+		Owner->SetScrollContentPosition(FVector2D(FMath::Clamp(Pos.X, -OverlapSize.X, 0.f), FMath::Clamp(Pos.Y, -max, HeaderLockedSize)));
 	}
 
 	if (Header != nullptr)
@@ -985,7 +985,7 @@ void UScrollPanel::Refresh2()
 
 void UScrollPanel::UpdateScrollBarPos()
 {
-	FVector2D ContentContainerPos = Owner->GetContentContainerPosition();
+	FVector2D ContentContainerPos = Owner->GetScrollContentPosition();
 	if (VScrollBar != nullptr)
 	{
 		VScrollBar->SetScrollPerc(OverlapSize.Y == 0 ? 0 : FMath::Clamp(-ContentContainerPos.Y, 0.f, OverlapSize.Y) / OverlapSize.Y);

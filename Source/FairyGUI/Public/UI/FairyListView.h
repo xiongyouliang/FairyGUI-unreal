@@ -185,14 +185,8 @@ public:
 	virtual TSharedPtr<SContainer> GetMaskContainerWidget() override;
 	virtual void SetupScroll(FairyGUI::FByteBuffer* Buffer) override;
 
-	virtual FVector2D GetScrollMaskSize() override;
-	virtual FVector2D GetScrollContentSize() override;
-
-	virtual FVector2D GetContentContainerSize() override;
-	virtual void SetContentContainerSize(FVector2D InSize) override;
-
-	virtual FVector2D GetContentContainerPosition() override;
-	virtual void SetContentContainerPosition(FVector2D InPosition) override;
+	virtual FVector2D GetScrollMaskSize() const override;
+	virtual FVector2D GetScrollContentSize() const override;
 
 protected:
 	virtual void ApplyController(UFairyController* Controller) override;

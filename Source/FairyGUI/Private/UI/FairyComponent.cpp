@@ -1026,12 +1026,12 @@ void UFairyComponent::SetupScroll(FairyGUI::FByteBuffer* Buffer)
 		const TSharedRef<SContainer> ScrollContainer = Container.ToSharedRef();
 
 		SContainer::FSlot& MaskContainerSlot = RootContainer->AddChild(MaskContainer);
-		MaskContainerSlot.SizeAttr.BindUFunction(this, TEXT("GetScrollMaskSizeForBind"));
+		MaskContainerSlot.SizeAttr.BindUObject(this, &UFairyComponent::GetScrollMaskSize);
 		MaskWidgetSlot = &MaskContainerSlot;
 
 		SContainer::FSlot& ContentContainerSlot = MaskContainer->AddChild(ScrollContainer);
-		ContentContainerSlot.SizeAttr.BindUFunction(this, TEXT("GetScrollContentSizeForBind"));
-		ContentContainerSlot.PositionAttr.BindUFunction(this, TEXT("GetScrollContentPositionForBind"));
+		ContentContainerSlot.SizeAttr.BindUObject(this, &UFairyComponent::GetScrollContentSize);
+		ContentContainerSlot.PositionAttr.BindUObject(this, &UFairyComponent::GetScrollContentPosition);
 		ScrollWidgetSlot = &ContentContainerSlot;
 
 		DisplayObject = Container = RootContainer;
@@ -1044,22 +1044,22 @@ void UFairyComponent::SetupScroll(FairyGUI::FByteBuffer* Buffer)
 	ScrollPanel->Setup(Buffer);
 }
 
-FVector2D UFairyComponent::GetScrollMaskSizeForBind()
-{
-	return GetScrollMaskSize();
-}
+//FVector2D UFairyComponent::GetScrollMaskSizeForBind()
+//{
+//	return GetScrollMaskSize();
+//}
+//
+//FVector2D UFairyComponent::GetScrollContentSizeForBind()
+//{
+//	return GetScrollContentSize();
+//}
+//
+//FVector2D UFairyComponent::GetScrollContentPositionForBind()
+//{
+//	return GetScrollContentPosition();
+//}
 
-FVector2D UFairyComponent::GetScrollContentSizeForBind()
-{
-	return GetScrollContentSize();
-}
-
-FVector2D UFairyComponent::GetScrollContentPositionForBind()
-{
-	return GetScrollContentPosition();
-}
-
-FVector2D UFairyComponent::GetScrollMaskSize()
+FVector2D UFairyComponent::GetScrollMaskSize() const
 {
 	if (ScrollPanel)
 	{
@@ -1068,7 +1068,7 @@ FVector2D UFairyComponent::GetScrollMaskSize()
 	return FVector2D::ZeroVector;
 }
 
-FVector2D UFairyComponent::GetScrollContentSize()
+FVector2D UFairyComponent::GetScrollContentSize() const
 {
 	if (ScrollPanel)
 	{
@@ -1085,7 +1085,7 @@ void UFairyComponent::SetScrollContentSize(FVector2D InSize)
 	}
 }
 
-FVector2D UFairyComponent::GetScrollContentPosition()
+FVector2D UFairyComponent::GetScrollContentPosition() const
 {
 	if (ScrollPanel)
 	{

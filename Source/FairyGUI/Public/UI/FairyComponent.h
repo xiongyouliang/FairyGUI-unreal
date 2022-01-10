@@ -197,29 +197,12 @@ public:
 	// ************** ScrollView API Start *******************
 	virtual void SetupScroll(FairyGUI::FByteBuffer* Buffer);
 
-	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	FVector2D GetScrollMaskSizeForBind();
-
-	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	FVector2D GetScrollContentSizeForBind();
-
-	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
-	FVector2D GetScrollContentPositionForBind();
-
-	virtual FVector2D GetScrollMaskSize();
-	virtual FVector2D GetScrollContentSize();
+	virtual FVector2D GetScrollMaskSize() const;
+	virtual FVector2D GetScrollContentSize() const;
 	virtual void SetScrollContentSize(FVector2D InSize);
-	virtual FVector2D GetScrollContentPosition();
+	virtual FVector2D GetScrollContentPosition() const;
 	virtual void SetScrollContentPosition(FVector2D InPosition);
 
-	[[deprecated("Will removed; Use GetScrollContentSize and GetSize instead.")]]
-	virtual FVector2D GetContentContainerSize() { return FVector2D::ZeroVector; };
-	[[deprecated("Will removed; Use SetScrollContentSize and SetSize instead.")]]
-	virtual void SetContentContainerSize(FVector2D InSize) {};
-	[[deprecated("Will removed; Use GetScrollContentPosition and GetPosition instead.")]]
-	virtual FVector2D GetContentContainerPosition() { return FVector2D::ZeroVector; };
-	[[deprecated("Will removed; Use SetScrollContentPosition and SetPosition instead.")]]
-	virtual void SetContentContainerPosition(FVector2D InPosition) {};
 	// ************** ScrollView API End *******************
 protected:
 	UFUNCTION(BlueprintImplementableEvent, Category = "FairyGUI", meta = (DisplayName = "OnConstruct"))

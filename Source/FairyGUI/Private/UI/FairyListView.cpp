@@ -48,11 +48,11 @@ void UFairyListView::MakeSlateWidget()
 		const TSharedRef<SContainer> ScrollContainer = SNew(SContainer).GObject(this);
 
 		SContainer::FSlot& MaskContainerSlot = RootContainer->AddChild(MaskContainer);
-		MaskContainerSlot.SizeAttr.BindUFunction(this, TEXT("GetScrollMaskSizeForBind"));
+		MaskContainerSlot.SizeAttr.BindUObject(this, &UFairyListView::GetScrollMaskSize);
 		MaskWidgetSlot = &MaskContainerSlot;
 
 		SContainer::FSlot& ContentContainerSlot = MaskContainer->AddChild(ScrollContainer);
-		ContentContainerSlot.SizeAttr.BindUFunction(this, TEXT("GetScrollContentSizeForBind"));
+		ContentContainerSlot.SizeAttr.BindUObject(this, &UFairyListView::GetScrollContentSize);
 		ScrollWidgetSlot = &ContentContainerSlot;
 
 		DisplayObject = Container = RootContainer;
@@ -77,7 +77,7 @@ void UFairyListView::SetupScroll(FairyGUI::FByteBuffer* Buffer)
 	Super::SetupScroll(Buffer);
 }
 
-FVector2D UFairyListView::GetScrollMaskSize()
+FVector2D UFairyListView::GetScrollMaskSize() const
 {
 	// scroll area size is equal FVector2D(Size.X - VerticalScrollBarWith, Size.Y - HorizontalScrollBarHeight)
 	const FVector2D& ComponentSize = GetSize();
@@ -99,40 +99,13 @@ FVector2D UFairyListView::GetScrollMaskSize()
 	return FinalSize;
 }
 
-FVector2D UFairyListView::GetScrollContentSize()
-{
-	return GetContentContainerSize();
-}
-
-FVector2D UFairyListView::GetContentContainerSize()
+FVector2D UFairyListView::GetScrollContentSize() const
 {
 	if (ScrollContentSize.Equals(FVector2D::ZeroVector))
 	{
-		ScrollContentSize = GetScrollMaskSize();
+		return GetScrollMaskSize();
 	}
 	return ScrollContentSize;
-}
-
-void UFairyListView::SetContentContainerSize(FVector2D InSize)
-{
-	ScrollContentSize = InSize;
-}
-
-FVector2D UFairyListView::GetContentContainerPosition()
-{
-	if (ScrollWidgetSlot)
-	{
-		return ScrollWidgetSlot->PositionAttr.Get();
-	}
-	return FVector2D::ZeroVector;
-}
-
-void UFairyListView::SetContentContainerPosition(FVector2D InPosition)
-{
-	if (ScrollWidgetSlot)
-	{
-		ScrollWidgetSlot->Position(InPosition);
-	}
 }
 
 void UFairyListView::ApplyController(UFairyController* Controller)
@@ -358,7 +331,7 @@ void UFairyListView::RefreshItemsLayoutForSingleCol()
 {
 	const int ChildNum = Children.Num();
 	int curPosY = 0;
-	FVector2D ContainerSize = GetContentContainerSize();
+	FVector2D ContainerSize = GetScrollContentSize();
 	for (int i = 0; i < ChildNum; i++)
 	{
 		UFairyObject* child = GetChildAt(i);
@@ -386,7 +359,7 @@ void UFairyListView::RefreshItemsLayoutForSingleRow()
 {
 	const int ChildNum = Children.Num();
 	int curPosX = 0;
-	FVector2D ContainerSize = GetContentContainerSize();
+	FVector2D ContainerSize = GetScrollContentSize();
 	for (int i = 0; i < ChildNum; i++)
 	{
 		UFairyObject* child = GetChildAt(i);
@@ -420,7 +393,7 @@ void UFairyListView::RefreshItemsLayoutForHorizontalFlow()
 
 	int curPosX = 0;
 	int curPosY = 0;
-	FVector2D ContainerSize = GetContentContainerSize();
+	FVector2D ContainerSize = GetScrollContentSize();
 	FVector2D ChildOriginSize = GetChildAt(0)->GetSize();
 
 	FVector2D ChildTargetSize = ChildOriginSize;
@@ -460,7 +433,7 @@ void UFairyListView::RefreshItemsLayoutForVerticalFlow()
 
 	int curPosX = 0;
 	int curPosY = 0;
-	FVector2D ContainerSize = GetContentContainerSize();
+	FVector2D ContainerSize = GetScrollContentSize();
 	FVector2D ChildOriginSize = GetChildAt(0)->GetSize();
 
 	FVector2D ChildTargetSize = ChildOriginSize;
@@ -498,7 +471,7 @@ void UFairyListView::RefreshItemsLayoutForPagination()
 		return;
 	}
 
-	FVector2D ContainerSize = GetContentContainerSize();
+	FVector2D ContainerSize = GetScrollContentSize();
 	FVector2D ChildOriginSize = GetChildAt(0)->GetSize();
 
 	FVector2D ChildTargetSize = ChildOriginSize;
@@ -2809,7 +2782,7 @@ void UFairyListView::HandleAlign(float contentWidth, float contentHeight)
 	if (newOffset != AlignOffset)
 	{
 		AlignOffset = newOffset;
-		SetContentContainerPosition(newOffset);
+		SetScrollContentPosition(newOffset);
 	}
 }
 

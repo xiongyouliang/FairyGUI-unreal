@@ -95,10 +95,10 @@ enum class EFairyScrollDirection : uint8
 UENUM()
 enum class EScrollBarDisplayType : uint8
 {
-	Default,
-	Visible,
-	Auto,
-	Hidden
+	Default = 0U,
+	Visible = 1U,
+	AutoHide = 2U,
+	Hidden = 3U
 };
 
 UENUM()

@@ -69,7 +69,13 @@ void UScrollPanel::Setup(FairyGUI::FByteBuffer* Buffer)
 	});
 
 	ScrollDirection = (EFairyScrollDirection)Buffer->ReadByte();
+
 	EScrollBarDisplayType ScrollBarDisplayType = (EScrollBarDisplayType)Buffer->ReadByte();
+	if (ScrollBarDisplayType == EScrollBarDisplayType::Default)
+	{
+		ScrollBarDisplayType = UFairyConfig::Config->DefaultScrollBarDisplay;
+	}
+	
 	int32 flags = Buffer->ReadInt(); // 4 bytes
 
 	if (Buffer->ReadBool())
@@ -80,10 +86,10 @@ void UScrollPanel::Setup(FairyGUI::FByteBuffer* Buffer)
 		ScrollBarMargin.Right = Buffer->ReadInt();
 	}
 
-	const FString& vtScrollBarRes = Buffer->ReadStringFromCache();
-	const FString& hzScrollBarRes = Buffer->ReadStringFromCache();
-	const FString& headerRes = Buffer->ReadStringFromCache();
-	const FString& footerRes = Buffer->ReadStringFromCache();
+	FName vtScrollBarRes = Buffer->ReadFNameFromCache();
+	FName hzScrollBarRes = Buffer->ReadFNameFromCache();
+	FName headerRes = Buffer->ReadFNameFromCache();
+	FName footerRes = Buffer->ReadFNameFromCache();
 
 	bScrollBarOnLeft = (flags & 1) != 0; // 1 bit
 	bSnapToItem = (flags & (1 << 1)) != 0; // 2 bit
@@ -117,12 +123,13 @@ void UScrollPanel::Setup(FairyGUI::FByteBuffer* Buffer)
 
 	if (ScrollBarDisplayType != EScrollBarDisplayType::Hidden)
 	{
+		// Add Vertical scroll view bar;
 		if (ScrollDirection == EFairyScrollDirection::Both || ScrollDirection == EFairyScrollDirection::Vertical)
 		{
-			const FString& res = vtScrollBarRes.Len() == 0 ? UFairyConfig::Config->VerticalScrollBar : vtScrollBarRes;
-			if (res.Len() > 0)
+			FName resURL = vtScrollBarRes.IsNone() ? UFairyConfig::Config->VerticalScrollBar : vtScrollBarRes;
+			if (!resURL.IsNone())
 			{
-				VScrollBar = Cast<UGScrollBar>(UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), FName(res)));
+				VScrollBar = Cast<UGScrollBar>(UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), resURL));
 				if (VScrollBar)
 				{
 					VScrollBar->SetScrollPane(this, true);
@@ -130,12 +137,14 @@ void UScrollPanel::Setup(FairyGUI::FByteBuffer* Buffer)
 				}
 			}
 		}
+
+		// Add Horizontal scroll view bar;
 		if (ScrollDirection == EFairyScrollDirection::Both || ScrollDirection == EFairyScrollDirection::Horizontal)
 		{
-			const FString& res = hzScrollBarRes.Len() == 0 ? UFairyConfig::Config->HorizontalScrollBar : hzScrollBarRes;
-			if (res.Len() > 0)
+			FName resURL = hzScrollBarRes.IsNone() ? UFairyConfig::Config->HorizontalScrollBar : hzScrollBarRes;
+			if (!resURL.IsNone())
 			{
-				HScrollBar = Cast<UGScrollBar>(UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), FName(res)));
+				HScrollBar = Cast<UGScrollBar>(UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), resURL));
 				if (HScrollBar)
 				{
 					HScrollBar->SetScrollPane(this, false);
@@ -144,8 +153,8 @@ void UScrollPanel::Setup(FairyGUI::FByteBuffer* Buffer)
 			}
 		}
 
-		// Auto means show scroll bar while force on mouse, or hidden it
-		bScrollBarDisplayAuto = ScrollBarDisplayType == EScrollBarDisplayType::Auto;
+		// Auto means show scroll view bar while force on mouse, or hidden it
+		bScrollBarDisplayAuto = ScrollBarDisplayType == EScrollBarDisplayType::AutoHide;
 		if (bScrollBarDisplayAuto)
 		{
 			if (VScrollBar != nullptr)
@@ -166,10 +175,10 @@ void UScrollPanel::Setup(FairyGUI::FByteBuffer* Buffer)
 	{
 		bMouseWheelEnabled = false;
 	}
-
-	if (headerRes.Len() > 0)
+	
+	if (!headerRes.IsNone())
 	{
-		Header = Cast<UFairyComponent>(UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), FName(headerRes)));
+		Header = Cast<UFairyComponent>(UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), headerRes));
 		if (Header)
 		{
 			Header->SetVisible(false);
@@ -177,9 +186,9 @@ void UScrollPanel::Setup(FairyGUI::FByteBuffer* Buffer)
 		}
 	}
 
-	if (footerRes.Len() > 0)
+	if (!footerRes.IsNone())
 	{
-		Footer = Cast<UFairyComponent>(UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), FName(footerRes)));
+		Footer = Cast<UFairyComponent>(UFairyPackageMgr::Get()->CreateObjectFromURL(GetOuter(), footerRes));
 		if (Footer)
 		{
 			Footer->SetVisible(false);

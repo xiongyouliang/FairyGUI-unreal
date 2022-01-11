@@ -9,7 +9,7 @@ UFairyConfig::UFairyConfig() :
     DefaultScrollDecelerationRate(0.967f),
     DefaultScrollTouchEffect(true),
     DefaultScrollBounceEffect(true),
-    DefaultScrollBarDisplay(EScrollBarDisplayType::Default),
+    DefaultScrollBarDisplay(EScrollBarDisplayType::Visible),
     TouchDragSensitivity(10),
     ClickDragSensitivity(2),
     TouchScrollSensitivity(20),

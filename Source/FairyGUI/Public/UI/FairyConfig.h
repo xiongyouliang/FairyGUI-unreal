@@ -41,10 +41,10 @@ public:
     EScrollBarDisplayType DefaultScrollBarDisplay;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
-    FString VerticalScrollBar;
+    FName VerticalScrollBar;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
-    FString HorizontalScrollBar;
+    FName HorizontalScrollBar;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FairyGUI")
     int32 TouchDragSensitivity;

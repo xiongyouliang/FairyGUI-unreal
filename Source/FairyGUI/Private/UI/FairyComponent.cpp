@@ -1182,6 +1182,8 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 		Margin.Right = CurPackageItemBuffer->ReadInt();
 	}
 
+	// Setup overflow
+	int32 cursorPos = CurPackageItemBuffer->GetPos();
 	EOverflowType overflow = (EOverflowType)CurPackageItemBuffer->ReadByte();
 	if (overflow == EOverflowType::Scroll)
 	{
@@ -1377,6 +1379,11 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 	ConstructExtension(CurPackageItemBuffer);
 
 	OnConstruct();
+
+	if (ScrollPanel)
+	{
+		ScrollPanel->SetContentSize(this->GetBounds().GetSize());
+	}
 }
 
 void UFairyComponent::ConstructExtension(FairyGUI::FByteBuffer* Buffer)

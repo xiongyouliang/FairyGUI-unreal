@@ -201,7 +201,7 @@ void UScrollPanel::Setup(FairyGUI::FByteBuffer* Buffer)
 		RefreshBarAxis = (ScrollDirection == EFairyScrollDirection::Both || ScrollDirection == EFairyScrollDirection::Vertical) ? 1 : 0;
 	}
 
-	SetSize(Owner->GetSize());
+	SetViewSize(Owner->GetSize());
 }
 
 void UScrollPanel::SetPosX(float Value, bool bAnimation)
@@ -632,11 +632,11 @@ void UScrollPanel::UpdatePageController()
 
 void UScrollPanel::OnOwnerSizeChanged()
 {
-	SetSize(Owner->GetSize());
+	SetViewSize(Owner->GetSize());
 	PosChanged(false);
 }
 
-void UScrollPanel::SetSize(const FVector2D& InSize)
+void UScrollPanel::SetViewSize(const FVector2D& InSize)
 {
 	if (HScrollBar != nullptr)
 	{
@@ -692,7 +692,9 @@ void UScrollPanel::SetSize(const FVector2D& InSize)
 
 	ViewSize.X = FMath::Max(1.f, ViewSize.X);
 	ViewSize.Y = FMath::Max(1.f, ViewSize.Y);
+
 	PageSize = ViewSize;
+	ContentSize = ViewSize; // Make sure Content size equal view size first;
 
 	HandleSizeChanged();
 }

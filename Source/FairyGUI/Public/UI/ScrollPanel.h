@@ -106,8 +106,12 @@ public:
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     const FVector2D& GetContentSize() const { return ContentSize; }
 
+    void SetContentSize(const FVector2D& InSize);
+
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     const FVector2D& GetViewSize() const { return ViewSize; }
+
+    void SetViewSize(const FVector2D& InSize);
 
     UFUNCTION(BlueprintCallable, Category = "FairyGUI")
     void LockHeader(int32 Size);
@@ -149,11 +153,11 @@ public:
 
 private:
     void OnOwnerSizeChanged();
-    void SetContentSize(const FVector2D& InSize);
+    
     void ChangeContentSizeOnScrolling(float DeltaWidth, float DeltaHeight, float DeltaPosX, float DeltaPosY);
     void SetViewWidth(float Width);
     void SetViewHeight(float Height);
-    void SetSize(const FVector2D& InSize);
+    
     void HandleSizeChanged();
 
     void ApplyController(UFairyController* Controller);

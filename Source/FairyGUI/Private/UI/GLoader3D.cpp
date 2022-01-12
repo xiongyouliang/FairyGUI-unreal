@@ -67,26 +67,30 @@ void UGLoader3D::LoadFromPackage(const FString& ItemURL)
 		ContentItem = ContentItem->GetHighResolution();
 		ContentItem->Load();
 
-		if (ContentItem->Type == EPackageItemType::Spine)
+		if (ContentItem->GetPackageItemType() == EPackageItemType::Spine)
 		{
 			UpdateLayout();
 		}
-		else if (ContentItem->Type == EPackageItemType::DragonBones)
+		else if (ContentItem->GetPackageItemType() == EPackageItemType::DragonBones)
 		{
 			UpdateLayout();
 		}
 		else
 		{
 			if (bAutoSize)
+			{
 				SetSize(ContentItem->Size);
+			}
 
 			SetErrorState();
 
-			UE_LOG(LogFairyGUI, Warning, TEXT("Unsupported type of GLoader: %d"), ContentItem->Type);
+			UE_LOG(LogFairyGUI, Warning, TEXT("Unsupported type of GLoader: %d"), ContentItem->GetPackageItemType());
 		}
 	}
 	else
+	{
 		SetErrorState();
+	}
 }
 
 void UGLoader3D::LoadExternal()

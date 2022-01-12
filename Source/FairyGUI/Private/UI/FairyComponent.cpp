@@ -1255,7 +1255,7 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 				}
 				else 
 				{
-					Package = CurPackageItem->OwnerPackage;
+					Package = CurPackageItem->GetOwnerPackage();
 				}
 
 				if (Package != nullptr)
@@ -1335,7 +1335,7 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 	int32 i2 = CurPackageItemBuffer->ReadInt();
 	if (!hitTestId.IsNone())
 	{
-		TSharedPtr<FFairyPackageItem> pi = CurPackageItem->OwnerPackage->GetItem(hitTestId);
+		TSharedPtr<FFairyPackageItem> pi = CurPackageItem->GetOwnerPackage()->GetItem(hitTestId);
 		/*if (pi != nullptr && pi->pixelHitTestData != nullptr)
 			setHitArea(new PixelHitTest(pi->pixelHitTestData, i1, i2));*/
 	}

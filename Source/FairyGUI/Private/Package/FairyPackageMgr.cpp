@@ -248,7 +248,7 @@ UFairyObject* UFairyPackageMgr::CreateObjectFromURL(UObject* Outer, const FName&
 	TSharedPtr<FFairyPackageItem> PackageItem = GetPackageItemByURL(URL.ToString());
 	if (PackageItem.IsValid()) 
 	{
-		return PackageItem->OwnerPackage->CreateObject(Outer, PackageItem);
+		return PackageItem->GetOwnerPackage()->CreateObject(Outer, PackageItem);
 	}
 	else
 	{

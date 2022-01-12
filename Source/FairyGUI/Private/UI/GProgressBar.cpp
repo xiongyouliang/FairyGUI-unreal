@@ -193,7 +193,7 @@ void UGProgressBar::SetupAfterAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos)
         return;
     }
 
-    if ((EObjectType)Buffer->ReadByte() != PackageItem->ObjectType)
+    if ((EObjectType)Buffer->ReadByte() != PackageItem->GetFairyObjectType())
     {
         Update(Value);
         return;
@@ -202,7 +202,9 @@ void UGProgressBar::SetupAfterAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos)
     Value = Buffer->ReadInt();
     Max = Buffer->ReadInt();
     if (Buffer->Version >= 2)
+    {
         Min = Buffer->ReadInt();
+    }
 
     Update(Value);
 }

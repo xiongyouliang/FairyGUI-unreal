@@ -56,7 +56,7 @@ UFairyObject* FUIObjectFactory::NewObject(UObject* Outer, const TSharedPtr<FFair
     }
     else
     {
-        FairyObject = FUIObjectFactory::NewObject(Outer, PackageItem->ObjectType);
+        FairyObject = FUIObjectFactory::NewObject(Outer, PackageItem->GetFairyObjectType());
     }
 
     if (FairyObject != nullptr)
@@ -120,13 +120,13 @@ UFairyObject* FUIObjectFactory::NewObject(UObject* Outer, EObjectType Type)
 
 void FUIObjectFactory::ResolvePackageItemExtension(const TSharedPtr<FFairyPackageItem>& PackageItem)
 {
-    auto it = PackageItemExtensions.Find(FString(TEXT("ui://") + PackageItem->OwnerPackage->GetID().ToString() + PackageItem->ID.ToString()));
+    auto it = PackageItemExtensions.Find(FString(TEXT("ui://") + PackageItem->GetOwnerPackage()->GetID().ToString() + PackageItem->ID.ToString()));
     if (it != nullptr)
     {
         PackageItem->ExtensionCreator = *it;
         return;
     }
-    it = PackageItemExtensions.Find(FString(TEXT("ui://") + PackageItem->OwnerPackage->GetName().ToString() + TEXT("/") + PackageItem->Name.ToString()));
+    it = PackageItemExtensions.Find(FString(TEXT("ui://") + PackageItem->GetOwnerPackage()->GetName().ToString() + TEXT("/") + PackageItem->Name.ToString()));
     if (it != nullptr)
     {
         PackageItem->ExtensionCreator = *it;

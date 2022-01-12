@@ -15,6 +15,13 @@ class UFairyComponent;
 
 class FAIRYGUI_API FFairyPackageItem : public FGCObject, public TSharedFromThis<FFairyPackageItem>
 {
+private:
+    friend class UFairyPackage;
+
+    UFairyPackage* OwnerPackage;
+    EPackageItemType Type;
+    EObjectType ObjectType;
+
 public:
     FFairyPackageItem();
 
@@ -25,10 +32,13 @@ public:
     virtual void AddReferencedObjects(FReferenceCollector& Collector) override;
 
 public:
-    UFairyPackage* OwnerPackage;
+    inline UFairyPackage* GetOwnerPackage() { return OwnerPackage; }
+    inline EPackageItemType GetPackageItemType() { return Type; }
+    inline EObjectType GetFairyObjectType() { return ObjectType; }
+public:
+    
 
-    EPackageItemType Type;
-    EObjectType ObjectType;
+    
 
     FName ID;
     FName Name;

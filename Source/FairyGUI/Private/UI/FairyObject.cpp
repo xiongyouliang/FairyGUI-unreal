@@ -411,7 +411,7 @@ FName UFairyObject::GetResourceURL() const
 {
 	if (PackageItem.IsValid())
 	{
-		FString TempUrl = FString(TEXT("ui://")) + PackageItem->OwnerPackage->GetID().ToString() + PackageItem->ID.ToString();
+		FString TempUrl = FString(TEXT("ui://")) + PackageItem->GetOwnerPackage()->GetID().ToString() + PackageItem->ID.ToString();
 		return FName(TempUrl);
 	}
 	else
@@ -436,7 +436,7 @@ FName UFairyObject::GetPackageName() const
 {
 	if (PackageItem.IsValid())
 	{
-		return PackageItem->OwnerPackage->GetName();
+		return PackageItem->GetOwnerPackage()->GetName();
 	}
 	else
 	{

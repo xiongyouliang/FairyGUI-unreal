@@ -214,7 +214,7 @@ void UGSlider::SetupAfterAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPos)
         return;
     }
 
-    if ((EObjectType)Buffer->ReadByte() != PackageItem->ObjectType)
+    if ((EObjectType)Buffer->ReadByte() != PackageItem->GetFairyObjectType())
     {
         Update();
         return;

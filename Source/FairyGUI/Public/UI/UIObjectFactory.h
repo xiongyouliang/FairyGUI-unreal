@@ -17,7 +17,7 @@ public:
     static void SetExtension(const FString& URL, TSubclassOf<UFairyComponent> ClassType);
 
     static UFairyObject* NewObject(UObject* Outer, const TSharedPtr<FFairyPackageItem>& PackageItem);
-    static UFairyObject* NewObject(UObject* Outer, EObjectType Type);
+    static UFairyObject* NewObject(UObject* Outer, EFairyObjectType Type);
 
     static FGLoaderCreator LoaderCreator;
     static void ResolvePackageItemExtension(const TSharedPtr<FFairyPackageItem>& PackageItem);

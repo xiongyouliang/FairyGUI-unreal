@@ -184,7 +184,7 @@ void UFairyPackage::Load(FairyGUI::FByteBuffer* Buffer)
 
 		TSharedPtr<FFairyPackageItem> pi = MakeShared<FFairyPackageItem>();
 		pi->OwnerPackage = this;
-		pi->Type = (EPackageItemType)Buffer->ReadByte();
+		pi->PackageItemType = (EPackageItemType)Buffer->ReadByte();
 		pi->ID = Buffer->ReadFNameFromCache();
 		pi->Name = Buffer->ReadFNameFromCache();
 		Buffer->Skip(2); //path
@@ -193,16 +193,11 @@ void UFairyPackage::Load(FairyGUI::FByteBuffer* Buffer)
 		pi->Size.X = Buffer->ReadInt();
 		pi->Size.Y = Buffer->ReadInt();
 
-		if (pi->Name.IsEqual(FName("Simple")))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("abc"));
-		}
-
-		switch (pi->Type)
+		switch (pi->GetPackageItemType())
 		{
 		case EPackageItemType::Image:
 		{
-			pi->ObjectType = EObjectType::Image;
+			pi->RawObjectType = EFairyObjectType::Image;
 			int32 scaleOption = Buffer->ReadByte();
 			if (scaleOption == 1)
 			{
@@ -226,7 +221,7 @@ void UFairyPackage::Load(FairyGUI::FByteBuffer* Buffer)
 		case EPackageItemType::MovieClip:
 		{
 			Buffer->ReadBool(); //smoothing
-			pi->ObjectType = EObjectType::MovieClip;
+			pi->RawObjectType = EFairyObjectType::MovieClip;
 			pi->RawData = Buffer->ReadBuffer(false);
 			break;
 		}
@@ -242,11 +237,11 @@ void UFairyPackage::Load(FairyGUI::FByteBuffer* Buffer)
 			int32 extension = Buffer->ReadByte();
 			if (extension > 0)
 			{
-				pi->ObjectType = (EObjectType)extension;
+				pi->RawObjectType = (EFairyObjectType)extension;
 			}
 			else
 			{
-				pi->ObjectType = EObjectType::Component;
+				pi->RawObjectType = EFairyObjectType::Component;
 			}
 
 			// todo: here can try to check the overflow type
@@ -384,7 +379,7 @@ void UFairyPackage::Load(FairyGUI::FByteBuffer* Buffer)
 
 void* UFairyPackage::GetItemAsset(const TSharedPtr<FFairyPackageItem>& Item)
 {
-	switch (Item->Type)
+	switch (Item->GetPackageItemType())
 	{
 	case EPackageItemType::Image:
 		if (Item->Texture == nullptr)

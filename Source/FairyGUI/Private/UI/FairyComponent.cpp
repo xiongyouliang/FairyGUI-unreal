@@ -14,8 +14,6 @@
 
 #include "FairyApplication.h"
 
-static FThreadSafeCounter FairyComponentCount;
-
 UFairyComponent::UFairyComponent() :
 	bBuildingDisplayList(false),
 	AlignOffset(ForceInit),
@@ -27,7 +25,6 @@ UFairyComponent::UFairyComponent() :
 	if (HasAnyFlags(RF_ClassDefaultObject) == false)
 	{
 		//UE_LOG(LogFairyGUI, Warning, TEXT("UFairyComponent::UFairyComponent(...), Count:%d"), FairyComponentCount.GetValue());
-		FairyComponentCount.Increment();
 	}
 }
 
@@ -35,7 +32,6 @@ UFairyComponent::~UFairyComponent()
 {
 	if (HasAnyFlags(RF_ClassDefaultObject) == false)
 	{
-		FairyComponentCount.Decrement();
 		//UE_LOG(LogFairyGUI, Warning, TEXT("UFairyComponent::~UFairyComponent(...), Count:%d"), FairyComponentCount.GetValue());
 	}
 }
@@ -1239,9 +1235,7 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 		{
 			CurPackageItemBuffer->Seek(curPos, 0);
 
-			EObjectType ObjectType = (EObjectType)CurPackageItemBuffer->ReadByte();
-			//const FString& src = CurPackageItemBuffer->ReadS();
-			//const FString& PackageID = CurPackageItemBuffer->ReadS();
+			EFairyObjectType ObjectType = (EFairyObjectType)CurPackageItemBuffer->ReadByte();
 			FName src = CurPackageItemBuffer->ReadFNameFromCache();
 			FName PackageID = CurPackageItemBuffer->ReadFNameFromCache();
 

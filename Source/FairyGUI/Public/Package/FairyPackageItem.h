@@ -13,61 +13,58 @@ class UFairyPackage;
 class UNTexture;
 class UFairyComponent;
 
-class FAIRYGUI_API FFairyPackageItem : public FGCObject, public TSharedFromThis<FFairyPackageItem>
+class FAIRYGUI_API FFairyPackageItem : public TSharedFromThis<FFairyPackageItem>
 {
 private:
-    friend class UFairyPackage;
+	friend class UFairyPackage;
 
-    UFairyPackage* OwnerPackage;
-    EPackageItemType Type;
-    EObjectType ObjectType;
-
-public:
-    FFairyPackageItem();
-
-    void Load();
-    TSharedPtr<FFairyPackageItem> GetBranch();
-    TSharedPtr<FFairyPackageItem> GetHighResolution();
-
-    virtual void AddReferencedObjects(FReferenceCollector& Collector) override;
+	UFairyPackage* OwnerPackage;
+	EPackageItemType PackageItemType;
+	EFairyObjectType RawObjectType;
 
 public:
-    inline UFairyPackage* GetOwnerPackage() { return OwnerPackage; }
-    inline EPackageItemType GetPackageItemType() { return Type; }
-    inline EObjectType GetFairyObjectType() { return ObjectType; }
+	FFairyPackageItem();
+
+	void Load();
+	TSharedPtr<FFairyPackageItem> GetBranch();
+	TSharedPtr<FFairyPackageItem> GetHighResolution();
+
+	//virtual void AddReferencedObjects(FReferenceCollector& Collector) override;
+
 public:
-    
+	inline UFairyPackage* GetOwnerPackage() { return OwnerPackage; }
+	inline EPackageItemType GetPackageItemType() { return PackageItemType; }
+	inline EFairyObjectType GetRawFairyObjectType() { return RawObjectType; }
+	inline EFairyObjectType GetExtendFairyObjectType();
+public:
+	FName ID;
+	FName Name;
+	FName File;
+	FVector2D Size;
 
-    
+	TSharedPtr<FairyGUI::FByteBuffer> RawData;
+	TOptional<TArray<FName>> Branches;
+	TOptional<TArray<FName>> HighResolution;
 
-    FName ID;
-    FName Name;
-    FName File;
-    FVector2D Size;
+	//atlas
+	UNTexture* Texture;
 
-    TSharedPtr<FairyGUI::FByteBuffer> RawData;
-    TOptional<TArray<FName>> Branches;
-    TOptional<TArray<FName>> HighResolution;
+	//image
+	TOptional<FBox2D> Scale9Grid;
+	bool bScaleByTile;
+	int32 TileGridIndice;
+	//PixelHitTestData* pixelHitTestData;
 
-    //atlas
-    UNTexture* Texture;
+	//movie clip
+	TSharedPtr<FMovieClipData> MovieClipData;
 
-    //image
-    TOptional<FBox2D> Scale9Grid;
-    bool bScaleByTile;
-    int32 TileGridIndice;
-    //PixelHitTestData* pixelHitTestData;
+	//component
+	FGComponentCreator ExtensionCreator;
+	bool bTranslated;
 
-    //movie clip
-    TSharedPtr<FMovieClipData> MovieClipData;
+	//font
+	TSharedPtr<FBitmapFont> BitmapFont;
 
-    //component
-    FGComponentCreator ExtensionCreator;
-    bool bTranslated;
-
-    //font
-    TSharedPtr<FBitmapFont> BitmapFont;
-
-    //sound
-    FSlateSound Sound;
+	//sound
+	FSlateSound Sound;
 };

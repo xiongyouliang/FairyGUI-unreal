@@ -333,7 +333,10 @@ public:
 	float GetMaxWidth() { return MaxSize.X; };
 	float GetMaxHeight() { return MaxSize.Y; };
 
-	virtual FSlateRect GetBounds(); // Get object bounds without rotation and skew.
+	/**
+	* @Desc:GetBounds() all value is in parent local coordinate.
+	*/
+	virtual FSlateRect GetBounds();
 
 	UFUNCTION(BlueprintCallable, Category = "FairyGUI")
 	const FVector2D& GetRelationSize() const;

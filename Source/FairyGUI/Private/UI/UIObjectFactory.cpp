@@ -2,6 +2,7 @@
 #include "Package/FairyPackage.h"
 #include "Package/FairyPackageItem.h"
 #include "UI/FairyComponent.h"
+#include "UI/FairyClippingPanel.h"
 #include "UI/GImage.h"
 #include "UI/FairyMovieClip.h"
 #include "UI/GTextField.h"
@@ -56,7 +57,7 @@ UFairyObject* FUIObjectFactory::NewObject(UObject* Outer, const TSharedPtr<FFair
     }
     else
     {
-        FairyObject = FUIObjectFactory::NewObject(Outer, PackageItem->GetFairyObjectType());
+        FairyObject = FUIObjectFactory::NewObject(Outer, PackageItem->GetRawFairyObjectType());
     }
 
     if (FairyObject != nullptr)
@@ -66,29 +67,33 @@ UFairyObject* FUIObjectFactory::NewObject(UObject* Outer, const TSharedPtr<FFair
     return FairyObject;
 }
 
-UFairyObject* FUIObjectFactory::NewObject(UObject* Outer, EObjectType Type)
+UFairyObject* FUIObjectFactory::NewObject(UObject* Outer, EFairyObjectType Type)
 {
     switch (Type)
     {
-    case EObjectType::Image:
+    case EFairyObjectType::Image:
         return ::NewObject<UGImage>(Outer);
-    case EObjectType::MovieClip:
+    case EFairyObjectType::MovieClip:
         return ::NewObject<UFairyMovieClip>(Outer);
-    case EObjectType::Component:
+    case EFairyObjectType::Component:
         return ::NewObject<UFairyComponent>(Outer);
-    case EObjectType::Text:
+	case EFairyObjectType::ClippingComponent:
+		return ::NewObject<UFairyClippingPanel>(Outer);
+	case EFairyObjectType::ScrollComponent:
+		return ::NewObject<UFairyComponent>(Outer);
+    case EFairyObjectType::Text:
         return ::NewObject<UGTextField>(Outer);
-    case EObjectType::RichText:
+    case EFairyObjectType::RichText:
         return ::NewObject<UGRichTextField>(Outer);
-    case EObjectType::InputText:
+    case EFairyObjectType::InputText:
         return ::NewObject<UGTextInput>(Outer);
-    case EObjectType::Group:
+    case EFairyObjectType::Group:
         return ::NewObject<UGGroup>(Outer);
-    case EObjectType::List:
+    case EFairyObjectType::List:
         return ::NewObject<UFairyListView>(Outer);
-    case EObjectType::Graph:
+    case EFairyObjectType::Graph:
         return ::NewObject<UGGraph>(Outer);
-    case EObjectType::Loader:
+    case EFairyObjectType::Loader:
         if (LoaderCreator.IsBound())
         {
             return LoaderCreator.Execute();
@@ -97,21 +102,21 @@ UFairyObject* FUIObjectFactory::NewObject(UObject* Outer, EObjectType Type)
         {
             return ::NewObject<UGLoader>(Outer);
         }
-    case EObjectType::Button:
+    case EFairyObjectType::Button:
         return ::NewObject<UFairyButton>(Outer);
-    case EObjectType::Label:
+    case EFairyObjectType::Label:
         return ::NewObject<UGLabel>(Outer);
-    case EObjectType::ProgressBar:
+    case EFairyObjectType::ProgressBar:
         return ::NewObject<UGProgressBar>(Outer);
-    case EObjectType::Slider:
+    case EFairyObjectType::Slider:
         return ::NewObject<UGSlider>(Outer);
-    case EObjectType::ScrollBar:
+    case EFairyObjectType::ScrollBar:
         return ::NewObject<UGScrollBar>(Outer);
-    case EObjectType::ComboBox:
+    case EFairyObjectType::ComboBox:
         return ::NewObject<UGComboBox>(Outer);
-    case EObjectType::Tree:
+    case EFairyObjectType::Tree:
         return ::NewObject<UGTree>(Outer);
-    case EObjectType::Loader3D:
+    case EFairyObjectType::Loader3D:
         return ::NewObject<UGLoader3D>(Outer);
     default:
         return nullptr;

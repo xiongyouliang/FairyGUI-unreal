@@ -21,7 +21,7 @@ enum class EPackageItemType
 };
 
 UENUM()
-enum class EObjectType
+enum class EFairyObjectType
 {
 	Image,
 	MovieClip,
@@ -41,15 +41,9 @@ enum class EObjectType
 	Slider,
 	ScrollBar,
 	Tree,
-	Loader3D
-};
-
-enum class EComponentSubtype
-{
-	Controller,
-	Clipping,
-	ScrollView,
-	List
+	Loader3D,
+	ClippingComponent,
+	ScrollComponent,
 };
 
 UENUM()

@@ -57,7 +57,7 @@ UFairyObject* FUIObjectFactory::NewObject(UObject* Outer, const TSharedPtr<FFair
     }
     else
     {
-        FairyObject = FUIObjectFactory::NewObject(Outer, PackageItem->GetRawFairyObjectType());
+        FairyObject = FUIObjectFactory::NewObject(Outer, PackageItem->GetExtendFairyObjectType());
     }
 
     if (FairyObject != nullptr)

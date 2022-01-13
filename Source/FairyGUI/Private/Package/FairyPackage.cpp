@@ -184,7 +184,7 @@ void UFairyPackage::Load(FairyGUI::FByteBuffer* Buffer)
 
 		TSharedPtr<FFairyPackageItem> pi = MakeShared<FFairyPackageItem>();
 		pi->OwnerPackage = this;
-		pi->Type = (EPackageItemType)Buffer->ReadByte();
+		pi->PackageItemType = (EPackageItemType)Buffer->ReadByte();
 		pi->ID = Buffer->ReadFNameFromCache();
 		pi->Name = Buffer->ReadFNameFromCache();
 		Buffer->Skip(2); //path
@@ -193,12 +193,7 @@ void UFairyPackage::Load(FairyGUI::FByteBuffer* Buffer)
 		pi->Size.X = Buffer->ReadInt();
 		pi->Size.Y = Buffer->ReadInt();
 
-		if (pi->Name.IsEqual(FName("Simple")))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("abc"));
-		}
-
-		switch (pi->Type)
+		switch (pi->GetPackageItemType())
 		{
 		case EPackageItemType::Image:
 		{
@@ -384,7 +379,7 @@ void UFairyPackage::Load(FairyGUI::FByteBuffer* Buffer)
 
 void* UFairyPackage::GetItemAsset(const TSharedPtr<FFairyPackageItem>& Item)
 {
-	switch (Item->Type)
+	switch (Item->GetPackageItemType())
 	{
 	case EPackageItemType::Image:
 		if (Item->Texture == nullptr)

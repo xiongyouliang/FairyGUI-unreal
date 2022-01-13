@@ -41,8 +41,11 @@ enum class EObjectType
 	Slider,
 	ScrollBar,
 	Tree,
-	Loader3D
+	Loader3D,
+	ClippingComponent,
+	ScrollComponent,
 };
+using EFairyObjectType = EObjectType;
 
 enum class EComponentSubtype
 {

@@ -62,7 +62,7 @@ EFairyObjectType FFairyPackageItem::GetExtendFairyObjectType()
 		int32 oldPos = Buffer->GetPos();
 
 		Buffer->Seek(0, 0);
-		
+
 		// Object Size attribute
 		Buffer->ReadInt();
 		Buffer->ReadInt();
@@ -91,7 +91,6 @@ EFairyObjectType FFairyPackageItem::GetExtendFairyObjectType()
 			Buffer->ReadInt();
 			Buffer->ReadInt();
 		}
-
 		EOverflowType overflow = (EOverflowType)Buffer->ReadByte();
 		if (overflow == EOverflowType::Visible)
 		{

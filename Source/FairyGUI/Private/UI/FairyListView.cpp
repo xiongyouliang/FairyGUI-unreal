@@ -169,10 +169,6 @@ void UFairyListView::SetupBeforeAdd(FairyGUI::FByteBuffer* Buffer, int32 BeginPo
 		SetupScroll(Buffer);
 		Buffer->SetPos(savedPos);
 	}
-	else
-	{
-		SetupOverflow(overflow);
-	}
 
 	if (Buffer->ReadBool()) //clipSoftness
 	{

@@ -192,7 +192,8 @@ public:
 	/**
 	* Desc: Just InOverflow is equal EOverflowType::Hidden Overflow has effect for clipping.
 	*/
-	virtual void SetupOverflow(EOverflowType InOverflow);
+	//virtual void SetupOverflow(EOverflowType InOverflow) {};
+	virtual void SetupClipping() {};
 
 	// ************** ScrollView API Start *******************
 	virtual void SetupScroll(FairyGUI::FByteBuffer* Buffer);

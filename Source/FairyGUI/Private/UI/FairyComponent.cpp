@@ -1004,18 +1004,9 @@ FVector2D UFairyComponent::GetSnappingPosition(const FVector2D& InPoint)
 	return ret;
 }
 
-void UFairyComponent::SetupOverflow(EOverflowType InOverflow)
-{
-	if (InOverflow == EOverflowType::Hidden)
-	{
-		GetDisplayObject()->SetClipping(EWidgetClipping::ClipToBoundsAlways);
-		GetDisplayObject()->SetCullingBoundsExtension(Margin);
-	}
-}
-
 void UFairyComponent::SetupScroll(FairyGUI::FByteBuffer* Buffer)
 {
-	if (!MaskWidget.IsValid() &&Container.IsValid())
+	if (!MaskWidget.IsValid() && Container.IsValid())
 	{
 		const TSharedPtr<SContainer> RootContainer = SNew(SContainer).GObject(this);
 		const TSharedRef<SContainer> MaskContainer = SNew(SContainer).GObject(this);
@@ -1190,9 +1181,9 @@ void UFairyComponent::ConstructFromResource(TArray<UFairyObject*>* ObjectPool, i
 
 		CurPackageItemBuffer->SetPos(savedPos);
 	}
-	else
+	else if(overflow == EOverflowType::Hidden)
 	{
-		SetupOverflow(overflow);
+		SetupClipping();
 	}
 
 	if (CurPackageItemBuffer->ReadBool()) //clipsoft

@@ -15,3 +15,8 @@ UFairyClippingPanel::~UFairyClippingPanel()
 	}
 }
 
+void UFairyClippingPanel::SetupClipping()
+{
+	GetDisplayObject()->SetClipping(EWidgetClipping::ClipToBoundsAlways);
+	GetDisplayObject()->SetCullingBoundsExtension(Margin);
+}

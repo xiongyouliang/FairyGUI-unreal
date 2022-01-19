@@ -14,7 +14,11 @@ UCLASS(BlueprintType, Blueprintable)
 class FAIRYGUI_API UFairyClippingPanel : public UFairyComponent
 {
 	GENERATED_BODY()
+private:
+
 public:
 	UFairyClippingPanel();
 	virtual ~UFairyClippingPanel();
+
+	virtual void SetupClipping() override;
 };
